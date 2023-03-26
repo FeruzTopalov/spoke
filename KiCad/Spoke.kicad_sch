@@ -5969,7 +5969,7 @@
     (property "Value" "Pad_round" (id 1) (at 212.09 196.85 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Footprint" "" (id 2) (at 209.55 201.93 0)
+    (property "Footprint" "Spoke:Pad_round" (id 2) (at 209.55 201.93 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (id 3) (at 209.55 201.93 0)
@@ -6058,7 +6058,7 @@
     (property "Value" "PLS-1x3" (id 1) (at 189.23 96.52 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "" (id 2) (at 186.69 87.63 0)
+    (property "Footprint" "Spoke:Header_1x3" (id 2) (at 186.69 87.63 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (id 3) (at 186.69 87.63 0)
@@ -6436,7 +6436,7 @@
       (reference "X2") (unit 1) (value "Pad_oval") (footprint "Spoke:Pad_oval")
     )
     (path "/f79b4726-71e3-41dd-96b8-0609b918c0df"
-      (reference "X3") (unit 1) (value "PLS-1x3") (footprint "")
+      (reference "X3") (unit 1) (value "PLS-1x3") (footprint "Spoke:Header_1x3")
     )
     (path "/652197a3-cbd3-4bde-b598-7a938cb11277"
       (reference "X4") (unit 1) (value "Pad_round") (footprint "Spoke:Pad_round")
@@ -6460,7 +6460,7 @@
       (reference "X10") (unit 1) (value "Pad_round") (footprint "Spoke:Pad_round")
     )
     (path "/f1a94af4-23ae-4c75-b9c9-e15248638296"
-      (reference "X11") (unit 1) (value "Pad_round") (footprint "")
+      (reference "X11") (unit 1) (value "Pad_round") (footprint "Spoke:Pad_round")
     )
     (path "/2ac64a75-1156-4d9f-8348-24b7092e0367"
       (reference "XTAL1") (unit 1) (value "Crystal_8MHz") (footprint "Spoke:HC49SM")
