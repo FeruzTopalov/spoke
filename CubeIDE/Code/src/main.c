@@ -215,11 +215,11 @@ void EXTI2_IRQHandler(void)
 }
 
 
-/*
+
 //RFM98 interrupt (PayloadReady or PacketSent)
-void EXTI9_5_IRQHandler(void)
+void EXTI0_IRQHandler(void)
 {
-    EXTI->PR = EXTI_PR_PR8;         //clear interrupt
+    EXTI->PR = EXTI_PR_PR0;         //clear interrupt
 
 	uint8_t current_radio_status = rfm98_get_irq_status();	//Process the radio interrupt
 
@@ -239,7 +239,9 @@ void EXTI9_5_IRQHandler(void)
 		main_flags.tx_state = 0;
 	}
 }
-*/
+
+
+
 								//	each byte is timer interrupt mask. timeslot_pattern[0] is the initial state and always zero
 								//	0 - skip interrupt
 								//	1 - do interrupt
@@ -320,28 +322,6 @@ void TIM2_IRQHandler(void)
 	main_flags.scan_buttons = 1;
 }
 
-
-/*
-//Up/Ok button interrupt
-void EXTI1_IRQHandler(void)
-{
-	disable_buttons_interrupts();
-	EXTI->PR = EXTI_PR_PR1;		//clear interrupt
-	processing_button = BUTTON_UP_OK_PA1;
-	timer2_start();
-}
-*/
-
-/*
-//Down/Esc button interrupt
-void EXTI2_IRQHandler(void)
-{
-	disable_buttons_interrupts();
-	EXTI->PR = EXTI_PR_PR2;		//clear interrupt
-	processing_button = BUTTON_DOWN_ESC_PA2;
-	timer2_start();
-}
-*/
 
 
 //DOWN/ESC button interrupt
