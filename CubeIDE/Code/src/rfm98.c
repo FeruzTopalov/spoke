@@ -50,7 +50,7 @@ struct settings_struct *p_settings;
 
 //RFM98 Init
 void rfm98_init(void)
-{
+{/*
     cs_rfm98_inactive();       	//set pins initial state
     res_rfm98_inactive();
     delay_cyc(100000);
@@ -154,13 +154,13 @@ void rfm98_init(void)
 	spi1_trx(REG_OPMODE | RFM_WRITE);
 	spi1_trx(RF_OPMODE_LONGRANGEMODE_OFF | RF_OPMODE_MODULATIONTYPE_FSK | RF_OPMODE_SLEEP);
 	cs_rfm98_inactive();
-}
+*/}
 
 
 
 //RFM98 TX packet
 uint8_t rfm98_tx_packet(void)
-{
+{/*
 	//check current mode
 	uint8_t mode_before_tx = 0;
 	cs_rfm98_active();
@@ -191,13 +191,15 @@ uint8_t rfm98_tx_packet(void)
 	{
 		return 0;
 	}
+*/
+	return 1;
 }
 
 
 
 //RFM98 start packet RX
 uint8_t rfm98_start_rx(void)
-{
+{/*
 	//check current mode
 	uint8_t mode_before_rx = 0;
 	cs_rfm98_active();
@@ -219,13 +221,15 @@ uint8_t rfm98_start_rx(void)
 		return 0;
 	}
 
+*/
+	return 1;
 }
 
 
 
 //RFM98 get interrupt status
 uint8_t rfm98_get_irq_status(void)
-{
+{/*
 	//check both flag bytes
 	cs_rfm98_active();
 	spi1_trx(REG_IRQFLAGS1 | RFM_READ);
@@ -234,13 +238,15 @@ uint8_t rfm98_get_irq_status(void)
 	cs_rfm98_inactive();
 
 	return radio_irq_status;
+*/
+	return 0;
 }
 
 
 
 //RFM98 get received packet
 void rfm98_get_rx_packet(void)
-{
+{/*
 	cs_rfm98_active();
 	spi1_trx(REG_FIFO | RFM_READ);
 	for (uint8_t i = 0; i < AIR_PACKET_LEN; i++)
@@ -248,17 +254,17 @@ void rfm98_get_rx_packet(void)
 		air_packet_rx[i] = spi1_trx(0);
 	}
 	cs_rfm98_inactive();
-}
+*/}
 
 
 
 void rfm98_flush_fifo(void)
-{
+{/*
 	cs_rfm98_active();
 	spi1_trx(REG_IRQFLAGS2 | RFM_WRITE);
 	spi1_trx(RF_IRQFLAGS2_FIFOOVERRUN);		//Clear FIFO by writing overrun flag
 	cs_rfm98_inactive();
-}
+*/}
 
 
 

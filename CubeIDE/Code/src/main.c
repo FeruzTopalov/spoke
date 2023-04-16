@@ -220,7 +220,7 @@ void EXTI2_IRQHandler(void)
 void EXTI0_IRQHandler(void)
 {
     EXTI->PR = EXTI_PR_PR0;         //clear interrupt
-
+/*
 	uint8_t current_radio_status = rfm98_get_irq_status();	//Process the radio interrupt
 
 	if (current_radio_status & RF_IRQFLAGS2_CRCOK)	//if CRC is ok
@@ -237,7 +237,7 @@ void EXTI0_IRQHandler(void)
 	else if (current_radio_status & RF_IRQFLAGS2_PACKETSENT)	//if packet sent
 	{
 		main_flags.tx_state = 0;
-	}
+	}*/
 }
 
 

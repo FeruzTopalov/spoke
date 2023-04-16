@@ -212,7 +212,7 @@ void ext_int_init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;         //enable afio clock
 
-    //PB0 - RF IRQ on rising edge ???
+    //PB0 - RF IRQ todo: on rising edge ???
     AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI0_PB;	//exti 0 source is port B
     EXTI->RTSR |= EXTI_RTSR_TR0;				//interrupt 0 on rising edge
     EXTI->IMR |= EXTI_IMR_MR0;					//unmask interrupt 0
