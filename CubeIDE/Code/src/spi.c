@@ -69,9 +69,9 @@ void spi2_init(void)
 {
     RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;     //enable clock spi2
     SPI2->CR1 &= ~SPI_CR1_BR;               //clock/2
-    SPI2->CR1 |= SPI_CR1_SSM;
+    SPI2->CR1 |= SPI_CR1_SSM;				//disable software slave management
     SPI2->CR1 |= SPI_CR1_SSI;
-    SPI2->CR1 |= SPI_CR1_MSTR;              //master mode
+    SPI2->CR1 |= SPI_CR1_MSTR;              //master mode (tx only, MISO is used as a general i/o)
     SPI2->CR1 &= ~SPI_CR1_CPOL;             //SCK = 0 in IDLE
     SPI2->CR1 &= ~SPI_CR1_CPHA;             //first rising edge capture
     SPI2->CR1 |= SPI_CR1_SPE;               //enable spi
