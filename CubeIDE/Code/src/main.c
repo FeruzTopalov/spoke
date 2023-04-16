@@ -50,6 +50,8 @@ uint8_t *p_update_interval_values;
 int main(void)
 {
     gpio_init();
+led_red_on();
+led_green_on();
     hold_power();
     settings_load();
     timers_init();
@@ -72,6 +74,8 @@ int main(void)
 
 
     __enable_irq();
+led_red_off();
+led_green_off();
 
 
 
