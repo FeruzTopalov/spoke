@@ -11,9 +11,13 @@
 
 
 
+void systick_init(void);
+void systick_start(void);
 void timer1_init(void);
 void timer1_clock_disable(void);
 void timer1_clock_enable(void);
+void timer2_init(void);
+void timer2_start(void);
 void timer3_init(void);
 
 
@@ -25,8 +29,48 @@ uint8_t sound_enabled = 1; //status of the beep sound notification
 //Init all timers together
 void timers_init(void)
 {
+	systick_init();
 	timer1_init();
+	timer2_init();
 	timer3_init();
+}
+
+
+
+void make_a_beep(void)
+{
+	if (sound_enabled)
+	{
+		timer2_start();		//pwm
+		systick_start();	//gating
+	}
+}
+
+
+
+//SysTick timer init
+void systick_init(void)
+{
+    SysTick->CTRL &= ~SysTick_CTRL_CLKSOURCE_Msk;   //clock source = AHB/8 = 3MHz/8 = 375 kHz
+    SysTick->LOAD = (uint32_t)37499;              	//375000Hz/(37499+1)=10Hz
+    SysTick->VAL = 0;                               //reset counter value
+    SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk;      //enable interrupt
+}
+
+
+
+//Start buzzer gating timer
+void systick_start(void)
+{
+	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
+}
+
+
+
+//Stop buzzer gating timer
+void systick_stop(void)
+{
+	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
 }
 
 
@@ -77,6 +121,43 @@ void timer1_stop_reload(void)
     TIM1->CR1 &= ~TIM_CR1_CEN;              //disable counter
     TIM1->EGR = TIM_EGR_UG;                 //software update generation
     timer1_clock_disable();
+}
+
+
+
+//Timer 2 init (pwm timer, the frequency of the "beep")
+void timer2_init(void)
+{
+	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; //enable timer clock
+	TIM2->PSC = (uint16_t)374;         	//3MHz/(374+1)=8kHz
+	TIM2->ARR = (uint16_t)3;            //8kHz/(3+1)=2kHz
+	TIM2->CCR1 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5
+	TIM2->CCR2 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5
+	TIM2->CCMR1 |= TIM_CCMR1_OC1M_2;    //PWM mode 1 for CH1
+	TIM2->CCMR1 |= TIM_CCMR1_OC1M_1;
+	TIM2->CCMR1 &= ~TIM_CCMR1_OC1M_0;
+	TIM2->CCMR1 |= TIM_CCMR1_OC2M_2;    //PWM mode 2 for CH2
+	TIM2->CCMR1 |= TIM_CCMR1_OC2M_1;
+	TIM2->CCMR1 |= TIM_CCMR1_OC2M_0;
+}
+
+
+
+void timer2_start(void)
+{
+	TIM2->CCER |= TIM_CCER_CC1E;   	//CH1 output enable
+	TIM2->CCER |= TIM_CCER_CC2E;    //CH2 output enable
+	TIM2->CR1 |= TIM_CR1_CEN;   	//enable PWM timer
+}
+
+
+
+void timer2_stop(void)
+{
+	TIM2->CR1 &= ~TIM_CR1_CEN;      //disable PWM timer
+	TIM2->CNT = 0;                  //force output low
+	TIM2->CCER &= ~TIM_CCER_CC1E;   //CH1 output disable
+	TIM2->CCER &= ~TIM_CCER_CC2E;   //CH2 output disable
 }
 
 

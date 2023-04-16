@@ -72,6 +72,7 @@ led_green_on();
     p_gps_num = get_gps_num();
     p_update_interval_values = get_update_interval_values();
 
+make_a_beep();
 
     __enable_irq();
 led_red_off();
@@ -367,6 +368,15 @@ void USART1_IRQHandler(void)
     uint8_t rx_data;
     rx_data = USART1->DR;
     uart1_tx_byte(++rx_data);	//simple incremental echo test
+}
+
+
+
+//End of beep
+void SysTick_Handler(void)
+{
+	timer2_stop();	//pwm
+	systick_stop();	//gating
 }
 
 
