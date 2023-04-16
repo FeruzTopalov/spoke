@@ -43,12 +43,12 @@ uint8_t timeout_prev_state = TIMEOUT_NO_OVERFLOW;
 //button return code = {ButtonNumber(0...BUTTONS_NUM-1) * BUTTON_ACTIONS_NUM + BUTTON_ACTION(_SHORT)(_LONG)} + 1
 uint8_t scan_button(uint8_t button)
 {
-	idr_reg = GPIOA->IDR;           //save pins data
+	idr_reg = GPIOB->IDR;           //save pins data
 
 	idr_reg >>= button;       		//align bits to the right, button of interest in LSBit position
 	idr_reg &= (uint32_t)0x01;		//unmask needed pin bit
 
-	button -= BUTTON_UP_OK_PA1;		//subtract first button pin number to make first button index equal 0
+	button -= BUTTON_DOWN_ESC_PB3;		//subtract first button pin number to make first button index equal 0
 
 
 
