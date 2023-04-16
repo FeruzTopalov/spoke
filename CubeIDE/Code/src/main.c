@@ -54,6 +54,7 @@ int main(void)
     settings_load();
     timers_init();
     spi_init();
+    uart1_init();
     uart_dma_init();
     lcd_init();
     rfm98_init();
@@ -372,6 +373,16 @@ void EXTI9_5_IRQHandler(void)
 	EXTI->PR = EXTI_PR_PR5;		//clear interrupt
 	processing_button = BUTTON_PWR_PB5;
 	timer2_start();
+}
+
+
+
+//Console RX symbol
+void USART1_IRQHandler(void)
+{
+    uint8_t rx_data;
+    rx_data = USART1->DR;
+    uart1_tx_byte(++rx_data);	//simple incremental echo test
 }
 
 

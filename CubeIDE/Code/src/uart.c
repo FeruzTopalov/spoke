@@ -17,6 +17,31 @@ char *backup_buf;					//backup for raw UART data
 
 
 
+//Console UART init
+void uart1_init(void)
+{
+    RCC->APB2ENR |= RCC_APB2ENR_USART1EN;   //ENABLE usart clock
+
+    USART1->BRR = 0x271; 					//115200 bod
+    USART1->CR1 |= USART_CR1_RXNEIE;    	//enable rx interrupt
+    USART1->CR1 |= USART_CR1_TE;        	//enable tx
+    USART1->CR1 |= USART_CR1_RE;        	//enable rx
+    USART1->CR1 |= USART_CR1_UE;        	//uart enable
+    NVIC_EnableIRQ(USART1_IRQn);
+}
+
+
+
+void uart1_tx_byte(uint8_t tx_data)
+{
+    while(!(USART1->SR & USART_SR_TXE))     //wait for transmit register empty
+    {
+    }
+    USART1->DR = tx_data;                      //transmit
+}
+
+
+
 //UART Init
 void uart_dma_init(void)//todo: try to use usart3 because it uses DMA channel 3, which does not mess with spi2 tx DMA ch. 5
 {

@@ -76,6 +76,7 @@ void gpio_init(void)
     GPIOA->CRH &= ~GPIO_CRH_MODE10;     //input
     GPIOA->CRH |= GPIO_CRH_CNF10_0;     //alternate input floating
     GPIOA->CRH &= ~GPIO_CRH_CNF10_1;
+    GPIOA->ODR |= GPIO_ODR_ODR10;       //pull-up for stability
 
     //PA11 - RF TX Enable
     GPIOA->CRH &= ~GPIO_CRH_MODE11_0;   //output 2 MHz

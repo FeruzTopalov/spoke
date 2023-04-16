@@ -15,6 +15,9 @@
 
 
 
+void uart1_init(void);
+void uart1_tx_byte(uint8_t tx_data);
+
 void uart_dma_init(void);
 void uart_dma_stop(void);
 void uart_dma_restart(void);
