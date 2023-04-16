@@ -88,28 +88,28 @@ uint8_t scan_button(uint8_t button)
 			if (button_pressed_counter < BUTTON_PRESSED_COUNTER_MIN)	//lower than min, skip this
 			{
 				button_pressed_counter = 0;
-				timer2_stop();
+				timer3_stop();
 				enable_buttons_interrupts();
 				return BTN_NO_ACTION;
 			}
 			else if (button_pressed_counter < BUTTON_PRESSED_COUNTER_THRESHOLD)	//released before overflow, then short click
 			{
 				button_pressed_counter = 0;
-				timer2_stop();
+				timer3_stop();
 				enable_buttons_interrupts();
 				return (button * BUTTON_ACTIONS_NUM + BUTTON_ACTION_SHORT) + 1;
 			}
 			else	//released after overflow or timeout, just switch timer off with no action
 			{
 				button_pressed_counter = 0;
-				timer2_stop();
+				timer3_stop();
 				enable_buttons_interrupts();
 				return BTN_NO_ACTION;
 			}
 		}
 		else	//two "released" states in a row = fast button release right after interrupt, skip this
 		{
-			timer2_stop();
+			timer3_stop();
 			enable_buttons_interrupts();
 			return BTN_NO_ACTION;
 		}

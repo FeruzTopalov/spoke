@@ -14,7 +14,7 @@
 void timer1_init(void);
 void timer1_clock_disable(void);
 void timer1_clock_enable(void);
-void timer2_init(void);
+void timer3_init(void);
 
 
 
@@ -26,7 +26,7 @@ uint8_t sound_enabled = 1; //status of the beep sound notification
 void timers_init(void)
 {
 	timer1_init();
-	timer2_init();
+	timer3_init();
 }
 
 
@@ -81,32 +81,32 @@ void timer1_stop_reload(void)
 
 
 
-//Timer 2 init (buttons scan interval)
-void timer2_init(void)
+//Timer 3 init (buttons scan interval)
+void timer3_init(void)
 {
-	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; //enable timer clock
-	TIM2->PSC = (uint16_t)299;         	// 3MHz/(299+1)=10kHz
-	TIM2->ARR = (uint16_t)99;           // 10kHz/(99+1)=100Hz(10ms)
-	TIM2->EGR = TIM_EGR_UG;             //software update generation
-	TIM2->DIER |= TIM_DIER_UIE;         //update interrupt enable
+	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN; //enable timer clock
+	TIM3->PSC = (uint16_t)299;         	// 3MHz/(299+1)=10kHz
+	TIM3->ARR = (uint16_t)99;           // 10kHz/(99+1)=100Hz(10ms)
+	TIM3->EGR = TIM_EGR_UG;             //software update generation
+	TIM3->DIER |= TIM_DIER_UIE;         //update interrupt enable
 
-	NVIC_EnableIRQ(TIM2_IRQn);
+	NVIC_EnableIRQ(TIM3_IRQn);
 }
 
 
 
-void timer2_start(void)
+void timer3_start(void)
 {
-	BIT_BAND_PERI(TIM2->CR1, TIM_CR1_CEN) = 1;	//start timer
+	BIT_BAND_PERI(TIM3->CR1, TIM_CR1_CEN) = 1;	//start timer
 }
 
 
 
-void timer2_stop(void)
+void timer3_stop(void)
 {
-	BIT_BAND_PERI(TIM2->CR1, TIM_CR1_CEN) = 0;	//stop  timer
-	TIM2->CNT = 0;					//reset counter
-	TIM2->SR &= ~TIM_SR_UIF;        //clear int
+	BIT_BAND_PERI(TIM3->CR1, TIM_CR1_CEN) = 0;	//stop  timer
+	TIM3->CNT = 0;					//reset counter
+	TIM3->SR &= ~TIM_SR_UIF;        //clear int
 }
 
 

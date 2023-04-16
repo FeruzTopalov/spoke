@@ -320,9 +320,9 @@ void TIM1_UP_IRQHandler(void)
 
 
 //Scan buttons interval
-void TIM2_IRQHandler(void)
+void TIM3_IRQHandler(void)
 {
-	TIM2->SR &= ~TIM_SR_UIF;        //clear gating timer int
+	TIM3->SR &= ~TIM_SR_UIF;        //clear gating timer int
 	main_flags.scan_buttons = 1;
 }
 
@@ -334,7 +334,7 @@ void EXTI3_IRQHandler(void)
 	disable_buttons_interrupts();
 	EXTI->PR = EXTI_PR_PR3;		//clear interrupt
 	processing_button = BUTTON_DOWN_ESC_PB3;
-	timer2_start();
+	timer3_start();
 }
 
 
@@ -345,7 +345,7 @@ void EXTI4_IRQHandler(void)
 	disable_buttons_interrupts();
 	EXTI->PR = EXTI_PR_PR4;		//clear interrupt
 	processing_button = BUTTON_UP_OK_PB4;
-	timer2_start();
+	timer3_start();
 }
 
 
@@ -356,7 +356,7 @@ void EXTI9_5_IRQHandler(void)
 	disable_buttons_interrupts();
 	EXTI->PR = EXTI_PR_PR5;		//clear interrupt
 	processing_button = BUTTON_PWR_PB5;
-	timer2_start();
+	timer3_start();
 }
 
 
