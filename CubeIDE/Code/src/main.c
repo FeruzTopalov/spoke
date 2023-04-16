@@ -55,7 +55,7 @@ int main(void)
     timers_init();
     spi_init();
     uart1_init();
-    uart_dma_init();
+    uart3_dma_init();
     lcd_init();
     rfm98_init();
     init_lrns();
@@ -170,14 +170,14 @@ int main(void)
 
 
 //DMA UART RX overflow
-void DMA1_Channel5_IRQHandler(void)
+void DMA1_Channel3_IRQHandler(void)
 {
 
-	DMA1->IFCR = DMA_IFCR_CGIF5;     //clear all interrupt flags for DMA channel 5
+	DMA1->IFCR = DMA_IFCR_CGIF3;     //clear all interrupt flags for DMA channel 3
 
-    uart_dma_stop();
+    uart3_dma_stop();
     backup_and_clear_uart_buffer();
-    uart_dma_restart();
+    uart3_dma_restart();
 
     if (main_flags.pps_synced == 1) 	//if last pps status was "sync" then make a beep because we lost PPS
     {
@@ -200,9 +200,9 @@ void EXTI15_10_IRQHandler(void)
 	EXTI->PR = EXTI_PR_PR11;        //clear interrupt
 	timer1_start();                 //the first thing to do is to start time slot timer right after PPS
 
-	uart_dma_stop();				//fix the data
+	uart3_dma_stop();				//fix the data
 	backup_and_clear_uart_buffer();
-	uart_dma_restart();
+	uart3_dma_restart();
 
 	pps_counter++;
 
