@@ -16,8 +16,10 @@ void ext_int_init(void);
 void enable_buttons_interrupts(void);
 void disable_buttons_interrupts(void);
 
-void x6_high(void);
-void x6_low(void);
+void x4_high(void);
+void x4_low(void);
+void x5_high(void);
+void x5_low(void);
 
 void led_red_on(void);
 void led_red_off(void);
@@ -44,5 +46,8 @@ void cs_lcd_inactive(void);
 
 void hold_power(void);
 void release_power(void);
+
+void rf_tx_mode(void);
+void rf_rx_mode(void);
 
 #endif /*GPIO_HEADER*/

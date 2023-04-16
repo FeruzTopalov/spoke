@@ -101,7 +101,7 @@ void gpio_init(void)
     GPIOB->CRL |= GPIO_CRL_CNF0_1;
     GPIOB->ODR |= GPIO_ODR_ODR0;        //pull-up
     
-    //PB1 - RF Busy ??? pull-up
+    //PB1 - RF Busy todo: pull-up???
     GPIOB->CRL &= ~GPIO_CRL_MODE1;      //input mode
     GPIOB->CRL |= GPIO_CRL_CNF1_0;      //floating input
     GPIOB->CRL &= ~GPIO_CRL_CNF1_1;
@@ -248,34 +248,50 @@ void ext_int_init(void)
 
 void enable_buttons_interrupts(void)
 {
-	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR1) = 1;		//unmask interrupt 1
-	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR2) = 1;		//unmask interrupt 2
 	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR3) = 1;		//unmask interrupt 3
+	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR4) = 1;		//unmask interrupt 4
+	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR5) = 1;		//unmask interrupt 5
 }
 
 
 
 void disable_buttons_interrupts(void)
 {
-	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR1) = 0;		//mask interrupt 1
-	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR2) = 0;		//mask interrupt 2
 	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR3) = 0;		//mask interrupt 3
+	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR4) = 0;		//mask interrupt 4
+	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR5) = 0;		//mask interrupt 5
 }
 
 
 
-//X6 high
-void x6_high(void)
+//X4 high
+void x4_high(void)
 {
-	GPIOC->BSRR = GPIO_BSRR_BS13;
+	GPIOC->BSRR = GPIO_BSRR_BS14;
 }
 
 
 
-//X6 low
-void x6_low(void)
+//X4 low
+void x4_low(void)
 {
-	GPIOC->BSRR = GPIO_BSRR_BR13;
+	GPIOC->BSRR = GPIO_BSRR_BR14;
+}
+
+
+
+//X5 high
+void x5_high(void)
+{
+	GPIOC->BSRR = GPIO_BSRR_BS15;
+}
+
+
+
+//X5 low
+void x5_low(void)
+{
+	GPIOC->BSRR = GPIO_BSRR_BR15;
 }
 
 
@@ -283,7 +299,7 @@ void x6_low(void)
 //Red led on
 void led_red_on(void)
 {
-    GPIOB->BSRR = GPIO_BSRR_BS1;
+    GPIOB->BSRR = GPIO_BSRR_BS8;
 }
 
 
@@ -291,7 +307,7 @@ void led_red_on(void)
 //Red led off
 void led_red_off(void)
 {
-    GPIOB->BSRR = GPIO_BSRR_BR1;
+    GPIOB->BSRR = GPIO_BSRR_BR8;
 }
 
 
@@ -299,7 +315,7 @@ void led_red_off(void)
 //Red green on
 void led_green_on(void)
 {
-    GPIOB->BSRR = GPIO_BSRR_BS0;
+    GPIOB->BSRR = GPIO_BSRR_BS9;
 }
 
 
@@ -307,48 +323,39 @@ void led_green_on(void)
 //Red green off
 void led_green_off(void)
 {
-    GPIOB->BSRR = GPIO_BSRR_BR0;
+    GPIOB->BSRR = GPIO_BSRR_BR9;
 }
 
 
 
 //RF CS active
-void cs_rfm98_active(void)
+void cs_rfm98_active(void) //todo: change name
 {
-    GPIOA->BSRR = GPIO_BSRR_BR15;
+    GPIOA->BSRR = GPIO_BSRR_BR3;
 }
 
 
 
 //RF CS inactive
-void cs_rfm98_inactive(void)
+void cs_rfm98_inactive(void) //todo: change name
 {
-    GPIOA->BSRR = GPIO_BSRR_BS15;
+    GPIOA->BSRR = GPIO_BSRR_BS3;
 }
 
 
 
 //RF RES active
-void res_rfm98_active(void)
+void res_rfm98_active(void) //todo: change name
 {
-
-
-    GPIOA->CRH &= ~GPIO_CRH_MODE12_0;   //output 2 MHz
-    GPIOA->CRH |= GPIO_CRH_MODE12_1;
-    GPIOA->CRH &= ~GPIO_CRH_CNF12;		//output push-pull
-
-
-    GPIOA->BSRR = GPIO_BSRR_BR12;
+    GPIOA->BSRR = GPIO_BSRR_BR4;
 }
 
 
 
 //RF RES inactive
-void res_rfm98_inactive(void)
+void res_rfm98_inactive(void) //todo: change name
 {
-    GPIOA->CRH &= ~GPIO_CRH_MODE12;   //input
-    GPIOA->CRH &= ~GPIO_CRH_CNF12_1;		//float
-    GPIOA->CRH |= GPIO_CRH_CNF12_0;
+	GPIOA->BSRR = GPIO_BSRR_BS4;
 }
 
 
@@ -356,7 +363,7 @@ void res_rfm98_inactive(void)
 //RES LCD active
 void res_lcd_active(void)
 {
-    GPIOA->BSRR = GPIO_BSRR_BR8;
+    GPIOB->BSRR = GPIO_BSRR_BR14;
 }
 
 
@@ -364,7 +371,7 @@ void res_lcd_active(void)
 //RES LCD inactive
 void res_lcd_inactive(void)
 {
-    GPIOA->BSRR = GPIO_BSRR_BS8;
+    GPIOB->BSRR = GPIO_BSRR_BS14;
 }
 
 
@@ -372,7 +379,7 @@ void res_lcd_inactive(void)
 //Data mode LCD
 void lcd_data_mode(void)
 {
-    GPIOB->BSRR = GPIO_BSRR_BS14;
+    GPIOA->BSRR = GPIO_BSRR_BS8;
 }
 
 
@@ -380,7 +387,7 @@ void lcd_data_mode(void)
 //Command mode LCD
 void lcd_command_mode(void)
 {
-    GPIOB->BSRR = GPIO_BSRR_BR14;
+    GPIOA->BSRR = GPIO_BSRR_BR8;
 }
 
 
@@ -401,17 +408,34 @@ void cs_lcd_inactive(void)
 
 
 
-//Battery monitoring on
+//Power switch On
 void hold_power(void)
 {
-    GPIOB->BSRR = GPIO_BSRR_BS9;
+    GPIOA->BSRR = GPIO_BSRR_BS15;
 }
 
 
 
-//Battery monitoring off
+//Power switch Off
 void release_power(void)
 {
-    GPIOB->BSRR = GPIO_BSRR_BR9;
+    GPIOA->BSRR = GPIO_BSRR_BR15;
 }
 
+
+
+//RF TX mode
+void rf_tx_mode(void)
+{
+	GPIOA->BSRR = GPIO_BSRR_BR12;	//off RX
+	GPIOA->BSRR = GPIO_BSRR_BS11;	//on TX
+}
+
+
+
+//RF RX mode
+void rf_rx_mode(void)
+{
+	GPIOA->BSRR = GPIO_BSRR_BR11;	//off TX
+	GPIOA->BSRR = GPIO_BSRR_BS12;	//on RX
+}
