@@ -194,10 +194,10 @@ void DMA1_Channel3_IRQHandler(void)
 
 
 //GPS PPS interrupt
-void EXTI15_10_IRQHandler(void)
+void EXTI2_IRQHandler(void)
 {
 
-	EXTI->PR = EXTI_PR_PR11;        //clear interrupt
+	EXTI->PR = EXTI_PR_PR2;		//clear interrupt
 	timer1_start();                 //the first thing to do is to start time slot timer right after PPS
 
 	uart3_dma_stop();				//fix the data
