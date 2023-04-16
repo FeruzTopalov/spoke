@@ -211,33 +211,35 @@ void ext_int_init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;         //enable afio clock
 
-    //PA1 temporary UP/OK button
-    AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI1_PA;	//exti 1 source is port A
-    EXTI->FTSR |= EXTI_FTSR_TR1;				//interrupt 1 on falling edge
-    NVIC_EnableIRQ(EXTI1_IRQn);             	//enable interrup
+    //PB0 - RF IRQ on rising edge ???
+    AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI0_PB;	//exti 0 source is port B
+    EXTI->RTSR |= EXTI_RTSR_TR0;				//interrupt 0 on rising edge
+    EXTI->IMR |= EXTI_IMR_MR0;					//unmask interrupt 0
+    NVIC_EnableIRQ(EXTI0_IRQn);             	//enable interrupt
 
-    //PA2 temporary DOWN/ESC button
-    AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI2_PA;	//exti 2 source is port A
-    EXTI->FTSR |= EXTI_FTSR_TR2;				//interrupt 2 on falling edge
-    NVIC_EnableIRQ(EXTI2_IRQn);             	//enable interrup
+    //PB2 - GPS PPS interrupt on rising edge
+    AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI2_PB;	//exti 2 source is port B
+    EXTI->RTSR |= EXTI_RTSR_TR2;				//interrupt 2 on rising edge
+    EXTI->IMR |= EXTI_IMR_MR2;					//unmask interrupt 2
+    NVIC_EnableIRQ(EXTI2_IRQn);             	//enable interrupt
 
-    //PA3 temporary PWR button
-    AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI3_PA;	//exti 3 source is port A
-    EXTI->FTSR |= EXTI_FTSR_TR3;				//interrupt 3 on falling edge
-    NVIC_EnableIRQ(EXTI3_IRQn);             	//enable interrup
+    //PB3 - DOWN/ESC button
+    AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI3_PB;	//exti 3 source is port B
+    EXTI->RTSR |= EXTI_FTSR_TR3;				//interrupt 3 on falling edge
+    EXTI->IMR |= EXTI_IMR_MR3;					//unmask interrupt 3
+    NVIC_EnableIRQ(EXTI3_IRQn);             	//enable interrupt
 
-    //PA11 - GPS PPS interrupt on rising edge
-    AFIO->EXTICR[2] |= AFIO_EXTICR3_EXTI11_PA;  //exti 11 source is port A
-    EXTI->RTSR |= EXTI_RTSR_TR11;               //interrupt 11 on rising edge
-    EXTI->IMR |= EXTI_IMR_MR11;                 //unmask interrupt 11
+    //PB4 - UP/OK button
+    AFIO->EXTICR[1] |= AFIO_EXTICR2_EXTI4_PB;	//exti 4 source is port B
+    EXTI->RTSR |= EXTI_FTSR_TR4;				//interrupt 4 on falling edge
+    EXTI->IMR |= EXTI_IMR_MR4;					//unmask interrupt 4
+    NVIC_EnableIRQ(EXTI4_IRQn);             	//enable interrupt
+
+    //PB5 - PWR button
+    AFIO->EXTICR[1] |= AFIO_EXTICR2_EXTI5_PB;   //exti 5 source is port B
+    EXTI->RTSR |= EXTI_FTSR_TR5;                //interrupt 5 on falling edge
+    EXTI->IMR |= EXTI_IMR_MR5;                 	//unmask interrupt 5
     NVIC_EnableIRQ(EXTI15_10_IRQn);             //enable interrupt
-
-    //PB8 - IRQ0 interrupt on rising edge
-    AFIO->EXTICR[2] |= AFIO_EXTICR3_EXTI8_PB;	//exti 8 source is port B
-    EXTI->RTSR |= EXTI_RTSR_TR8;				//interrupt 8 on rising edge
-    EXTI->IMR |= EXTI_IMR_MR8;					//unmask interrupt 8
-
-    NVIC_EnableIRQ(EXTI9_5_IRQn);               //enable IRQn interrupts
 
     EXTI->PR = (uint32_t)0x0007FFFF;            //clear all pending interrupts
 }
