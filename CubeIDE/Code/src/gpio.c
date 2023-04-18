@@ -147,9 +147,9 @@ void gpio_init(void)
     GPIOB->CRH &= ~GPIO_CRH_CNF8;       //output push-pull
 
     //PB9 - Green LED
-    GPIOB->CRH &= ~GPIO_CRH_MODE8_0;    //output 2 MHz
-    GPIOB->CRH |= GPIO_CRH_MODE8_1;
-    GPIOB->CRH &= ~GPIO_CRH_CNF8;       //output push-pull
+    GPIOB->CRH &= ~GPIO_CRH_MODE9_0;    //output 2 MHz
+    GPIOB->CRH |= GPIO_CRH_MODE9_1;
+    GPIOB->CRH &= ~GPIO_CRH_CNF9;       //output push-pull
     
     //PB10 - USART3 TX (GPS)
     GPIOB->CRH &= ~GPIO_CRH_MODE10_0;    //output 2 MHz

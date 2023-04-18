@@ -22,7 +22,7 @@ void uart1_init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_USART1EN;   //ENABLE usart clock
 
-    USART1->BRR = 0x271; 					//115200 bod
+    USART1->BRR = 0x0138; 					//9600 bod
     USART1->CR1 |= USART_CR1_RXNEIE;    	//enable rx interrupt
     USART1->CR1 |= USART_CR1_TE;        	//enable tx
     USART1->CR1 |= USART_CR1_RE;        	//enable rx
