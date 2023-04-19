@@ -211,6 +211,7 @@ void gpio_init(void)
 void ext_int_init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;         //enable afio clock
+    AFIO->MAPR |= AFIO_MAPR_SWJ_CFG_JTAGDISABLE;
 
     //PB0 - RF IRQ todo: on rising edge ???
     AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI0_PB;	//exti 0 source is port B
@@ -237,7 +238,7 @@ void ext_int_init(void)
     //PB5 - PWR button
     AFIO->EXTICR[1] |= AFIO_EXTICR2_EXTI5_PB;   //exti 5 source is port B
     EXTI->FTSR |= EXTI_FTSR_TR5;                //interrupt 5 on falling edge
-    NVIC_EnableIRQ(EXTI15_10_IRQn);             //enable interrupt
+    NVIC_EnableIRQ(EXTI9_5_IRQn);               //enable interrupt
 
     EXTI->PR = (uint32_t)0x0007FFFF;            //clear all pending interrupts
 }
