@@ -168,7 +168,6 @@ uint8_t lcd_get_display_status(void)
 //Update screen with buffer content
 void lcd_update(void)
 {
-led_green_on();
 	if (display_status == LCD_DISPLAY_ON) //update display content only if the display is on
 	{
 		//spi2_clock_enable();
@@ -202,7 +201,6 @@ led_green_on();
 
 		//spi2_clock_disable();
 	}
-led_green_off();
 }
 
 

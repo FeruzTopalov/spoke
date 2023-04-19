@@ -21,7 +21,7 @@ void gpio_init(void)
     //PA0 - Piezo Buzzer (PWM) P
     GPIOA->CRL &= ~GPIO_CRL_MODE0_0;    //output 2 MHz
     GPIOA->CRL |= GPIO_CRL_MODE0_1;
-    GPIOA->CRL &= ~GPIO_CRL_CNF0;       //alternate output push-pull
+    GPIOA->CRL &= ~GPIO_CRL_CNF0_0;       //alternate output push-pull
     GPIOA->CRL |= GPIO_CRL_CNF0_1;
     
     //PA1 - Piezo Buzzer (PWM) N

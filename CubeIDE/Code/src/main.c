@@ -72,9 +72,11 @@ led_green_on();
     p_gps_num = get_gps_num();
     p_update_interval_values = get_update_interval_values();
 
-make_a_beep();
+
 
     __enable_irq();
+
+make_a_beep();
 led_red_off();
 led_green_off();
 
