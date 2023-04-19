@@ -23,11 +23,11 @@
 //Button actions
 #define BTN_NO_ACTION		(0)
 
-#define BTN_UP				(1)     //PB4
-#define BTN_OK				(2)
+#define BTN_DOWN			(1)     //PB3
+#define BTN_ESC				(2)
 
-#define BTN_DOWN			(3)     //PB3
-#define BTN_ESC				(4)
+#define BTN_UP				(3)     //PB4
+#define BTN_OK				(4)
 
 #define BTN_PWR				(5)     //PB5
 #define BTN_PWR_LONG		(6)
