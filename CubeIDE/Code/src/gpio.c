@@ -226,20 +226,17 @@ void ext_int_init(void)
 
     //PB3 - DOWN/ESC button
     AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI3_PB;	//exti 3 source is port B
-    EXTI->RTSR |= EXTI_FTSR_TR3;				//interrupt 3 on falling edge
-    EXTI->IMR |= EXTI_IMR_MR3;					//unmask interrupt 3
+    EXTI->FTSR |= EXTI_FTSR_TR3;				//interrupt 3 on falling edge
     NVIC_EnableIRQ(EXTI3_IRQn);             	//enable interrupt
 
     //PB4 - UP/OK button
     AFIO->EXTICR[1] |= AFIO_EXTICR2_EXTI4_PB;	//exti 4 source is port B
-    EXTI->RTSR |= EXTI_FTSR_TR4;				//interrupt 4 on falling edge
-    EXTI->IMR |= EXTI_IMR_MR4;					//unmask interrupt 4
+    EXTI->FTSR |= EXTI_FTSR_TR4;				//interrupt 4 on falling edge
     NVIC_EnableIRQ(EXTI4_IRQn);             	//enable interrupt
 
     //PB5 - PWR button
     AFIO->EXTICR[1] |= AFIO_EXTICR2_EXTI5_PB;   //exti 5 source is port B
-    EXTI->RTSR |= EXTI_FTSR_TR5;                //interrupt 5 on falling edge
-    EXTI->IMR |= EXTI_IMR_MR5;                 	//unmask interrupt 5
+    EXTI->FTSR |= EXTI_FTSR_TR5;                //interrupt 5 on falling edge
     NVIC_EnableIRQ(EXTI15_10_IRQn);             //enable interrupt
 
     EXTI->PR = (uint32_t)0x0007FFFF;            //clear all pending interrupts
