@@ -22,7 +22,7 @@ void spi_init(void)
 void spi1_init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;             //enable clock spi1
-    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;             //enable alternate function clock
+// already enabled    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;             //enable alternate function clock
     SPI1->CR1 &= ~SPI_CR1_BR;                       //clock/2
     SPI1->CR1 |= SPI_CR1_SSM;
     SPI1->CR1 |= SPI_CR1_SSI;
