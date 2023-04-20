@@ -158,10 +158,10 @@ void gpio_init(void)
     GPIOB->CRH |= GPIO_CRH_CNF10_1;
 
     //PB11 - USART3 RX (GPS)
-    GPIOB->CRH &= ~GPIO_CRH_MODE11_0;    //output 2 MHz
-    GPIOB->CRH |= GPIO_CRH_MODE11_1;
-    GPIOB->CRH &= ~GPIO_CRH_CNF11_0;     //alternate output push-pull
-    GPIOB->CRH |= GPIO_CRH_CNF11_1;
+    GPIOB->CRH &= ~GPIO_CRH_MODE11;      //input
+    GPIOB->CRH |= GPIO_CRH_CNF11_0;      //alternate input floating
+    GPIOB->CRH &= ~GPIO_CRH_CNF11_1;
+    GPIOB->ODR |= GPIO_ODR_ODR11;        //pull-up for stability
 
     //PB12 - LCD CS
     GPIOB->CRH &= ~GPIO_CRH_MODE12_0;   //output 2 MHz
