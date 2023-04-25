@@ -22,12 +22,14 @@
 
 
 
-#define AIR_PACKET_LEN      (12)        //bytes amount to tx/rx over air; does not include preamble, syncword and CRC
+
+//bytes amount to tx/rx over air; does not include preamble, syncword and CRC
 //1 byte device number and ID (single char)
 //1 byte flags
 //4 bytes lat
 //4 bytes lon
 //2 bytes altitude
+#define AIR_PACKET_LEN      (12)
 
 
 
@@ -49,7 +51,7 @@ struct settings_struct *p_settings;
 
 
 //RFM98 Init
-void rfm98_init(void)
+void rf_init(void)
 {/*
     cs_rfm98_inactive();       	//set pins initial state
     res_rfm98_inactive();
@@ -159,7 +161,7 @@ void rfm98_init(void)
 
 
 //RFM98 TX packet
-uint8_t rfm98_tx_packet(void)
+uint8_t rf_tx_packet(void)
 {/*
 	//check current mode
 	uint8_t mode_before_tx = 0;
@@ -198,7 +200,7 @@ uint8_t rfm98_tx_packet(void)
 
 
 //RFM98 start packet RX
-uint8_t rfm98_start_rx(void)
+uint8_t rf_start_rx(void)
 {/*
 	//check current mode
 	uint8_t mode_before_rx = 0;
@@ -228,7 +230,7 @@ uint8_t rfm98_start_rx(void)
 
 
 //RFM98 get interrupt status
-uint8_t rfm98_get_irq_status(void)
+uint8_t rf_get_irq_status(void)
 {/*
 	//check both flag bytes
 	cs_rfm98_active();
@@ -245,7 +247,7 @@ uint8_t rfm98_get_irq_status(void)
 
 
 //RFM98 get received packet
-void rfm98_get_rx_packet(void)
+void rf_get_rx_packet(void)
 {/*
 	cs_rfm98_active();
 	spi1_trx(REG_FIFO | RFM_READ);
@@ -258,7 +260,7 @@ void rfm98_get_rx_packet(void)
 
 
 
-void rfm98_flush_fifo(void)
+void rf_flush_fifo(void)
 {/*
 	cs_rfm98_active();
 	spi1_trx(REG_IRQFLAGS2 | RFM_WRITE);

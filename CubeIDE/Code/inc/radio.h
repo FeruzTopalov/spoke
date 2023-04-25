@@ -6,20 +6,20 @@
 
 
 
-#ifndef RFM98_HEADER
-#define RFM98_HEADER
+#ifndef RADIO_HEADER
+#define RADIO_HEADER
 
 
 
-void rfm98_init(void);
-uint8_t rfm98_tx_packet(void);
-uint8_t rfm98_get_irq_status(void);
-uint8_t rfm98_start_rx(void);
-void rfm98_flush_fifo(void);
-void rfm98_get_rx_packet(void);
+void rf_init(void);
+uint8_t rf_tx_packet(void);
+uint8_t rf_get_irq_status(void);
+uint8_t rf_start_rx(void);
+void rf_flush_fifo(void);
+void rf_get_rx_packet(void);
 uint8_t *get_air_packet_tx(void);
 uint8_t *get_air_packet_rx(void);
 
 
 
-#endif /*RFM98_HEADER*/
+#endif /*RADIO_HEADER*/

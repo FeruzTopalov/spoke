@@ -59,7 +59,7 @@ led_green_on();
     uart1_init();
     uart3_dma_init();
     lcd_init();
-    rfm98_init();
+    rf_init();
     init_lrns();
     gps_init();
     init_menu();
@@ -287,14 +287,14 @@ void TIM1_UP_IRQHandler(void)
     		{
     			if (time_slot == p_settings->device_number)
     			{
-    				if (rfm98_tx_packet())
+    				if (rf_tx_packet())
     				{
     					main_flags.tx_state = 1;
     				}
     			}
     			else
     			{
-    				if (rfm98_start_rx())
+    				if (rf_start_rx())
     				{
     					main_flags.rx_state = 1;
     				}
