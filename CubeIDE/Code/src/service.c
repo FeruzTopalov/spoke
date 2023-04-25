@@ -7,6 +7,7 @@
 #include <string.h>
 #include "stm32f10x.h"
 #include "service.h"
+#include "uart.h"
 
 
 
@@ -16,6 +17,16 @@ void delay_cyc(uint32_t cycles)
     while (cycles)
     {
         cycles--;
+    }
+}
+
+
+
+void print_debug(char *string)
+{
+    while (*string)
+    {
+    	uart1_tx_byte(*string++);
     }
 }
 
