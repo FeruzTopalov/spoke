@@ -1,7 +1,7 @@
 /*
 	SPOKE
     
-    file: rfm98.h
+    file: radio.h
 */
 
 

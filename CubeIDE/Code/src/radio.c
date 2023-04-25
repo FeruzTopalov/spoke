@@ -1,7 +1,7 @@
 /*
 	SPOKE
     
-    file: rfm98.c
+    file: radio.c
 */
 
 #include "stm32f10x.h"

@@ -1,13 +1,13 @@
 /*
 	SPOKE
     
-    file: rfm98_config.h
+    file: sx1268_config.h
 */
 
 
 
-#ifndef RFM98_CONFIG_HEADER
-#define RFM98_CONFIG_HEADER
+#ifndef SX1268_CONFIG_HEADER
+#define SX1268_CONFIG_HEADER
 
 //SPI operations
 #define RFM_READ		(0x00)
@@ -1210,4 +1210,4 @@
 
 
 
-#endif /*RFM98_CONFIG_HEADER*/
+#endif /*SX1268_CONFIG_HEADER*/
