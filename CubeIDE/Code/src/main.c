@@ -24,7 +24,7 @@
 #include "uart.h"
 #include "gps.h"
 #include "radio.h"
-#include "sx1268_config.h"
+#include "sx126x_config.h"
 
 
 

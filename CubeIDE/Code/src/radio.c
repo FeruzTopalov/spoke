@@ -6,7 +6,7 @@
 
 #include "stm32f10x.h"
 #include "radio.h"
-#include "sx1268_config.h"
+#include "sx126x_config.h"
 #include "gpio.h"
 #include "spi.h"
 #include "service.h"
@@ -50,18 +50,19 @@ struct settings_struct *p_settings;
 
 
 
-//RFM98 Init
+//sx1268 Init
 void rf_init(void)
-{/*
-    cs_rfm98_inactive();       	//set pins initial state
-    res_rfm98_inactive();
+{
+    cs_rf_inactive();       	//set pins initial state
+    res_rf_inactive();
+    rf_rx_mode();
     delay_cyc(100000);
     
-    res_rfm98_active();        	//reset the chip
+    res_rf_active();        	//reset the chip
     delay_cyc(100000);
-    res_rfm98_inactive();
+    res_rf_inactive();
     delay_cyc(100000);
-
+/*
     uint8_t init_arr[] = RFM_CONF_ARRAY;    	//array with init data
     
     for (uint8_t i = 0; i < sizeof(init_arr); i += 2)
