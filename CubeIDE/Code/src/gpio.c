@@ -87,6 +87,7 @@ void gpio_init(void)
     GPIOA->CRH &= ~GPIO_CRH_MODE12_0;   //output 2 MHz
     GPIOA->CRH |= GPIO_CRH_MODE12_1;
     GPIOA->CRH &= ~GPIO_CRH_CNF12;      //output push-pull
+    GPIOA->ODR |= GPIO_ODR_ODR12;		//enable RX on power-up
 
     //PA15 - Power Switch Hold
     GPIOA->CRH &= ~GPIO_CRH_MODE15_0;   //output 2 MHz
@@ -96,16 +97,17 @@ void gpio_init(void)
     //Port B
     RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
     
-    //PB0 - RF IRQ
+    //PB0 - RF IRQ (rising edge)
     GPIOB->CRL &= ~GPIO_CRL_MODE0;      //input mode
     GPIOB->CRL &= ~GPIO_CRL_CNF0_0;     //input with pull
     GPIOB->CRL |= GPIO_CRL_CNF0_1;
-    GPIOB->ODR |= GPIO_ODR_ODR0;        //pull-up
+    GPIOB->ODR &= ~GPIO_ODR_ODR0;       //pull-down
     
-    //PB1 - RF Busy todo: pull-up???
+    //PB1 - RF Busy
     GPIOB->CRL &= ~GPIO_CRL_MODE1;      //input mode
     GPIOB->CRL |= GPIO_CRL_CNF1_0;      //floating input
     GPIOB->CRL &= ~GPIO_CRL_CNF1_1;
+    GPIOB->ODR &= ~GPIO_ODR_ODR1;       //pull-down
 
     //PB2 - GPS (PPS interrupt)
     GPIOB->CRL &= ~GPIO_CRL_MODE2;     //input mode
@@ -213,7 +215,7 @@ void ext_int_init(void)
     RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;         //enable afio clock
     AFIO->MAPR |= AFIO_MAPR_SWJ_CFG_JTAGDISABLE;
 
-    //PB0 - RF IRQ todo: on rising edge ???
+    //PB0 - RF IRQ
     AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI0_PB;	//exti 0 source is port B
     EXTI->RTSR |= EXTI_RTSR_TR0;				//interrupt 0 on rising edge
     EXTI->IMR |= EXTI_IMR_MR0;					//unmask interrupt 0
@@ -328,33 +330,33 @@ void led_green_off(void)
 
 
 //RF CS active
-void cs_rfm98_active(void) //todo: change name
-{
-    GPIOA->BSRR = GPIO_BSRR_BR3;
-}
-
-
-
-//RF CS inactive
-void cs_rfm98_inactive(void) //todo: change name
-{
-    GPIOA->BSRR = GPIO_BSRR_BS3;
-}
-
-
-
-//RF RES active
-void res_rfm98_active(void) //todo: change name
+void cs_rf_active(void)
 {
     GPIOA->BSRR = GPIO_BSRR_BR4;
 }
 
 
 
-//RF RES inactive
-void res_rfm98_inactive(void) //todo: change name
+//RF CS inactive
+void cs_rf_inactive(void)
 {
-	GPIOA->BSRR = GPIO_BSRR_BS4;
+    GPIOA->BSRR = GPIO_BSRR_BS4;
+}
+
+
+
+//RF RES active
+void res_rf_active(void)
+{
+    GPIOA->BSRR = GPIO_BSRR_BR3;
+}
+
+
+
+//RF RES inactive
+void res_rf_inactive(void)
+{
+	GPIOA->BSRR = GPIO_BSRR_BS3;
 }
 
 
