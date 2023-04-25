@@ -5,8 +5,8 @@
 */
 
 #include "stm32f10x.h"
-#include "rfm98.h"
-#include "rfm98_config.h"
+#include "radio.h"
+#include "sx1268_config.h"
 #include "gpio.h"
 #include "spi.h"
 #include "service.h"

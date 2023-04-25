@@ -23,8 +23,8 @@
 #include "points.h"
 #include "uart.h"
 #include "gps.h"
-#include "rfm98.h"
-#include "rfm98_config.h"
+#include "radio.h"
+#include "sx1268_config.h"
 
 
 

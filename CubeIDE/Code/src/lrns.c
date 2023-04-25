@@ -13,7 +13,7 @@
 #include "lrns.h"
 #include "settings.h"
 #include "gps.h"
-#include "rfm98.h"
+#include "radio.h"
 #include "menu.h"
 #include "lcd.h"
 #include "gpio.h"
