@@ -68,7 +68,7 @@ void rf_init(void)
 
 
 
-    while ((GPIOB->IDR) && GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
 
     //clear errors
     cs_rf_active();
@@ -79,7 +79,7 @@ void rf_init(void)
 
 
 
-    while ((GPIOB->IDR) && GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
 
     //get status
     uint8_t status;
@@ -97,7 +97,7 @@ void rf_init(void)
 
 
 
-    while ((GPIOB->IDR) && GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
 
     //set status
     cs_rf_active();
@@ -107,7 +107,7 @@ void rf_init(void)
 
 
 
-    while ((GPIOB->IDR) && GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
 
     //get status
     cs_rf_active();
@@ -123,7 +123,7 @@ void rf_init(void)
 
 
 
-    while ((GPIOB->IDR) && GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
 
     //set dio3 as dc source for tcxo
     cs_rf_active();
@@ -138,7 +138,7 @@ void rf_init(void)
 
 
 
-    while ((GPIOB->IDR) && GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
 
     //get errors
     cs_rf_active();
