@@ -126,6 +126,15 @@
 #define		STDBY_RC		(0x00)
 #define		STDBY_XOSC		(0x01)
 
+#define		TCXO_CTRL_1_6V                          (0x00)
+#define		TCXO_CTRL_1_7V                          (0x01)
+#define		TCXO_CTRL_1_8V                          (0x02)
+#define		TCXO_CTRL_2_2V                          (0x03)
+#define		TCXO_CTRL_2_4V                          (0x04)
+#define		TCXO_CTRL_2_7V                          (0x05)
+#define		TCXO_CTRL_3_0V                          (0x06)
+#define		TCXO_CTRL_3_3V                          (0x07)
+
 
 
 

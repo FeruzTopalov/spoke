@@ -70,6 +70,17 @@ void rf_init(void)
 
     while ((GPIOB->IDR) && GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
 
+    //clear errors
+    cs_rf_active();
+    spi1_trx(SX126X_CLR_DEVICE_ERRORS);      	//send command byte
+    spi1_trx(SX126X_NOP);			//send nop
+    spi1_trx(SX126X_NOP);			//send nop
+    cs_rf_inactive();
+
+
+
+    while ((GPIOB->IDR) && GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
+
     //get status
     uint8_t status;
     cs_rf_active();
@@ -111,6 +122,37 @@ void rf_init(void)
     uart1_tx_byte('\n');
 
 
+
+    while ((GPIOB->IDR) && GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
+
+    //set dio3 as dc source for tcxo
+    cs_rf_active();
+    spi1_trx(SX126X_SET_DIO3_AS_TCXO_CTRL);      	//send command byte
+    spi1_trx(TCXO_CTRL_1_8V);			//send nop, get response
+    spi1_trx(0x00);							//set delay of 100 ms (6400 in 15.625 us steps)
+    spi1_trx(0x19);
+    spi1_trx(0x00);
+    cs_rf_inactive();
+
+    delay_cyc(100000);
+
+
+
+    while ((GPIOB->IDR) && GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
+
+    //get errors
+    cs_rf_active();
+    spi1_trx(SX126X_GET_DEVICE_ERRORS);      	//send command byte
+    spi1_trx(SX126X_NOP);			//send nop
+    spi1_trx(SX126X_NOP);			//send nop
+    status = spi1_trx(SX126X_NOP);			//send nop, get errors lsb
+    cs_rf_inactive();
+
+    //debug status again
+	print_debug("RF errors lsb: ");
+	itoa32(status, buf);
+	print_debug(buf);
+	uart1_tx_byte('\n');
 
 /*
     uint8_t init_arr[] = RFM_CONF_ARRAY;    	//array with init data
