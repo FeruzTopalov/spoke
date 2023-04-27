@@ -15,6 +15,9 @@
 //Initialization of all used ports
 void gpio_init(void)
 {
+    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;         //enable afio clock
+    AFIO->MAPR |= AFIO_MAPR_SWJ_CFG_JTAGDISABLE;
+
     //Port A
     RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
     
@@ -105,8 +108,8 @@ void gpio_init(void)
     
     //PB1 - RF Busy
     GPIOB->CRL &= ~GPIO_CRL_MODE1;      //input mode
-    GPIOB->CRL |= GPIO_CRL_CNF1_0;      //floating input
-    GPIOB->CRL &= ~GPIO_CRL_CNF1_1;
+    GPIOB->CRL &= ~GPIO_CRL_CNF1_0;     //input with pull
+    GPIOB->CRL |= GPIO_CRL_CNF1_1;
     GPIOB->ODR &= ~GPIO_ODR_ODR1;       //pull-down
 
     //PB2 - GPS (PPS interrupt)
@@ -212,9 +215,6 @@ void gpio_init(void)
 //Init external interrupts
 void ext_int_init(void)
 {
-    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;         //enable afio clock
-    AFIO->MAPR |= AFIO_MAPR_SWJ_CFG_JTAGDISABLE;
-
     //PB0 - RF IRQ
     AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI0_PB;	//exti 0 source is port B
     EXTI->RTSR |= EXTI_RTSR_TR0;				//interrupt 0 on rising edge

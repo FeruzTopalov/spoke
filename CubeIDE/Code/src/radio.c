@@ -99,6 +99,21 @@ void rf_init(void)
 
     while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
 
+    //set dio3 as dc source for tcxo
+    cs_rf_active();
+    spi1_trx(SX126X_SET_DIO3_AS_TCXO_CTRL);      	//send command byte
+    spi1_trx(TCXO_CTRL_1_8V);			//send nop, get response
+    spi1_trx(0x00);							//set delay of 100 ms (6400 in 15.625 us steps)
+    spi1_trx(0x19);
+    spi1_trx(0x00);
+    cs_rf_inactive();
+
+    delay_cyc(100000);
+
+
+
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
+
     //set status
     cs_rf_active();
     spi1_trx(SX126X_SET_STANDBY);      	//send command byte
@@ -123,18 +138,7 @@ void rf_init(void)
 
 
 
-    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait BUSY goes low	todo: move to spi1_trx()
 
-    //set dio3 as dc source for tcxo
-    cs_rf_active();
-    spi1_trx(SX126X_SET_DIO3_AS_TCXO_CTRL);      	//send command byte
-    spi1_trx(TCXO_CTRL_1_8V);			//send nop, get response
-    spi1_trx(0x00);							//set delay of 100 ms (6400 in 15.625 us steps)
-    spi1_trx(0x19);
-    spi1_trx(0x00);
-    cs_rf_inactive();
-
-    delay_cyc(100000);
 
 
 
