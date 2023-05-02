@@ -59,7 +59,6 @@
 // Miscellaneous
 #define		SX126X_GET_DEVICE_ERRORS (0x17)
 #define		SX126X_CLR_DEVICE_ERRORS (0x07)
-#define		SX126X_NOP (0x00)
 
 
 
@@ -119,13 +118,16 @@
 #define		SX126X_SIZE_CLR_DEVICE_ERRORS (3)
 #define		SX126X_SIZE_MAX_BUFFER        (255)
 #define		SX126X_SIZE_DUMMY_BYTE        (1)
+#define		SX126X_NOP 					  (0)
 
 
 
-//ARG PARAMETERS/CONFIGS
+//ARG PARAMETER/CONFIG
+// SX126X_SET_STANDBY
 #define		STDBY_RC		(0x00)
 #define		STDBY_XOSC		(0x01)
 
+// SX126X_SET_DIO3_AS_TCXO_CTRL
 #define		TCXO_CTRL_1_6V                          (0x00)
 #define		TCXO_CTRL_1_7V                          (0x01)
 #define		TCXO_CTRL_1_8V                          (0x02)
@@ -134,6 +136,16 @@
 #define		TCXO_CTRL_2_7V                          (0x05)
 #define		TCXO_CTRL_3_0V                          (0x06)
 #define		TCXO_CTRL_3_3V                          (0x07)
+
+#define		TCXO_DELAY_5MS_23_16					(0x00)
+#define		TCXO_DELAY_5MS_15_8						(0x01)
+#define		TCXO_DELAY_5MS_7_0						(0x40)
+
+// SX126X_SET_REGULATOR_MODE
+#define		USE_LDO 	(0x00)
+#define		USE_DCDC	(0x01)
+
+
 
 
 
