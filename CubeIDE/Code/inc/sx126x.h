@@ -127,6 +127,10 @@
 #define		STDBY_RC		(0x00)
 #define		STDBY_XOSC		(0x01)
 
+// SX126X_SET_DIO2_AS_RF_SWITCH_CTRL
+#define		DIO2_AS_RF_ENABLED		(0x01)
+#define		DIO2_AS_RF_DISABLED		(0x00)
+
 // SX126X_SET_DIO3_AS_TCXO_CTRL
 #define		TCXO_CTRL_1_6V                          (0x00)
 #define		TCXO_CTRL_1_7V                          (0x01)
