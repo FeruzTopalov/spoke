@@ -6,6 +6,7 @@
 
 #include "stm32f10x.h"
 #include "radio.h"
+#include "sx126x.h"
 #include "sx126x_config.h"
 #include "gpio.h"
 #include "spi.h"
