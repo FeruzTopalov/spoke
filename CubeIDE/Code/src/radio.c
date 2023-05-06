@@ -151,6 +151,21 @@ uint8_t rf_start_rx(void)
 
 
 
+//RFM98 get received packet
+void rf_get_rx_packet(void)
+{/*
+	cs_rfm98_active();
+	spi1_trx(REG_FIFO | RFM_READ);
+	for (uint8_t i = 0; i < AIR_PACKET_LEN; i++)
+	{
+		air_packet_rx[i] = spi1_trx(0);
+	}
+	cs_rfm98_inactive();
+*/}
+
+
+
+//sx126x get status
 uint8_t rf_get_status(void)
 {
     while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
@@ -166,34 +181,40 @@ uint8_t rf_get_status(void)
 
 
 
-//RFM98 get interrupt status
+//sx126x get interrupt status
 uint8_t rf_get_irq_status(void)
-{/*
-	//check both flag bytes
-	cs_rfm98_active();
-	spi1_trx(REG_IRQFLAGS1 | RFM_READ);
-	spi1_trx(0);
-	radio_irq_status = spi1_trx(0);		//take only RegIrqFlags2
-	cs_rfm98_inactive();
+{
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
 
-	return radio_irq_status;
-*/
-	return 0;
+    uint8_t status;
+    cs_rf_active();
+    spi1_trx(SX126X_GET_IRQ_STATUS);	//send command byte
+    spi1_trx(SX126X_NOP);
+    spi1_trx(SX126X_NOP);				//MSB is not used yet
+    status = spi1_trx(SX126X_NOP);		//get only LSB of IRQ status
+    cs_rf_inactive();
+
+    return status;
 }
 
 
 
-//RFM98 get received packet
-void rf_get_rx_packet(void)
-{/*
-	cs_rfm98_active();
-	spi1_trx(REG_FIFO | RFM_READ);
-	for (uint8_t i = 0; i < AIR_PACKET_LEN; i++)
-	{
-		air_packet_rx[i] = spi1_trx(0);
-	}
-	cs_rfm98_inactive();
-*/}
+//sx126x clear interrupts
+void rf_clear_irq(void)
+{
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
+
+    cs_rf_active();
+    spi1_trx(SX126X_CLR_IRQ_STATUS);	//send command byte
+    spi1_trx(SX126X_ALL);				//clear all interrupts
+    spi1_trx(SX126X_ALL);
+    cs_rf_inactive();
+}
+
+
+
+
+
 
 
 

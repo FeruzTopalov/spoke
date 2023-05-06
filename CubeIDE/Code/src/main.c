@@ -24,7 +24,7 @@
 #include "uart.h"
 #include "gps.h"
 #include "radio.h"
-#include "sx126x_config.h"
+#include "sx126x.h"
 
 
 
@@ -223,28 +223,28 @@ void EXTI2_IRQHandler(void)
 
 
 
-//RFM98 interrupt (PayloadReady or PacketSent)
+//Radio interrupt (PayloadReady or PacketSent)
 void EXTI0_IRQHandler(void)
 {
     EXTI->PR = EXTI_PR_PR0;         //clear interrupt
-/*
-	uint8_t current_radio_status = rfm98_get_irq_status();	//Process the radio interrupt
 
-	if (current_radio_status & RF_IRQFLAGS2_CRCOK)	//if CRC is ok
+	uint8_t current_radio_status = rf_get_irq_status();	//Process the radio interrupt
+
+	if (current_radio_status & IRQ_RX_DONE_0)	//Packet received
 	{
-		rfm98_get_rx_packet();
-		parse_air_packet();   //parse air data from another device (which has ended TX in the current time_slot)
-		main_flags.rx_state = 0;
+		if (!(current_radio_status & IRQ_CRC_ERROR_0))	// if no CRC error
+		{
+			//rfm98_get_rx_packet();
+			//parse_air_packet();   //parse air data from another device (which has ended TX in the current time_slot)
+			main_flags.rx_state = 0;
+		}
 	}
-	else if (current_radio_status & RF_IRQFLAGS2_PAYLOADREADY)	//if CRC is wrong but packet has been received
-	{
-		rfm98_flush_fifo();
-		main_flags.rx_state = 0;
-	}
-	else if (current_radio_status & RF_IRQFLAGS2_PACKETSENT)	//if packet sent
+	else if (current_radio_status & IRQ_TX_DONE_0)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
-	}*/
+	}
+
+	rf_clear_irq();		//clear all flags
 }
 
 
