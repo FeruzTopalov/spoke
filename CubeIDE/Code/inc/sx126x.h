@@ -119,7 +119,6 @@
 #define		SX126X_SIZE_MAX_BUFFER        (255)
 #define		SX126X_SIZE_DUMMY_BYTE        (1)
 #define		SX126X_NOP 					  (0)
-#define		SX126X_ZERO_OFFSET
 
 
 

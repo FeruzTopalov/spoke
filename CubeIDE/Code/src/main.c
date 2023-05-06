@@ -234,8 +234,8 @@ void EXTI0_IRQHandler(void)
 	{
 		if (!(current_radio_status & IRQ_CRC_ERROR_0))	// if no CRC error
 		{
-			//rfm98_get_rx_packet();
-			//parse_air_packet();   //parse air data from another device (which has ended TX in the current time_slot)
+			rf_get_rx_packet();
+			parse_air_packet();   //parse air data from another device (which has ended TX in the current time_slot)
 			main_flags.rx_state = 0;
 		}
 	}

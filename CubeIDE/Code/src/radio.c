@@ -97,7 +97,7 @@ uint8_t rf_tx_packet(void)
 	//fill tx buffer
 	cs_rf_active();
 	spi1_trx(SX126X_WRITE_BUFFER);		//command
-	spi1_trx(0x00);						//zero offset
+	spi1_trx(BASE_ADDR_TX);				//offset
 	for(uint8_t i = 0; i < AIR_PACKET_LEN; i++)
 	{
 		spi1_trx(air_packet_tx[i]);
@@ -139,17 +139,22 @@ uint8_t rf_start_rx(void)
 
 
 
-//RFM98 get received packet
+//sx126x get received packet
 void rf_get_rx_packet(void)
-{/*
-	cs_rfm98_active();
-	spi1_trx(REG_FIFO | RFM_READ);
+{
+	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
+
+	//get data
+	cs_rf_active();
+	spi1_trx(SX126X_READ_BUFFER);	//command
+	spi1_trx(BASE_ADDR_RX);			//offset
+	spi1_trx(SX126X_NOP);			//NOP required
 	for (uint8_t i = 0; i < AIR_PACKET_LEN; i++)
 	{
-		air_packet_rx[i] = spi1_trx(0);
+		air_packet_rx[i] = spi1_trx(SX126X_NOP);
 	}
-	cs_rfm98_inactive();
-*/}
+	cs_rf_inactive();
+}
 
 
 
@@ -206,7 +211,7 @@ void rf_clear_irq(void)
 
 
 
-void rf_flush_fifo(void)
+void rf_flush_fifo(void)	//todo: delete
 {/*
 	cs_rfm98_active();
 	spi1_trx(REG_IRQFLAGS2 | RFM_WRITE);
