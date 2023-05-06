@@ -149,6 +149,105 @@
 #define		USE_LDO 	(0x00)
 #define		USE_DCDC	(0x01)
 
+// SX126X_CALIBRATE
+#define		CALIBRATE_ALL 	(0x7F)
+
+// SX126X_CALIBRATE_IMAGE
+#define		CALIBRATE_IMAGE_FREQ1_430M 	(0x6B)
+#define		CALIBRATE_IMAGE_FREQ2_440M 	(0x6F)
+
+// SX126X_SET_PKT_TYPE
+#define		PACKET_TYPE_GFSK		(0x00)
+#define		PACKET_TYPE_LORA		(0x01)
+
+// SX126X_SET_RF_FREQUENCY
+#define		RF_FREQ_LPD_CH1_31_24		(0x1B)
+#define		RF_FREQ_LPD_CH1_23_16		(0x11)
+#define		RF_FREQ_LPD_CH1_15_8		(0x33)
+#define		RF_FREQ_LPD_CH1_7_0			(0x33)
+
+// SX126X_SET_PA_CFG
+#define		PA_CFG_DUTY_CYCLE_10DB		(0x00)	//+10 dBm
+#define		PA_CFG_HP_MAX_10DB			(0x03)	//+10 dBm
+#define		PA_CFG_DEV_SEL				(0x00)
+#define		PA_CFG_LUT					(0x01)
+
+// SX126X_SET_TX_PARAMS
+#define		TX_POWER_10DB			(0x0A)	//+10 dBm
+#define		TX_RAMP_TIME_800U		(0x05)	//800 us
+
+// SX126X_SET_BUFFER_BASE_ADDRESS
+#define		BASE_ADDR_TX				(0x00)
+#define		BASE_ADDR_RX				(0x7F)
+
+// SX126X_SET_MODULATION_PARAMS
+#define		FSK_MP1_BR_1200				(0x0D)
+#define		FSK_MP2_BR_1200				(0x05)
+#define		FSK_MP3_BR_1200				(0x55)
+#define		FSK_MP4_SHAPE_05			(0x09)
+#define		FSK_MP5_RX_BW_4800			(0x1F)
+#define		FSK_MP6_FDEV_1200			(0x00)
+#define		FSK_MP7_FDEV_1200			(0x04)
+#define		FSK_MP8_FDEV_1200			(0xEA)
+
+// SX126X_SET_PKT_PARAMS
+#define		FSK_PP1_PREAMB_5_BYTE		(0x00)	//40 bits
+#define		FSK_PP2_PREAMB_5_BYTE		(0x28)
+#define		FSK_PP3_PREAMB_THS_1_BYTE	(0x04)
+#define		FSK_PP4_SYNCW_LEN_2_BYTE		(0x10)	//16 bits
+#define		FSK_PP5_ADDR_COMP_NO		(0x00)
+#define		FSK_PP6_PKT_TYPE_FIXED		(0x00)
+#define		FSK_PP7_PLOAD_LEN_12_BYTE	(0x0C)	//payload only, no syncword/crc included
+#define		FSK_PP8_CRC_TYPE_2_BYTE		(0x02)
+#define		FSK_PP9_WHITE_NO			(0x00)
+
+// SET Sync Word
+#define		SYNC_WORD_0		(0x4B)
+#define		SYNC_WORD_1		(0xB2)
+
+// SET CRC
+#define 	CRC_IBM_SEED				(0xFFFF)
+#define 	CRC_IBM_SEED_0				(0xFF)
+#define 	CRC_IBM_SEED_1				(0xFF)
+#define 	CRC_POLYNOMIAL_IBM			(0x8005)
+#define 	CRC_POLYNOMIAL_IBM_0		(0x05)
+#define 	CRC_POLYNOMIAL_IBM_1		(0x80)
+
+// SX126X_SET_DIO_IRQ_PARAMS
+#define		IRQ_TX_DONE_0					(0x01) //"_0" LSB
+#define		IRQ_RX_DONE_0					(0x02)
+#define		IRQ_PREAMBLE_DETECTED_0			(0x04)
+#define		IRQ_SYNCWORD_VALID_0			(0x08)
+#define		IRQ_HEADER_VALID_0				(0x10)
+#define		IRQ_HEADER_ERROR_0				(0x20)
+#define		IRQ_CRC_ERROR_0					(0x40)
+#define		IRQ_CAD_DONE_0					(0x80)
+#define		IRQ_CAD_ACTIVITY_DETECTED_1		(0x01)	//"_1" MSB
+#define		IRQ_RX_TX_TIMEOUT_1				(0x02)
+
+#define		IRQ_MASK_0						(IRQ_TX_DONE_0 | IRQ_RX_DONE_0 | IRQ_CRC_ERROR_0)
+#define		IRQ_MASK_1						(0x00)
+#define		IRQ_DIO1_MASK_0					(IRQ_TX_DONE_0 | IRQ_RX_DONE_0 | IRQ_CRC_ERROR_0)
+#define		IRQ_DIO1_MASK_1					(0x00)
+#define		IRQ_DIO2_MASK_0					(0x00)
+#define		IRQ_DIO2_MASK_1					(0x00)
+#define		IRQ_DIO3_MASK_0					(0x00)
+#define		IRQ_DIO3_MASK_1					(0x00)
+
+// SX126X_SET_RX_TX_FALLBACK_MODE
+#define		FALLBACK_MODE_XOSC				(0x30)
+
+
+
+//REGISTERS ADDRESS
+#define SX126X_REG_SYNC_WORD_0			(0x06C0)
+#define SX126X_REG_SYNC_WORD_0_0		(0xC0)
+#define SX126X_REG_SYNC_WORD_0_1		(0x06)
+
+#define SX126X_REG_CRC_INIT_VAL			(0x06BC)
+#define SX126X_REG_CRC_INIT_VAL_0		(0xBC)
+#define SX126X_REG_CRC_INIT_VAL_1		(0x06)
+
 
 
 
