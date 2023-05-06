@@ -31,7 +31,7 @@
 //4 bytes lat
 //4 bytes lon
 //2 bytes altitude
-#define AIR_PACKET_LEN      (12)
+#define AIR_PACKET_LEN      (FSK_PP7_PLOAD_LEN_12_BYTE)
 
 
 
@@ -62,143 +62,61 @@ void rf_init(void)
     res_rf_active();        	//reset the chip
     delay_cyc(100000);
     res_rf_inactive();
-    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait reset done
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait reset done		todo: move to cs_rf_active()
 
 
-/*
-    uint8_t init_arr[] = RFM_CONF_ARRAY;    	//array with init data
+
+    uint8_t rf_init_arr[] = SX126X_CONFIG_ARRAY;    	//array with init data
+    uint8_t i = 0;
+    uint8_t len = 0;
     
-    for (uint8_t i = 0; i < sizeof(init_arr); i += 2)
+    while (rf_init_arr[i] != 0x00)
     {
-        cs_rfm98_active();
-        spi1_trx(init_arr[i]);      	//send command byte
-        spi1_trx(init_arr[i + 1]);		//send value
-        cs_rfm98_inactive();
+        len = rf_init_arr[i++];
+
+        while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
+
+        cs_rf_active();
+        while (len--)
+        {
+            spi1_trx(rf_init_arr[i++]);
+        }
+        cs_rf_inactive();
     }
 
-    //Get current settings
-    p_settings = get_settings();
-
-    //Set the packet len
-    cs_rfm98_active();
-	spi1_trx(REG_PAYLOADLENGTH | RFM_WRITE);
-	spi1_trx(AIR_PACKET_LEN);
-	cs_rfm98_inactive();
-
-	//Set frequency
-	freq_reg_value_float = ((float)BASE_CHANNEL_FREQUENCY + p_settings->freq_channel * CHANNEL_FREQUENCY_STEP) / ((float)RFM98_CRYSTAL / POWER_2_TO_19);
-	freq_reg_value.as_uint32 = freq_reg_value_float;
-    cs_rfm98_active();
-	spi1_trx(REG_FRFMSB | RFM_WRITE);
-	spi1_trx(freq_reg_value.as_array[2]);
-	spi1_trx(freq_reg_value.as_array[1]);
-	spi1_trx(freq_reg_value.as_array[0]);
-	cs_rfm98_inactive();
-
-	//Set TX power
-	switch (p_settings->tx_power_opt)
-	{
-		case TX_POWER_1MILLIW_SETTING:
-			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_0);
-			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
-			break;
-
-		case TX_POWER_10MILLIW_SETTING:
-			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_8);
-			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
-			break;
-
-		case TX_POWER_50MILLIW_SETTING:
-			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_15);
-			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
-			break;
-
-		case TX_POWER_100MILLIW_SETTING:
-			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_15);
-			pa_dac_reg_value = RF_PADAC_20DBM_ON;
-			break;
-
-		default:	//10 mW
-			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_8);
-			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
-			break;
-	}
-
-    cs_rfm98_active();
-	spi1_trx(REG_PACONFIG | RFM_WRITE);
-	spi1_trx(pa_conf_reg_value);
-	cs_rfm98_inactive();
-
-	cs_rfm98_active();
-	spi1_trx(REG_PADAC | RFM_WRITE);
-	spi1_trx(pa_dac_reg_value);
-	cs_rfm98_inactive();
-
-	//Calibrate IQ
-	cs_rfm98_active();
-	spi1_trx(REG_OPMODE | RFM_WRITE);
-	spi1_trx(RF_OPMODE_LONGRANGEMODE_OFF | RF_OPMODE_MODULATIONTYPE_FSK | RF_OPMODE_STANDBY);
-	cs_rfm98_inactive();
-
-	cs_rfm98_active();
-	spi1_trx(REG_IMAGECAL | RFM_WRITE);
-	spi1_trx(RF_IMAGECAL_AUTOIMAGECAL_OFF | RF_IMAGECAL_IMAGECAL_START | RF_IMAGECAL_TEMPMONITOR_OFF);
-	cs_rfm98_inactive();
-
-	uint8_t cal_iq_running;
-	do
-	{
-		delay_cyc(100);
-		cs_rfm98_active();
-		spi1_trx(REG_IMAGECAL | RFM_READ);
-		cal_iq_running = spi1_trx(0) & RF_IMAGECAL_IMAGECAL_RUNNING;
-		cs_rfm98_inactive();
-	}
-	while (cal_iq_running == RF_IMAGECAL_IMAGECAL_RUNNING);
-
-	cs_rfm98_active();
-	spi1_trx(REG_OPMODE | RFM_WRITE);
-	spi1_trx(RF_OPMODE_LONGRANGEMODE_OFF | RF_OPMODE_MODULATIONTYPE_FSK | RF_OPMODE_SLEEP);
-	cs_rfm98_inactive();
-*/}
+}
 
 
 
-//RFM98 TX packet
+//sx126x TX packet
 uint8_t rf_tx_packet(void)
-{/*
-	//check current mode
-	uint8_t mode_before_tx = 0;
-	cs_rfm98_active();
-	spi1_trx(REG_OPMODE | RFM_READ);
-	mode_before_tx = spi1_trx(0);
-	cs_rfm98_inactive();
+{
 
-	if (!((mode_before_tx & (uint8_t)(~RF_OPMODE_MASK)) & 0x06))	//Start TX only in SLEEP or STANDBY mode
+	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
+
+	//fill tx buffer
+	cs_rf_active();
+	spi1_trx(SX126X_WRITE_BUFFER);		//command
+	spi1_trx(0x00);						//zero offset
+	for(uint8_t i = 0; i < AIR_PACKET_LEN; i++)
 	{
-		//fill TX FIFO buffer
-		cs_rfm98_active();
-		spi1_trx(REG_FIFO | RFM_WRITE);
-		for(uint8_t i = 0; i < AIR_PACKET_LEN; i++)
-		{
-			spi1_trx(air_packet_tx[i]);
-		}
-		cs_rfm98_inactive();
-
-		//start TX
-		cs_rfm98_active();
-		spi1_trx(REG_SEQCONFIG1 | RFM_WRITE);
-		spi1_trx(RF_SEQCONFIG1_SEQUENCER_START | RF_SEQCONFIG1_IDLEMODE_SLEEP | RF_SEQCONFIG1_FROMSTART_TOTX | RF_SEQCONFIG1_LPS_SEQUENCER_OFF | RF_SEQCONFIG1_FROMTX_TOLPS);
-		cs_rfm98_inactive();
-
-		return 1;				//successful TX start
+		spi1_trx(air_packet_tx[i]);
 	}
-	else
-	{
-		return 0;
-	}
-*/
-	return 1;
+	cs_rf_inactive();
+
+
+
+	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
+
+	//start tx
+	cs_rf_active();
+	spi1_trx(SX126X_SET_TX);			//command
+	spi1_trx(0x00);						//zero timeout
+	spi1_trx(0x00);
+	spi1_trx(0x00);
+	cs_rf_inactive();
+
+	return 1;	//todo: check for rf mode before tx
 }
 
 
