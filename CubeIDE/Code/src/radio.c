@@ -111,9 +111,9 @@ uint8_t rf_tx_packet(void)
 	//start tx
 	cs_rf_active();
 	spi1_trx(SX126X_SET_TX);			//command
-	spi1_trx(0x00);						//zero timeout
-	spi1_trx(0x00);
-	spi1_trx(0x00);
+	spi1_trx(TX_TIMEOUT_DISABLED_2);	//zero timeout
+	spi1_trx(TX_TIMEOUT_DISABLED_1);
+	spi1_trx(TX_TIMEOUT_DISABLED_0);
 	cs_rf_inactive();
 
 	return 1;	//todo: check for rf mode before tx
@@ -121,31 +121,19 @@ uint8_t rf_tx_packet(void)
 
 
 
-//RFM98 start packet RX
+//sx126x start packet RX
 uint8_t rf_start_rx(void)
-{/*
-	//check current mode
-	uint8_t mode_before_rx = 0;
-	cs_rfm98_active();
-	spi1_trx(REG_OPMODE | RFM_READ);
-	mode_before_rx = spi1_trx(0);
-	cs_rfm98_inactive();
+{
+	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
 
-	if (!((mode_before_rx & (uint8_t)(~RF_OPMODE_MASK)) & 0x06))	//Start RX only in SLEEP or STANDBY mode
-	{
-		cs_rfm98_active();
-		spi1_trx(REG_SEQCONFIG1 | RFM_WRITE);
-		spi1_trx(RF_SEQCONFIG1_SEQUENCER_START | RF_SEQCONFIG1_IDLEMODE_SLEEP | RF_SEQCONFIG1_FROMSTART_TORX | RF_SEQCONFIG1_LPS_SEQUENCER_OFF);
-		cs_rfm98_inactive();
+	//start rx
+	cs_rf_active();
+	spi1_trx(SX126X_SET_RX);			//command
+	spi1_trx(RX_TIMEOUT_45MS_2);		//45 ms timeout
+	spi1_trx(RX_TIMEOUT_45MS_1);
+	spi1_trx(RX_TIMEOUT_45MS_0);
+	cs_rf_inactive();
 
-		return 1;				//successful RX start
-	}
-	else
-	{
-		return 0;
-	}
-
-*/
 	return 1;
 }
 
@@ -206,8 +194,8 @@ void rf_clear_irq(void)
 
     cs_rf_active();
     spi1_trx(SX126X_CLR_IRQ_STATUS);	//send command byte
-    spi1_trx(SX126X_ALL);				//clear all interrupts
-    spi1_trx(SX126X_ALL);
+    spi1_trx(IRQ_MASK_ALL);				//clear all interrupts
+    spi1_trx(IRQ_MASK_ALL);
     cs_rf_inactive();
 }
 

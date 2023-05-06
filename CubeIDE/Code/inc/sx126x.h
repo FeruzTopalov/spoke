@@ -119,7 +119,7 @@
 #define		SX126X_SIZE_MAX_BUFFER        (255)
 #define		SX126X_SIZE_DUMMY_BYTE        (1)
 #define		SX126X_NOP 					  (0)
-#define		SX126X_ALL 					  (0xFF)
+#define		SX126X_ZERO_OFFSET
 
 
 
@@ -195,8 +195,8 @@
 #define		FSK_PP1_PREAMB_5_BYTE		(0x00)	//40 bits
 #define		FSK_PP2_PREAMB_5_BYTE		(0x28)
 #define		FSK_PP3_PREAMB_THS_1_BYTE	(0x04)
-#define		FSK_PP4_SYNCW_LEN_2_BYTE		(0x10)	//16 bits
-#define		FSK_PP5_ADDR_COMP_NO		(0x00)
+#define		FSK_PP4_SYNCW_LEN_2_BYTE	(0x10)	//16 bits
+#define		FSK_PP5_ADDR_COMP_DIS		(0x00)
 #define		FSK_PP6_PKT_TYPE_FIXED		(0x00)
 #define		FSK_PP7_PLOAD_LEN_12_BYTE	(0x0C)	//payload only, no syncword/crc included
 #define		FSK_PP8_CRC_TYPE_2_BYTE		(0x02)
@@ -226,6 +226,7 @@
 #define		IRQ_CAD_ACTIVITY_DETECTED_1		(0x01)	//"_1" MSB
 #define		IRQ_RX_TX_TIMEOUT_1				(0x02)
 
+#define		IRQ_MASK_ALL					(0xFF)
 #define		IRQ_MASK_0						(IRQ_TX_DONE_0 | IRQ_RX_DONE_0 | IRQ_CRC_ERROR_0)
 #define		IRQ_MASK_1						(0x00)
 #define		IRQ_DIO1_MASK_0					(IRQ_TX_DONE_0 | IRQ_RX_DONE_0 | IRQ_CRC_ERROR_0)
@@ -237,6 +238,18 @@
 
 // SX126X_SET_RX_TX_FALLBACK_MODE
 #define		FALLBACK_MODE_XOSC				(0x30)
+
+// SX126X_SET_TX
+#define		TX_TIMEOUT_DISABLED_0				(0x00)
+#define		TX_TIMEOUT_DISABLED_1				(0x00)
+#define		TX_TIMEOUT_DISABLED_2				(0x00)
+
+// SX126X_SET_RX
+#define		RX_TIMEOUT_45MS_0				(0x40)	//5 bytes preamble + 2 bytes sync word = 56 bit; 56 / 1200 = ~45 ms
+#define		RX_TIMEOUT_45MS_1				(0x0B)
+#define		RX_TIMEOUT_45MS_2				(0x00)
+
+
 
 
 
