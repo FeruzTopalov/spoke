@@ -186,6 +186,7 @@
 #define		FSK_MP3_BR_1200				(0x55)
 #define		FSK_MP4_SHAPE_05			(0x09)
 #define		FSK_MP5_RX_BW_4800			(0x1F)
+#define		FSK_MP5_RX_BW_11700			(0x16)
 #define		FSK_MP6_FDEV_1200			(0x00)
 #define		FSK_MP7_FDEV_1200			(0x04)
 #define		FSK_MP8_FDEV_1200			(0xEA)
