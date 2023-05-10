@@ -108,6 +108,9 @@ uint8_t rf_tx_packet(void)
 
 	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
 
+	//enable TX path
+	rf_tx_mode();
+
 	//start tx
 	cs_rf_active();
 	spi1_trx(SX126X_SET_TX);			//command
@@ -125,6 +128,9 @@ uint8_t rf_tx_packet(void)
 uint8_t rf_start_rx(void)
 {
 	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
+
+	//enable RX path
+	rf_rx_mode();
 
 	//start rx
 	cs_rf_active();

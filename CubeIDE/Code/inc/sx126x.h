@@ -197,7 +197,7 @@
 #define		FSK_PP4_SYNCW_LEN_2_BYTE	(0x10)	//16 bits
 #define		FSK_PP5_ADDR_COMP_DIS		(0x00)
 #define		FSK_PP6_PKT_TYPE_FIXED		(0x00)
-#define		FSK_PP7_PLOAD_LEN_12_BYTE	(0x0C)	//payload only, no syncword/crc included
+#define		FSK_PP7_PLOAD_LEN_12_BYTE	(0x0C)	//payload len only, no syncword/crc included
 #define		FSK_PP8_CRC_TYPE_2_BYTE		(0x02)
 #define		FSK_PP9_WHITE_NO			(0x00)
 
@@ -253,13 +253,13 @@
 
 
 //REGISTERS ADDRESS
-#define SX126X_REG_SYNC_WORD_0			(0x06C0)
-#define SX126X_REG_SYNC_WORD_0_0		(0xC0)
-#define SX126X_REG_SYNC_WORD_0_1		(0x06)
+#define SX126X_REG_ADDR_SYNC_WORD_0			(0x06C0)
+#define SX126X_REG_ADDR_SYNC_WORD_0_0		(0xC0)
+#define SX126X_REG_ADDR_SYNC_WORD_0_1		(0x06)
 
-#define SX126X_REG_CRC_INIT_VAL			(0x06BC)
-#define SX126X_REG_CRC_INIT_VAL_0		(0xBC)
-#define SX126X_REG_CRC_INIT_VAL_1		(0x06)
+#define SX126X_REG_ADDR_CRC_INIT_VAL		(0x06BC)
+#define SX126X_REG_ADDR_CRC_INIT_VAL_0		(0xBC)
+#define SX126X_REG_ADDR_CRC_INIT_VAL_1		(0x06)
 
 
 
