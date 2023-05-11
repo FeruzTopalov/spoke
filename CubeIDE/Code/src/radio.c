@@ -65,6 +65,29 @@ void rf_init(void)
     while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait reset done		todo: move to cs_rf_active()
 
 
+    //workaround 15.2 Better Resistance of the SX1268 Tx to Antenna Mismatch
+    uint8_t tx_clamp_reg = 0;
+
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
+    cs_rf_active();
+    spi1_trx(SX126X_READ_REGISTER);
+    spi1_trx(0x08); //TxClampConfig 0x08D8
+    spi1_trx(0xD8);
+    spi1_trx(0);	//NOP
+    tx_clamp_reg = spi1_trx(0);
+    cs_rf_inactive();
+
+    tx_clamp_reg |= 0x1E;
+
+    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
+    cs_rf_active();
+    spi1_trx(SX126X_WRITE_REGISTER);
+    spi1_trx(0x08); //TxClampConfig 0x08D8
+    spi1_trx(0xD8);
+    spi1_trx(tx_clamp_reg);
+    cs_rf_inactive();
+    //end of workaround
+
 
     uint8_t rf_init_arr[] = SX126X_CONFIG_ARRAY;    	//array with init data
     uint8_t i = 0;
