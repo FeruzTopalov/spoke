@@ -161,19 +161,25 @@
 #define		PACKET_TYPE_LORA		(0x01)
 
 // SX126X_SET_RF_FREQUENCY
+/*
 #define		RF_FREQ_LPD_CH1_31_24		(0x1B)
 #define		RF_FREQ_LPD_CH1_23_16		(0x11)
 #define		RF_FREQ_LPD_CH1_15_8		(0x33)
 #define		RF_FREQ_LPD_CH1_7_0			(0x33)
+*/
+#define		RF_FREQ_LPD_CH1_31_24		(0x1B)	//todo just for test purposes, freq 433071000 to match old Spoke HW
+#define		RF_FREQ_LPD_CH1_23_16		(0x11)
+#define		RF_FREQ_LPD_CH1_15_8		(0x22)
+#define		RF_FREQ_LPD_CH1_7_0			(0xD1)
 
 // SX126X_SET_PA_CFG
-#define		PA_CFG_DUTY_CYCLE_10DB		(0x00)	//+10 dBm
-#define		PA_CFG_HP_MAX_10DB			(0x03)	//+10 dBm
+#define		PA_CFG_DUTY_CYCLE_22DB		(0x04)	//+22 dBm PA
+#define		PA_CFG_HP_MAX_22DB			(0x07)	//+22 dBm PA
 #define		PA_CFG_DEV_SEL				(0x00)
 #define		PA_CFG_LUT					(0x01)
 
 // SX126X_SET_TX_PARAMS
-#define		TX_POWER_10DB			(0x0A)	//+10 dBm
+#define		TX_POWER_10DB			(0x0A)	//+10 dBm power level
 #define		TX_RAMP_TIME_800U		(0x05)	//800 us
 
 // SX126X_SET_BUFFER_BASE_ADDRESS
@@ -184,7 +190,8 @@
 #define		FSK_MP1_BR_1200				(0x0D)
 #define		FSK_MP2_BR_1200				(0x05)
 #define		FSK_MP3_BR_1200				(0x55)
-#define		FSK_MP4_SHAPE_05			(0x09)
+#define		FSK_MP4_SHAPE_00			(0x00)	//Pure FSK
+#define		FSK_MP4_SHAPE_05			(0x09)	//BT 0.5
 #define		FSK_MP5_RX_BW_4800			(0x1F)
 #define		FSK_MP5_RX_BW_11700			(0x16)
 #define		FSK_MP6_FDEV_1200			(0x00)
