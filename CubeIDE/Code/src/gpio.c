@@ -37,12 +37,12 @@ void gpio_init(void)
     GPIOA->CRL &= ~GPIO_CRL_MODE2;      //input mode
     GPIOA->CRL &= ~GPIO_CRL_CNF2;       //analog input
     
-    //PA3 - RF CS
+    //PA3 - RF Reset
     GPIOA->CRL &= ~GPIO_CRL_MODE3_0;   //output 2 MHz
     GPIOA->CRL |= GPIO_CRL_MODE3_1;
     GPIOA->CRL &= ~GPIO_CRL_CNF3;      //output push-pull
     
-    //PA4 - RF Reset
+    //PA4 - RF CS
     GPIOA->CRL &= ~GPIO_CRL_MODE4_0;   //output 2 MHz
     GPIOA->CRL |= GPIO_CRL_MODE4_1;
     GPIOA->CRL &= ~GPIO_CRL_CNF4;      //output push-pull

@@ -174,14 +174,14 @@ void process_all_devices(void)
 
 void process_current_device(void)
 {
-led_red_on();
+
 	uint8_t curr_dev = get_current_device();
 
 	if (curr_dev != this_device)
 	{
 		calc_relative_position(curr_dev);
 	}
-led_red_off();
+
 }
 
 

@@ -189,7 +189,6 @@ void DMA1_Channel3_IRQHandler(void)
     if (main_flags.pps_synced == 1) 	//if last pps status was "sync" then make a beep because we lost PPS
     {
     	//make a long beep
-    	//led_red_on();
     }
 
     pps_counter = 0;
@@ -238,6 +237,7 @@ void EXTI0_IRQHandler(void)
 		{
 			rf_get_rx_packet();
 			parse_air_packet();   //parse air data from another device (which has ended TX in the current time_slot)
+			uart1_tx_byte('1');
 		}
 		main_flags.rx_state = 0;
 		led_green_off();
@@ -246,6 +246,7 @@ void EXTI0_IRQHandler(void)
 	{
 		main_flags.tx_state = 0;
 		led_red_off();
+		uart1_tx_byte('2');
 	}
 
 	rf_clear_irq();		//clear all flags
@@ -272,8 +273,6 @@ void TIM1_UP_IRQHandler(void)
 
     if (timeslot_pattern[time_slot_timer_ovf] == 1)
     {
-    	led_red_on();
-    	led_red_off();
 
     	time_slot++;
 
