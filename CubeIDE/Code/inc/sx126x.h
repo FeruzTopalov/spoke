@@ -256,7 +256,10 @@
 #define		RX_TIMEOUT_45MS_1				(0x0B)
 #define		RX_TIMEOUT_45MS_2				(0x00)
 
-
+// SX126X_SET_RX_TEST
+#define		RX_TIMEOUT_DISABLED_0				(0x00)
+#define		RX_TIMEOUT_DISABLED_1				(0x00)
+#define		RX_TIMEOUT_DISABLED_2				(0x00)
 
 
 
