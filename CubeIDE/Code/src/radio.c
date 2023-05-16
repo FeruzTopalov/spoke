@@ -158,9 +158,9 @@ uint8_t rf_start_rx(void)
 	//start rx
 	cs_rf_active();
 	spi1_trx(SX126X_SET_RX);			//command
-	spi1_trx(RX_TIMEOUT_45MS_2);		//45 ms timeout
-	spi1_trx(RX_TIMEOUT_45MS_1);
-	spi1_trx(RX_TIMEOUT_45MS_0);
+	spi1_trx(RX_TIMEOUT_DISABLED_2);		//45 ms timeout (changed to 0 for testing)
+	spi1_trx(RX_TIMEOUT_DISABLED_1);
+	spi1_trx(RX_TIMEOUT_DISABLED_0);
 	cs_rf_inactive();
 
 	return 1;
