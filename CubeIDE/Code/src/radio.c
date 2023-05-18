@@ -187,6 +187,18 @@ void rf_get_rx_packet(void)
 
 
 
+void rf_set_standby_xosc(void)
+{
+	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
+
+	cs_rf_active();
+	spi1_trx(SX126X_SIZE_SET_STANDBY);			//command
+	spi1_trx(STDBY_XOSC);
+	cs_rf_inactive();
+}
+
+
+
 //sx126x get status
 uint8_t rf_get_status(void)
 {

@@ -228,6 +228,7 @@ void EXTI0_IRQHandler(void)
     EXTI->PR = EXTI_PR_PR0;         //clear interrupt
 
 	uint16_t current_radio_status = rf_get_irq_status();	//Process the radio interrupt
+	rf_clear_irq();		//clear all flags
 
 	//todo add rx timeout interrupt
 	if (current_radio_status & IRQ_RX_DONE)	//Packet received
@@ -250,9 +251,10 @@ void EXTI0_IRQHandler(void)
 	{
 		main_flags.rx_state = 0;
 		led_green_off();
+		rf_set_standby_xosc();	//after RX TO it goes to Standby RC mode only (https://forum.lora-developers.semtech.com/t/sx1268-is-it-possible-to-configure-transition-to-stdby-xosc-after-cad-done-rx-timeout/1282)
 	}
 
-	rf_clear_irq();		//clear all flags
+
 }
 
 
