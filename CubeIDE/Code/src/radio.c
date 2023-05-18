@@ -158,9 +158,9 @@ uint8_t rf_start_rx(void)
 	//start rx
 	cs_rf_active();
 	spi1_trx(SX126X_SET_RX);			//command
-	spi1_trx(RX_TIMEOUT_DISABLED_2);		//45 ms timeout (changed to 0 for testing)
-	spi1_trx(RX_TIMEOUT_DISABLED_1);
-	spi1_trx(RX_TIMEOUT_DISABLED_0);
+	spi1_trx(RX_TIMEOUT_50MS_2);		//50 ms timeout
+	spi1_trx(RX_TIMEOUT_50MS_1);
+	spi1_trx(RX_TIMEOUT_50MS_0);
 	cs_rf_inactive();
 
 	return 1;
@@ -204,19 +204,19 @@ uint8_t rf_get_status(void)
 
 
 //sx126x get interrupt status
-uint8_t rf_get_irq_status(void)
+uint16_t rf_get_irq_status(void)
 {
     while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
 
-    uint8_t status;
+    uint16_t status_msb, status_lsb;
     cs_rf_active();
     spi1_trx(SX126X_GET_IRQ_STATUS);	//send command byte
     spi1_trx(SX126X_NOP);
-    spi1_trx(SX126X_NOP);				//MSB is not used yet
-    status = spi1_trx(SX126X_NOP);		//get only LSB of IRQ status
+    status_msb = spi1_trx(SX126X_NOP);		//get MSB
+    status_lsb = spi1_trx(SX126X_NOP);		//get LSB
     cs_rf_inactive();
 
-    return status;
+    return ((status_msb << 8) | status_lsb);
 }
 
 

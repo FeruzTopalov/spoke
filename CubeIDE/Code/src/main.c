@@ -227,26 +227,29 @@ void EXTI0_IRQHandler(void)
 {
     EXTI->PR = EXTI_PR_PR0;         //clear interrupt
 
-	uint8_t current_radio_status = rf_get_irq_status();	//Process the radio interrupt
-	uart1_tx_byte(current_radio_status);
+	uint16_t current_radio_status = rf_get_irq_status();	//Process the radio interrupt
 
 	//todo add rx timeout interrupt
-	if (current_radio_status & IRQ_RX_DONE_0)	//Packet received
+	if (current_radio_status & IRQ_RX_DONE)	//Packet received
 	{
-		if (!(current_radio_status & IRQ_CRC_ERROR_0))	// if no CRC error
+		main_flags.rx_state = 0;
+		led_green_off();
+
+		if (!(current_radio_status & IRQ_CRC_ERROR))	// if no CRC error
 		{
 			rf_get_rx_packet();
 			parse_air_packet();   //parse air data from another device (which has ended TX in the current time_slot)
-			uart1_tx_byte('1');
 		}
-		main_flags.rx_state = 0;
-		led_green_off();
 	}
-	else if (current_radio_status & IRQ_TX_DONE_0)		//Packet transmission completed
+	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
 		led_red_off();
-		uart1_tx_byte('2');
+	}
+	else if (current_radio_status & IRQ_RX_TX_TIMEOUT)	//RX timeout only, because TX timeout feature is not used at all
+	{
+		main_flags.rx_state = 0;
+		led_green_off();
 	}
 
 	rf_clear_irq();		//clear all flags

@@ -161,16 +161,10 @@
 #define		PACKET_TYPE_LORA		(0x01)
 
 // SX126X_SET_RF_FREQUENCY
-/*
 #define		RF_FREQ_LPD_CH1_31_24		(0x1B)
 #define		RF_FREQ_LPD_CH1_23_16		(0x11)
 #define		RF_FREQ_LPD_CH1_15_8		(0x33)
 #define		RF_FREQ_LPD_CH1_7_0			(0x33)
-*/
-#define		RF_FREQ_LPD_CH1_31_24		(0x1B)	//todo just for test purposes, freq 433071000 to match old Spoke HW
-#define		RF_FREQ_LPD_CH1_23_16		(0x11)
-#define		RF_FREQ_LPD_CH1_15_8		(0x22)
-#define		RF_FREQ_LPD_CH1_7_0			(0xD1)
 
 // SX126X_SET_PA_CFG
 #define		PA_CFG_DUTY_CYCLE_22DB		(0x04)	//+22 dBm PA
@@ -191,7 +185,7 @@
 #define		FSK_MP2_BR_1200				(0x05)
 #define		FSK_MP3_BR_1200				(0x55)
 #define		FSK_MP4_SHAPE_00			(0x00)	//Pure FSK
-#define		FSK_MP4_SHAPE_05			(0x09)	//BT 0.5
+#define		FSK_MP4_SHAPE_05			(0x09)	//GFSK BT 0.5
 #define		FSK_MP5_RX_BW_4800			(0x1F)
 #define		FSK_MP5_RX_BW_11700			(0x16)
 #define		FSK_MP6_FDEV_1200			(0x00)
@@ -199,8 +193,8 @@
 #define		FSK_MP8_FDEV_1200			(0xEA)
 
 // SX126X_SET_PKT_PARAMS
-#define		FSK_PP1_PREAMB_5_BYTE		(0x00)	//40 bits
-#define		FSK_PP2_PREAMB_5_BYTE		(0x28)
+#define		FSK_PP1_PREAMB_3_BYTE		(0x00)	//24 bits
+#define		FSK_PP2_PREAMB_3_BYTE		(0x18)
 #define		FSK_PP3_PREAMB_THS_1_BYTE	(0x04)
 #define		FSK_PP4_SYNCW_LEN_2_BYTE	(0x10)	//16 bits
 #define		FSK_PP5_ADDR_COMP_DIS		(0x00)
@@ -222,26 +216,31 @@
 #define 	CRC_POLYNOMIAL_IBM_1		(0x80)
 
 // SX126X_SET_DIO_IRQ_PARAMS
-#define		IRQ_TX_DONE_0					(0x01) //"_0" LSB
-#define		IRQ_RX_DONE_0					(0x02)
-#define		IRQ_PREAMBLE_DETECTED_0			(0x04)
-#define		IRQ_SYNCWORD_VALID_0			(0x08)
-#define		IRQ_HEADER_VALID_0				(0x10)
-#define		IRQ_HEADER_ERROR_0				(0x20)
-#define		IRQ_CRC_ERROR_0					(0x40)
-#define		IRQ_CAD_DONE_0					(0x80)
-#define		IRQ_CAD_ACTIVITY_DETECTED_1		(0x01)	//"_1" MSB
-#define		IRQ_RX_TX_TIMEOUT_1				(0x02)
+#define		IRQ_TX_DONE						(0x0001)
+#define		IRQ_RX_DONE						(0x0002)
+#define		IRQ_PREAMBLE_DETECTED			(0x0004)
+#define		IRQ_SYNCWORD_VALID				(0x0008)
+#define		IRQ_HEADER_VALID				(0x0010)
+#define		IRQ_HEADER_ERROR				(0x0020)
+#define		IRQ_CRC_ERROR					(0x0040)
+#define		IRQ_CAD_DONE					(0x0080)
+#define		IRQ_CAD_ACTIVITY_DETECTED		(0x0100)
+#define		IRQ_RX_TX_TIMEOUT				(0x0200)
 
 #define		IRQ_MASK_ALL					(0xFF)
-#define		IRQ_MASK_0						(IRQ_TX_DONE_0 | IRQ_RX_DONE_0 | IRQ_CRC_ERROR_0)
-#define		IRQ_MASK_1						(0x00)
-#define		IRQ_DIO1_MASK_0					(IRQ_TX_DONE_0 | IRQ_RX_DONE_0 | IRQ_CRC_ERROR_0)
-#define		IRQ_DIO1_MASK_1					(0x00)
-#define		IRQ_DIO2_MASK_0					(0x00)
-#define		IRQ_DIO2_MASK_1					(0x00)
-#define		IRQ_DIO3_MASK_0					(0x00)
-#define		IRQ_DIO3_MASK_1					(0x00)
+#define		IRQ_MASK						(IRQ_TX_DONE | IRQ_RX_DONE | IRQ_CRC_ERROR | IRQ_RX_TX_TIMEOUT)
+#define		IRQ_DIO1_MASK					(IRQ_TX_DONE | IRQ_RX_DONE | IRQ_CRC_ERROR | IRQ_RX_TX_TIMEOUT)
+#define		IRQ_DIO2_MASK					(0x0000)
+#define		IRQ_DIO3_MASK					(0x0000)
+
+#define		IRQ_MASK_1				((IRQ_MASK >> 8) & 0xFF)
+#define		IRQ_MASK_0				(IRQ_MASK & 0xFF)
+#define		IRQ_DIO1_MASK_1			((IRQ_DIO1_MASK >> 8) & 0xFF)
+#define		IRQ_DIO1_MASK_0			(IRQ_DIO1_MASK & 0xFF)
+#define		IRQ_DIO2_MASK_1			((IRQ_DIO2_MASK >> 8) & 0xFF)
+#define		IRQ_DIO2_MASK_0			(IRQ_DIO2_MASK & 0xFF)
+#define		IRQ_DIO3_MASK_1			((IRQ_DIO3_MASK >> 8) & 0xFF)
+#define		IRQ_DIO3_MASK_0			(IRQ_DIO3_MASK & 0xFF)
 
 // SX126X_SET_RX_TX_FALLBACK_MODE
 #define		FALLBACK_MODE_XOSC				(0x30)
@@ -252,11 +251,9 @@
 #define		TX_TIMEOUT_DISABLED_2				(0x00)
 
 // SX126X_SET_RX
-#define		RX_TIMEOUT_45MS_0				(0x40)	//5 bytes preamble + 2 bytes sync word = 56 bit; 56 / 1200 = ~45 ms
-#define		RX_TIMEOUT_45MS_1				(0x0B)
-#define		RX_TIMEOUT_45MS_2				(0x00)
-
-// SX126X_SET_RX_TEST
+#define		RX_TIMEOUT_50MS_0				(0x80)	//3 bytes preamble + 2 bytes sync word = 40 bit; 40 / 1200 = ~33 ms; make 50 ms to ensure sync word reception
+#define		RX_TIMEOUT_50MS_1				(0x0C)
+#define		RX_TIMEOUT_50MS_2				(0x00)
 #define		RX_TIMEOUT_DISABLED_0				(0x00)
 #define		RX_TIMEOUT_DISABLED_1				(0x00)
 #define		RX_TIMEOUT_DISABLED_2				(0x00)
