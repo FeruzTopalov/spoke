@@ -16,6 +16,11 @@
 #include "uart.h"
 
 
+void rf_tx_power_test(void);
+void rf_config_tx_power(int8_t power_dbm);
+void rf_set_cw_tx(void);
+
+
 
 #define BASE_CHANNEL_FREQUENCY 			(433050000)
 #define CHANNEL_FREQUENCY_STEP			(25000)
@@ -107,6 +112,88 @@ void rf_init(void)
         cs_rf_inactive();
     }
 
+    rf_tx_power_test();
+
+}
+
+
+
+void rf_tx_power_test(void)
+{
+	while (1)
+	{
+		//set rf switch
+		rf_tx_mode();
+
+		// 1
+		//wait
+		delay_cyc(1000000);
+
+		led_green_off();
+		led_red_off();
+		//set tx params
+		rf_config_tx_power(-9);
+
+		//set CW
+		rf_set_cw_tx();
+
+		//wait
+		delay_cyc(1000000);
+
+		//off
+		rf_set_standby_xosc();
+
+
+
+		// 2
+		led_green_on();
+		led_red_off();
+		//set tx params
+		rf_config_tx_power(0);
+
+		//set CW
+		rf_set_cw_tx();
+
+		//wait
+		delay_cyc(1000000);
+
+		//off
+		rf_set_standby_xosc();
+
+
+
+		// 3
+		led_green_off();
+		led_red_on();
+		//set tx params
+		rf_config_tx_power(10);
+
+		//set CW
+		rf_set_cw_tx();
+
+		//wait
+		delay_cyc(1000000);
+
+		//off
+		rf_set_standby_xosc();
+
+
+
+		// 3
+		led_green_on();
+		led_red_on();
+		//set tx params
+		rf_config_tx_power(20);
+
+		//set CW
+		rf_set_cw_tx();
+
+		//wait
+		delay_cyc(1000000);
+
+		//off
+		rf_set_standby_xosc();
+	}
 }
 
 
@@ -194,6 +281,30 @@ void rf_set_standby_xosc(void)
 	cs_rf_active();
 	spi1_trx(SX126X_SIZE_SET_STANDBY);			//command
 	spi1_trx(STDBY_XOSC);
+	cs_rf_inactive();
+}
+
+
+
+void rf_set_cw_tx(void)
+{
+	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
+
+	cs_rf_active();
+	spi1_trx(SX126X_SET_TX_CONTINUOUS_WAVE);			//command
+	cs_rf_inactive();
+}
+
+
+
+void rf_config_tx_power(int8_t power_dbm)
+{
+	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
+
+	cs_rf_active();
+	spi1_trx(SX126X_SET_TX_PARAMS);			//command
+	spi1_trx(power_dbm);
+	spi1_trx(TX_RAMP_TIME_800U);
 	cs_rf_inactive();
 }
 

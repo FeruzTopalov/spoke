@@ -174,6 +174,7 @@
 
 // SX126X_SET_TX_PARAMS
 #define		TX_POWER_10DB			(0x0A)	//+10 dBm power level
+#define		TX_POWER_NEG9DB			(0xF7)	//-9 dBm power level
 #define		TX_RAMP_TIME_800U		(0x05)	//800 us
 
 // SX126X_SET_BUFFER_BASE_ADDRESS
