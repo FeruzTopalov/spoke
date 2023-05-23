@@ -19,25 +19,27 @@
 void rf_wait_busy(void);
 void rf_workaround_15_2(void);
 void rf_tx_power_test(void);
+void rf_config_frequency(uint8_t channel_num);
 void rf_config_tx_power(int8_t power_dbm);
 void rf_set_cw_tx(void);
 
 
 
-#define BASE_CHANNEL_FREQUENCY 			(433050000)
+#define BASE_CHANNEL_FREQUENCY 			(433050000)	// = LDP Ch1 freq minus freq step
 #define CHANNEL_FREQUENCY_STEP			(25000)
-#define RFM98_CRYSTAL					(32000000)
-#define POWER_2_TO_19					(524288)
+#define RADIO_CRYSTAL					(32000000)
+#define POWER_2_TO_25					(33554432)
 
 
 
 
-//bytes amount to tx/rx over air; does not include preamble, syncword and CRC
+//Bytes amount to tx/rx over the air; does not include preamble, syncword and CRC
 //1 byte device number and ID (single char)
 //1 byte flags
 //4 bytes lat
 //4 bytes lon
 //2 bytes altitude
+//TOTAL 12 bytes
 #define AIR_PACKET_LEN      (FSK_PP7_PLOAD_LEN_12_BYTE)
 
 
@@ -46,13 +48,8 @@ union
 {
     uint32_t as_uint32;
     uint8_t as_array[4];
-} freq_reg_value;
-float freq_reg_value_float;
+} freq_reg;
 
-uint8_t pa_conf_reg_value;
-uint8_t pa_dac_reg_value;
-
-uint8_t radio_irq_status = 0;
 uint8_t air_packet_tx[AIR_PACKET_LEN];
 uint8_t air_packet_rx[AIR_PACKET_LEN];
 struct settings_struct *p_settings;
@@ -99,6 +96,81 @@ void rf_init(void)
         cs_rf_inactive();
     }
 
+
+
+    //Get current settings
+    p_settings = get_settings();
+
+    rf_config_frequency(p_settings->freq_channel);
+/*
+	//Set TX power
+	switch (p_settings->tx_power_opt)
+	{
+		case TX_POWER_1MILLIW_SETTING:
+			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_0);
+			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
+			break;
+
+		case TX_POWER_10MILLIW_SETTING:
+			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_8);
+			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
+			break;
+
+		case TX_POWER_50MILLIW_SETTING:
+			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_15);
+			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
+			break;
+
+		case TX_POWER_100MILLIW_SETTING:
+			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_15);
+			pa_dac_reg_value = RF_PADAC_20DBM_ON;
+			break;
+
+		default:	//10 mW
+			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_8);
+			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
+			break;
+	}
+
+    cs_rfm98_active();
+	spi1_trx(REG_PACONFIG | RFM_WRITE);
+	spi1_trx(pa_conf_reg_value);
+	cs_rfm98_inactive();
+
+	cs_rfm98_active();
+	spi1_trx(REG_PADAC | RFM_WRITE);
+	spi1_trx(pa_dac_reg_value);
+	cs_rfm98_inactive();
+
+*/
+}
+
+
+
+void rf_config_frequency(uint8_t channel_num)
+{
+    float freq_reg_value;
+	freq_reg_value = ((float)BASE_CHANNEL_FREQUENCY + channel_num * CHANNEL_FREQUENCY_STEP) / ((float)RADIO_CRYSTAL / POWER_2_TO_25);
+	freq_reg.as_uint32 = freq_reg_value;
+
+	cs_rf_active();
+	spi1_trx(SX126X_SET_RF_FREQUENCY);			//command
+	spi1_trx(freq_reg.as_array[3]);
+	spi1_trx(freq_reg.as_array[2]);
+	spi1_trx(freq_reg.as_array[1]);
+	spi1_trx(freq_reg.as_array[0]);
+	cs_rf_inactive();
+}
+
+
+
+void rf_config_tx_power(int8_t power_dbm)
+{
+	cs_rf_active();
+	spi1_trx(SX126X_SET_TX_PARAMS);			//command
+	spi1_trx(power_dbm);
+	spi1_trx(TX_RAMP_TIME_800U);
+	cs_rf_inactive();
 }
 
 
@@ -174,17 +246,6 @@ void rf_set_standby_xosc(void)
 	cs_rf_active();
 	spi1_trx(SX126X_SIZE_SET_STANDBY);			//command
 	spi1_trx(STDBY_XOSC);
-	cs_rf_inactive();
-}
-
-
-
-void rf_config_tx_power(int8_t power_dbm)
-{
-	cs_rf_active();
-	spi1_trx(SX126X_SET_TX_PARAMS);			//command
-	spi1_trx(power_dbm);
-	spi1_trx(TX_RAMP_TIME_800U);
 	cs_rf_inactive();
 }
 

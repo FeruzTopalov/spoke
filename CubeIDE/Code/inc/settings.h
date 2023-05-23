@@ -73,7 +73,7 @@ struct settings_struct
 
     char device_id;      				//user id, ASCII symbol
 
-    uint8_t freq_channel;               //frequency tx/rx channel
+    uint8_t freq_channel;               //frequency tx/rx channel, LPD #1-69
 
     uint8_t tx_power_opt;               //tx power option, not an actual value
 
