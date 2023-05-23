@@ -16,6 +16,8 @@
 #include "uart.h"
 
 
+void rf_wait_busy(void);
+void rf_workaround_15_2(void);
 void rf_tx_power_test(void);
 void rf_config_tx_power(int8_t power_dbm);
 void rf_set_cw_tx(void);
@@ -57,6 +59,14 @@ struct settings_struct *p_settings;
 
 
 
+//wait until radio is ready to accept a command, or until reset is done
+void rf_wait_busy(void)
+{
+	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
+}
+
+
+
 //sx126x Init
 void rf_init(void)
 {
@@ -65,34 +75,11 @@ void rf_init(void)
     rf_rx_mode();
     
     res_rf_active();        	//reset the chip
-    delay_cyc(100000);
+    delay_cyc(10);
     res_rf_inactive();
-    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait reset done		todo: move to cs_rf_active()
+    rf_wait_busy();
 
-
-    //workaround 15.2 Better Resistance of the SX1268 Tx to Antenna Mismatch
-    uint8_t tx_clamp_reg = 0;
-
-    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
-    cs_rf_active();
-    spi1_trx(SX126X_READ_REGISTER);
-    spi1_trx(0x08); //TxClampConfig 0x08D8
-    spi1_trx(0xD8);
-    spi1_trx(0);	//NOP
-    tx_clamp_reg = spi1_trx(0);
-    cs_rf_inactive();
-
-    tx_clamp_reg |= 0x1E;
-
-    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
-    cs_rf_active();
-    spi1_trx(SX126X_WRITE_REGISTER);
-    spi1_trx(0x08); //TxClampConfig 0x08D8
-    spi1_trx(0xD8);
-    spi1_trx(tx_clamp_reg);
-    cs_rf_inactive();
-    //end of workaround
-
+    rf_workaround_15_2();
 
     uint8_t rf_init_arr[] = SX126X_CONFIG_ARRAY;    	//array with init data
     uint8_t i = 0;
@@ -112,8 +99,183 @@ void rf_init(void)
         cs_rf_inactive();
     }
 
-    rf_tx_power_test();
+}
 
+
+
+//sx126x TX packet
+uint8_t rf_tx_packet(void)
+{
+	//fill tx buffer
+	cs_rf_active();
+	spi1_trx(SX126X_WRITE_BUFFER);		//command
+	spi1_trx(BASE_ADDR_TX);				//offset
+	for(uint8_t i = 0; i < AIR_PACKET_LEN; i++)
+	{
+		spi1_trx(air_packet_tx[i]);
+	}
+	cs_rf_inactive();
+
+
+	//enable TX path
+	rf_tx_mode();
+
+	//start tx
+	cs_rf_active();
+	spi1_trx(SX126X_SET_TX);			//command
+	spi1_trx(TX_TIMEOUT_DISABLED_2);	//zero timeout
+	spi1_trx(TX_TIMEOUT_DISABLED_1);
+	spi1_trx(TX_TIMEOUT_DISABLED_0);
+	cs_rf_inactive();
+
+	return 1;	//todo: check for rf mode before tx
+}
+
+
+
+//sx126x start packet RX
+uint8_t rf_start_rx(void)
+{
+	//enable RX path
+	rf_rx_mode();
+
+	//start rx
+	cs_rf_active();
+	spi1_trx(SX126X_SET_RX);			//command
+	spi1_trx(RX_TIMEOUT_50MS_2);		//50 ms timeout
+	spi1_trx(RX_TIMEOUT_50MS_1);
+	spi1_trx(RX_TIMEOUT_50MS_0);
+	cs_rf_inactive();
+
+	return 1;
+}
+
+
+
+//sx126x get received packet
+void rf_get_rx_packet(void)
+{
+	//get data
+	cs_rf_active();
+	spi1_trx(SX126X_READ_BUFFER);	//command
+	spi1_trx(BASE_ADDR_RX);			//offset
+	spi1_trx(SX126X_NOP);			//NOP required
+	for (uint8_t i = 0; i < AIR_PACKET_LEN; i++)
+	{
+		air_packet_rx[i] = spi1_trx(SX126X_NOP);
+	}
+	cs_rf_inactive();
+}
+
+
+
+void rf_set_standby_xosc(void)
+{
+	cs_rf_active();
+	spi1_trx(SX126X_SIZE_SET_STANDBY);			//command
+	spi1_trx(STDBY_XOSC);
+	cs_rf_inactive();
+}
+
+
+
+void rf_config_tx_power(int8_t power_dbm)
+{
+	cs_rf_active();
+	spi1_trx(SX126X_SET_TX_PARAMS);			//command
+	spi1_trx(power_dbm);
+	spi1_trx(TX_RAMP_TIME_800U);
+	cs_rf_inactive();
+}
+
+
+
+//sx126x get status
+uint8_t rf_get_status(void)
+{
+    uint8_t status;
+    cs_rf_active();
+    spi1_trx(SX126X_GET_STATUS);		//send command byte
+    status = spi1_trx(SX126X_NOP);		//send nop, get response
+    cs_rf_inactive();
+
+    return status;
+}
+
+
+
+//sx126x get interrupt status
+uint16_t rf_get_irq_status(void)
+{
+    uint16_t status_msb, status_lsb;
+    cs_rf_active();
+    spi1_trx(SX126X_GET_IRQ_STATUS);	//send command byte
+    spi1_trx(SX126X_NOP);
+    status_msb = spi1_trx(SX126X_NOP);		//get MSB
+    status_lsb = spi1_trx(SX126X_NOP);		//get LSB
+    cs_rf_inactive();
+
+    return ((status_msb << 8) | status_lsb);
+}
+
+
+
+//sx126x clear interrupts
+void rf_clear_irq(void)
+{
+    cs_rf_active();
+    spi1_trx(SX126X_CLR_IRQ_STATUS);	//send command byte
+    spi1_trx(IRQ_MASK_ALL);				//clear all interrupts
+    spi1_trx(IRQ_MASK_ALL);
+    cs_rf_inactive();
+}
+
+
+
+uint8_t *get_air_packet_tx(void)
+{
+	return &air_packet_tx[0];
+}
+
+
+
+uint8_t *get_air_packet_rx(void)
+{
+	return &air_packet_rx[0];
+}
+
+
+
+void rf_workaround_15_2(void)
+{
+    //workaround 15.2 Better Resistance of the SX1268 Tx to Antenna Mismatch
+    uint8_t tx_clamp_reg = 0;
+
+    cs_rf_active();
+    spi1_trx(SX126X_READ_REGISTER);
+    spi1_trx(0x08); //TxClampConfig 0x08D8
+    spi1_trx(0xD8);
+    spi1_trx(0);	//NOP
+    tx_clamp_reg = spi1_trx(0);
+    cs_rf_inactive();
+
+    tx_clamp_reg |= 0x1E;
+
+    cs_rf_active();
+    spi1_trx(SX126X_WRITE_REGISTER);
+    spi1_trx(0x08); //TxClampConfig 0x08D8
+    spi1_trx(0xD8);
+    spi1_trx(tx_clamp_reg);
+    cs_rf_inactive();
+}
+
+
+
+void rf_set_cw_tx(void)
+{
+	cs_rf_active();
+	spi1_trx(SX126X_SET_TX_CONTINUOUS_WAVE);			//command
+	cs_rf_inactive();
 }
 
 
@@ -194,193 +356,4 @@ void rf_tx_power_test(void)
 		//off
 		rf_set_standby_xosc();
 	}
-}
-
-
-
-//sx126x TX packet
-uint8_t rf_tx_packet(void)
-{
-
-	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
-
-	//fill tx buffer
-	cs_rf_active();
-	spi1_trx(SX126X_WRITE_BUFFER);		//command
-	spi1_trx(BASE_ADDR_TX);				//offset
-	for(uint8_t i = 0; i < AIR_PACKET_LEN; i++)
-	{
-		spi1_trx(air_packet_tx[i]);
-	}
-	cs_rf_inactive();
-
-
-
-	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
-
-	//enable TX path
-	rf_tx_mode();
-
-	//start tx
-	cs_rf_active();
-	spi1_trx(SX126X_SET_TX);			//command
-	spi1_trx(TX_TIMEOUT_DISABLED_2);	//zero timeout
-	spi1_trx(TX_TIMEOUT_DISABLED_1);
-	spi1_trx(TX_TIMEOUT_DISABLED_0);
-	cs_rf_inactive();
-
-	return 1;	//todo: check for rf mode before tx
-}
-
-
-
-//sx126x start packet RX
-uint8_t rf_start_rx(void)
-{
-	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
-
-	//enable RX path
-	rf_rx_mode();
-
-	//start rx
-	cs_rf_active();
-	spi1_trx(SX126X_SET_RX);			//command
-	spi1_trx(RX_TIMEOUT_50MS_2);		//50 ms timeout
-	spi1_trx(RX_TIMEOUT_50MS_1);
-	spi1_trx(RX_TIMEOUT_50MS_0);
-	cs_rf_inactive();
-
-	return 1;
-}
-
-
-
-//sx126x get received packet
-void rf_get_rx_packet(void)
-{
-	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
-
-	//get data
-	cs_rf_active();
-	spi1_trx(SX126X_READ_BUFFER);	//command
-	spi1_trx(BASE_ADDR_RX);			//offset
-	spi1_trx(SX126X_NOP);			//NOP required
-	for (uint8_t i = 0; i < AIR_PACKET_LEN; i++)
-	{
-		air_packet_rx[i] = spi1_trx(SX126X_NOP);
-	}
-	cs_rf_inactive();
-}
-
-
-
-void rf_set_standby_xosc(void)
-{
-	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
-
-	cs_rf_active();
-	spi1_trx(SX126X_SIZE_SET_STANDBY);			//command
-	spi1_trx(STDBY_XOSC);
-	cs_rf_inactive();
-}
-
-
-
-void rf_set_cw_tx(void)
-{
-	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
-
-	cs_rf_active();
-	spi1_trx(SX126X_SET_TX_CONTINUOUS_WAVE);			//command
-	cs_rf_inactive();
-}
-
-
-
-void rf_config_tx_power(int8_t power_dbm)
-{
-	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}		//wait
-
-	cs_rf_active();
-	spi1_trx(SX126X_SET_TX_PARAMS);			//command
-	spi1_trx(power_dbm);
-	spi1_trx(TX_RAMP_TIME_800U);
-	cs_rf_inactive();
-}
-
-
-
-//sx126x get status
-uint8_t rf_get_status(void)
-{
-    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
-
-    uint8_t status;
-    cs_rf_active();
-    spi1_trx(SX126X_GET_STATUS);		//send command byte
-    status = spi1_trx(SX126X_NOP);		//send nop, get response
-    cs_rf_inactive();
-
-    return status;
-}
-
-
-
-//sx126x get interrupt status
-uint16_t rf_get_irq_status(void)
-{
-    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
-
-    uint16_t status_msb, status_lsb;
-    cs_rf_active();
-    spi1_trx(SX126X_GET_IRQ_STATUS);	//send command byte
-    spi1_trx(SX126X_NOP);
-    status_msb = spi1_trx(SX126X_NOP);		//get MSB
-    status_lsb = spi1_trx(SX126X_NOP);		//get LSB
-    cs_rf_inactive();
-
-    return ((status_msb << 8) | status_lsb);
-}
-
-
-
-//sx126x clear interrupts
-void rf_clear_irq(void)
-{
-    while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
-
-    cs_rf_active();
-    spi1_trx(SX126X_CLR_IRQ_STATUS);	//send command byte
-    spi1_trx(IRQ_MASK_ALL);				//clear all interrupts
-    spi1_trx(IRQ_MASK_ALL);
-    cs_rf_inactive();
-}
-
-
-
-
-
-
-
-
-void rf_flush_fifo(void)	//todo: delete
-{/*
-	cs_rfm98_active();
-	spi1_trx(REG_IRQFLAGS2 | RFM_WRITE);
-	spi1_trx(RF_IRQFLAGS2_FIFOOVERRUN);		//Clear FIFO by writing overrun flag
-	cs_rfm98_inactive();
-*/}
-
-
-
-uint8_t *get_air_packet_tx(void)
-{
-	return &air_packet_tx[0];
-}
-
-
-
-uint8_t *get_air_packet_rx(void)
-{
-	return &air_packet_rx[0];
 }

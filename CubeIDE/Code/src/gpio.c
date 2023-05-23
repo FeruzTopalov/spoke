@@ -332,6 +332,7 @@ void led_green_off(void)
 //RF CS active
 void cs_rf_active(void)
 {
+	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}	//wait RF BUSY line goes low
     GPIOA->BSRR = GPIO_BSRR_BR4;
 }
 
