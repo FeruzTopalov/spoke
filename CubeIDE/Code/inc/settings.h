@@ -28,12 +28,12 @@
 
 
 //POWER SETTINGS
-#define TX_POWER_1MILLIW_SETTING   	(0)
-#define TX_POWER_10MILLIW_SETTING   (1)
-#define TX_POWER_50MILLIW_SETTING   (2)
+#define TX_POWER_0MILLIW_SETTING   	(0)
+#define TX_POWER_1MILLIW_SETTING    (1)
+#define TX_POWER_10MILLIW_SETTING   (2)
 #define TX_POWER_100MILLIW_SETTING  (3)
 
-#define TX_POWER_FIRST_OPTION 		(TX_POWER_1MILLIW_SETTING)
+#define TX_POWER_FIRST_OPTION 		(TX_POWER_0MILLIW_SETTING)
 #define TX_POWER_LAST_OPTION 		(TX_POWER_100MILLIW_SETTING)
 
 
@@ -73,7 +73,7 @@ struct settings_struct
 
     char device_id;      				//user id, ASCII symbol
 
-    uint8_t freq_channel;               //frequency tx/rx channel
+    uint8_t freq_channel;               //frequency tx/rx channel, LPD #1-69
 
     uint8_t tx_power_opt;               //tx power option, not an actual value
 

@@ -12,6 +12,7 @@
 
 
 void delay_cyc(uint32_t cycles);
+void print_debug(char *string);
 
 float atof32(char *input);
 void ftoa32(float value, uint8_t precision, char *buffer);

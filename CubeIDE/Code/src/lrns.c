@@ -13,7 +13,7 @@
 #include "lrns.h"
 #include "settings.h"
 #include "gps.h"
-#include "rfm98.h"
+#include "radio.h"
 #include "menu.h"
 #include "lcd.h"
 #include "gpio.h"
@@ -48,6 +48,7 @@ const double pi_div_by_4 = 0.7853981633974483;      // pi / 4
 //4 bytes (2, 3, 4, 5) lat
 //4 bytes (6, 7, 8, 9) lon
 //2 bytes (10, 11) altitude
+//TOTAL 12 bytes - see radio.c for AIR_PACKET_LEN
 
 
 
@@ -174,14 +175,14 @@ void process_all_devices(void)
 
 void process_current_device(void)
 {
-led_red_on();
+
 	uint8_t curr_dev = get_current_device();
 
 	if (curr_dev != this_device)
 	{
 		calc_relative_position(curr_dev);
 	}
-led_red_off();
+
 }
 
 

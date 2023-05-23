@@ -23,8 +23,8 @@
 #include "points.h"
 #include "uart.h"
 #include "gps.h"
-#include "rfm98.h"
-#include "rfm98_config.h"
+#include "radio.h"
+#include "sx126x.h"
 
 
 
@@ -50,16 +50,20 @@ uint8_t *p_update_interval_values;
 int main(void)
 {
     gpio_init();
+    release_power();	//set switch off position
+	delay_cyc(600000); //startup delay ~2sec
+	hold_power();
+
 led_red_on();
 led_green_on();
-    hold_power();
+
     settings_load();
     timers_init();
     spi_init();
     uart1_init();
     uart3_dma_init();
     lcd_init();
-    rfm98_init();
+    rf_init();
     init_lrns();
     gps_init();
     init_menu();
@@ -189,7 +193,6 @@ void DMA1_Channel3_IRQHandler(void)
     if (main_flags.pps_synced == 1) 	//if last pps status was "sync" then make a beep because we lost PPS
     {
     	//make a long beep
-    	//led_red_on();
     }
 
     pps_counter = 0;
@@ -223,28 +226,39 @@ void EXTI2_IRQHandler(void)
 
 
 
-//RFM98 interrupt (PayloadReady or PacketSent)
+//Radio interrupt (PayloadReady or PacketSent)
 void EXTI0_IRQHandler(void)
 {
     EXTI->PR = EXTI_PR_PR0;         //clear interrupt
-/*
-	uint8_t current_radio_status = rfm98_get_irq_status();	//Process the radio interrupt
 
-	if (current_radio_status & RF_IRQFLAGS2_CRCOK)	//if CRC is ok
+	uint16_t current_radio_status = rf_get_irq_status();	//Process the radio interrupt
+	rf_clear_irq();		//clear all flags
+
+	//todo add rx timeout interrupt
+	if (current_radio_status & IRQ_RX_DONE)	//Packet received
 	{
-		rfm98_get_rx_packet();
-		parse_air_packet();   //parse air data from another device (which has ended TX in the current time_slot)
 		main_flags.rx_state = 0;
+		led_green_off();
+
+		if (!(current_radio_status & IRQ_CRC_ERROR))	// if no CRC error
+		{
+			rf_get_rx_packet();
+			parse_air_packet();   //parse air data from another device (which has ended TX in the current time_slot)
+		}
 	}
-	else if (current_radio_status & RF_IRQFLAGS2_PAYLOADREADY)	//if CRC is wrong but packet has been received
-	{
-		rfm98_flush_fifo();
-		main_flags.rx_state = 0;
-	}
-	else if (current_radio_status & RF_IRQFLAGS2_PACKETSENT)	//if packet sent
+	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
-	}*/
+		led_red_off();
+	}
+	else if (current_radio_status & IRQ_RX_TX_TIMEOUT)	//RX timeout only, because TX timeout feature is not used at all
+	{
+		main_flags.rx_state = 0;
+		led_green_off();
+		rf_set_standby_xosc();	//after RX TO it goes to Standby RC mode only (https://forum.lora-developers.semtech.com/t/sx1268-is-it-possible-to-configure-transition-to-stdby-xosc-after-cad-done-rx-timeout/1282)
+	}
+
+
 }
 
 
@@ -268,8 +282,6 @@ void TIM1_UP_IRQHandler(void)
 
     if (timeslot_pattern[time_slot_timer_ovf] == 1)
     {
-    	led_red_on();
-    	led_red_off();
 
     	time_slot++;
 
@@ -287,16 +299,18 @@ void TIM1_UP_IRQHandler(void)
     		{
     			if (time_slot == p_settings->device_number)
     			{
-    				if (rfm98_tx_packet())
+    				if (rf_tx_packet())
     				{
     					main_flags.tx_state = 1;
+    					led_red_on();
     				}
     			}
     			else
     			{
-    				if (rfm98_start_rx())
+    				if (rf_start_rx())
     				{
     					main_flags.rx_state = 1;
+    					led_green_on();
     				}
     			}
     		}
