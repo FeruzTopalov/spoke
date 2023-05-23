@@ -16,6 +16,7 @@
 #include "uart.h"
 
 
+
 void rf_wait_busy(void);
 void rf_workaround_15_2(void);
 void rf_tx_power_test(void);
@@ -29,7 +30,6 @@ void rf_set_cw_tx(void);
 #define CHANNEL_FREQUENCY_STEP			(25000)
 #define RADIO_CRYSTAL					(32000000)
 #define POWER_2_TO_25					(33554432)
-
 
 
 
@@ -101,48 +101,35 @@ void rf_init(void)
     //Get current settings
     p_settings = get_settings();
 
+    //Set freq
     rf_config_frequency(p_settings->freq_channel);
-/*
+
 	//Set TX power
+    int8_t power_reg_dbm;
 	switch (p_settings->tx_power_opt)
 	{
+		case TX_POWER_0MILLIW_SETTING:
+			power_reg_dbm = -9;
+			break;
+
 		case TX_POWER_1MILLIW_SETTING:
-			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_0);
-			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
+			power_reg_dbm = 0;
 			break;
 
 		case TX_POWER_10MILLIW_SETTING:
-			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_8);
-			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
-			break;
-
-		case TX_POWER_50MILLIW_SETTING:
-			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_15);
-			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
+			power_reg_dbm = 10;
 			break;
 
 		case TX_POWER_100MILLIW_SETTING:
-			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_15);
-			pa_dac_reg_value = RF_PADAC_20DBM_ON;
+			power_reg_dbm = 20;
 			break;
 
 		default:	//10 mW
-			pa_conf_reg_value = (RF_PACONFIG_PASELECT_PABOOST | RF_PACONFIG_MAX_POWER_7 | RF_PACONFIG_OUTPUTPOWER_8);
-			pa_dac_reg_value = RF_PADAC_20DBM_OFF;
+			power_reg_dbm = 10;
 			break;
 	}
+	rf_config_tx_power(power_reg_dbm);
 
-    cs_rfm98_active();
-	spi1_trx(REG_PACONFIG | RFM_WRITE);
-	spi1_trx(pa_conf_reg_value);
-	cs_rfm98_inactive();
-
-	cs_rfm98_active();
-	spi1_trx(REG_PADAC | RFM_WRITE);
-	spi1_trx(pa_dac_reg_value);
-	cs_rfm98_inactive();
-
-*/
 }
 
 
