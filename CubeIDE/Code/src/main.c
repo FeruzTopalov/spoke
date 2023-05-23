@@ -50,9 +50,13 @@ uint8_t *p_update_interval_values;
 int main(void)
 {
     gpio_init();
+    release_power();	//set switch off position
+	delay_cyc(600000); //startup delay ~2sec
+	hold_power();
+
 led_red_on();
 led_green_on();
-    hold_power();
+
     settings_load();
     timers_init();
     spi_init();
