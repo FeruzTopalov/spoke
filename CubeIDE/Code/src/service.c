@@ -8,6 +8,7 @@
 #include "stm32f10x.h"
 #include "service.h"
 #include "uart.h"
+#include "gpio.h"
 
 
 
@@ -28,6 +29,18 @@ void print_debug(char *string)
     {
     	uart1_tx_byte(*string++);
     }
+}
+
+
+
+void manage_power(void)
+{
+    release_power();					//initially set switch off position
+    if (!(RCC->CSR & RCC_CSR_SFTRSTF))		//if the reset is not caused by software (save & restart after settings changed)
+    {
+    	delay_cyc(600000); //startup delay ~2sec
+    }
+	hold_power();
 }
 
 
