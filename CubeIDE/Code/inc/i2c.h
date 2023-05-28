@@ -15,6 +15,8 @@ void i2c_init(void);
 void i2c_clock_disable(void);
 void i2c_clock_enable(void);
 uint8_t i2c_poll(uint8_t i2c_addr);
+void i2c_write(uint8_t i2c_addr, uint8_t reg_addr, uint8_t data);
+uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr);
 
 
 
