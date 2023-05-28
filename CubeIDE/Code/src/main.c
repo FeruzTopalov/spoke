@@ -66,6 +66,24 @@ led_green_on();
     init_lrns();
     gps_init();
     i2c_init();
+
+    //****
+    uint8_t res = 0;
+    char buf[10];
+
+    res = i2c_poll(0x32); //acc
+    itoa32(res, buf);
+    lcd_print(0, 0, buf, 0);
+    lcd_update();
+
+    res = i2c_poll(0x3C); //mag
+    itoa32(res, buf);
+    lcd_print(1, 0, buf, 0);
+    lcd_update();
+
+    while (1) {}
+    //****
+
     init_menu();
     init_memory_points();
     ext_int_init();
