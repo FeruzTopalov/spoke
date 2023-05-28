@@ -25,6 +25,7 @@
 #include "gps.h"
 #include "radio.h"
 #include "sx126x.h"
+#include "i2c.h"
 
 
 
@@ -64,6 +65,7 @@ led_green_on();
     rf_init();
     init_lrns();
     gps_init();
+    i2c_init();
     init_menu();
     init_memory_points();
     ext_int_init();
