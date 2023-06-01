@@ -126,6 +126,6 @@ struct mag_data
 //mag reg val
 #define		LSM303_MAG_CRA_REG_M__75HZ        (0x18)
 #define		LSM303_MAG_CRB_REG_M__1_3GS       (0x20)
-#define		LSM303_MAG_MR_REG_M__CONT         (0x57)
+#define		LSM303_MAG_MR_REG_M__CONT         (0x00)
 
 #endif /*SENSORS_HEADER*/

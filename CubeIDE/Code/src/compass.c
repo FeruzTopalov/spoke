@@ -55,24 +55,24 @@ void init_compass(void)
 
 
 
-			lcd_print(0, 8, "MAG", 0);
+			lcd_print(0, 9, "MAG", 0);
 
-			lcd_print(1, 8, "X", 0);
+			lcd_print(1, 9, "X", 0);
 			itoa32(p_magnetic_field->mag_x.as_integer, buf);
-			lcd_print(1, 10, buf, 0);
+			lcd_print(1, 11, buf, 0);
 
-			lcd_print(2, 8, "Y", 0);
+			lcd_print(2, 9, "Y", 0);
 			itoa32(p_magnetic_field->mag_y.as_integer, buf);
-			lcd_print(2, 10, buf, 0);
+			lcd_print(2, 11, buf, 0);
 
-			lcd_print(3, 8, "Z", 0);
+			lcd_print(3, 9, "Z", 0);
 			itoa32(p_magnetic_field->mag_z.as_integer, buf);
-			lcd_print(3, 10, buf, 0);
+			lcd_print(3, 11, buf, 0);
 
 
 
 			lcd_update();
-			delay_cyc(100000);
+			delay_cyc(25000);
 		}
 	}
 }

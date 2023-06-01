@@ -71,10 +71,10 @@ void read_magn(void)
 
 	magnetic_field.mag_x.as_array[1] = buf[0];
 	magnetic_field.mag_x.as_array[0] = buf[1];
-	magnetic_field.mag_y.as_array[1] = buf[2];
-	magnetic_field.mag_y.as_array[0] = buf[3];
-	magnetic_field.mag_z.as_array[1] = buf[4];
-	magnetic_field.mag_z.as_array[0] = buf[5];
+	magnetic_field.mag_z.as_array[1] = buf[2];
+	magnetic_field.mag_z.as_array[0] = buf[3];
+	magnetic_field.mag_y.as_array[1] = buf[4];
+	magnetic_field.mag_y.as_array[0] = buf[5];
 }
 
 
