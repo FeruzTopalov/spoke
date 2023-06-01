@@ -60,6 +60,10 @@ void read_accel(void)
 	acceleration.acc_y.as_array[1] = buf[3];
 	acceleration.acc_z.as_array[0] = buf[4];
 	acceleration.acc_z.as_array[1] = buf[5];
+
+	acceleration.acc_x.as_integer /= 16;	//signed shift right 4 bit, align 12 bit data in 16 bit wide type
+	acceleration.acc_y.as_integer /= 16;
+	acceleration.acc_z.as_integer /= 16;
 }
 
 
