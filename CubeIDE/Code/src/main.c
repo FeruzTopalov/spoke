@@ -66,40 +66,7 @@ led_green_on();
     init_lrns();
     gps_init();
     i2c_init();
-
-    //****
-    uint8_t res = 0;
-    char buf[10];
-
-    //acc
-    res = i2c_read(0x32, 0x20); //CTRL_REG1_A default 00000111
-    itoa32(res, buf);
-    lcd_print(0, 0, buf, 0);
-
-    i2c_write(0x32, 0x20, 0x57); //acc en, 100 Hz ODR
-
-    res = i2c_read(0x32, 0x20); //CTRL_REG1_A
-    itoa32(res, buf);
-    lcd_print(0, 5, buf, 0);
-
-    lcd_update();
-
-	//mag
-    res = i2c_read(0x3C, 0x02);	//MR_REG_M default 00000011
-    itoa32(res, buf);
-    lcd_print(1, 0, buf, 0);
-
-    i2c_write(0x3C, 0x02, 0x00);	//magn en, continuous mode
-
-    res = i2c_read(0x3C, 0x02);	//MR_REG_M
-    itoa32(res, buf);
-    lcd_print(1, 5, buf, 0);
-
-    lcd_update();
-
-    while (1) {}
-    //****
-
+    init_compass();
     init_menu();
     init_memory_points();
     ext_int_init();

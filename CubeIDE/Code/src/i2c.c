@@ -108,49 +108,46 @@ uint8_t i2c_poll(uint8_t i2c_addr)
 
 void i2c_write(uint8_t i2c_addr, uint8_t reg_addr, uint8_t data)
 {
-	if (i2c_poll(i2c_addr))
+	uint8_t SR_tmp;
+
+	//Start
+	I2C1->CR1 |= I2C_CR1_START;
+	//Wait for start generated
+	while (!(I2C1->SR1 & I2C_SR1_SB))
 	{
-		uint8_t SR_tmp;
-
-		//Start
-		I2C1->CR1 |= I2C_CR1_START;
-		//Wait for start generated
-		while (!(I2C1->SR1 & I2C_SR1_SB))
-		{
-		}
-		//Clear
-		SR_tmp = I2C1->SR1;
-
-		//Device address
-		I2C1->DR = i2c_addr;
-		//Wait for address end of transmission
-		while (!(I2C1->SR1 & I2C_SR1_ADDR))
-		{
-		}
-		//Clear
-		SR_tmp = I2C1->SR1;
-		SR_tmp = I2C1->SR2;
-
-		//Reg address
-		I2C1->DR = reg_addr;
-		//Wait for data register empty
-		while (!(I2C1->SR1 & I2C_SR1_TXE))
-		{
-		}
-
-		//Write data
-		I2C1->DR = data;
-		//Wait byte transfer finish
-		while (!(I2C1->SR1 & I2C_SR1_BTF))
-		{
-		}
-
-		SR_tmp++;
-
-		//Stop
-		I2C1->CR1 |= I2C_CR1_STOP;
-		while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
 	}
+	//Clear
+	SR_tmp = I2C1->SR1;
+
+	//Device address
+	I2C1->DR = i2c_addr;
+	//Wait for address end of transmission
+	while (!(I2C1->SR1 & I2C_SR1_ADDR))
+	{
+	}
+	//Clear
+	SR_tmp = I2C1->SR1;
+	SR_tmp = I2C1->SR2;
+
+	//Reg address
+	I2C1->DR = reg_addr;
+	//Wait for data register empty
+	while (!(I2C1->SR1 & I2C_SR1_TXE))
+	{
+	}
+
+	//Write data
+	I2C1->DR = data;
+	//Wait byte transfer finish
+	while (!(I2C1->SR1 & I2C_SR1_BTF))
+	{
+	}
+
+	SR_tmp++;
+
+	//Stop
+	I2C1->CR1 |= I2C_CR1_STOP;
+	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
 }
 
 
@@ -158,76 +155,149 @@ void i2c_write(uint8_t i2c_addr, uint8_t reg_addr, uint8_t data)
 uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 {
     uint8_t result = 0;
+	uint16_t SR_tmp;
 
-    if (i2c_poll(i2c_addr))
-    {
-        uint16_t SR_tmp;
+	//Start
+	I2C1->CR1 |= I2C_CR1_START;
+	//Wait for start generated
+	while (!(I2C1->SR1 & I2C_SR1_SB))
+	{
+	}
+	//Clear
+	SR_tmp = I2C1->SR1;
 
-        //Start
-        I2C1->CR1 |= I2C_CR1_START;
-        //Wait for start generated
-        while (!(I2C1->SR1 & I2C_SR1_SB))
-        {
-        }
-        //Clear
-        SR_tmp = I2C1->SR1;
+	//Device address
+	I2C1->DR = i2c_addr;
+	//Wait for address end of transmission
+	while (!(I2C1->SR1 & I2C_SR1_ADDR))
+	{
+	}
+	//Clear
+	SR_tmp = I2C1->SR1;
+	SR_tmp = I2C1->SR2;
 
-        //Device address
-        I2C1->DR = i2c_addr;
-        //Wait for address end of transmission
-        while (!(I2C1->SR1 & I2C_SR1_ADDR))
-        {
-        }
-        //Clear
-        SR_tmp = I2C1->SR1;
-        SR_tmp = I2C1->SR2;
-
-        //Reg address
-        I2C1->DR = reg_addr;
-        //Wait for data register empty
-        while (!(I2C1->SR1 & I2C_SR1_TXE))
-        {
-        }
+	//Reg address
+	I2C1->DR = reg_addr;
+	//Wait for data register empty
+	while (!(I2C1->SR1 & I2C_SR1_TXE))
+	{
+	}
 
 
-        //Start (restart actually)
-        I2C1->CR1 |= I2C_CR1_START;
-        //Wait for start generated
-        while (!(I2C1->SR1 & I2C_SR1_SB))
-        {
-        }
-        //Clear
-        SR_tmp = I2C1->SR1;
+	//Start (restart actually)
+	I2C1->CR1 |= I2C_CR1_START;
+	//Wait for start generated
+	while (!(I2C1->SR1 & I2C_SR1_SB))
+	{
+	}
+	//Clear
+	SR_tmp = I2C1->SR1;
 
-        //Device address
-        I2C1->DR = (i2c_addr | 0x01);	//read mode bit set
-        //Wait for address end of transmission
-        while (!(I2C1->SR1 & I2C_SR1_ADDR))
-        {
-        }
-        //Clear
-        SR_tmp = I2C1->SR1;
-        SR_tmp = I2C1->SR2;
+	//Device address
+	I2C1->DR = (i2c_addr | 0x01);	//read mode bit set
+	//Wait for address end of transmission
+	while (!(I2C1->SR1 & I2C_SR1_ADDR))
+	{
+	}
+	//Clear
+	SR_tmp = I2C1->SR1;
+	SR_tmp = I2C1->SR2;
 
-        //NACK next byte
-        I2C1->CR1 &= ~I2C_CR1_ACK;
-        //Stop
-        I2C1->CR1 |= I2C_CR1_STOP;
-        while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
-        //Wait for data register not empty
-        while (!(I2C1->SR1 & I2C_SR1_RXNE))
-        {
-        }
+	//NACK next byte
+	I2C1->CR1 &= ~I2C_CR1_ACK;
+	//Stop
+	I2C1->CR1 |= I2C_CR1_STOP;
+	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE))
+	{
+	}
 
-        SR_tmp = SR_tmp + 1;
+	SR_tmp = SR_tmp + 1;
 
-        //Read requested byte
-        result = I2C1->DR;
-    }
-    else
-    {
-        result = 0;
-    }
+	//Read requested byte
+	result = I2C1->DR;
 
     return result;
+}
+
+
+
+void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t *buffer)
+{
+	uint8_t SR_tmp;
+
+	//Start
+	I2C1->CR1 |= I2C_CR1_START;
+	//Wait for start generated
+	while (!(I2C1->SR1 & I2C_SR1_SB))
+	{
+	}
+	//Clear
+	SR_tmp = I2C1->SR1;
+
+	//Device address
+	I2C1->DR = i2c_addr;
+	//Wait for address end of transmission
+	while (!(I2C1->SR1 & I2C_SR1_ADDR))
+	{
+	}
+	//Clear
+	SR_tmp = I2C1->SR1;
+	SR_tmp = I2C1->SR2;
+
+	//Reg address
+	I2C1->DR = reg_addr;
+	//Wait for data register empty
+	while (!(I2C1->SR1 & I2C_SR1_TXE))
+	{
+	}
+
+
+	//Start (restart actually)
+	I2C1->CR1 |= I2C_CR1_START;
+	//Wait for start generated
+	while (!(I2C1->SR1 & I2C_SR1_SB))
+	{
+	}
+	//Clear
+	SR_tmp = I2C1->SR1;
+
+	//Device address
+	I2C1->DR = (i2c_addr | 0x01);	//read mode bit set
+	//Wait for address end of transmission
+	while (!(I2C1->SR1 & I2C_SR1_ADDR))
+	{
+	}
+	//Clear
+	SR_tmp = I2C1->SR1;
+	SR_tmp = I2C1->SR2;
+
+	for (uint8_t i = 0; i < size - 1; i++)
+	{
+		//ACK next byte
+		I2C1->CR1 |= I2C_CR1_ACK;
+		//Wait for data register not empty
+		while (!(I2C1->SR1 & I2C_SR1_RXNE))
+		{
+		}
+
+		//Read byte
+		buffer[i] = I2C1->DR;
+	}
+
+	//NACK last byte
+	I2C1->CR1 &= ~I2C_CR1_ACK;
+	//Stop
+	I2C1->CR1 |= I2C_CR1_STOP;
+	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE))
+	{
+	}
+
+	//Read last byte
+	buffer[size - 1] = I2C1->DR;
+
+	SR_tmp = SR_tmp + 1;
 }
