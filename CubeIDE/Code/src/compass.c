@@ -34,6 +34,11 @@ void init_compass(void)
 
 
 
+			read_accel();
+			read_magn();
+
+
+
 			lcd_print(0, 0, "ACC", 0);
 
 			lcd_print(1, 0, "X", 0);
@@ -67,7 +72,7 @@ void init_compass(void)
 
 
 			lcd_update();
-			delay_cyc(10000);
+			delay_cyc(100000);
 		}
 	}
 }

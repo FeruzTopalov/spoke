@@ -247,7 +247,7 @@ void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t
 	SR_tmp = I2C1->SR2;
 
 	//Reg address
-	I2C1->DR = reg_addr;
+	I2C1->DR = (reg_addr | 0x80);	//to read multiple bytes of lsm303dlhc
 	//Wait for data register empty
 	while (!(I2C1->SR1 & I2C_SR1_TXE))
 	{
