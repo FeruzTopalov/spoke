@@ -7,6 +7,7 @@
 
 
 #include "stm32f10x.h"
+#include <math.h>
 #include "i2c.h"
 #include "compass.h"
 #include "sensors.h"
@@ -219,6 +220,7 @@ void init_compass(void)
 		lcd_pixel(64, 32, 1);
 		lcd_print(0, 0, "HS", 0);
 
+
 		for (uint16_t i = 0; i < BUF_LEN; i++)
 		{
 			x_dot = (uint8_t)(((float)buf_mag_x[i] - offset_x) * scale_x * scale + 64);
@@ -228,6 +230,33 @@ void init_compass(void)
 
 		//view
 		lcd_update();
-		while (1){}
+		delay_cyc(2000000);
+
+
+		//compass
+		float comp_x, comp_y;
+		float north;
+		float x1, y1;
+
+		while (1)
+		{
+			//read magnetometr
+			read_magn();
+
+			comp_x = (p_magnetic_field->mag_x.as_integer - offset_x) * scale_x;
+			comp_y = (p_magnetic_field->mag_y.as_integer - offset_y) * scale_y;
+
+			north = atan2(comp_y, comp_x) + 1.5707963267;	// + pi/2
+
+			x1 = 63 + 25 * sin(north);
+			y1 = 31 - 25 * cos(north);
+
+			lcd_clear();
+			lcd_draw_line(63, 31, x1, y1);
+
+			//view
+			lcd_update();
+			delay_cyc(20000);
+		}
 	}
 }
