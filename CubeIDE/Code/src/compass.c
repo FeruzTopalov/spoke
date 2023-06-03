@@ -28,51 +28,103 @@ void init_compass(void)
 		p_acceleration = get_acceleration();
 		p_magnetic_field = get_magnetic_field();
 
+		#define BUF_LEN (360)
+		int16_t buf_mag_x[BUF_LEN] = {0};
+		int16_t buf_mag_y[BUF_LEN] = {0};
+		uint16_t buf_pointer = 0;
+
+		int16_t abs_x_max = 0;
+		int16_t abs_y_max = 0;
+
 		while (1)
 		{
 			lcd_clear();
 
+			//print buf_pointer
+			itoa32(buf_pointer, buf);
+			lcd_print(0, 0, buf, 0);
 
-
-			read_accel();
+			//read magnetometr
 			read_magn();
 
+			//limit values
+			if (p_magnetic_field->mag_x.as_integer > 2047)
+			{
+				p_magnetic_field->mag_x.as_integer = 2047;
+			}
+			else if (p_magnetic_field->mag_x.as_integer < -2048)
+			{
+				p_magnetic_field->mag_x.as_integer = -2048;
+			}
 
+			if (p_magnetic_field->mag_y.as_integer > 2047)
+			{
+				p_magnetic_field->mag_y.as_integer = 2047;
+			}
+			else if (p_magnetic_field->mag_y.as_integer < -2048)
+			{
+				p_magnetic_field->mag_y.as_integer = -2048;
+			}
 
-			lcd_print(0, 0, "ACC", 0);
+			//find abs max
+			int8_t sign_x = 1;
+			if (p_magnetic_field->mag_x.as_integer < 0)
+			{
+				sign_x = -1;
+			}
 
-			lcd_print(1, 0, "X", 0);
-			itoa32(p_acceleration->acc_x.as_integer, buf);
-			lcd_print(1, 2, buf, 0);
+			if (p_magnetic_field->mag_x.as_integer * sign_x > abs_x_max)
+			{
+				abs_x_max = p_magnetic_field->mag_x.as_integer * sign_x;
+			}
 
-			lcd_print(2, 0, "Y", 0);
-			itoa32(p_acceleration->acc_y.as_integer, buf);
-			lcd_print(2, 2, buf, 0);
+			int8_t sign_y = 1;
+			if (p_magnetic_field->mag_y.as_integer < 0)
+			{
+				sign_y = -1;
+			}
 
-			lcd_print(3, 0, "Z", 0);
-			itoa32(p_acceleration->acc_z.as_integer, buf);
-			lcd_print(3, 2, buf, 0);
+			if (p_magnetic_field->mag_y.as_integer * sign_y > abs_y_max)
+			{
+				abs_y_max = p_magnetic_field->mag_y.as_integer * sign_y;
+			}
 
+			//store values
+			buf_mag_x[buf_pointer] = p_magnetic_field->mag_x.as_integer;
+			buf_mag_y[buf_pointer] = p_magnetic_field->mag_y.as_integer;
 
+			if (buf_pointer == (BUF_LEN - 1))
+			{
+				buf_pointer = 0;
+			}
+			else
+			{
+				buf_pointer++;
+			}
 
-			lcd_print(0, 9, "MAG", 0);
+			//draw
+			uint8_t x_dot, y_dot;
+			float scale;
 
-			lcd_print(1, 9, "X", 0);
-			itoa32(p_magnetic_field->mag_x.as_integer, buf);
-			lcd_print(1, 11, buf, 0);
+			if (abs_x_max > abs_y_max)
+			{
+				scale = (float)32/abs_x_max;
+			}
+			else
+			{
+				scale = (float)32/abs_y_max;
+			}
 
-			lcd_print(2, 9, "Y", 0);
-			itoa32(p_magnetic_field->mag_y.as_integer, buf);
-			lcd_print(2, 11, buf, 0);
+			for (uint16_t i = 0; i < BUF_LEN; i++)
+			{
+				x_dot = (uint8_t)((float)buf_mag_x[i] * scale + 64);
+				y_dot = (uint8_t)((float)buf_mag_y[i] * scale + 32);
+				lcd_pixel(x_dot, y_dot, 1);
+			}
 
-			lcd_print(3, 9, "Z", 0);
-			itoa32(p_magnetic_field->mag_z.as_integer, buf);
-			lcd_print(3, 11, buf, 0);
-
-
-
+			//view
 			lcd_update();
-			delay_cyc(25000);
+			delay_cyc(5000);
 		}
 	}
 }
