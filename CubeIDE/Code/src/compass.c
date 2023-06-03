@@ -184,9 +184,10 @@ void init_compass(void)
 			scale = (float)32/abs_y_max;
 		}
 
-		//draw with offset
+		//draw with hard offset
 		lcd_clear();
 		lcd_pixel(64, 32, 1);
+		lcd_print(0, 0, "H", 0);
 
 		uint8_t x_dot, y_dot;
 		for (uint16_t i = 0; i < BUF_LEN; i++)
@@ -196,6 +197,36 @@ void init_compass(void)
 			lcd_pixel(x_dot, y_dot, 1);
 		}
 
+		//view
+		lcd_update();
+		delay_cyc(2000000);
+
+
+		//soft iron compensation (simple)
+		int16_t avg_delta_x, avg_delta_y;
+		avg_delta_x = (x_max - x_min) / 2;
+		avg_delta_y = (y_max - y_min) / 2;
+
+		int16_t avg_delta;
+		avg_delta = (avg_delta_x + avg_delta_y) / 2;
+
+		float scale_x, scale_y;
+		scale_x = (float)avg_delta / avg_delta_x;
+		scale_y = (float)avg_delta / avg_delta_y;
+
+		//draw with hard & soft offset
+		lcd_clear();
+		lcd_pixel(64, 32, 1);
+		lcd_print(0, 0, "HS", 0);
+
+		for (uint16_t i = 0; i < BUF_LEN; i++)
+		{
+			x_dot = (uint8_t)(((float)buf_mag_x[i] - offset_x) * scale_x * scale + 64);
+			y_dot = (uint8_t)(((float)buf_mag_y[i] - offset_y)* scale_y * scale + 32);
+			lcd_pixel(x_dot, y_dot, 1);
+		}
+
+		//view
 		lcd_update();
 		while (1){}
 	}
