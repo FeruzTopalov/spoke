@@ -33,17 +33,24 @@ void init_compass(void)
 		int16_t buf_mag_y[BUF_LEN] = {0};
 		uint16_t buf_pointer = 0;
 
+		float scale;
+		int16_t abs_x_max;
+		int16_t abs_y_max;
+
 		int16_t x_max = 0;
 		int16_t x_min = 0;
 		int16_t y_max = 0;
 		int16_t y_min = 0;
 
-		int16_t offset_x = 0;
-		int16_t offset_y = 0;
+		//init min/max
+		read_magn();
+		x_max = x_min = p_magnetic_field->mag_x.as_integer;
+		y_max = y_min = p_magnetic_field->mag_y.as_integer;
 
-		while (1)
+		for (buf_pointer = 0; buf_pointer < BUF_LEN; buf_pointer++)
 		{
 			lcd_clear();
+			lcd_pixel(64, 32, 1);
 
 			//print buf_pointer
 			itoa32(buf_pointer, buf);
@@ -75,55 +82,26 @@ void init_compass(void)
 			buf_mag_x[buf_pointer] = p_magnetic_field->mag_x.as_integer;
 			buf_mag_y[buf_pointer] = p_magnetic_field->mag_y.as_integer;
 
-			if (buf_pointer == (BUF_LEN - 1))
-			{
-				buf_pointer = 0;
-				offset_x = (x_max + x_min) / 2;
-				offset_y = (y_max + y_min) / 2;
-
-				x_max = 0;
-				x_min = 0;
-				y_max = 0;
-				y_min = 0;
-			}
-			else
-			{
-				buf_pointer++;
-			}
-
 			//find max/min
-			float scale;
-			int16_t abs_x_max;
-			int16_t abs_y_max;
 
-			if (p_magnetic_field->mag_x.as_integer < 0)
+			if (p_magnetic_field->mag_x.as_integer < x_min)
 			{
-				if (p_magnetic_field->mag_x.as_integer < x_min)
-				{
-					x_min = p_magnetic_field->mag_x.as_integer;
-				}
-			}
-			else
-			{
-				if (p_magnetic_field->mag_x.as_integer > x_max)
-				{
-					x_max = p_magnetic_field->mag_x.as_integer;
-				}
+				x_min = p_magnetic_field->mag_x.as_integer;
 			}
 
-			if (p_magnetic_field->mag_y.as_integer < 0)
+			if (p_magnetic_field->mag_x.as_integer > x_max)
 			{
-				if (p_magnetic_field->mag_y.as_integer < y_min)
-				{
-					y_min = p_magnetic_field->mag_y.as_integer;
-				}
+				x_max = p_magnetic_field->mag_x.as_integer;
 			}
-			else
+
+			if (p_magnetic_field->mag_y.as_integer < y_min)
 			{
-				if (p_magnetic_field->mag_y.as_integer > y_max)
-				{
-					y_max = p_magnetic_field->mag_y.as_integer;
-				}
+				y_min = p_magnetic_field->mag_y.as_integer;
+			}
+
+			if (p_magnetic_field->mag_y.as_integer > y_max)
+			{
+				y_max = p_magnetic_field->mag_y.as_integer;
 			}
 
 			if (x_max > x_min * -1)
@@ -157,8 +135,8 @@ void init_compass(void)
 			uint8_t x_dot, y_dot;
 			for (uint16_t i = 0; i < BUF_LEN; i++)
 			{
-				x_dot = (uint8_t)(((float)buf_mag_x[i] - offset_x) * scale + 64);
-				y_dot = (uint8_t)(((float)buf_mag_y[i] - offset_y) * scale + 32);
+				x_dot = (uint8_t)((float)buf_mag_x[i] * scale + 64);
+				y_dot = (uint8_t)((float)buf_mag_y[i] * scale + 32);
 				lcd_pixel(x_dot, y_dot, 1);
 			}
 
@@ -166,5 +144,59 @@ void init_compass(void)
 			lcd_update();
 			delay_cyc(5000);
 		}
+
+		//calc offset for hard iron
+		int16_t offset_x = 0;
+		int16_t offset_y = 0;
+		offset_x = (x_max + x_min) / 2;
+		offset_y = (y_max + y_min) / 2;
+
+		//recalc scale
+		x_max -= offset_x;
+		x_min -= offset_x;
+		y_max -= offset_y;
+		y_min -= offset_y;
+
+		if (x_max > x_min * -1)
+		{
+			abs_x_max = x_max;
+		}
+		else
+		{
+			abs_x_max = x_min * -1;
+		}
+
+		if (y_max > y_min * -1)
+		{
+			abs_y_max = y_max;
+		}
+		else
+		{
+			abs_y_max = y_min * -1;
+		}
+
+		if (abs_x_max > abs_y_max)
+		{
+			scale = (float)32/abs_x_max;
+		}
+		else
+		{
+			scale = (float)32/abs_y_max;
+		}
+
+		//draw with offset
+		lcd_clear();
+		lcd_pixel(64, 32, 1);
+
+		uint8_t x_dot, y_dot;
+		for (uint16_t i = 0; i < BUF_LEN; i++)
+		{
+			x_dot = (uint8_t)(((float)buf_mag_x[i] - offset_x) * scale + 64);
+			y_dot = (uint8_t)(((float)buf_mag_y[i] - offset_y) * scale + 32);
+			lcd_pixel(x_dot, y_dot, 1);
+		}
+
+		lcd_update();
+		while (1){}
 	}
 }
