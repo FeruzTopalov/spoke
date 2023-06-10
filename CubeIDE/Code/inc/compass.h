@@ -11,5 +11,6 @@
 
 void init_compass(void);
 void calibrate_compass(void);
+float get_north(void);
 
 #endif /*COMPASS_HEADER*/

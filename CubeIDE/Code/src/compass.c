@@ -39,6 +39,28 @@ void init_compass(void)
 	{
 		calibrate_compass();
 	}
+
+	while (1)
+	{
+		float north;
+		float x1, y1;
+		char buf[15];
+
+		north = get_north();
+
+		x1 = 63 + 25 * sin(north);
+		y1 = 31 - 25 * cos(north);
+
+		lcd_clear();
+
+		ftoa32(north, 3, buf);
+		lcd_print(0, 0, buf, 0);
+		lcd_draw_line(63, 31, x1, y1);
+
+		//view
+		lcd_update();
+		delay_cyc(20000);
+	}
 }
 
 
@@ -112,7 +134,7 @@ restart_cal:
 		read_magn();
 
 		//limit and store values
-		buf_x[pt] = limit_to(p_magnetic_field->mag_x.as_integer, 2047, -2048);
+		buf_x[pt] = limit_to(p_magnetic_field->mag_x.as_integer, 2047, -2048);	//todo: move to read_magn()
 		buf_y[pt] = limit_to(p_magnetic_field->mag_y.as_integer, 2047, -2048);
 
 		//find max/min
@@ -247,7 +269,7 @@ restart_cal:
 //    lcd_update();
 //
 //    delay_cyc(300000);
-//    while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click to start cal
+//    while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click
 
     //save calibration in settings
     settings_copy.magn_offset_x = offset_x;
@@ -255,4 +277,22 @@ restart_cal:
     settings_copy.magn_scale_x.as_float = scale_x;
     settings_copy.magn_scale_y.as_float = scale_y;
     settings_save(&settings_copy);
+
+    //reset MCU
+    delay_cyc(200000);
+    NVIC_SystemReset();
+}
+
+
+
+float get_north(void)
+{
+	float comp_x, comp_y;
+
+	read_magn();
+
+	comp_x = (p_magnetic_field->mag_x.as_integer - p_settings->magn_offset_x) * p_settings->magn_scale_x.as_float;
+	comp_y = (p_magnetic_field->mag_y.as_integer - p_settings->magn_offset_y) * p_settings->magn_scale_y.as_float;
+
+	return (atan2(comp_y, comp_x));		// + ?
 }
