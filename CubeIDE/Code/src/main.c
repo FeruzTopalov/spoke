@@ -26,6 +26,7 @@
 #include "radio.h"
 #include "sx126x.h"
 #include "i2c.h"
+#include "compass.h"
 
 
 
