@@ -53,10 +53,11 @@ void calibrate_compass(void)
 	#define LCD_CNTR_X (64)
 	#define LCD_CNTR_Y (32)
 
-	#define BUF_LEN (100)
+	#define BUF_LEN (180)
 	int16_t buf_x[BUF_LEN] = {0};
 	int16_t buf_y[BUF_LEN] = {0};
 
+	#define STOP_TOL (25)
 	int16_t x_start = 0;
 	int16_t y_start = 0;
 	int16_t x_max = 0;
@@ -124,6 +125,19 @@ void calibrate_compass(void)
 		//view
 		lcd_update();
 		delay_cyc(5000);
+
+		//auto-stop if we reached initial values (i.e. completed turnaround)
+		if (pt > (BUF_LEN / 2)) //only if we already acquired more than a half of buffer
+		{
+			int16_t diff_x, diff_y;
+			diff_x = absv(buf_x[pt] - x_start);
+			diff_y = absv(buf_y[pt] - y_start);
+
+			if ((diff_x < STOP_TOL) && (diff_y < STOP_TOL))
+			{
+				break; //exit for loop
+			}
+		}
 	}
 
 
