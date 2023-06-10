@@ -225,6 +225,7 @@ void lcd_clear(void)
 
 
 //Clear, Set or Reset any pixel on the screen (x 0-127, y 0-63)
+//(0, 0) is top left corner
 void lcd_pixel(uint8_t x, uint8_t y, int8_t action)
 {
     switch (action)
@@ -244,9 +245,21 @@ void lcd_pixel(uint8_t x, uint8_t y, int8_t action)
 
 
 //Set any pixel on the screen (x 0-127, y 0-63)
+//(0, 0) is top left corner
 void lcd_set_pixel(uint8_t x, uint8_t y)
 {
     //set pixel
+    screen_buf[x + (y / 8) * LCD_SIZE_X] |= 1 << (y % 8);			//todo: use bit band instead
+}
+
+
+
+//Set any pixel on the screen for XY plot (x 0-127, y 0-63)
+//(0, 0) is bottom left corner
+void lcd_set_pixel_plot(uint8_t x, uint8_t y)
+{
+    //set pixel
+	y = 63 - y;
     screen_buf[x + (y / 8) * LCD_SIZE_X] |= 1 << (y % 8);			//todo: use bit band instead
 }
 

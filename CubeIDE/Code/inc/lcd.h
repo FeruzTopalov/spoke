@@ -44,6 +44,7 @@ void lcd_fill(void);
 void lcd_clear(void);
 void lcd_pixel(uint8_t x, uint8_t y, int8_t action);
 void lcd_set_pixel(uint8_t x, uint8_t y);
+void lcd_set_pixel_plot(uint8_t x, uint8_t y);
 void lcd_pos(uint8_t row, uint8_t col);
 void lcd_char(char chr, uint8_t inv);
 void lcd_char16(char chr, uint8_t inv);

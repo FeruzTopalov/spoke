@@ -7,6 +7,7 @@
 
 
 #include "stm32f10x.h"
+#include <string.h>
 #include <math.h>
 #include "i2c.h"
 #include "compass.h"
@@ -29,19 +30,8 @@ void init_compass(void)
 	p_magnetic_field = get_magnetic_field();
 
 	//start calibration if requested
-	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//if DOWN button was pressed upon power up
+	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//if DOWN button is pressed upon power up
 	{
-		lcd_clear();
-		lcd_print(0, 3, "Compass cal", 0);
-		lcd_print(1, 0, "- hold horizont.", 0);
-		lcd_print(2, 0, "- click DOWN", 0);
-		lcd_print(3, 0, "- turnaround 360", 0);
-		lcd_update();
-
-		while (!((GPIOB->IDR) & GPIO_IDR_IDR3)){}	//wait for user release DOWN/ESC after power up
-		delay_cyc(300000);	//hold on for a moment
-		while ((GPIOB->IDR) & GPIO_IDR_IDR3){}		//wait for DOWN/ESC click to start cal
-
 		calibrate_compass();
 	}
 }
@@ -54,29 +44,49 @@ void calibrate_compass(void)
 	#define LCD_CNTR_Y (32)
 
 	#define BUF_LEN (180)
-	uint16_t len_tot = 0;
-	int16_t buf_x[BUF_LEN] = {0};
-	int16_t buf_y[BUF_LEN] = {0};
+	uint16_t len_tot;
+	int16_t buf_x[BUF_LEN];
+	int16_t buf_y[BUF_LEN];
 
 	#define STOP_TOL (30)	//tolerance on auto-stop condition
-	int16_t x_start = 0;
-	int16_t y_start = 0;
-	int16_t x_max = 0;
-	int16_t x_min = 0;
-	int16_t y_max = 0;
-	int16_t y_min = 0;
+	int16_t x_start;
+	int16_t y_start;
+	int16_t x_max;
+	int16_t x_min;
+	int16_t y_max;
+	int16_t y_min;
 
-	int16_t pos_max = 0;
-	int16_t neg_max = 0;
-	int16_t abs_max = 0;
+	int16_t pos_max;
+	int16_t neg_max;
+	int16_t abs_max;
 
-	float plot_scale = 0;
+	float plot_scale;
 	char buf[15];	//for lcd prints
 
-	//begin
+restart_cal:
+	//init vars
+	len_tot = 0;
+	x_start = 0;
+	y_start = 0;
+	x_max = 0;
+	x_min = 0;
+	y_max = 0;
+	y_min = 0;
+	pos_max = 0;
+	neg_max = 0;
+	abs_max = 0;
+	plot_scale = 0;
+	memset(buf_x, 0, 2 * BUF_LEN);
+	memset(buf_y, 0, 2 * BUF_LEN);
+
+	//print instruction
 	lcd_clear();
-	lcd_print(0, 0, "start", 0);
+	lcd_print(0, 3, "Compass cal", 0);
+	lcd_print(1, 0, "-Hold horizont.", 0);
+	lcd_print(2, 0, "-Click OK", 0);
+	lcd_print(3, 0, "-Turnaround 360", 0);
 	lcd_update();
+	while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click to start cal
 
 	//init start value and min/max values
 	read_magn();
@@ -118,7 +128,7 @@ void calibrate_compass(void)
 			uint8_t x_dot, y_dot;
 			x_dot = (uint8_t)((float)buf_x[i] * plot_scale + LCD_CNTR_X);
 			y_dot = (uint8_t)((float)buf_y[i] * plot_scale + LCD_CNTR_Y);
-			lcd_set_pixel(x_dot, y_dot);
+			lcd_set_pixel_plot(x_dot, y_dot);
 		}
 
 		//view
@@ -192,11 +202,30 @@ void calibrate_compass(void)
 		uint8_t x_dot, y_dot;
 		x_dot = (uint8_t)((float)buf_x[i] * plot_scale + LCD_CNTR_X);
 		y_dot = (uint8_t)((float)buf_y[i] * plot_scale + LCD_CNTR_Y);
-		lcd_set_pixel(x_dot, y_dot);
+		lcd_set_pixel_plot(x_dot, y_dot);
 	}
+	lcd_print(0, 0, "Done", 0);
 	lcd_update();
 
+	while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click to continue
 
+	lcd_clear();
+    lcd_print(0, 3, "Calibrated!", 0);
+    lcd_print(2, 0, "OK save & reboot", 0);
+    lcd_print(3, 3, "ESC restart", 0);
+    lcd_update();
+    delay_cyc(300000);
 
-	while (1){}
+    while (1)
+    {
+    	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for restart
+    	{
+    		goto restart_cal;
+    	}
+
+    	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for save
+    	{
+    		break;
+    	}
+    }
 }
