@@ -25,6 +25,7 @@
 #include "gps.h"
 #include "radio.h"
 #include "sx126x.h"
+#include "i2c.h"
 
 
 
@@ -50,9 +51,7 @@ uint8_t *p_update_interval_values;
 int main(void)
 {
     gpio_init();
-    release_power();	//set switch off position
-	delay_cyc(600000); //startup delay ~2sec
-	hold_power();
+    manage_power();
 
 led_red_on();
 led_green_on();
@@ -66,6 +65,8 @@ led_green_on();
     rf_init();
     init_lrns();
     gps_init();
+    i2c_init();
+    init_compass();
     init_menu();
     init_memory_points();
     ext_int_init();

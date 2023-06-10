@@ -16,7 +16,7 @@
 
 
 
-//#define LCD_SSD1306
+//#define LCD_SSD1306		//todo: delete 1306
 #define LCD_SH1106
 
 
