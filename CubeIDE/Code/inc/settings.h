@@ -88,6 +88,22 @@ struct settings_struct
     int8_t time_zone_hour;				//can be 0 ... 14 if time_zone_dir = 1; and 0 ... 12 if time_zone_dir = -1
 
     int8_t time_zone_minute;			//can be 0, 15, 30, 45
+
+    int16_t magn_offset_x;				//magnetometer offset X for hard iron compensation
+
+    int16_t magn_offset_y;				//magnetometer offset Y for hard iron compensation
+
+	union
+	{
+		float as_float;         		//magnetometer scale X for soft iron compensation
+		uint16_t as_array[2];
+	} magn_scale_x;
+
+	union
+	{
+		float as_float;         		//magnetometer scale Y for soft iron compensation
+		uint16_t as_array[2];
+	} magn_scale_y;
 };
 
 

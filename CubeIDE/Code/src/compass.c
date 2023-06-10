@@ -14,11 +14,14 @@
 #include "sensors.h"
 #include "service.h"
 #include "lcd.h"
+#include "settings.h"
 
 
 
 struct acc_data *p_acceleration;
 struct mag_data *p_magnetic_field;
+struct settings_struct *p_settings;
+struct settings_struct settings_copy;
 
 
 
@@ -28,6 +31,8 @@ void init_compass(void)
 	init_magnetometer();
 	p_acceleration = get_acceleration();
 	p_magnetic_field = get_magnetic_field();
+	p_settings = get_settings();
+	settings_copy = *p_settings;
 
 	//start calibration if requested
 	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//if DOWN button is pressed upon power up
@@ -216,7 +221,7 @@ restart_cal:
     lcd_update();
     delay_cyc(300000);
 
-    while (1)
+    while (1)	//wait for user's decision
     {
     	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for restart
     	{
@@ -228,4 +233,11 @@ restart_cal:
     		break;
     	}
     }
+
+    //save calibration in settings
+    settings_copy.magn_offset_x = offset_x;
+    settings_copy.magn_offset_y = offset_y;
+    settings_copy.magn_scale_x.as_float = scale_x;
+    settings_copy.magn_scale_y.as_float = scale_y;
+    settings_save(&settings_copy);
 }
