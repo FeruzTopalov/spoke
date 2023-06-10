@@ -234,6 +234,21 @@ restart_cal:
     	}
     }
 
+//DEBUG OUT
+//	lcd_clear();
+//	itoa32(offset_x, buf);
+//    lcd_print(0, 0, buf, 0);
+//	itoa32(offset_y, buf);
+//    lcd_print(1, 0, buf, 0);
+//	ftoa32(scale_x, 5, buf);
+//    lcd_print(2, 0, buf, 0);
+//    ftoa32(scale_y, 5, buf);
+//    lcd_print(3, 0, buf, 0);
+//    lcd_update();
+//
+//    delay_cyc(300000);
+//    while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click to start cal
+
     //save calibration in settings
     settings_copy.magn_offset_x = offset_x;
     settings_copy.magn_offset_y = offset_y;
