@@ -294,5 +294,5 @@ float get_north(void)
 	comp_x = (p_magnetic_field->mag_x.as_integer - p_settings->magn_offset_x) * p_settings->magn_scale_x.as_float;
 	comp_y = (p_magnetic_field->mag_y.as_integer - p_settings->magn_offset_y) * p_settings->magn_scale_y.as_float;
 
-	return (atan2(comp_y, comp_x));		// + ?
+	return (atan2(comp_y, -comp_x) - 1.57079633);		// invert X axis to have angles counting CW; subtract pi/2
 }
