@@ -15,6 +15,7 @@
 #include "service.h"
 #include "lcd.h"
 #include "settings.h"
+#include "gpio.h"
 
 
 
@@ -46,7 +47,9 @@ void init_compass(void)
 		float x1, y1;
 		char buf[15];
 
+		led_green_on();
 		north = get_north();
+		led_green_off();
 
 		x1 = 63 + 25 * sin(north);
 		y1 = 31 - 25 * cos(north);
