@@ -92,16 +92,11 @@ led_green_off();
     while (1)
     {
     	//Scan Keys
-    	if (main_flags.scan_buttons == 1)
+    	if (main_flags.buttons_scanned == 1)
     	{
-    		main_flags.scan_buttons = 0;
-    		button_code = scan_button(processing_button);
-
-    		if (button_code)
-    		{
-    			change_menu(button_code);
-    			main_flags.menu_changed = 1;
-    		}
+    		main_flags.buttons_scanned = 0;
+			change_menu(button_code);
+			main_flags.menu_changed = 1;
     	}
 
 
@@ -353,7 +348,15 @@ void TIM1_UP_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
 	TIM3->SR &= ~TIM_SR_UIF;        //clear gating timer int
-	main_flags.scan_buttons = 1;
+
+	if (main_flags.buttons_scanned == 0)	//if not scanned yet
+	{
+		button_code = scan_button(processing_button);
+		if (button_code)
+		{
+			main_flags.buttons_scanned = 1;
+		}
+	}
 }
 
 

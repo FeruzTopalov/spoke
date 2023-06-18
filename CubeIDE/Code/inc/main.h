@@ -12,7 +12,7 @@
 
 struct main_flags_struct
 {
-    uint8_t scan_buttons;
+    uint8_t buttons_scanned;
     uint8_t parse_nmea;
     uint8_t update_screen;
     uint8_t run_frame;
