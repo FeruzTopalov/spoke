@@ -41,6 +41,8 @@ void init_compass(void)
 		calibrate_compass();
 	}
 
+/*
+ 	//compass section
 	while (1)
 	{
 		float north;
@@ -64,6 +66,7 @@ void init_compass(void)
 		lcd_update();
 		delay_cyc(20000);
 	}
+*/
 }
 
 

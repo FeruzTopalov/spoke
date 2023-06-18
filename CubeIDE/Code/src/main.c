@@ -399,4 +399,13 @@ void SysTick_Handler(void)
 
 
 
+void TIM4_IRQHandler(void)
+{
+	led_green_on();
+	delay_cyc(100);
+	led_green_off();
+}
+
+
+
 //todo: setupt ints priorities
