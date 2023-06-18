@@ -74,6 +74,9 @@ void navigation_ok(void);
 void scroll_devices_up(void);
 void navigation_and_coordinates_up(void);
 void navigation_and_coordinates_down(void);
+void navigation_esc(void);
+void coordinates_esc(void);
+void main_ok(void);
 void main_navigation_coordinates_pwr_long(void);
 void power_ok(void);
 void power_esc(void);
@@ -246,9 +249,12 @@ const struct
 	{M_NAVIGATION,				BTN_OK,					navigation_ok},
 	{M_NAVIGATION,				BTN_UP,					navigation_and_coordinates_up},
 	{M_NAVIGATION,				BTN_DOWN,				navigation_and_coordinates_down},
+	{M_NAVIGATION,				BTN_ESC,				navigation_esc},
 	{M_COORDINATES,				BTN_OK,					coordinates_ok},
 	{M_COORDINATES,				BTN_UP,					navigation_and_coordinates_up},
 	{M_COORDINATES,				BTN_DOWN,				navigation_and_coordinates_down},
+	{M_COORDINATES,				BTN_ESC,				coordinates_esc},
+	{M_MAIN,					BTN_OK,					main_ok},
 	{M_MAIN,					BTN_PWR_LONG,			main_navigation_coordinates_pwr_long},
 	{M_NAVIGATION,				BTN_PWR_LONG,			main_navigation_coordinates_pwr_long},
 	{M_COORDINATES,				BTN_PWR_LONG,			main_navigation_coordinates_pwr_long},
@@ -307,9 +313,6 @@ const struct
 } menu_forward_table[] = 
 {
 //  Current Menu                Current Item                		Next Menu
-    {M_MAIN,                    M_MAIN_I_NAVIGATION,           		M_NAVIGATION},
-    {M_MAIN,                    M_MAIN_I_SETTINGS,          		M_SETTINGS},
-    {M_MAIN,                    M_MAIN_I_INFO,              		M_INFO},
 	{M_DEVICE_SUBMENU,			M_DEVICE_SUBMENU_I_SAVE,			M_SAVE_DEVICE},
 	{M_DEVICE_SUBMENU,			M_DEVICE_SUBMENU_I_DELETE,			M_DELETE_DEVICE},
 	{M_SETTINGS,				M_SETTINGS_I_DEVICE,				M_EDIT_DEVICE},
@@ -1362,6 +1365,7 @@ void navigation_ok(void)
 {
 	current_menu = M_COORDINATES;
 	//draw_current_menu();
+	timer4_stop(); //stop compass activity
 }
 
 
@@ -1414,8 +1418,47 @@ void navigation_and_coordinates_down(void)
 
 
 
+void navigation_esc(void)
+{
+	timer4_stop();	//stop compass activity
+	current_menu = M_MAIN;
+}
+
+
+
+void coordinates_esc(void)
+{
+	timer4_start();	//stop compass activity
+	current_menu = M_NAVIGATION;
+}
+
+
+
+void main_ok(void)
+{
+	switch (get_current_item())
+	{
+		case M_MAIN_I_NAVIGATION:
+			timer4_start();					//start compass activity
+			current_menu = M_NAVIGATION;
+			break;
+		case M_MAIN_I_SETTINGS:
+			current_menu = M_SETTINGS;
+			break;
+		case M_MAIN_I_INFO:
+			current_menu = M_INFO;
+			break;
+	}
+}
+
+
+
 void main_navigation_coordinates_pwr_long(void)
 {
+	if (current_menu == M_NAVIGATION)
+	{
+		timer4_stop(); //stop compass activity
+	}
 	return_from_power_menu = current_menu;
 	current_menu = M_POWER;
 	//draw_current_menu();
@@ -1450,6 +1493,10 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 
 void power_esc(void)
 {
+	if (return_from_power_menu == M_NAVIGATION)
+	{
+		timer4_start(); //start compass activity
+	}
 	reset_current_item_in_menu(M_POWER);
 	current_menu = return_from_power_menu;
 	//draw_current_menu();

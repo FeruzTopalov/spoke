@@ -401,6 +401,7 @@ void SysTick_Handler(void)
 
 void TIM4_IRQHandler(void)
 {
+	TIM4->SR &= ~TIM_SR_UIF;        //clear gating timer int
 	led_green_on();
 	delay_cyc(100);
 	led_green_off();
