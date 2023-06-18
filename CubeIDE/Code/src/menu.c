@@ -22,6 +22,7 @@
 #include "points.h"
 #include "lcd_bitmaps.h"
 #include "gps.h"
+#include "compass.h"
 
 
 
@@ -760,10 +761,12 @@ void draw_navigation(void)
 	#define SCREEN_CENTER_Y	(31)
 	#define ARROW_LEN		(15)
 
-	if (p_gps_num->speed > 1)	//only while moving
+	if (is_north_ready())	//only when north value is available
 	{
 		float x1, y1;
-		float arrow_ang_rad = p_gps_num->course * deg_to_rad;
+		float arrow_ang_rad;
+
+		arrow_ang_rad = get_north();
 
 		x1 = SCREEN_CENTER_X + ARROW_LEN * sin(arrow_ang_rad);
 		y1 = SCREEN_CENTER_Y - ARROW_LEN * cos(arrow_ang_rad);

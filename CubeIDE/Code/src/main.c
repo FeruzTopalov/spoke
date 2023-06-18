@@ -27,6 +27,7 @@
 #include "sx126x.h"
 #include "i2c.h"
 #include "compass.h"
+#include "sensors.h"
 
 
 
@@ -165,6 +166,16 @@ led_green_off();
 		{
         	main_flags.process_devices = 0;
         	process_all_devices();
+		}
+
+
+    	if (main_flags.process_compass == 1)
+		{
+    		main_flags.process_compass = 0;
+    		led_green_on();
+    		read_north();
+    		led_green_off();
+    		main_flags.update_screen = 1;
 		}
 
 
@@ -402,9 +413,7 @@ void SysTick_Handler(void)
 void TIM4_IRQHandler(void)
 {
 	TIM4->SR &= ~TIM_SR_UIF;        //clear gating timer int
-	led_green_on();
-	delay_cyc(100);
-	led_green_off();
+	main_flags.process_compass = 1;
 }
 
 

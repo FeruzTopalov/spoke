@@ -25,6 +25,8 @@ struct main_flags_struct
     uint8_t frame_ended;
     uint8_t nmea_parsed_only;
     uint8_t pps_synced;
+
+    uint8_t process_compass;
 };
 
 

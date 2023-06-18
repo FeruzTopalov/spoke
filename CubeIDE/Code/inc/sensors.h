@@ -15,6 +15,7 @@ uint8_t init_accelerometer(void);
 uint8_t init_magnetometer(void);
 void read_accel(void);
 void read_magn(void);
+uint8_t is_horizontal(void);
 struct acc_data *get_acceleration(void);
 struct mag_data *get_magnetic_field(void);
 

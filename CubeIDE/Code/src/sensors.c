@@ -12,6 +12,10 @@
 
 
 
+#define ACC_HORIZ_THRS	(900)	//threshold value for Z axis when checking horizontality
+
+
+
 struct acc_data acceleration;
 struct mag_data magnetic_field;
 
@@ -85,6 +89,21 @@ void read_magn(void)
 
 	magnetic_field.mag_z.as_integer *= -1;	//invert Y and Z due to physical location of the sensor on the PCB
 	magnetic_field.mag_y.as_integer *= -1;	//after this correction and for the device in normal orientation: X - to the right, Y - forward, Z - up into face
+}
+
+
+
+uint8_t is_horizontal(void)
+{
+	read_accel();
+	if (acceleration.acc_z.as_integer > ACC_HORIZ_THRS)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 

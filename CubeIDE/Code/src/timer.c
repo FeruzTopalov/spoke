@@ -201,7 +201,7 @@ void timer4_init(void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_TIM4EN; //enable timer clock
 	TIM4->PSC = (uint16_t)299;         	// 3MHz/(299+1)=10kHz
-	TIM4->ARR = (uint16_t)665;          // 10kHz/(665+1)=15Hz(66ms)
+	TIM4->ARR = (uint16_t)999;          // 10kHz/(999+1)=10Hz(100ms)
 	TIM4->EGR = TIM_EGR_UG;             //software update generation
 	TIM4->DIER |= TIM_DIER_UIE;         //update interrupt enable
 

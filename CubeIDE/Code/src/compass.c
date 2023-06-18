@@ -16,6 +16,12 @@
 #include "lcd.h"
 #include "settings.h"
 #include "gpio.h"
+#include "gps.h"
+#include "lrns.h"
+
+
+
+#define GPS_SPEED_THRS	(2)	//threshold value for GPS speed in km/h to show course
 
 
 
@@ -23,6 +29,9 @@ struct acc_data *p_acceleration;
 struct mag_data *p_magnetic_field;
 struct settings_struct *p_settings;
 struct settings_struct settings_copy;
+struct gps_num_struct *p_gps_num;
+float north; //calculated north, +-pi
+uint8_t north_ready = 0; //flag is north value ready to readout
 
 
 
@@ -32,6 +41,7 @@ void init_compass(void)
 	init_magnetometer();
 	p_acceleration = get_acceleration();
 	p_magnetic_field = get_magnetic_field();
+	p_gps_num = get_gps_num();
 	p_settings = get_settings();
 	settings_copy = *p_settings;
 
@@ -291,15 +301,48 @@ restart_cal:
 
 
 
-float get_north(void)
+void read_north(void)
 {
 	float comp_x, comp_y;
 
-	read_magn();
+	if (is_horizontal())	//if the device is oriented horizontally
+	{
+		read_magn();
 
-	comp_x = (p_magnetic_field->mag_x.as_integer - p_settings->magn_offset_x) * p_settings->magn_scale_x.as_float;
-	comp_y = (p_magnetic_field->mag_y.as_integer - p_settings->magn_offset_y) * p_settings->magn_scale_y.as_float;
+		comp_x = (p_magnetic_field->mag_x.as_integer - p_settings->magn_offset_x) * p_settings->magn_scale_x.as_float;
+		comp_y = (p_magnetic_field->mag_y.as_integer - p_settings->magn_offset_y) * p_settings->magn_scale_y.as_float;
 
-	return (atan2(comp_x, comp_y));		//from atan2(y, x) to atan2(-x, y) to rotate result pi/2 CCW
-										//from atan2(-x, y) to atan2(x, y) to invert X axis to have angles counting in CW direction
+		north = atan2(comp_x, comp_y);		//from atan2(y, x) to atan2(-x, y) to rotate result pi/2 CCW
+											//from atan2(-x, y) to atan2(x, y) to invert X axis to have angles counting in CW direction
+
+		north_ready = 1;
+	}
+	else	//otherwise use GPS course
+	{
+		if (p_gps_num->speed > GPS_SPEED_THRS)	//only when moving
+		{
+			north = p_gps_num->course * deg_to_rad;
+			north_ready = 1;
+		}
+		else
+		{
+			north_ready = 0;
+		}
+	}
 }
+
+
+
+uint8_t is_north_ready(void)
+{
+	return north_ready;
+}
+
+
+
+float get_north(void)
+{
+	north_ready = 0; //clear flag until next read_north()
+	return north;
+}
+
