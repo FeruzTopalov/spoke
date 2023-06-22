@@ -19,6 +19,7 @@ void timer1_clock_enable(void);
 void timer2_init(void);
 void timer2_start(void);
 void timer3_init(void);
+void timer4_init(void);
 
 
 
@@ -33,6 +34,7 @@ void timers_init(void)
 	timer1_init();
 	timer2_init();
 	timer3_init();
+	timer4_init();
 }
 
 
@@ -190,6 +192,36 @@ void timer3_stop(void)
 	BIT_BAND_PERI(TIM3->CR1, TIM_CR1_CEN) = 0;	//stop  timer
 	TIM3->CNT = 0;					//reset counter
 	TIM3->SR &= ~TIM_SR_UIF;        //clear int
+}
+
+
+
+//Timer 4 init (compass update)
+void timer4_init(void)
+{
+	RCC->APB1ENR |= RCC_APB1ENR_TIM4EN; //enable timer clock
+	TIM4->PSC = (uint16_t)299;         	// 3MHz/(299+1)=10kHz
+	TIM4->ARR = (uint16_t)999;          // 10kHz/(999+1)=10Hz(100ms)
+	TIM4->EGR = TIM_EGR_UG;             //software update generation
+	TIM4->DIER |= TIM_DIER_UIE;         //update interrupt enable
+
+	NVIC_EnableIRQ(TIM4_IRQn);
+}
+
+
+
+void timer4_start(void)
+{
+	BIT_BAND_PERI(TIM4->CR1, TIM_CR1_CEN) = 1;	//start timer
+}
+
+
+
+void timer4_stop(void)
+{
+	BIT_BAND_PERI(TIM4->CR1, TIM_CR1_CEN) = 0;	//stop  timer
+	TIM4->CNT = 0;					//reset counter
+	TIM4->SR &= ~TIM_SR_UIF;        //clear int
 }
 
 

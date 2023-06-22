@@ -50,6 +50,10 @@
 #define SETTINGS_TIME_ZONE_DIR_POS			(9)
 #define SETTINGS_TIME_ZONE_HOUR_POS			(10)
 #define SETTINGS_TIME_ZONE_MINUTE_POS		(11)
+#define SETTINGS_MAGN_OFFSET_X_POS			(12)
+#define SETTINGS_MAGN_OFFSET_Y_POS			(13)
+#define SETTINGS_MAGN_SCALE_X_POS			(14)
+#define SETTINGS_MAGN_SCALE_Y_POS			(16)
 
 //default values:
 #define SETTINGS_INIT_FLAG_DEFAULT      	(0xAA)
@@ -64,9 +68,15 @@
 #define SETTINGS_TIME_ZONE_DIR_DEFAULT		(1)
 #define SETTINGS_TIME_ZONE_HOUR_DEFAULT		(0)
 #define SETTINGS_TIME_ZONE_MINUTE_DEFAULT	(0)
+#define SETTINGS_MAGN_OFFSET_X_DEFAULT		(0)
+#define SETTINGS_MAGN_OFFSET_Y_DEFAULT		(0)
+#define SETTINGS_MAGN_SCALE_XM_DEFAULT		(0x3f80)	//float 1.0
+#define SETTINGS_MAGN_SCALE_XL_DEFAULT		(0x0000)
+#define SETTINGS_MAGN_SCALE_YM_DEFAULT		(0x3f80)	//float 1.0
+#define SETTINGS_MAGN_SCALE_YL_DEFAULT		(0x0000)
 
 //settings size
-#define SETTINGS_SIZE						(12) //half-words
+#define SETTINGS_SIZE						(18) //half-words
 
 
 
@@ -105,7 +115,7 @@ void settings_load(void)
 
     if (settings_array[SETTINGS_INIT_FLAG_POS] != SETTINGS_INIT_FLAG_DEFAULT)     //if first power-up or FLASH had been erased
     {
-        settings_save_default();
+        settings_save_default();		//todo: add default load by OK & ESC button hold
     }
     
     //read from flash
@@ -123,6 +133,12 @@ void settings_load(void)
     settings.time_zone_dir = 					settings_array[SETTINGS_TIME_ZONE_DIR_POS];
     settings.time_zone_hour = 					settings_array[SETTINGS_TIME_ZONE_HOUR_POS];
     settings.time_zone_minute = 				settings_array[SETTINGS_TIME_ZONE_MINUTE_POS];
+    settings.magn_offset_x =					settings_array[SETTINGS_MAGN_OFFSET_X_POS];
+    settings.magn_offset_y =					settings_array[SETTINGS_MAGN_OFFSET_Y_POS];
+    settings.magn_scale_x.as_array[0] = 		settings_array[SETTINGS_MAGN_SCALE_X_POS];
+    settings.magn_scale_x.as_array[1] = 		settings_array[SETTINGS_MAGN_SCALE_X_POS + 1];
+    settings.magn_scale_y.as_array[0] = 		settings_array[SETTINGS_MAGN_SCALE_Y_POS];
+    settings.magn_scale_y.as_array[1] = 		settings_array[SETTINGS_MAGN_SCALE_Y_POS + 1];
 }
 
 
@@ -144,6 +160,13 @@ void settings_save_default(void)
     settings_array[SETTINGS_TIME_ZONE_DIR_POS] = 		SETTINGS_TIME_ZONE_DIR_DEFAULT;
     settings_array[SETTINGS_TIME_ZONE_HOUR_POS] = 		SETTINGS_TIME_ZONE_HOUR_DEFAULT;
     settings_array[SETTINGS_TIME_ZONE_MINUTE_POS] = 	SETTINGS_TIME_ZONE_MINUTE_DEFAULT;
+    settings_array[SETTINGS_MAGN_OFFSET_X_POS] = 		SETTINGS_MAGN_OFFSET_X_DEFAULT;
+    settings_array[SETTINGS_MAGN_OFFSET_Y_POS] = 		SETTINGS_MAGN_OFFSET_Y_DEFAULT;
+    settings_array[SETTINGS_MAGN_SCALE_X_POS] = 		SETTINGS_MAGN_SCALE_XL_DEFAULT;	//little-endian
+    settings_array[SETTINGS_MAGN_SCALE_X_POS + 1] =		SETTINGS_MAGN_SCALE_XM_DEFAULT;
+    settings_array[SETTINGS_MAGN_SCALE_Y_POS] = 		SETTINGS_MAGN_SCALE_YL_DEFAULT;
+    settings_array[SETTINGS_MAGN_SCALE_Y_POS + 1] = 	SETTINGS_MAGN_SCALE_YM_DEFAULT;
+
     
     //write to flash
     write_flash_page(FLASH_SETTINGS_PAGE, &settings_array[0], SETTINGS_SIZE);
@@ -168,6 +191,12 @@ void settings_save(struct settings_struct *p_settings)
     settings_array[SETTINGS_TIME_ZONE_DIR_POS] = 		p_settings->time_zone_dir;
     settings_array[SETTINGS_TIME_ZONE_HOUR_POS] = 		p_settings->time_zone_hour;
     settings_array[SETTINGS_TIME_ZONE_MINUTE_POS] = 	p_settings->time_zone_minute;
+    settings_array[SETTINGS_MAGN_OFFSET_X_POS] = 		p_settings->magn_offset_x;
+    settings_array[SETTINGS_MAGN_OFFSET_Y_POS] = 		p_settings->magn_offset_y;
+    settings_array[SETTINGS_MAGN_SCALE_X_POS] = 		p_settings->magn_scale_x.as_array[0];
+    settings_array[SETTINGS_MAGN_SCALE_X_POS + 1] = 	p_settings->magn_scale_x.as_array[1];
+    settings_array[SETTINGS_MAGN_SCALE_Y_POS] = 		p_settings->magn_scale_y.as_array[0];
+    settings_array[SETTINGS_MAGN_SCALE_Y_POS + 1] = 	p_settings->magn_scale_y.as_array[1];
     
     //write to flash
     write_flash_page(FLASH_SETTINGS_PAGE, &settings_array[0], SETTINGS_SIZE);

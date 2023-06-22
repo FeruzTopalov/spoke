@@ -26,6 +26,8 @@
 #include "radio.h"
 #include "sx126x.h"
 #include "i2c.h"
+#include "compass.h"
+#include "sensors.h"
 
 
 
@@ -90,16 +92,11 @@ led_green_off();
     while (1)
     {
     	//Scan Keys
-    	if (main_flags.scan_buttons == 1)
+    	if (main_flags.buttons_scanned == 1)
     	{
-    		main_flags.scan_buttons = 0;
-    		button_code = scan_button(processing_button);
-
-    		if (button_code)
-    		{
-    			change_menu(button_code);
-    			main_flags.menu_changed = 1;
-    		}
+    		main_flags.buttons_scanned = 0;
+			change_menu(button_code);
+			main_flags.menu_changed = 1;
     	}
 
 
@@ -164,6 +161,16 @@ led_green_off();
 		{
         	main_flags.process_devices = 0;
         	process_all_devices();
+		}
+
+
+    	if (main_flags.process_compass == 1)
+		{
+    		main_flags.process_compass = 0;
+    		led_green_on();
+    		read_north();
+    		led_green_off();
+    		main_flags.update_screen = 1;
 		}
 
 
@@ -341,7 +348,15 @@ void TIM1_UP_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
 	TIM3->SR &= ~TIM_SR_UIF;        //clear gating timer int
-	main_flags.scan_buttons = 1;
+
+	if (main_flags.buttons_scanned == 0)	//if not scanned yet
+	{
+		button_code = scan_button(processing_button);
+		if (button_code)
+		{
+			main_flags.buttons_scanned = 1;
+		}
+	}
 }
 
 
@@ -394,6 +409,14 @@ void SysTick_Handler(void)
 {
 	timer2_stop();	//pwm
 	systick_stop();	//gating
+}
+
+
+
+void TIM4_IRQHandler(void)
+{
+	TIM4->SR &= ~TIM_SR_UIF;        //clear gating timer int
+	main_flags.process_compass = 1;
 }
 
 

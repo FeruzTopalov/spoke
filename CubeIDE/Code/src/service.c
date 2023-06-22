@@ -45,6 +45,66 @@ void manage_power(void)
 
 
 
+uint32_t absv(int32_t value)
+{
+	if (value < 0)
+	{
+		return (-1 * value);
+	}
+	else
+	{
+		return value;
+	}
+}
+
+
+
+int32_t maxv(int32_t x, int32_t y)
+{
+	if (x > y)
+	{
+		return x;
+	}
+	else
+	{
+		return y;
+	}
+}
+
+
+
+int32_t minv(int32_t x, int32_t y)
+{
+	if (x < y)
+	{
+		return x;
+	}
+	else
+	{
+		return y;
+	}
+}
+
+
+
+int32_t limit_to(int32_t value, int32_t pos_lim, int32_t neg_lim)
+{
+	if (value > pos_lim)
+	{
+		return pos_lim;
+	}
+	else if (value < neg_lim)
+	{
+		return neg_lim;
+	}
+	else
+	{
+		return value;
+	}
+}
+
+
+
 //Converts string to float
 float atof32(char *input)
 {
