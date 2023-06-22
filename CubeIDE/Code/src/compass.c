@@ -312,8 +312,7 @@ void read_north(void)
 		comp_x = (p_magnetic_field->mag_x.as_integer - p_settings->magn_offset_x) * p_settings->magn_scale_x.as_float;
 		comp_y = (p_magnetic_field->mag_y.as_integer - p_settings->magn_offset_y) * p_settings->magn_scale_y.as_float;
 
-		north = atan2(comp_x, comp_y);		//from atan2(y, x) to atan2(-x, y) to rotate result pi/2 CCW
-											//from atan2(-x, y) to atan2(x, y) to invert X axis to have angles counting in CW direction
+		north = atan2(-comp_x, comp_y);		//from atan2(y, x) to atan2(-x, y) to rotate result pi/2 CCW
 
 		north_ready = 1;
 	}
