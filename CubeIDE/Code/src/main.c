@@ -421,4 +421,19 @@ void TIM4_IRQHandler(void)
 
 
 
+//DMA SPI2 TX LCD
+void DMA1_Channel5_IRQHandler(void)
+{
+
+	DMA1->IFCR = DMA_IFCR_CGIF5;     //clear all interrupt flags for DMA channel 5
+
+	cs_lcd_inactive();
+	lcd_continue_update();
+
+	led_red_on();
+	delay_cyc(1000);
+	led_red_off();
+}
+
+
 //todo: setupt ints priorities

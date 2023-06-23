@@ -22,8 +22,7 @@
 
 
 #define LCD_SIZE_BYTES    	(1024)
-#define LCD_SIZE_X        	(128)
-#define LCD_SIZE_Y        	(64)
+
 
 #define FONT_SIZE_X       	(8)		//size of font in pixels
 #define FONT_SIZE_Y       	(16)	//size of font in pixels
@@ -44,6 +43,7 @@
 
 uint8_t screen_buf[LCD_SIZE_BYTES];     		//public array 128x64 pixels
 uint16_t buf_pos = 0;                   		//public var 0 - 1023
+uint8_t current_page = 0;
 uint8_t display_status = LCD_DISPLAY_ON;	//lcd panel status on/off
 
 
@@ -126,6 +126,7 @@ void lcd_init(void)
 
     lcd_clear();
     lcd_update();
+
 }
 
 
@@ -183,23 +184,56 @@ void lcd_update(void)
 #endif
 
 #ifdef LCD_SH1106
-		for (uint8_t page = 0; page < 8; page++)		//page means line for SH1106
-		{
-			lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
-			lcd_send_command(0x10);			//reset column address high
-			lcd_send_command(0xB0 | page);	//set page address
+//		for (uint8_t page = 0; page < 8; page++)		//page means line for SH1106
+//		{
+//			lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
+//			lcd_send_command(0x10);			//reset column address high
+//			lcd_send_command(0xB0 | page);	//set page address
+//
+//			lcd_data_mode();
+//			cs_lcd_active();
+//			for (uint16_t i = (page * LCD_SIZE_X); i < ((page + 1) * LCD_SIZE_X); i++)
+//			{
+//				spi2_trx(screen_buf[i]);
+//			}
+//			cs_lcd_inactive();
+//		}
 
-			lcd_data_mode();
-			cs_lcd_active();
-			for (uint16_t i = (page * LCD_SIZE_X); i < ((page + 1) * LCD_SIZE_X); i++)
-			{
-				spi2_trx(screen_buf[i]);
-			}
-			cs_lcd_inactive();
-		}
+		current_page = 0;
+		lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
+		lcd_send_command(0x10);			//reset column address high
+		lcd_send_command(0xB0);			//set 0 page address
+		lcd_data_mode();
+		cs_lcd_active();
+		spi2_dma_start(&screen_buf[0], LCD_SIZE_X);
+
+
 #endif
 
 		//spi2_clock_disable();
+	}
+}
+
+
+
+void lcd_continue_update(void)
+{
+	current_page++;
+
+	if (current_page < 8)
+	{
+		lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
+		lcd_send_command(0x10);			//reset column address high
+		lcd_send_command(0xB0 | current_page);	//set page address
+
+		lcd_data_mode();
+		cs_lcd_active();
+		spi2_dma_start(&screen_buf[current_page * LCD_SIZE_X], LCD_SIZE_X);
+	}
+	else
+	{
+		current_page = 0;
+		spi2_dma_stop();
 	}
 }
 
@@ -562,4 +596,11 @@ void lcd_draw_dot(int8_t x0, int8_t y0)
 			}
 		}
 	}
+}
+
+
+
+uint8_t *get_lcd_buffer(void)
+{
+	return &screen_buf[0];
 }
