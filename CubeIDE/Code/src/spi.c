@@ -78,10 +78,11 @@ void spi2_dma_init(uint8_t buffer[], uint32_t buffer_len)
     SPI2->CR2 |= SPI_CR2_TXDMAEN;			//enable SPI TX DMA
     RCC->AHBENR |= RCC_AHBENR_DMA1EN;       //enable dma1 clock
 
-    DMA1_Channel5->CPAR = (uint32_t)(&buffer[0]);    //transfer source
-    DMA1_Channel5->CMAR = (uint32_t)(&(SPI2->DR));  //transfer destination
+    DMA1_Channel5->CMAR = (uint32_t)(&buffer[0]);    //transfer source
+    DMA1_Channel5->CPAR = (uint32_t)(&(SPI2->DR));  //transfer destination
     DMA1_Channel5->CNDTR = buffer_len;                //bytes amount to transmit
 
+    DMA1_Channel5->CCR |= DMA_CCR5_DIR;		//from memory to periph
     DMA1_Channel5->CCR |= DMA_CCR5_MINC;    //enable memory increment
     DMA1_Channel5->CCR |= DMA_CCR5_TCIE;    //enable transfer complete interrupt
 
@@ -95,7 +96,7 @@ void spi2_dma_init(uint8_t buffer[], uint32_t buffer_len)
 
 void spi2_dma_start(uint8_t buffer[], uint32_t buffer_len)
 {
-	DMA1_Channel5->CPAR = (uint32_t)(&buffer[0]);    //transfer source
+	DMA1_Channel5->CMAR = (uint32_t)(&buffer[0]);    //transfer source
 	DMA1_Channel5->CNDTR = buffer_len;                //bytes amount to transmit
     DMA1_Channel5->CCR |= DMA_CCR5_EN;      //enable channel
 }
