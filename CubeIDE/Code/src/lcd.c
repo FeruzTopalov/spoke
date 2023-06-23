@@ -233,7 +233,6 @@ void lcd_continue_update(void)
 	else
 	{
 		current_page = 0;
-		spi2_dma_stop();
 	}
 }
 
