@@ -199,6 +199,8 @@ void lcd_update(void)
 //			cs_lcd_inactive();
 //		}
 
+
+		//todo: if current_page <> 0 to prevent glitches
 		current_page = 0;
 		lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
 		lcd_send_command(0x10);			//reset column address high

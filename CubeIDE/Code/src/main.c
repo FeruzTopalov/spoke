@@ -421,13 +421,12 @@ void DMA1_Channel5_IRQHandler(void)
 
 	DMA1->IFCR = DMA_IFCR_CGIF5;     //clear all interrupt flags for DMA channel 5
 
+	led_red_on();
+	led_red_off();
+
 	spi2_dma_stop();
 	cs_lcd_inactive();
 	lcd_continue_update();
-
-	led_red_on();
-	delay_cyc(1000);
-	led_red_off();
 }
 
 
