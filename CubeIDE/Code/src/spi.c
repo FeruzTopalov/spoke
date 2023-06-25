@@ -58,6 +58,9 @@ uint8_t spi1_trx(uint8_t send_data)
     SPI1->DR = send_data;
 
     while(!(SPI1->SR & SPI_SR_RXNE)){}      //while RXNE = 0
+
+    //todo: add busy wait like in spi2?
+
     return SPI1->DR;
 }
 
@@ -129,4 +132,6 @@ void spi2_trx(uint8_t send_data)		//todo: rename to spi2_tx
 {
     while (!(SPI2->SR & SPI_SR_TXE)){}      //while TXE bit = 0
     SPI2->DR = send_data;
+
+    while(SPI2->SR & SPI_SR_BSY){}      //while busy
 }
