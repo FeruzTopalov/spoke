@@ -54,10 +54,6 @@ int main(void)
 {
     gpio_init();
     manage_power();
-
-led_red_on();
-led_green_on();
-
     settings_load();
     timers_init();
     spi_init();
@@ -84,8 +80,6 @@ led_green_on();
     __enable_irq();
 
 make_a_beep();
-led_red_off();
-led_green_off();
 
 
 
@@ -419,6 +413,21 @@ void TIM4_IRQHandler(void)
 	main_flags.process_compass = 1;
 }
 
+
+
+//DMA SPI2 TX LCD
+void DMA1_Channel5_IRQHandler(void)
+{
+
+	DMA1->IFCR = DMA_IFCR_CGIF5;     //clear all interrupt flags for DMA channel 5
+
+	led_red_on();
+	led_red_off();
+
+	spi2_dma_stop();
+	cs_lcd_inactive();
+	lcd_continue_update();
+}
 
 
 //todo: setupt ints priorities

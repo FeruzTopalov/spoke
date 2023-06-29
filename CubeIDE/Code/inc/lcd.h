@@ -34,6 +34,11 @@
 
 
 
+#define LCD_SIZE_BYTES    	(1024)
+#define LCD_SIZE_X        	(128)
+#define LCD_SIZE_Y        	(64)
+
+
 
 void lcd_init(void);
 void lcd_send_command(uint8_t command);
@@ -58,9 +63,11 @@ void lcd_print_viceversa(uint8_t row, uint8_t col, char *p_str, uint8_t inv);
 void lcd_print16_viceversa(uint8_t row, uint8_t col, char *p_str, uint8_t inv);
 void lcd_bitmap(const uint8_t arr[]);
 void lcd_update(void);
+void lcd_continue_update(void);
 void lcd_print_byte(uint8_t row, uint8_t col, uint8_t byte);
 void lcd_draw_line(int8_t x1, int8_t y1, int8_t x2, int8_t y2);
 void lcd_draw_dot(int8_t x0, int8_t y0);
+uint8_t *get_lcd_buffer(void);
 
 
 
