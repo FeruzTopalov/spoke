@@ -229,7 +229,7 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 
 void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t *buffer)
 {
-	uint8_t remaining = size; //only for size > 2
+//	uint8_t remaining = size; //only for size > 2
 	uint8_t SR_tmp;
 
 	//Start
@@ -278,40 +278,84 @@ void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t
 	SR_tmp = I2C1->SR1;
 	SR_tmp = I2C1->SR2;
 
-	while (remaining > 3)
+
+	//ACK byte
+	I2C1->CR1 |= I2C_CR1_ACK;
+
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+
+	//Read byte 1
+	buffer[0] = I2C1->DR;
+
+
+
+	//ACK byte
+	I2C1->CR1 |= I2C_CR1_ACK;
+
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+
+	//Read byte 2
+	buffer[1] = I2C1->DR;
+
+
+
+	//ACK byte
+	I2C1->CR1 |= I2C_CR1_ACK;
+
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+
+	//Read byte 3
+	buffer[2] = I2C1->DR;
+
+
+
+	//ACK byte
+	I2C1->CR1 |= I2C_CR1_ACK;
+
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+
+
+
+	//ACK byte
+	I2C1->CR1 |= I2C_CR1_ACK;
+
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+
+
+	//Wait byte transfer finish
+	while (!(I2C1->SR1 & I2C_SR1_BTF))
 	{
-		//ACK received byte
-		I2C1->CR1 |= I2C_CR1_ACK;
-
-		//Wait for data register not empty
-		while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
-
-		//Read byte
-		buffer[size - remaining] = I2C1->DR;
-
-		remaining--;
 	}
 
-	//Wait for data register not empty (datan-2)
-	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
 
 	//NACK
 	I2C1->CR1 &= ~I2C_CR1_ACK;
 
-	//read (datan-2)
-	buffer[size - remaining] = I2C1->DR;
+
+	//Read byte 4
+	buffer[3] = I2C1->DR;
+
 
 	//Stop
 	I2C1->CR1 |= I2C_CR1_STOP;
 
-	//read (datan-1)
-	remaining--;
-	buffer[size - remaining] = I2C1->DR;
 
-	//Read last byte
+	//Read byte 5
+	buffer[4] = I2C1->DR;
+
+
+
+	//Wait for data register not empty
 	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
-	remaining--;
-	buffer[size - remaining] = I2C1->DR;
+
+	//Read byte 6
+	buffer[5] = I2C1->DR;
+
 
 	SR_tmp = SR_tmp + 1;
 }
