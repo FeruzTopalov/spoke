@@ -407,6 +407,7 @@ void SysTick_Handler(void)
 
 
 
+//Compass update interval
 void TIM4_IRQHandler(void)
 {
 	TIM4->SR &= ~TIM_SR_UIF;        //clear gating timer int

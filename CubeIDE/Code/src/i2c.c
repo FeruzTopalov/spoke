@@ -199,15 +199,17 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 	while (!(I2C1->SR1 & I2C_SR1_ADDR))
 	{
 	}
-	//Clear
-	SR_tmp = I2C1->SR1;
-	SR_tmp = I2C1->SR2;
 
 	//NACK next byte
 	I2C1->CR1 &= ~I2C_CR1_ACK;
+
+	//Clear ADR
+	SR_tmp = I2C1->SR1;
+	SR_tmp = I2C1->SR2;
+
 	//Stop
 	I2C1->CR1 |= I2C_CR1_STOP;
-	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
+
 	//Wait for data register not empty
 	while (!(I2C1->SR1 & I2C_SR1_RXNE))
 	{
@@ -218,6 +220,8 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 	//Read requested byte
 	result = I2C1->DR;
 
+	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
+
     return result;
 }
 
@@ -225,6 +229,7 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 
 void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t *buffer)
 {
+	uint8_t remaining = size; //only for size > 2
 	uint8_t SR_tmp;
 
 	//Start
@@ -273,31 +278,35 @@ void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t
 	SR_tmp = I2C1->SR1;
 	SR_tmp = I2C1->SR2;
 
-	for (uint8_t i = 0; i < size - 1; i++)
+	while (remaining > 3)
 	{
-		//ACK next byte
-		I2C1->CR1 |= I2C_CR1_ACK;
 		//Wait for data register not empty
-		while (!(I2C1->SR1 & I2C_SR1_RXNE))
-		{
-		}
+		while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
 
 		//Read byte
-		buffer[i] = I2C1->DR;
+		buffer[size - remaining] = I2C1->DR;
+
+		//ACK received byte
+		I2C1->CR1 |= I2C_CR1_ACK;
+
+		remaining--;
 	}
 
-	//NACK last byte
+	//NACK
 	I2C1->CR1 &= ~I2C_CR1_ACK;
+
+	//Wait for data register not empty (second last)
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+	buffer[size - remaining] = I2C1->DR;
+
 	//Stop
 	I2C1->CR1 |= I2C_CR1_STOP;
-	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
-	//Wait for data register not empty
-	while (!(I2C1->SR1 & I2C_SR1_RXNE))
-	{
-	}
+
+	remaining--;
 
 	//Read last byte
-	buffer[size - 1] = I2C1->DR;
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+	buffer[size - remaining] = I2C1->DR;
 
 	SR_tmp = SR_tmp + 1;
 }
