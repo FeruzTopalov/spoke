@@ -280,32 +280,37 @@ void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t
 
 	while (remaining > 3)
 	{
+		//ACK received byte
+		I2C1->CR1 |= I2C_CR1_ACK;
+
 		//Wait for data register not empty
 		while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
 
 		//Read byte
 		buffer[size - remaining] = I2C1->DR;
 
-		//ACK received byte
-		I2C1->CR1 |= I2C_CR1_ACK;
-
 		remaining--;
 	}
+
+	//Wait for data register not empty (datan-2)
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
 
 	//NACK
 	I2C1->CR1 &= ~I2C_CR1_ACK;
 
-	//Wait for data register not empty (second last)
-	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+	//read (datan-2)
 	buffer[size - remaining] = I2C1->DR;
 
 	//Stop
 	I2C1->CR1 |= I2C_CR1_STOP;
 
+	//read (datan-1)
 	remaining--;
+	buffer[size - remaining] = I2C1->DR;
 
 	//Read last byte
 	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+	remaining--;
 	buffer[size - remaining] = I2C1->DR;
 
 	SR_tmp = SR_tmp + 1;
