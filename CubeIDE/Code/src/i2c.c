@@ -278,7 +278,7 @@ void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t
 	SR_tmp = I2C1->SR1;
 	SR_tmp = I2C1->SR2;
 
-
+//todo: wrap in cycle
 	//ACK byte
 	I2C1->CR1 |= I2C_CR1_ACK;
 

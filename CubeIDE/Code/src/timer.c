@@ -30,6 +30,7 @@ uint8_t sound_enabled = 1; //status of the beep sound notification
 //Init all timers together
 void timers_init(void)
 {
+	rtc_init();
 	systick_init();
 	timer1_init();
 	timer2_init();
@@ -46,6 +47,35 @@ void make_a_beep(void)
 		timer2_start();		//pwm
 		systick_start();	//gating
 //	}
+}
+
+
+
+void rtc_init(void)
+{
+	RCC->APB1ENR |= RCC_APB1ENR_PWREN;				//Enable power interface
+	RCC->APB1ENR |= RCC_APB1ENR_BKPEN;				//Enable backup interface
+	PWR->CR |= PWR_CR_DBP;							//Disable backup domain write protection
+    RCC->BDCR |=  RCC_BDCR_BDRST;					//Reset entire backup domain (reset RTC)
+    RCC->BDCR &= ~RCC_BDCR_BDRST;
+
+	RCC->CSR |= RCC_CSR_LSION;  					//Enable LSI 40 kHz
+	while ((RCC->CSR & RCC_CSR_LSIRDY) == 0){}		//Wait for stabilize
+	RCC->BDCR |= RCC_BDCR_RTCSEL_1;					//LSI is RTC clock source
+	RCC->BDCR &= ~RCC_BDCR_RTCSEL_0;
+	RCC->BDCR |= RCC_BDCR_RTCEN;					//Enable RTC
+
+	while ((RTC->CRL & RTC_CRL_RTOFF) == 0){}		//Wait RTC ready to acquire new command
+	RTC->CRL |= RTC_CRL_CNF;						//Enter config mode
+	RTC->PRLH = 0;
+	RTC->PRLL = 39999;								//(40000Hz-1)
+	RTC->CRH |= RTC_CRH_SECIE;						//Enable Interrupt
+	RTC->CRL &= ~RTC_CRL_CNF;						//Exit config mode
+	while ((RTC->CRL & RTC_CRL_RTOFF) == 0){}
+
+	PWR->CR &= ~PWR_CR_DBP;							//Enable backup domain write protection
+
+	NVIC_EnableIRQ(RTC_IRQn);
 }
 
 

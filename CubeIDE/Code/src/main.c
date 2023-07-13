@@ -40,12 +40,12 @@ uint8_t button_code = 0;
 uint8_t processing_button = 0;
 
 //TIMERS
+uint32_t uptime = 0;
 uint32_t pps_counter = 0;
 uint8_t time_slot_timer_ovf = 0;
 uint8_t time_slot = 0;
 
 uint8_t *p_update_interval_values;
-
 
 
 
@@ -69,6 +69,7 @@ int main(void)
     init_memory_points();
     ext_int_init();
     enable_buttons_interrupts();
+
 
 
     p_settings = get_settings();
@@ -118,6 +119,18 @@ make_a_beep();
 					main_flags.nmea_parsed_only = 1; //show results after successful parsing //only if pps does not exist; otherwise screen_update will be set after frame_end
 				}
             }
+        }
+
+
+
+        //After each second
+        if (main_flags.tick_1s == 1)
+        {
+        	main_flags.tick_1s = 0;
+        	led_green_on();
+        	led_green_off();
+            //adc_check_bat_voltage();
+            //calc_timeout(uptime);
         }
 
 
@@ -428,6 +441,17 @@ void DMA1_Channel5_IRQHandler(void)
 	spi2_dma_stop();
 	cs_lcd_inactive();
 	lcd_continue_update();
+}
+
+
+
+//Uptime counter (every 1 second)
+void RTC_IRQHandler(void)
+{
+	RTC->CRL &= ~RTC_CRL_SECF;		//Clear interrupt
+
+    uptime++;
+    main_flags.tick_1s = 1;
 }
 
 

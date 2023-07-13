@@ -27,6 +27,8 @@ struct main_flags_struct
     uint8_t pps_synced;
 
     uint8_t process_compass;
+
+    uint8_t tick_1s;
 };
 
 
