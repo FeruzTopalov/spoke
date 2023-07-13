@@ -28,6 +28,7 @@
 #include "i2c.h"
 #include "compass.h"
 #include "sensors.h"
+#include "adc.h"
 
 
 
@@ -64,11 +65,13 @@ int main(void)
     init_lrns();
     gps_init();
     i2c_init();
+    adc_init();
     init_compass();
     init_menu();
     init_memory_points();
     ext_int_init();
     enable_buttons_interrupts();
+    adc_start_bat_voltage_reading();
 
 
 
@@ -129,7 +132,7 @@ make_a_beep();
         	main_flags.tick_1s = 0;
         	led_green_on();
         	led_green_off();
-            //adc_check_bat_voltage();
+            adc_check_bat_voltage();
             //calc_timeout(uptime);
         }
 
@@ -452,6 +455,14 @@ void RTC_IRQHandler(void)
 
     uptime++;
     main_flags.tick_1s = 1;
+}
+
+
+
+//End of ADC conversion (battery voltage)
+void ADC1_2_IRQHandler(void)
+{
+	adc_read_bat_voltage_result(); 			//EOC is cleared automatically after ADC_DR reading
 }
 
 

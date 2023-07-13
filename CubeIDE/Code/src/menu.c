@@ -23,6 +23,7 @@
 #include "lcd_bitmaps.h"
 #include "gps.h"
 #include "compass.h"
+#include "adc.h"
 
 
 
@@ -701,6 +702,8 @@ void draw_main(void)
     lcd_print(MAIN_ROW + 1, MAIN_COL, "Settings", 0);
     lcd_print(MAIN_ROW + 2, MAIN_COL, "Info", 0);
     lcd_print(MAIN_ROW + get_current_item(), MAIN_COL - 1, ">", 0);
+    ftoa32(get_bat_voltage(), 2, &tmp_buf[0]);
+    lcd_print(0, 12, tmp_buf, 0);
 
     lcd_update();
 }
