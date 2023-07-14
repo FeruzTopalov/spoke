@@ -20,11 +20,8 @@ void adc_start_bat_voltage_reading(void);
 
 
 
-#define V_BATTERY_0_TO_10       	(3.0)
-#define V_BATTERY_10_TO_25      	(3.1)
-#define V_BATTERY_25_TO_50      	(3.3)
-#define V_BATTERY_50_TO_75      	(3.6)
-#define V_BATTERY_75_TO_100     	(3.9)
+#define V_BATTERY_MIN       (3.0)
+#define V_BATTERY_MAX     	(4.2)
 
 
 
@@ -84,35 +81,10 @@ void adc_start_bat_voltage_reading(void)
 
 
 //Read the ADC conversion result; return 1 if battery low is detected
-uint8_t adc_read_bat_voltage_result(void)
+void adc_read_bat_voltage_result(void)
 {
 	//Convert
 	bat_voltage = 2 * ((ADC1->DR * vref) / 4096);     //x2 due to resistive voltage divider before ADC input
-
-	//Refresh flags
-	if (bat_voltage > V_BATTERY_75_TO_100)
-	{
-		;
-	}
-	else if (bat_voltage > V_BATTERY_50_TO_75)
-	{
-		;
-	}
-	else if (bat_voltage > V_BATTERY_25_TO_50)
-	{
-		;
-	}
-	else if (bat_voltage > V_BATTERY_10_TO_25)
-	{
-		;
-	}
-	else
-	{
-		;
-		return 1;
-	}
-
-    return 0;
 }
 
 
@@ -135,4 +107,24 @@ void adc_check_bat_voltage(void)
 float get_bat_voltage(void)
 {
 	return bat_voltage;
+}
+
+
+
+uint8_t get_battery_level(void)
+{
+	//scale to 16 levels
+	float v_tmp;
+	float lvl;
+	uint8_t lvl_scaled;
+	v_tmp = bat_voltage - V_BATTERY_MIN;
+	lvl = v_tmp * (V_BATTERY_MAX - V_BATTERY_MIN);
+	lvl_scaled = lvl * 16;
+
+	if (lvl_scaled > 15)
+	{
+		lvl_scaled = 15;
+	}
+
+	return lvl_scaled;
 }

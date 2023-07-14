@@ -509,6 +509,13 @@ void lcd_print_byte(uint8_t row, uint8_t col, uint8_t byte)
 
 
 
+void lcd_byte2buf(uint16_t pos, uint8_t byte)
+{
+    screen_buf[pos++] = byte;
+}
+
+
+
 void lcd_draw_line(int8_t x1, int8_t y1, int8_t x2, int8_t y2)	//todo: implement new line draw algorithm to speed up this
 {
 	int8_t signX;

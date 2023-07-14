@@ -47,6 +47,7 @@ void switch_backward(void);
 
 
 void draw_main(void);
+void draw_bat_level(void);
 void draw_power(void);
 void draw_navigation(void);
 void draw_coordinates(void);
@@ -702,10 +703,25 @@ void draw_main(void)
     lcd_print(MAIN_ROW + 1, MAIN_COL, "Settings", 0);
     lcd_print(MAIN_ROW + 2, MAIN_COL, "Info", 0);
     lcd_print(MAIN_ROW + get_current_item(), MAIN_COL - 1, ">", 0);
-    ftoa32(get_bat_voltage(), 2, &tmp_buf[0]);
-    lcd_print(0, 12, tmp_buf, 0);
+    draw_bat_level();
 
     lcd_update();
+}
+
+
+
+//Draw an icon in top right corner
+void draw_bat_level(void)
+{
+	lcd_char_pos(0, 13, SYMB8_BAT_TAIL, 0);
+	lcd_char_pos(0, 14, SYMB8_BAT_MID, 0);
+	lcd_char_pos(0, 15, SYMB8_BAT_HEAD, 0);
+
+	for (uint8_t px = 0; px < (get_battery_level() + 1); px++)
+	{
+		lcd_byte2buf(108 + px, 0xF8);	//1st line
+		lcd_byte2buf((128 + 108) + px, 0x0F);	//2nd line
+	}
 }
 
 
@@ -741,6 +757,8 @@ void draw_power(void)
 
     lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL, "Power Off", 0);
     lcd_print(EDIT_POWER_ROW + get_current_item(), EDIT_POWER_COL - 1, ">", 0);
+
+    draw_bat_level();
 
     lcd_update();
 }
@@ -839,7 +857,6 @@ void draw_navigation(void)
     	add_leading_zero(&tmp_buf[0]);
         lcd_print_next(&tmp_buf[0], 0);
 
-
 //    	ssd1306_char16_pos(3, 14, SYMB16_TIMEOUT, 0);	//todo: those icons are not needed at all anymore
 //    	ssd1306_char16_pos(3, 12, SYMB16_ALARM, 0);
 //    	ssd1306_char16_pos(3, 10, SYMB16_FENCE, 0);
@@ -894,6 +911,7 @@ void draw_navigation(void)
 		}
     }
 
+    draw_bat_level();
 
 	lcd_update();
 
@@ -951,6 +969,7 @@ void draw_coordinates(void)
         lcd_char('+', 0);
     }
 
+    draw_bat_level();
 
     lcd_update();
 }

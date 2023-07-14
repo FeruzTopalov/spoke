@@ -30,7 +30,11 @@
 #define SYMB16_RX13        	('\x5b')
 #define SYMB16_RX23        	('\x5c')
 #define SYMB16_RX33        	('\x5d')
+
 #define SYMB8_DEGREE        ('\x80')
+#define SYMB8_BAT_TAIL    	('\x81')
+#define SYMB8_BAT_MID    	('\x82')
+#define SYMB8_BAT_HEAD    	('\x83')
 
 
 
@@ -65,6 +69,7 @@ void lcd_bitmap(const uint8_t arr[]);
 void lcd_update(void);
 void lcd_continue_update(void);
 void lcd_print_byte(uint8_t row, uint8_t col, uint8_t byte);
+void lcd_byte2buf(uint16_t pos, uint8_t byte);
 void lcd_draw_line(int8_t x1, int8_t y1, int8_t x2, int8_t y2);
 void lcd_draw_dot(int8_t x0, int8_t y0);
 uint8_t *get_lcd_buffer(void);
