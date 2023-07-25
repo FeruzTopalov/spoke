@@ -48,6 +48,7 @@ void switch_backward(void);
 
 void draw_main(void);
 void draw_bat_level(void);
+void draw_devices(void);
 void draw_power(void);
 void draw_navigation(void);
 void draw_coordinates(void);
@@ -135,6 +136,7 @@ enum
     M_MAIN = 1,
     M_NAVIGATION,
 	M_COORDINATES,
+	M_DEVICES,
 	M_POWER,
 	M_DEVICE_SUBMENU,
 	M_SAVE_DEVICE,
@@ -153,8 +155,7 @@ enum
 	M_SET_TIMEOUT,
 	M_SET_FENCE,
 	M_SET_TIMEZONE,
-	M_CONFIRM_SETTINGS_SAVE,
-	M_INFO
+	M_CONFIRM_SETTINGS_SAVE
 };
 
 
@@ -169,9 +170,9 @@ enum
 enum
 {
     M_MAIN_I_NAVIGATION = 0,
-    M_MAIN_I_SETTINGS,
-	M_MAIN_I_INFO,						//last item
-    M_MAIN_I_LAST = M_MAIN_I_INFO		//copy last item here
+	M_MAIN_I_DEVICES,
+	M_MAIN_I_SETTINGS,					//last item
+    M_MAIN_I_LAST = M_MAIN_I_SETTINGS	//copy last item here
 };
 
 
@@ -344,6 +345,7 @@ const struct
 //  Current Menu                Next Menu
     {M_NAVIGATION,              M_MAIN},
 	{M_COORDINATES,				M_NAVIGATION},
+	{M_DEVICES,                 M_MAIN},
 	{M_DEVICE_SUBMENU,     		M_COORDINATES},
 	{M_DELETE_DEVICE,			M_DEVICE_SUBMENU},
 	{M_SAVED_POPUP,				M_COORDINATES},
@@ -352,7 +354,6 @@ const struct
     {M_EDIT_DEVICE,             M_SETTINGS},
 	{M_EDIT_RADIO,	            M_SETTINGS},
 	{M_EDIT_OTHER,              M_SETTINGS},
-	{M_INFO,                    M_MAIN},
     {0, 0}      //end marker
 };
 
@@ -391,6 +392,7 @@ const struct
 	{M_NAVIGATION,				draw_navigation},
 	{M_COORDINATES,				draw_coordinates},
 	{M_MAIN,                    draw_main},
+	{M_DEVICES,                 draw_devices},
 	{M_POWER,					draw_power},
 	{M_DEVICE_SUBMENU,     		draw_device_submenu},
 	{M_SAVE_DEVICE,				draw_save_device},
@@ -409,7 +411,6 @@ const struct
 	{M_SET_TIMEOUT,				draw_set_timeout},
 	{M_SET_FENCE,				draw_set_fence},
 	{M_SET_TIMEZONE,			draw_set_timezone},
-    {M_INFO,                    draw_info},
 	{M_CONFIRM_SETTINGS_SAVE,	draw_confirm_settings_save},
     {0, 0}      //end marker
 };
@@ -700,8 +701,8 @@ void draw_main(void)
     lcd_clear();
     lcd_print(0, MAIN_COL, "MENU", 0);
     lcd_print(MAIN_ROW, MAIN_COL, "Navigation", 0);
-    lcd_print(MAIN_ROW + 1, MAIN_COL, "Settings", 0);
-    lcd_print(MAIN_ROW + 2, MAIN_COL, "Info", 0);
+    lcd_print(MAIN_ROW + 1, MAIN_COL, "Devices", 0);
+    lcd_print(MAIN_ROW + 2, MAIN_COL, "Settings", 0);
     lcd_print(MAIN_ROW + get_current_item(), MAIN_COL - 1, ">", 0);
     draw_bat_level();
 
@@ -719,9 +720,23 @@ void draw_bat_level(void)
 
 	for (uint8_t px = 0; px < (get_battery_level() + 1); px++)
 	{
-		lcd_byte2buf(108 + px, 0xF8);	//1st line
+		lcd_byte2buf(108 + px, 0xF8);	//1st line, 108 is a start pixel position
 		lcd_byte2buf((128 + 108) + px, 0x0F);	//2nd line
 	}
+}
+
+
+
+void draw_devices(void)
+{
+	lcd_clear();
+
+	lcd_print(0, 0, "1A  123 NWW   AF", 0);
+	lcd_print(1, 0, "2B  1.3 N    T  ", 0);
+	lcd_print(2, 0, "3C   27 SE    A ", 0);
+	lcd_print(3, 0, "5E 10.1 W      F", 0);
+
+	lcd_update();
 }
 
 
@@ -1348,40 +1363,6 @@ void draw_confirm_settings_save(void)
 
 
 
-//INFO
-void draw_info(void)
-{
-//ORIGINAL
-//    ssd1306_clear();
-//
-//    ssd1306_print(0, 0, "SPOKE", 0);
-//
-//    ssd1306_print(1, 0, "HW/FW: ", 0);
-//    ssd1306_print_next(HW_VERSION, 0);
-//    ssd1306_print_next("/", 0);
-//    ssd1306_print_next(FW_VERSION, 0);
-//
-//    ssd1306_print(2, 0, __DATE__, 0);
-//
-//    ssd1306_print(3, 0, "(C)'22 F.Topalov", 0);
-//
-//    ssd1306_update();
-
-
-
-//MOCK 1
-	lcd_clear();
-
-	lcd_print(0, 0, "1A  123 NWW   AF", 0);
-	lcd_print(1, 0, "2B  1.3 N    T  ", 0);
-	lcd_print(2, 0, "3C   27 SE    A ", 0);
-	lcd_print(3, 0, "5E 10.1 W      F", 0);
-
-	lcd_update();
-}
-
-
-
 //--------------------------------------------------------------
 //--------------------------- SET ------------------------------
 //--------------------------------------------------------------
@@ -1467,11 +1448,11 @@ void main_ok(void)
 			timer4_start();					//start compass activity
 			current_menu = M_NAVIGATION;
 			break;
+		case M_MAIN_I_DEVICES:
+			current_menu = M_DEVICES;
+			break;
 		case M_MAIN_I_SETTINGS:
 			current_menu = M_SETTINGS;
-			break;
-		case M_MAIN_I_INFO:
-			current_menu = M_INFO;
 			break;
 	}
 }
