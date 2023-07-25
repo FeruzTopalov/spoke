@@ -70,7 +70,6 @@ void draw_set_timeout(void);
 void draw_set_fence(void);
 void draw_set_timezone(void);
 void draw_confirm_settings_save(void);
-void draw_info(void);
 
 
 
@@ -173,6 +172,16 @@ enum
 	M_MAIN_I_DEVICES,
 	M_MAIN_I_SETTINGS,					//last item
     M_MAIN_I_LAST = M_MAIN_I_SETTINGS	//copy last item here
+};
+
+
+
+//DEVICES
+enum
+{
+    M_DEVICES_I_DEVICES = 0,
+	M_DEVICES_I_POINTS,					//last item
+    M_DEVICES_I_LAST = M_DEVICES_I_POINTS	//copy last item here
 };
 
 
@@ -370,6 +379,7 @@ struct
 {
 //  Current Menu                Current Item                Last Item in Current Menu
     {M_MAIN,                    M_ALL_I_FIRST,              M_MAIN_I_LAST},
+	{M_DEVICES,					M_ALL_I_FIRST,              M_DEVICES_I_LAST},
 	{M_POWER,					M_ALL_I_FIRST,				M_POWER_I_LAST},
 	{M_DEVICE_SUBMENU,			M_ALL_I_FIRST,				M_DEVICE_SUBMENU_I_LAST},
     {M_SETTINGS,                M_ALL_I_FIRST,              M_SETTINGS_I_LAST},
@@ -731,10 +741,58 @@ void draw_devices(void)
 {
 	lcd_clear();
 
-	lcd_print(0, 0, "1A  123 NWW   AF", 0);
-	lcd_print(1, 0, "2B  1.3 N    T  ", 0);
-	lcd_print(2, 0, "3C   27 SE    A ", 0);
-	lcd_print(3, 0, "5E 10.1 W      F", 0);
+	if (get_current_item() == M_DEVICES_I_DEVICES)	//draw all online devices
+	{
+		uint8_t active_devs = 0;
+		uint8_t active_row = 0;
+
+		for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)
+		{
+			if (pp_devices[dev]->exist_flag == 1)
+			{
+				if (dev != this_device)
+				{
+					active_devs++;
+					itoa32(dev, &tmp_buf[0]);
+					lcd_print(active_row, 0, tmp_buf, 0);
+					lcd_char_pos(active_row, 1, pp_devices[dev]->device_id, 0);
+					active_row++;
+				}
+			}
+		}
+
+		if (active_devs == 0)
+		{
+			lcd_print(1, 3, "No active", 0);
+			lcd_print(2, 4, "devices", 0);
+		}
+	}
+	else if (get_current_item() == M_DEVICES_I_POINTS)	//draw all saved points
+	{
+		uint8_t active_pts = 0;
+		uint8_t active_row = 0;
+
+		for (uint8_t pt = MEMORY_POINT_FIRST; pt < MEMORY_POINT_LAST + 1; pt++)
+		{
+			if (pp_devices[pt]->exist_flag == 1)
+			{
+				active_pts++;
+				lcd_print(active_row, 0, get_memory_point_name(pt), 0);
+				active_row++;
+			}
+		}
+
+		if (active_pts == 0)
+		{
+			lcd_print(1, 3, "No active", 0);
+			lcd_print(2, 4, "points", 0);
+		}
+	}
+
+//	lcd_print(0, 0, "1A  123 NWW   AF", 0);
+//	lcd_print(1, 0, "2B  1.3 N    T  ", 0);
+//	lcd_print(2, 0, "3C   27 SE    A ", 0);
+//	lcd_print(3, 0, "5E 10.1 W      F", 0);
 
 	lcd_update();
 }

@@ -396,7 +396,7 @@ void lcd_char16_pos(uint8_t row, uint8_t col, char chr, uint8_t inv)
 
 
 
-//Print string on screen (with position)
+//Print string on screen (with position (rows 0-3, cols 0-15))
 void lcd_print(uint8_t row, uint8_t col, char *p_str, uint8_t inv)
 {
     lcd_pos(row, col);
