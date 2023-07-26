@@ -533,6 +533,10 @@ void change_menu(uint8_t button_code)
 
 			case BTN_PWR:
 				lcd_display_off_request();
+				if (current_menu == M_NAVIGATION)
+				{
+					timer4_stop(); //stop compass
+				}
 				break;
 
 			default:
@@ -541,6 +545,10 @@ void change_menu(uint8_t button_code)
 	}
 	else if (button_code == BTN_PWR_LONG)	//if lcd is off then check for PRW button was pressed. If so - toggle the lcd
 	{
+		if (current_menu == M_NAVIGATION)
+		{
+			timer4_start(); //start compass
+		}
 		lcd_display_on();
 	}
 }
