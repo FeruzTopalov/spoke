@@ -48,6 +48,7 @@ void lcd_init(void);
 void lcd_send_command(uint8_t command);
 void lcd_display_on(void);
 void lcd_display_off(void);
+void lcd_display_off_request(void);
 uint8_t lcd_get_display_status(void);
 void lcd_fill(void);
 void lcd_clear(void);

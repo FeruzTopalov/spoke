@@ -44,6 +44,9 @@
 uint8_t screen_buf[LCD_SIZE_BYTES];     		//public array 128x64 pixels
 uint16_t buf_pos = 0;                   		//public var 0 - 1023
 uint8_t current_page = 0;
+uint8_t lcd_busy = 0;	//is lcd update ongoing?
+uint8_t lcd_pending_off = 0; 	//pending command to off the lcd
+
 uint8_t display_status = LCD_DISPLAY_ON;	//lcd panel status on/off
 
 
@@ -159,6 +162,20 @@ void lcd_display_off(void)
 
 
 
+void lcd_display_off_request(void)
+{
+	if (lcd_busy == 1)
+	{
+		lcd_pending_off = 1;
+	}
+	else
+	{
+		lcd_display_off();
+	}
+}
+
+
+
 uint8_t lcd_get_display_status(void)
 {
 	return display_status;
@@ -201,6 +218,7 @@ void lcd_update(void)
 
 
 		//todo: if current_page <> 0 to prevent glitches
+		lcd_busy = 1;
 		current_page = 0;
 		lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
 		lcd_send_command(0x10);			//reset column address high
@@ -235,6 +253,12 @@ void lcd_continue_update(void)
 	else
 	{
 		current_page = 0;
+		if (lcd_pending_off == 1)
+		{
+			lcd_display_off();
+			lcd_pending_off = 0;
+		}
+		lcd_busy = 0;
 	}
 }
 

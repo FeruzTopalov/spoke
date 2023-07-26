@@ -532,7 +532,7 @@ void change_menu(uint8_t button_code)
 				break;
 
 			case BTN_PWR:
-				lcd_display_off();
+				lcd_display_off_request();
 				break;
 
 			default:
