@@ -42,11 +42,11 @@ void timers_init(void)
 
 void make_a_beep(void)
 {
-//	if (sound_enabled)
-//	{
+	if (sound_enabled)
+	{
 		timer2_start();		//pwm
 		systick_start();	//gating
-//	}
+	}
 }
 
 

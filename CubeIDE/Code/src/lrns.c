@@ -175,7 +175,7 @@ void process_all_devices(void)
 
 
 
-void process_current_device(void)
+void process_current_device(void)	//todo: delete
 {
 
 	uint8_t curr_dev = get_current_device();
@@ -289,10 +289,8 @@ void calc_timeout(uint32_t current_uptime)
 
 
 
-uint8_t check_fence(void)		//all devices should be processed before calling this func
+void calc_fence(void)		//all devices should be processed before calling this func
 {
-	uint8_t fence_status = 0;
-
 	if (p_settings->fence_threshold != FENCE_ALARM_DISABLED)
 	{
 		for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < MEMORY_POINT_LAST + 1; dev++)		//devices + mem points
@@ -302,7 +300,6 @@ uint8_t check_fence(void)		//all devices should be processed before calling this
 				if (devices[dev].distance > p_settings->fence_threshold)
 				{
 					devices[dev].fence_flag = 1;
-					fence_status = 1;
 				}
 				else
 				{
@@ -311,13 +308,29 @@ uint8_t check_fence(void)		//all devices should be processed before calling this
 			}
 		}
 	}
-
-	return fence_status;
 }
 
 
 
-void toggle_alarm(void)
+uint8_t check_any_alarm_fence_timeout(void)
+{
+	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < MEMORY_POINT_LAST + 1; dev++)		//devices + mem points
+	{
+		if (devices[dev].exist_flag)
+		{
+			if ((devices[dev].alarm_flag) || (devices[dev].fence_flag) || (devices[dev].timeout_flag))
+			{
+				return 1;
+			}
+		}
+	}
+
+	return 0;
+}
+
+
+
+void toggle_my_alarm(void)
 {
 	if (devices[this_device].alarm_flag == 0)
 	{
@@ -331,7 +344,7 @@ void toggle_alarm(void)
 
 
 
-uint8_t get_alarm_status(void)
+uint8_t get_my_alarm_status(void)
 {
 	return devices[this_device].alarm_flag;
 }

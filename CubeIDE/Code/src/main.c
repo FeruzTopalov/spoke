@@ -94,7 +94,7 @@ make_a_beep();
     	{
     		main_flags.buttons_scanned = 0;
 			change_menu(button_code);
-			main_flags.menu_changed = 1;
+			main_flags.update_screen = 1;
     	}
 
 
@@ -133,7 +133,12 @@ make_a_beep();
         	led_green_on();
         	led_green_off();
             adc_check_bat_voltage();
-            calc_timeout(uptime);
+
+            if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
+            {
+            	calc_timeout(uptime);
+            	main_flags.do_beep = check_any_alarm_fence_timeout();
+            }
         }
 
 
@@ -142,7 +147,10 @@ make_a_beep();
         if (main_flags.frame_ended == 1)
         {
         	main_flags.frame_ended = 0;
-        	main_flags.process_devices = 1;
+        	process_all_devices();
+        	calc_fence();
+        	calc_timeout(uptime);
+        	main_flags.do_beep = check_any_alarm_fence_timeout();
         	main_flags.update_screen = 1;
         }
 
@@ -153,25 +161,6 @@ make_a_beep();
         	main_flags.update_screen = 1;
         }
 
-
-		if (main_flags.menu_changed == 1)
-		{
-			main_flags.menu_changed = 0;
-			main_flags.update_screen = 1;
-
-//			if ((p_gps_num->status == GPS_DATA_VALID) && (main_flags.pps_synced == 1)) //prevent dist calc when no valid gps data
-//			{
-//	        	main_flags.process_device = 1;
-//			}
-		}
-
-
-		//rel pos calc only once
-    	if (main_flags.process_devices == 1)
-		{
-        	main_flags.process_devices = 0;
-        	process_all_devices();
-		}
 
 
     	if (main_flags.process_compass == 1)
@@ -191,6 +180,15 @@ make_a_beep();
 		{
         	main_flags.update_screen = 0;
         	draw_current_menu();
+		}
+
+
+
+		//beep on alarm/fence/timeout
+    	if (main_flags.do_beep == 1)
+		{
+    		main_flags.do_beep = 0;
+    		make_a_beep();
 		}
 
 

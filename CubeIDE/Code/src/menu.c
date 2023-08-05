@@ -817,7 +817,7 @@ void draw_power(void)
 	lcd_print(0, EDIT_POWER_COL + 4, "POWER", 0);
 
     lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL, "Alarm is ", 0);
-    if (get_alarm_status())
+    if (get_my_alarm_status())
     {
     	lcd_print_next("On", 0);
     }
@@ -1543,7 +1543,7 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 	switch (get_current_item())
 	{
 		case M_POWER_I_ALARM:
-			toggle_alarm();
+			toggle_my_alarm();
 			break;
 
 		case M_POWER_I_SOUND:

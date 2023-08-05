@@ -22,8 +22,10 @@ void process_all_devices(void);
 void process_current_device(void);
 void calc_relative_position(uint8_t another_device);
 void calc_timeout(uint32_t current_uptime);
-void toggle_alarm(void);
-uint8_t get_alarm_status(void);
+void calc_fence(void);
+uint8_t check_any_alarm_fence_timeout(void);
+void toggle_my_alarm(void);
+uint8_t get_my_alarm_status(void);
 struct devices_struct **get_devices(void);
 
 
