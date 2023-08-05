@@ -112,7 +112,7 @@ make_a_beep();
 					{
 						if ((p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt]) == 0)
 						{
-							fill_air_packet();
+							fill_air_packet(uptime);
 							main_flags.run_frame = 1;
 						}
 					}
@@ -133,7 +133,7 @@ make_a_beep();
         	led_green_on();
         	led_green_off();
             adc_check_bat_voltage();
-            //calc_timeout(uptime);
+            calc_timeout(uptime);
         }
 
 
@@ -263,7 +263,7 @@ void EXTI0_IRQHandler(void)
 		if (!(current_radio_status & IRQ_CRC_ERROR))	// if no CRC error
 		{
 			rf_get_rx_packet();
-			parse_air_packet();   //parse air data from another device (which has ended TX in the current time_slot)
+			parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
 		}
 	}
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed

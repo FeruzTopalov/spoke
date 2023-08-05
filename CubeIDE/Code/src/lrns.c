@@ -91,9 +91,10 @@ void init_lrns(void)
 
 
 
-void fill_air_packet(void)
+void fill_air_packet(uint32_t current_uptime)
 {
 	p_air_packet_tx[PACKET_NUM_ID_POS] = 			(this_device << BYTE_NUM_POS) | (devices[this_device].device_id - 'A');	   //transmit dev id as A-Z, but with 0x41 ('A') shift resulting in 0-25 dec
+	devices[this_device].timestamp =				current_uptime;
 
 	p_air_packet_tx[PACKET_FLAGS_POS] = 			0; 			//todo add flags here
 
@@ -113,12 +114,13 @@ void fill_air_packet(void)
 
 
 
-void parse_air_packet(void)
+void parse_air_packet(uint32_t current_uptime)
 {
 	uint8_t rx_device = (p_air_packet_rx[PACKET_NUM_ID_POS] & PACKET_NUM_MASK) >> BYTE_NUM_POS; //extract device number from received packet
 
 	devices[rx_device].exist_flag 				=	1;
 	devices[rx_device].device_id				=	(p_air_packet_rx[PACKET_NUM_ID_POS] & PACKET_ID_MASK) + 'A';	//restore 0x41 shift
+	devices[rx_device].timestamp				=	current_uptime;
 
 	//todo read flags here
 
@@ -258,6 +260,31 @@ void calc_relative_position(uint8_t another_device)
     //altitude diff
     devices[another_device].delta_altitude = devices[another_device].altitude.as_integer - devices[this_device].altitude.as_integer;
 
+}
+
+
+
+void calc_timeout(uint32_t current_uptime)
+{
+	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)	//calculated even for this device and used to alarm about own timeout upon lost of PPS signal
+	{
+		if (devices[dev].exist_flag == 1)
+		{
+			devices[dev].timeout = current_uptime - devices[dev].timestamp; //calc timeout for each active device
+
+        	if (p_settings->timeout_threshold != TIMEOUT_ALARM_DISABLED) //if enabled
+        	{
+				if (devices[dev].timeout > p_settings->timeout_threshold)
+				{
+					devices[dev].timeout_flag = 1; //set flag for alarm
+				}
+				else
+				{
+					devices[dev].timeout_flag = 0;
+				}
+        	}
+        }
+    }
 }
 
 
