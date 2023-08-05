@@ -1028,7 +1028,7 @@ void draw_coordinates(void)
 		}
 		else
 		{
-			lcd_print(3, 0, "ALR TOC xx:xx:xx", 0);	//todo: finish
+			lcd_print(3, 0, "ALR FNC xx:xx:xx", 0);	//todo: finish
 		}
 
     }

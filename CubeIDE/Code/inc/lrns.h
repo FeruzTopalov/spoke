@@ -32,9 +32,17 @@ struct devices_struct **get_devices(void);
 struct devices_struct
 {
 	//COMMON
-	uint8_t exist_flag;             //does a device exist?
-	uint8_t alarm_flag;				//is alarm reported by a device?
     char device_id;  				//a device id, single ASCII symbol
+	uint8_t exist_flag;             //does a device exist?
+    uint8_t memory_point_flag;		//is this device a memory point?
+	uint8_t alarm_flag;				//is alarm reported by a device?
+	uint8_t fence_flag;				//is a predefined fence distance reached?
+
+
+    //TIME
+    uint32_t timestamp;					//time stamp in seconds since power-up when the last activity was detected
+    uint32_t timeout;					//timeout in seconds since last activity (RX of coordinates)
+    uint8_t timeout_flag;				//set when predefined timeout occurs
 
 
     //ABSOLUTE COORDINATES
@@ -65,10 +73,6 @@ struct devices_struct
 
 
     //MISC
-    uint32_t timestamp;					//time stamp in seconds since power-up when the last activity was detected
-    uint32_t timeout;					//timeout in seconds since last activity (RX of coordinates)
-    uint8_t timeout_flag;				//set when predefined timeout occurs
-    uint8_t memory_point_flag;			//is this device a memory point?
     uint8_t rx_icon;					//rx icon rotator
 };
 

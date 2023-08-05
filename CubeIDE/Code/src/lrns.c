@@ -289,6 +289,34 @@ void calc_timeout(uint32_t current_uptime)
 
 
 
+uint8_t check_fence(void)		//all devices should be processed before calling this func
+{
+	uint8_t fence_status = 0;
+
+	if (p_settings->fence_threshold != FENCE_ALARM_DISABLED)
+	{
+		for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < MEMORY_POINT_LAST + 1; dev++)		//devices + mem points
+		{
+			if (devices[dev].exist_flag)
+			{
+				if (devices[dev].distance > p_settings->fence_threshold)
+				{
+					devices[dev].fence_flag = 1;
+					fence_status = 1;
+				}
+				else
+				{
+					devices[dev].fence_flag = 0;
+				}
+			}
+		}
+	}
+
+	return fence_status;
+}
+
+
+
 void toggle_alarm(void)
 {
 	if (devices[this_device].alarm_flag == 0)
