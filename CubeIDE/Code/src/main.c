@@ -178,9 +178,11 @@ make_a_beep();
 		{
     		main_flags.process_compass = 0;
     		led_green_on();
-    		read_north();
+    		if (read_north())		//todo: decide on applicability of this condition
+    		{
+    			main_flags.update_screen = 1;
+    		}
     		led_green_off();
-    		main_flags.update_screen = 1;
 		}
 
 

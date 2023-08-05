@@ -301,7 +301,7 @@ restart_cal:
 
 
 
-void read_north(void)
+uint8_t read_north(void)
 {
 	float comp_x, comp_y;
 
@@ -315,6 +315,8 @@ void read_north(void)
 		north = atan2(-comp_x, comp_y);		//from atan2(y, x) to atan2(-x, y) to rotate result pi/2 CCW
 
 		north_ready = 1;
+
+		return 1; //return 1 if horizontal
 	}
 	else	//otherwise use GPS course
 	{
@@ -327,6 +329,8 @@ void read_north(void)
 		{
 			north_ready = 0;
 		}
+
+		return 0; //return 0 if not horizontal
 	}
 }
 
