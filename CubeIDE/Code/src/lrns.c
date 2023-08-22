@@ -293,7 +293,7 @@ void calc_fence(void)		//all devices should be processed before calling this fun
 {
 	if (p_settings->fence_threshold != FENCE_ALARM_DISABLED)
 	{
-		for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < MEMORY_POINT_LAST + 1; dev++)		//devices + mem points
+		for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)		//devices only, not for mem point
 		{
 			if (devices[dev].exist_flag)
 			{
