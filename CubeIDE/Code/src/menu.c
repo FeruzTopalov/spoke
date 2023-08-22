@@ -952,7 +952,7 @@ void draw_navigation(void)
     {
     	if (pp_devices[navigate_to_device]->memory_point_flag == 0)
     	{
-    		lcd_char16_pos(0, 8, pp_devices[navigate_to_device]->rx_icon, 0); //Print RX icon only for real devices
+    		lcd_char16_pos(0, 8, pp_devices[navigate_to_device]->rx_icon, 0); //Print RX icon only for real devices todo: delete
     	}
 
 		//Draw notch
@@ -1631,6 +1631,7 @@ void save_device_ok(void)
 	pp_devices[current_mem_point_to_save]->exist_flag = 1;
 	pp_devices[current_mem_point_to_save]->latitude.as_float = pp_devices[navigate_to_device]->latitude.as_float;
 	pp_devices[current_mem_point_to_save]->longitude.as_float = pp_devices[navigate_to_device]->longitude.as_float;
+	pp_devices[current_mem_point_to_save]->altitude.as_integer = pp_devices[navigate_to_device]->altitude.as_integer;
 
 	//save to flash
 	store_memory_points();

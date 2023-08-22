@@ -14,13 +14,14 @@
 
 
 
-#define MEMORY_POINT_SIZE	(9)	//9 bytes include: 1 flag, 4 lat; 4 lon.
+#define MEMORY_POINT_SIZE	(11)	//10 uint16 words include: 1 flag, 4 lat; 4 lon; 2 altitude
 #define MEMORY_POINTS_SIZE	(MEMORY_POINTS_TOT * MEMORY_POINT_SIZE)
 
 #define MEMORY_POINT_FLAG		(0xAA)	//if a mem point exists then it's flag variable is 0xAA
 #define MEMORY_POINT_FLAG_POS	(0)
 #define MEMORY_POINT_LAT_POS	(1)
 #define MEMORY_POINT_LON_POS	(5)
+#define MEMORY_POINT_ALT_POS	(9)
 
 #define MEM_POINT_NAME_LEN 	(4)			//max len of any point name
 #define MEM_POINT_0_NAME   	("HOME")
@@ -36,7 +37,7 @@
 
 
 struct devices_struct **pp_devices;
-uint16_t raw_points_array[MEMORY_POINTS_SIZE]; //uint16 is used because the FLASH organization; actually it is used to carry uint8 data
+uint16_t raw_points_array[MEMORY_POINTS_SIZE]; //uint16 is used because the FLASH structure; actually it is used to carry uint8 data
 char memory_points_names_values[MEMORY_POINTS_TOT][MEM_POINT_NAME_LEN + 1] = MEM_POINTS_NAMES_ARRAY;
 
 
@@ -70,8 +71,12 @@ void load_memory_points(void)	// FLASH -> buffer array -> devices struct
 			{
 				pp_devices[point_device_number]->latitude.as_array[b] = raw_points_array[point_start_index + MEMORY_POINT_LAT_POS + b];
 				pp_devices[point_device_number]->longitude.as_array[b] = raw_points_array[point_start_index + MEMORY_POINT_LON_POS + b];
-
 			}
+
+			//read altitude
+			pp_devices[point_device_number]->altitude.as_array[0] = raw_points_array[point_start_index + MEMORY_POINT_ALT_POS + 0];
+			pp_devices[point_device_number]->altitude.as_array[1] = raw_points_array[point_start_index + MEMORY_POINT_ALT_POS + 1];
+
 		}
 		else
 		{
@@ -100,9 +105,15 @@ void store_memory_points(void)	// devices struct -> buffer array -> FLASH (pre-e
 			{
 				raw_points_array[point_start_index + MEMORY_POINT_LAT_POS + b] = pp_devices[point_device_number]->latitude.as_array[b];
 				raw_points_array[point_start_index + MEMORY_POINT_LON_POS + b] = pp_devices[point_device_number]->longitude.as_array[b];
-				//todo: add altitude save
-				//todo: add date/time save
+
 			}
+
+			//add altitude save
+			raw_points_array[point_start_index + MEMORY_POINT_ALT_POS + 0] = pp_devices[point_device_number]->altitude.as_array[0]; //store signed in unsigned via array
+			raw_points_array[point_start_index + MEMORY_POINT_ALT_POS + 1] = pp_devices[point_device_number]->altitude.as_array[1];
+
+			//todo: add date/time save
+
 		}
 		else
 		{
