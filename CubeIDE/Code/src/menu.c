@@ -1023,8 +1023,17 @@ void draw_coordinates(void)
 		if (navigate_to_device == this_device)
 		{
 			lcd_print(0, 8, "(YOU)", 0);
-			lcd_print(3, 0, "SAT xx/xx DOP xx", 0);  //todo: finish
 
+			lcd_print(3, 0, "SAT ", 0);	//satellites in use/view
+			itoa32(p_gps_num->sat_used, &tmp_buf[0]);
+			lcd_print_next(&tmp_buf[0], 0);
+			lcd_print_next("/", 0);
+			itoa32(p_gps_num->sat_view, &tmp_buf[0]);
+			lcd_print_next(&tmp_buf[0], 0);
+
+			lcd_print(3, 10, "DOP ", 0);	//DOP
+			itoa32(((uint16_t)(p_gps_num->pdop)), &tmp_buf[0]);
+			lcd_print_next(&tmp_buf[0], 0);
 		}
 		else
 		{
