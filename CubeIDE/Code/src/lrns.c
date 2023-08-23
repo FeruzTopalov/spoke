@@ -17,6 +17,7 @@
 #include "menu.h"
 #include "lcd.h"
 #include "gpio.h"
+#include "main.h"
 
 
 
@@ -276,7 +277,21 @@ void calc_timeout(uint32_t current_uptime)
         	{
 				if (devices[dev].timeout > p_settings->timeout_threshold)
 				{
-					devices[dev].timeout_flag = 1; //set flag for alarm
+					if (dev == this_device)
+					{
+						if (get_abs_pps_cntr() < PPS_SKIP)	//if this is a timeout right after power up, ignore timeout alarm, do not set the flag
+						{
+							devices[dev].timeout_flag = 0;
+						}
+						else
+						{
+							devices[dev].timeout_flag = 1;
+						}
+					}
+					else
+					{
+						devices[dev].timeout_flag = 1; //set flag for alarm
+					}
 				}
 				else
 				{

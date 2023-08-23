@@ -1013,7 +1013,7 @@ void draw_coordinates(void)
     {
 		lcd_print_next(" POINT ", 0);
 		lcd_print_next(get_memory_point_name(navigate_to_device), 0);
-		lcd_print(3, 0, "xx:xx   xx/xx/xx", 0);  //todo: finish
+		lcd_print(3, 0, "ALT +12456 xx/xx", 0);  //todo: finish altitude+save date
     }
     else
     {
@@ -1037,7 +1037,7 @@ void draw_coordinates(void)
 		}
 		else
 		{
-			lcd_print(3, 0, "ALR FNC xx:xx:xx", 0);	//todo: finish
+			lcd_print(3, 0, "ALT +12345 xx:xx", 0);	//todo: finish altitude+timeout
 		}
 
     }

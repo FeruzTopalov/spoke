@@ -42,7 +42,8 @@ uint8_t processing_button = 0;
 
 //TIMERS
 uint32_t uptime = 0;
-uint32_t pps_counter = 0;
+uint32_t pps_absolute_counter = 0;
+uint32_t pps_relative_counter = 0;
 uint8_t time_slot_timer_ovf = 0;
 uint8_t time_slot = 0;
 
@@ -213,7 +214,7 @@ void DMA1_Channel3_IRQHandler(void)
     	//make a long beep
     }
 
-    pps_counter = 0;
+    pps_relative_counter = 0;
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;
 
@@ -232,9 +233,10 @@ void EXTI2_IRQHandler(void)
 	backup_and_clear_uart_buffer();
 	uart3_dma_restart();
 
-	pps_counter++;
+	pps_absolute_counter++;
+	pps_relative_counter++;
 
-	if (pps_counter > 2) //skip first two pps impulses: skip first PPS - ignore previous nmea data; skip second PPS, but fix the nmea data acquired after first PPS
+	if (pps_relative_counter > PPS_SKIP) //skip first two pps impulses: skip first PPS - ignore previous nmea data; skip second PPS, but fix the nmea data acquired after first PPS
 	{
 		main_flags.pps_synced = 1;
 		main_flags.parse_nmea = 1;
@@ -466,4 +468,14 @@ void ADC1_2_IRQHandler(void)
 }
 
 
+
+uint32_t get_abs_pps_cntr(void)
+{
+	return pps_absolute_counter;
+}
+
+
 //todo: setupt ints priorities
+
+
+

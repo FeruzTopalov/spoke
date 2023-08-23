@@ -112,7 +112,7 @@ void store_memory_points(void)	// devices struct -> buffer array -> FLASH (pre-e
 			raw_points_array[point_start_index + MEMORY_POINT_ALT_POS + 0] = pp_devices[point_device_number]->altitude.as_array[0]; //store signed in unsigned via array
 			raw_points_array[point_start_index + MEMORY_POINT_ALT_POS + 1] = pp_devices[point_device_number]->altitude.as_array[1];
 
-			//todo: add date/time save
+			//todo: add date save
 
 		}
 		else
