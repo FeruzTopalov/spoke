@@ -49,6 +49,7 @@ void make_a_beep(void)
 		timer2_start();		//pwm
 		systick_set_100ms();
 		systick_start();	//gating
+		led_red_on();
 	}
 }
 
@@ -61,6 +62,7 @@ void make_a_long_beep(void)
 		timer2_start();		//pwm
 		systick_set_1000ms();
 		systick_start();	//gating
+		led_red_on();
 	}
 }
 
@@ -109,8 +111,6 @@ void systick_init(void)
 //Start buzzer gating timer
 void systick_start(void)
 {
-    SysTick->LOAD = (uint32_t)37499;              	//375000Hz/(37499+1)=10Hz
-    SysTick->VAL = 0;                               //reset counter value
 	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 }
 

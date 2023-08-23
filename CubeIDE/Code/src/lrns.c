@@ -279,7 +279,7 @@ void calc_timeout(uint32_t current_uptime)
 				{
 					if (dev == this_device)
 					{
-						if (get_abs_pps_cntr() < PPS_SKIP)	//if this is a timeout right after power up, ignore timeout alarm, do not set the flag
+						if (get_abs_pps_cntr() <= PPS_SKIP)	//if this is a timeout right after power up, ignore timeout alarm, do not set the flag
 						{									//feature, not a bug: once first PPS appeared, a short beep occurs (do "<= PPS_SKIP" to disable this, #TBD)
 							devices[dev].timeout_flag = 0;
 						}

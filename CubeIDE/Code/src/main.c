@@ -131,8 +131,6 @@ make_a_beep();
         if (main_flags.tick_1s == 1)
         {
         	main_flags.tick_1s = 0;
-        	led_green_on();
-        	led_green_off();
             adc_check_bat_voltage();
 
             if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
@@ -167,12 +165,10 @@ make_a_beep();
     	if (main_flags.process_compass == 1)
 		{
     		main_flags.process_compass = 0;
-    		led_green_on();
     		if (read_north())		//todo: decide on applicability of this condition
     		{
     			main_flags.update_screen = 1;
     		}
-    		led_green_off();
 		}
 
 
@@ -238,6 +234,7 @@ void EXTI2_IRQHandler(void)
 
 	if (pps_relative_counter > PPS_SKIP) //skip first two pps impulses: skip first PPS - ignore previous nmea data; skip second PPS, but fix the nmea data acquired after first PPS
 	{
+
 		main_flags.pps_synced = 1;
 		main_flags.parse_nmea = 1;
 	}
@@ -254,7 +251,6 @@ void EXTI0_IRQHandler(void)
 	uint16_t current_radio_status = rf_get_irq_status();	//Process the radio interrupt
 	rf_clear_irq();		//clear all flags
 
-	//todo add rx timeout interrupt
 	if (current_radio_status & IRQ_RX_DONE)	//Packet received
 	{
 		main_flags.rx_state = 0;
@@ -269,7 +265,7 @@ void EXTI0_IRQHandler(void)
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
-		led_red_off();
+		led_green_off();
 	}
 	else if (current_radio_status & IRQ_RX_TX_TIMEOUT)	//RX timeout only, because TX timeout feature is not used at all
 	{
@@ -322,7 +318,7 @@ void TIM1_UP_IRQHandler(void)
     				if (rf_tx_packet())
     				{
     					main_flags.tx_state = 1;
-    					led_red_on();
+    					led_green_on();
     				}
     			}
     			else
@@ -421,6 +417,7 @@ void SysTick_Handler(void)
 {
 	timer2_stop();	//pwm
 	systick_stop();	//gating
+	led_red_off();
 }
 
 
@@ -439,9 +436,6 @@ void DMA1_Channel5_IRQHandler(void)
 {
 
 	DMA1->IFCR = DMA_IFCR_CGIF5;     //clear all interrupt flags for DMA channel 5
-
-	led_red_on();
-	led_red_off();
 
 	spi2_dma_stop();
 	cs_lcd_inactive();
