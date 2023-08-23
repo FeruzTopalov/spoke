@@ -211,7 +211,7 @@ void DMA1_Channel3_IRQHandler(void)
 
     if (main_flags.pps_synced == 1) 	//if last pps status was "sync" then make a beep because we lost PPS
     {
-    	//make a long beep
+    	make_a_long_beep();
     }
 
     pps_relative_counter = 0;

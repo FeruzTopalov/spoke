@@ -13,6 +13,8 @@
 
 void systick_init(void);
 void systick_start(void);
+void systick_set_100ms(void);
+void systick_set_1000ms(void);
 void timer1_init(void);
 void timer1_clock_disable(void);
 void timer1_clock_enable(void);
@@ -45,6 +47,19 @@ void make_a_beep(void)
 	if (sound_enabled)
 	{
 		timer2_start();		//pwm
+		systick_set_100ms();
+		systick_start();	//gating
+	}
+}
+
+
+
+void make_a_long_beep(void)
+{
+	if (sound_enabled)
+	{
+		timer2_start();		//pwm
+		systick_set_1000ms();
 		systick_start();	//gating
 	}
 }
@@ -105,6 +120,22 @@ void systick_start(void)
 void systick_stop(void)
 {
 	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+}
+
+
+
+void systick_set_100ms(void)
+{
+	SysTick->LOAD = (uint32_t)37499;              	//375000Hz/(37499+1)=10Hz
+	SysTick->VAL = 0;
+}
+
+
+
+void systick_set_1000ms(void)
+{
+	SysTick->LOAD = (uint32_t)374999;              	//375000Hz/(374999+1)=1Hz
+	SysTick->VAL = 0;
 }
 
 
