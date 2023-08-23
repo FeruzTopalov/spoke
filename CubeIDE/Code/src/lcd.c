@@ -513,6 +513,28 @@ void lcd_print_next(char *p_str, uint8_t inv)
 
 
 
+void lcd_print_next_viceversa(char *p_str, uint8_t inv)	//use only after lcd_print_viceversa()
+{
+    uint8_t symb_cntr = 0;
+
+    //buf_pos -= 4 * FONT_SIZE_X;         //minus two characters position
+
+    while (*p_str)
+    {
+        p_str++;
+        symb_cntr++;
+    }
+
+    while (symb_cntr)
+    {
+        symb_cntr--;
+        lcd_char(*--p_str, inv);
+        buf_pos -= 2 * FONT_SIZE_X;         //minus two characters position
+    }
+}
+
+
+
 //Show bitmap
 void lcd_bitmap(const uint8_t arr[])
 {

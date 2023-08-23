@@ -234,7 +234,6 @@ void EXTI2_IRQHandler(void)
 
 	if (pps_relative_counter > PPS_SKIP) //skip first two pps impulses: skip first PPS - ignore previous nmea data; skip second PPS, but fix the nmea data acquired after first PPS
 	{
-
 		main_flags.pps_synced = 1;
 		main_flags.parse_nmea = 1;
 	}

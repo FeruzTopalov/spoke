@@ -65,6 +65,7 @@ void lcd_print_only(uint8_t row, uint8_t col, char *p_str, uint8_t inv);
 void lcd_print16(uint8_t row, uint8_t col, char *p_str, uint8_t inv);
 void lcd_print_next(char *p_str, uint8_t inv);
 void lcd_print_viceversa(uint8_t row, uint8_t col, char *p_str, uint8_t inv);
+void lcd_print_next_viceversa(char *p_str, uint8_t inv);
 void lcd_print16_viceversa(uint8_t row, uint8_t col, char *p_str, uint8_t inv);
 void lcd_bitmap(const uint8_t arr[]);
 void lcd_update(void);

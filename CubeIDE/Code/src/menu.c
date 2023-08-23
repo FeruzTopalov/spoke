@@ -927,12 +927,12 @@ void draw_navigation(void)
     	itoa32(p_gps_num->day_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
         lcd_print(2, 8, &tmp_buf[0], 0);
-        lcd_print_next("/", 0);
+        lcd_print_next(".", 0);
 
     	itoa32(p_gps_num->month_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
     	lcd_print_next(&tmp_buf[0], 0);
-        lcd_print_next("/", 0);
+        lcd_print_next(".", 0);
 
     	itoa32(p_gps_num->year_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
@@ -942,10 +942,15 @@ void draw_navigation(void)
 //    	ssd1306_char16_pos(3, 12, SYMB16_ALARM, 0);
 //    	ssd1306_char16_pos(3, 10, SYMB16_FENCE, 0);
 
+        itoa32(p_gps_num->sat_view, &tmp_buf[0]);	//satellites in use|view
+		lcd_print_viceversa(3, 15, &tmp_buf[0], 0);
+		lcd_print_next_viceversa("/", 0);
+		itoa32(p_gps_num->sat_used, &tmp_buf[0]);
+		lcd_print_next_viceversa(&tmp_buf[0], 0);
 
-		lcd_char_pos(3, 15, 'm', 0); 				//meter char
-		itoa32((int32_t)(p_gps_num->altitude), &tmp_buf[0]);
-		lcd_print_viceversa(3, 14, &tmp_buf[0], 0);
+//		lcd_char_pos(3, 15, 'm', 0); 				//meter char
+//		itoa32((int32_t)(p_gps_num->altitude), &tmp_buf[0]);
+//		lcd_print_viceversa(3, 14, &tmp_buf[0], 0);
 
     }
     else										//if navigate to another device
@@ -1020,16 +1025,13 @@ void draw_coordinates(void)
 		lcd_print(0, 3, "ID", 0);
 		lcd_char_pos(0, 6, pp_devices[navigate_to_device]->device_id, 0);
 
+		//todo: add timeout here for all
+
 		if (navigate_to_device == this_device)
 		{
 			lcd_print(0, 8, "(YOU)", 0);
 
-			lcd_print(3, 0, "SAT ", 0);	//satellites in use/view
-			itoa32(p_gps_num->sat_used, &tmp_buf[0]);
-			lcd_print_next(&tmp_buf[0], 0);
-			lcd_print_next("/", 0);
-			itoa32(p_gps_num->sat_view, &tmp_buf[0]);
-			lcd_print_next(&tmp_buf[0], 0);
+			//todo: "ALT +12345 xx:xx"
 
 			lcd_print(3, 10, "DOP ", 0);	//DOP
 			itoa32(((uint16_t)(p_gps_num->pdop)), &tmp_buf[0]);
@@ -1058,6 +1060,8 @@ void draw_coordinates(void)
     {
         lcd_char('+', 0);
     }
+
+    //todo: add ALT here for all
 
     draw_bat_level();
 
