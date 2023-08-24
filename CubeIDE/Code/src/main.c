@@ -256,9 +256,13 @@ void EXTI0_IRQHandler(void)
 
 		if (!(current_radio_status & IRQ_CRC_ERROR))	// if no CRC error
 		{
-			led_green_on(); //indicate successful rx event, it will be switched off at the next timeslot interrupt
 			rf_get_rx_packet();
 			parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
+
+			if (get_current_device() == time_slot)
+			{
+				led_green_on(); //indicate successful rx event only if received device is active in menu, it will be switched off at the next timeslot interrupt
+			}
 		}
 	}
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
