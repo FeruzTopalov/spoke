@@ -236,6 +236,7 @@ void EXTI2_IRQHandler(void)
 	{
 		main_flags.pps_synced = 1;
 		main_flags.parse_nmea = 1;
+		led_green_on(); //indicate valid PPS event, led will be switched off at the next timeslot interrupt
 	}
 
 }
@@ -253,10 +254,10 @@ void EXTI0_IRQHandler(void)
 	if (current_radio_status & IRQ_RX_DONE)	//Packet received
 	{
 		main_flags.rx_state = 0;
-		led_green_off();
 
 		if (!(current_radio_status & IRQ_CRC_ERROR))	// if no CRC error
 		{
+			led_green_on(); //switch green led on only after successful reception, it will be switched off at the next timeslot interrupt
 			rf_get_rx_packet();
 			parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
 		}
@@ -264,12 +265,10 @@ void EXTI0_IRQHandler(void)
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
-		led_green_off();
 	}
 	else if (current_radio_status & IRQ_RX_TX_TIMEOUT)	//RX timeout only, because TX timeout feature is not used at all
 	{
 		main_flags.rx_state = 0;
-		led_green_off();
 		rf_set_standby_xosc();	//after RX TO it goes to Standby RC mode only (https://forum.lora-developers.semtech.com/t/sx1268-is-it-possible-to-configure-transition-to-stdby-xosc-after-cad-done-rx-timeout/1282)
 	}
 
@@ -292,6 +291,7 @@ const uint8_t timeslot_pattern[] = {	0, 	0, 	1,	0,	0,	1,	0,	0,	1,	0,	0,	1,	0,	0,
 void TIM1_UP_IRQHandler(void)
 {
     TIM1->SR &= ~TIM_SR_UIF;                    //clear interrupt
+    led_green_off();		//switch off green led after successful rx event
 
     time_slot_timer_ovf++;             			//increment ovf counter
 
@@ -317,7 +317,6 @@ void TIM1_UP_IRQHandler(void)
     				if (rf_tx_packet())
     				{
     					main_flags.tx_state = 1;
-    					led_green_on();
     				}
     			}
     			else
@@ -325,7 +324,6 @@ void TIM1_UP_IRQHandler(void)
     				if (rf_start_rx())
     				{
     					main_flags.rx_state = 1;
-    					led_green_on();
     				}
     			}
     		}
