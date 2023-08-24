@@ -236,7 +236,6 @@ void EXTI2_IRQHandler(void)
 	{
 		main_flags.pps_synced = 1;
 		main_flags.parse_nmea = 1;
-		led_green_on(); //indicate valid PPS event, led will be switched off at the next timeslot interrupt
 	}
 
 }
@@ -257,7 +256,7 @@ void EXTI0_IRQHandler(void)
 
 		if (!(current_radio_status & IRQ_CRC_ERROR))	// if no CRC error
 		{
-			led_green_on(); //switch green led on only after successful reception, it will be switched off at the next timeslot interrupt
+			led_green_on(); //indicate successful rx event, it will be switched off at the next timeslot interrupt
 			rf_get_rx_packet();
 			parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
 		}
@@ -265,6 +264,7 @@ void EXTI0_IRQHandler(void)
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
+		led_green_on(); //indicate successful tx event, led will be switched off at the next timeslot interrupt
 	}
 	else if (current_radio_status & IRQ_RX_TX_TIMEOUT)	//RX timeout only, because TX timeout feature is not used at all
 	{
