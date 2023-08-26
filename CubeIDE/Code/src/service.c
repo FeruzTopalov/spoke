@@ -105,6 +105,136 @@ int32_t limit_to(int32_t value, int32_t pos_lim, int32_t neg_lim)
 
 
 
+void convert_timeout(uint32_t timeout_val, char *buffer)
+{
+    uint32_t sec = 0;
+    uint32_t min = 0;
+    uint32_t hour = 0;
+    uint32_t day = 0;
+    char buf[3];
+
+
+    if (timeout_val >= 60)
+    {
+        min = timeout_val / 60;
+        sec = timeout_val % 60;
+
+        if (min >= 60)
+        {
+            hour = min / 60;
+            min = min % 60;
+
+            if (hour >= 24)
+            {
+                day = hour / 24;
+                hour = hour % 24;
+            }
+        }
+    }
+    else
+    {
+        sec = timeout_val;
+    }
+
+    if (day)
+    {
+        //XXdXXh
+        itoa32(day, &buf[0]);
+        if (day > 9)
+        {
+            buffer[0] = buf[0];
+            buffer[1] = buf[1];
+            buffer[2] = 'd';
+        }
+        else
+        {
+            buffer[0] = '0';
+            buffer[1] = buf[0];
+            buffer[2] = 'd';
+        }
+
+        itoa32(hour, &buf[0]);
+        if (hour > 9)
+        {
+            buffer[3] = buf[0];
+            buffer[4] = buf[1];
+            buffer[5] = 'h';
+        }
+        else
+        {
+            buffer[3] = '0';
+            buffer[4] = buf[0];
+            buffer[5] = 'h';
+        }
+    }
+    else if (hour)
+    {
+        //XXhXXm
+        itoa32(hour, &buf[0]);
+        if (hour > 9)
+        {
+            buffer[0] = buf[0];
+            buffer[1] = buf[1];
+            buffer[2] = 'h';
+        }
+        else
+        {
+            buffer[0] = '0';
+            buffer[1] = buf[0];
+            buffer[2] = 'h';
+        }
+
+        itoa32(min, &buf[0]);
+        if (min > 9)
+        {
+            buffer[3] = buf[0];
+            buffer[4] = buf[1];
+            buffer[5] = 'm';
+        }
+        else
+        {
+            buffer[3] = '0';
+            buffer[4] = buf[0];
+            buffer[5] = 'm';
+        }
+    }
+    else
+    {
+        //XXmXXs
+        itoa32(min, &buf[0]);
+        if (min > 9)
+        {
+            buffer[0] = buf[0];
+            buffer[1] = buf[1];
+            buffer[2] = 'm';
+        }
+        else
+        {
+            buffer[0] = '0';
+            buffer[1] = buf[0];
+            buffer[2] = 'm';
+        }
+
+        itoa32(sec, &buf[0]);
+        if (sec > 9)
+        {
+            buffer[3] = buf[0];
+            buffer[4] = buf[1];
+            buffer[5] = 's';
+        }
+        else
+        {
+            buffer[3] = '0';
+            buffer[4] = buf[0];
+            buffer[5] = 's';
+        }
+    }
+
+    buffer[6] = 0;  //string end
+}
+
+
+
 //Converts string to float
 float atof32(char *input)
 {

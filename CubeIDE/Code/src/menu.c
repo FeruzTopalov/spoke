@@ -1018,30 +1018,22 @@ void draw_coordinates(void)
     {
 		lcd_print_next(" POINT ", 0);
 		lcd_print_next(get_memory_point_name(navigate_to_device), 0);
-		lcd_print(3, 0, "ALT +12456 xx/xx", 0);  //todo: finish altitude+save date
+
+		//save date
     }
     else
     {
 		lcd_print(0, 3, "ID", 0);
 		lcd_char_pos(0, 6, pp_devices[navigate_to_device]->device_id, 0);
 
-		//todo: add timeout here for all
-
 		if (navigate_to_device == this_device)
 		{
 			lcd_print(0, 8, "(YOU)", 0);
-
-			//todo: "ALT +12345 xx:xx"
-
-			lcd_print(3, 10, "DOP ", 0);	//DOP
-			itoa32(((uint16_t)(p_gps_num->pdop)), &tmp_buf[0]);
-			lcd_print_next(&tmp_buf[0], 0);
-		}
-		else
-		{
-			lcd_print(3, 0, "ALT +12345 xx:xx", 0);	//todo: finish altitude+timeout
 		}
 
+		//print timeout here for all
+		convert_timeout(pp_devices[navigate_to_device]->timeout, &tmp_buf[0]);
+		lcd_print(3, 10, &tmp_buf[0], 0);
     }
 
     lcd_print(1, 0, "LAT", 0);
@@ -1061,7 +1053,10 @@ void draw_coordinates(void)
         lcd_char('+', 0);
     }
 
-    //todo: add ALT here for all
+    //print ALT here for all
+    lcd_print(3, 0, "ALT", 0);
+    itoa32(pp_devices[navigate_to_device]->altitude.as_integer, &tmp_buf[0]);
+    lcd_print(3, 4, &tmp_buf[0], 0);
 
     draw_bat_level();
 

@@ -295,7 +295,7 @@ const uint8_t timeslot_pattern[] = {	0, 	0, 	1,	0,	0,	1,	0,	0,	1,	0,	0,	1,	0,	0,
 void TIM1_UP_IRQHandler(void)
 {
     TIM1->SR &= ~TIM_SR_UIF;                    //clear interrupt
-    led_green_off();		//switch off green led after successful rx event
+    led_green_off();		//switch off green led after successful tx/rx event
 
     time_slot_timer_ovf++;             			//increment ovf counter
 
