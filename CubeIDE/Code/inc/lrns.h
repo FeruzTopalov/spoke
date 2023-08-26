@@ -46,6 +46,10 @@ struct devices_struct
     uint32_t timeout;					//timeout in seconds since last activity (RX of coordinates)
     uint8_t timeout_flag;				//set when predefined timeout occurs
 
+    //DATE (only for memory points)
+    uint8_t save_day;
+	uint8_t save_month;
+	uint8_t save_year;
 
     //ABSOLUTE COORDINATES
     union

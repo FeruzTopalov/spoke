@@ -14,7 +14,7 @@
 
 
 
-#define MEMORY_POINT_SIZE	(11)	//10 uint16 words include: 1 flag, 4 lat; 4 lon; 2 altitude
+#define MEMORY_POINT_SIZE	(14)	//uint16 words, include: 1 flag, 4 lat; 4 lon; 2 altitude; 1 save day, 1 save month, 1 save year
 #define MEMORY_POINTS_SIZE	(MEMORY_POINTS_TOT * MEMORY_POINT_SIZE)
 
 #define MEMORY_POINT_FLAG		(0xAA)	//if a mem point exists then it's flag variable is 0xAA
@@ -22,6 +22,10 @@
 #define MEMORY_POINT_LAT_POS	(1)
 #define MEMORY_POINT_LON_POS	(5)
 #define MEMORY_POINT_ALT_POS	(9)
+#define MEMORY_POINT_SDAY_POS	(11)
+#define MEMORY_POINT_SMONTH_POS	(12)
+#define MEMORY_POINT_SYEAR_POS	(13)
+
 
 #define MEM_POINT_NAME_LEN 	(4)			//max len of any point name
 #define MEM_POINT_0_NAME   	("HOME")
@@ -77,6 +81,10 @@ void load_memory_points(void)	// FLASH -> buffer array -> devices struct
 			pp_devices[point_device_number]->altitude.as_array[0] = raw_points_array[point_start_index + MEMORY_POINT_ALT_POS + 0];
 			pp_devices[point_device_number]->altitude.as_array[1] = raw_points_array[point_start_index + MEMORY_POINT_ALT_POS + 1];
 
+			//read save date
+			pp_devices[point_device_number]->save_day = raw_points_array[point_start_index + MEMORY_POINT_SDAY_POS];
+			pp_devices[point_device_number]->save_month = raw_points_array[point_start_index + MEMORY_POINT_SMONTH_POS];
+			pp_devices[point_device_number]->save_year = raw_points_array[point_start_index + MEMORY_POINT_SYEAR_POS];
 		}
 		else
 		{
@@ -108,12 +116,14 @@ void store_memory_points(void)	// devices struct -> buffer array -> FLASH (pre-e
 
 			}
 
-			//add altitude save
+			//altitude save
 			raw_points_array[point_start_index + MEMORY_POINT_ALT_POS + 0] = pp_devices[point_device_number]->altitude.as_array[0]; //store signed in unsigned via array
 			raw_points_array[point_start_index + MEMORY_POINT_ALT_POS + 1] = pp_devices[point_device_number]->altitude.as_array[1];
 
-			//todo: add date save
-
+			//date save
+			raw_points_array[point_start_index + MEMORY_POINT_SDAY_POS] = pp_devices[point_device_number]->save_day;
+			raw_points_array[point_start_index + MEMORY_POINT_SMONTH_POS] = pp_devices[point_device_number]->save_month;
+			raw_points_array[point_start_index + MEMORY_POINT_SYEAR_POS] = pp_devices[point_device_number]->save_year;
 		}
 		else
 		{

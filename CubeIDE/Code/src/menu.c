@@ -1020,6 +1020,14 @@ void draw_coordinates(void)
 		lcd_print_next(get_memory_point_name(navigate_to_device), 0);
 
 		//save date
+		itoa32(pp_devices[navigate_to_device]->save_day, &tmp_buf[0]);
+		add_leading_zero(&tmp_buf[0]);
+		lcd_print(3, 11, &tmp_buf[0], 0);
+		lcd_print_next(".", 0);
+
+		itoa32(pp_devices[navigate_to_device]->save_month, &tmp_buf[0]);
+		add_leading_zero(&tmp_buf[0]);
+		lcd_print_next(&tmp_buf[0], 0);
     }
     else
     {
@@ -1631,6 +1639,9 @@ void save_device_ok(void)
 	pp_devices[current_mem_point_to_save]->latitude.as_float = pp_devices[navigate_to_device]->latitude.as_float;
 	pp_devices[current_mem_point_to_save]->longitude.as_float = pp_devices[navigate_to_device]->longitude.as_float;
 	pp_devices[current_mem_point_to_save]->altitude.as_integer = pp_devices[navigate_to_device]->altitude.as_integer;
+	pp_devices[current_mem_point_to_save]->save_day = p_gps_num->day_tz;
+	pp_devices[current_mem_point_to_save]->save_month = p_gps_num->month_tz;
+	pp_devices[current_mem_point_to_save]->save_year = p_gps_num->year_tz;
 
 	//save to flash
 	store_memory_points();
