@@ -69,7 +69,7 @@ void init_lrns(void)
     for (uint8_t dev = 1; dev <= NAV_OBJECTS_MAX; dev++)
     {
         memset(&devices[dev], 0, sizeof(devices[dev]));
-        devices[dev].rx_icon = SYMB16_RX13;
+        devices[dev].rx_icon = SYMB8_RX12;
     }
 
 	//Get external things
@@ -146,9 +146,9 @@ void parse_air_packet(uint32_t current_uptime)
 
 void update_reception_icon(uint8_t rx_device)
 {
-	if (devices[rx_device].rx_icon == SYMB16_RX33)
+	if (devices[rx_device].rx_icon == SYMB8_RX22)
 	{
-		devices[rx_device].rx_icon = SYMB16_RX13;
+		devices[rx_device].rx_icon = SYMB8_RX12;
 	}
 	else
 	{

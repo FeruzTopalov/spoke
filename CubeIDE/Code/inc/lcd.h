@@ -27,14 +27,13 @@
 #define SYMB16_TIMEOUT      (':')
 #define SYMB16_ALARM        (';')
 #define SYMB16_FENCE        ('<')
-#define SYMB16_RX13        	('\x5b')
-#define SYMB16_RX23        	('\x5c')
-#define SYMB16_RX33        	('\x5d')
 
 #define SYMB8_DEGREE        ('\x80')
 #define SYMB8_BAT_TAIL    	('\x81')
 #define SYMB8_BAT_MID    	('\x82')
 #define SYMB8_BAT_HEAD    	('\x83')
+#define SYMB8_RX12        	('\x84')
+#define SYMB8_RX22        	('\x85')
 
 
 

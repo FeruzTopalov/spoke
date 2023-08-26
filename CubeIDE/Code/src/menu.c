@@ -957,7 +957,7 @@ void draw_navigation(void)
     {
     	if (pp_devices[navigate_to_device]->memory_point_flag == 0)
     	{
-    		lcd_char16_pos(0, 8, pp_devices[navigate_to_device]->rx_icon, 0); //Print RX icon only for real devices todo: delete
+    		lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon, 0); //Print RX icon only for real devices todo: delete
     	}
 
 		//Draw notch
