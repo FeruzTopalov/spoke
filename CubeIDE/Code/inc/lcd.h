@@ -34,6 +34,9 @@
 #define SYMB8_BAT_HEAD    	('\x83')
 #define SYMB8_RX12        	('\x84')
 #define SYMB8_RX22        	('\x85')
+#define SYMB8_TIMEOUT       ('\x86')
+#define SYMB8_FENCE       	('\x87')
+#define SYMB8_ALARM       	('\x88')
 
 
 

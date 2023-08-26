@@ -97,7 +97,7 @@ void fill_air_packet(uint32_t current_uptime)
 	p_air_packet_tx[PACKET_NUM_ID_POS] = 			(this_device << BYTE_NUM_POS) | (devices[this_device].device_id - 'A');	   //transmit dev id as A-Z, but with 0x41 ('A') shift resulting in 0-25 dec
 	devices[this_device].timestamp =				current_uptime;
 
-	p_air_packet_tx[PACKET_FLAGS_POS] = 			0; 			//todo add flags here
+	p_air_packet_tx[PACKET_FLAGS_POS] = 			devices[this_device].alarm_flag;
 
 	p_air_packet_tx[PACKET_LATITUDE_POS] = 			devices[this_device].latitude.as_array[0];
 	p_air_packet_tx[PACKET_LATITUDE_POS + 1] = 		devices[this_device].latitude.as_array[1];
@@ -123,7 +123,7 @@ void parse_air_packet(uint32_t current_uptime)
 	devices[rx_device].device_id				=	(p_air_packet_rx[PACKET_NUM_ID_POS] & PACKET_ID_MASK) + 'A';	//restore 0x41 shift
 	devices[rx_device].timestamp				=	current_uptime;
 
-	//todo read flags here
+	devices[rx_device].alarm_flag				=	p_air_packet_rx[PACKET_FLAGS_POS];
 
 	devices[rx_device].latitude.as_array[0]	=		p_air_packet_rx[PACKET_LATITUDE_POS];
 	devices[rx_device].latitude.as_array[1]	=		p_air_packet_rx[PACKET_LATITUDE_POS + 1];

@@ -909,6 +909,16 @@ void draw_navigation(void)
 
     if (navigate_to_device == this_device)		//if navigate to this device
     {
+    	if (pp_devices[navigate_to_device]->timeout_flag)
+		{
+			lcd_char_pos(0, 8, SYMB8_TIMEOUT, 0);
+		}
+
+    	if (pp_devices[navigate_to_device]->alarm_flag)
+    	{
+    		lcd_char_pos(0, 10, SYMB8_ALARM, 0);
+    	}
+
     	itoa32(p_gps_num->hour_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
         lcd_print(1, 8, &tmp_buf[0], 0);
@@ -957,7 +967,24 @@ void draw_navigation(void)
     {
     	if (pp_devices[navigate_to_device]->memory_point_flag == 0)
     	{
-    		lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon, 0); //Print RX icon only for real devices todo: delete
+    		if (pp_devices[navigate_to_device]->timeout_flag)
+    		{
+    			lcd_char_pos(0, 8, SYMB8_TIMEOUT, 0);
+    		}
+    		else
+    		{
+    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon, 0); //Print RX icon only for real devices todo: delete
+    		}
+    	}
+
+    	if (pp_devices[navigate_to_device]->fence_flag)
+    	{
+    		lcd_char_pos(0, 9, SYMB8_FENCE, 0);
+    	}
+
+    	if (pp_devices[navigate_to_device]->alarm_flag)
+    	{
+    		lcd_char_pos(0, 10, SYMB8_ALARM, 0);
     	}
 
 		//Draw notch
