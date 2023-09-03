@@ -1078,6 +1078,7 @@ void draw_coordinates(void)
     {
         lcd_char('+', 0);
     }
+    lcd_char_pos(1, 15, SYMB8_DEGREE, 0); //degree char
 
 
     lcd_print(2, 0, "LON", 0);
@@ -1087,11 +1088,14 @@ void draw_coordinates(void)
     {
         lcd_char('+', 0);
     }
+    lcd_char_pos(2, 15, SYMB8_DEGREE, 0); //degree char
+
 
     //print ALT here for all
     lcd_print(3, 0, "ALT", 0);
     itoa32(pp_devices[navigate_to_device]->altitude.as_integer, &tmp_buf[0]);
     lcd_print(3, 4, &tmp_buf[0], 0);
+    lcd_char('m', 0); //meter char
 
     draw_bat_level();
 
