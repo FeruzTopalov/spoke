@@ -780,7 +780,7 @@ void draw_devices(void)
 					}
 					else
 					{
-						lcd_char_pos(active_row, 13, pp_devices[dev]->rx_icon, 0); //Print RX icon only for real devices todo: delete
+						lcd_char_pos(active_row, 13, pp_devices[dev]->rx_icon, 0);
 					}
 
 			    	if (pp_devices[dev]->fence_flag)
@@ -989,19 +989,11 @@ void draw_navigation(void)
     	add_leading_zero(&tmp_buf[0]);
         lcd_print_next(&tmp_buf[0], 0);
 
-//    	ssd1306_char16_pos(3, 14, SYMB16_TIMEOUT, 0);	//todo: those icons are not needed at all anymore
-//    	ssd1306_char16_pos(3, 12, SYMB16_ALARM, 0);
-//    	ssd1306_char16_pos(3, 10, SYMB16_FENCE, 0);
-
         itoa32(p_gps_num->sat_view, &tmp_buf[0]);	//satellites in use|view
 		lcd_print_viceversa(3, 15, &tmp_buf[0], 0);
 		lcd_print_next_viceversa("/", 0);
 		itoa32(p_gps_num->sat_used, &tmp_buf[0]);
 		lcd_print_next_viceversa(&tmp_buf[0], 0);
-
-//		lcd_char_pos(3, 15, 'm', 0); 				//meter char
-//		itoa32((int32_t)(p_gps_num->altitude), &tmp_buf[0]);
-//		lcd_print_viceversa(3, 14, &tmp_buf[0], 0);
 
     }
     else										//if navigate to another device
@@ -1014,7 +1006,7 @@ void draw_navigation(void)
     		}
     		else
     		{
-    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon, 0); //Print RX icon only for real devices todo: delete
+    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon, 0);
     		}
     	}
 

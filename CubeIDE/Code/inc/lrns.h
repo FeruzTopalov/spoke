@@ -19,7 +19,6 @@ void init_lrns(void);
 void fill_air_packet(uint32_t current_uptime);
 void parse_air_packet(uint32_t current_uptime);
 void process_all_devices(void);
-void process_current_device(void);
 void calc_relative_position(uint8_t another_device);
 void calc_timeout(uint32_t current_uptime);
 void calc_fence(void);

@@ -176,20 +176,6 @@ void process_all_devices(void)
 
 
 
-void process_current_device(void)	//todo: delete
-{
-
-	uint8_t curr_dev = get_current_device();
-
-	if (curr_dev != this_device)
-	{
-		calc_relative_position(curr_dev);
-	}
-
-}
-
-
-
 //  Heart of the device <3
 //Calculates distance between two GPS points (using haversine formula)
 //Calculates heading between two GPS points (loxodrome, or rhumb line)

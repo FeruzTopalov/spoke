@@ -12,7 +12,7 @@
 
 
 
-const char *rumbs[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
+char rumbs[9][3] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
 
 
 
@@ -290,12 +290,12 @@ void convert_main_alt_difference(int16_t dalt, char *buffer)
 
 
 
-const char *convert_heading(uint16_t heading)
+char *convert_heading(uint16_t heading)
 {
 	float rumb;
 
 	rumb = (heading + 22.5) / 45;
-	return rumbs[(uint8_t)rumb];
+	return &rumbs[(uint8_t)rumb][0];
 }
 
 
