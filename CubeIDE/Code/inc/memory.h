@@ -11,8 +11,8 @@
 
 
 
-#define FLASH_POINTS_PAGE	(0x0801F800)	//page 126 start
-#define FLASH_SETTINGS_PAGE	(0x0801FC00) 	//page 127 start
+#define FLASH_POINTS_PAGE	(0x08018800)	//page 62 start
+#define FLASH_SETTINGS_PAGE	(0x08018C00) 	//page 63 start
 
 
 

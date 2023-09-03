@@ -472,27 +472,6 @@ void init_menu(void)
     current_menu = M_MAIN;
     return_from_power_menu = M_MAIN;
     set_current_item(M_MAIN_I_NAVIGATION);
-    draw_current_menu();
-
-    //Create fake devices
-//    pp_devices[this_device]->exist_flag = 1;
-//    pp_devices[this_device]->memory_point_flag = 0;
-//    pp_devices[this_device]->latitude.as_float = 59.907968;	//0
-//    pp_devices[this_device]->longitude.as_float = 30.455612;
-//
-//
-//    pp_devices[p_settings->devices_on_air]->exist_flag = 1;
-//    pp_devices[p_settings->devices_on_air]->device_id = 'F';
-//    pp_devices[p_settings->devices_on_air]->memory_point_flag = 0;
-//    pp_devices[p_settings->devices_on_air]->latitude.as_float = 59.906175;
-//    pp_devices[p_settings->devices_on_air]->longitude.as_float = 30.457254;
-//
-//
-//    pp_devices[p_settings->devices_on_air - 1]->exist_flag = 1;
-//    pp_devices[p_settings->devices_on_air - 1]->device_id = 'Z';
-//    pp_devices[p_settings->devices_on_air - 1]->memory_point_flag = 0;
-//    pp_devices[p_settings->devices_on_air - 1]->latitude.as_float = 59.909516;
-//    pp_devices[p_settings->devices_on_air - 1]->longitude.as_float = 30.462170;
 }
 
 
