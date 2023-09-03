@@ -80,7 +80,7 @@ void navigation_and_coordinates_down(void);
 void navigation_esc(void);
 void coordinates_esc(void);
 void main_ok(void);
-void main_navigation_coordinates_pwr_long(void);
+void main_navigation_coordinates_devices_pwr_long(void);
 void power_ok(void);
 void power_esc(void);
 void coordinates_ok(void);
@@ -268,9 +268,10 @@ const struct
 	{M_COORDINATES,				BTN_DOWN,				navigation_and_coordinates_down},
 	{M_COORDINATES,				BTN_ESC,				coordinates_esc},
 	{M_MAIN,					BTN_OK,					main_ok},
-	{M_MAIN,					BTN_PWR_LONG,			main_navigation_coordinates_pwr_long},
-	{M_NAVIGATION,				BTN_PWR_LONG,			main_navigation_coordinates_pwr_long},
-	{M_COORDINATES,				BTN_PWR_LONG,			main_navigation_coordinates_pwr_long},
+	{M_MAIN,					BTN_PWR_LONG,			main_navigation_coordinates_devices_pwr_long},
+	{M_NAVIGATION,				BTN_PWR_LONG,			main_navigation_coordinates_devices_pwr_long},
+	{M_COORDINATES,				BTN_PWR_LONG,			main_navigation_coordinates_devices_pwr_long},
+	{M_DEVICES,					BTN_PWR_LONG,			main_navigation_coordinates_devices_pwr_long},
 	{M_POWER,					BTN_OK,					power_ok},
 	{M_POWER,					BTN_ESC,				power_esc},
 	{M_SAVE_DEVICE,				BTN_UP,					save_device_up},
@@ -1612,7 +1613,7 @@ void main_ok(void)
 
 
 
-void main_navigation_coordinates_pwr_long(void)
+void main_navigation_coordinates_devices_pwr_long(void)
 {
 	if (current_menu == M_NAVIGATION)
 	{
