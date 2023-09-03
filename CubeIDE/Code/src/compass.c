@@ -46,37 +46,10 @@ void init_compass(void)
 	settings_copy = *p_settings;
 
 	//start calibration if requested
-	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//if DOWN button is pressed upon power up
+	if (!((GPIOB->IDR) & GPIO_IDR_IDR3) && ((GPIOB->IDR) & GPIO_IDR_IDR4))	//if DOWN button is pressed and  OK button is released upon power up
 	{
 		calibrate_compass();
 	}
-
-/*
- 	//compass section
-	while (1)
-	{
-		float north;
-		float x1, y1;
-		char buf[15];
-
-		led_green_on();
-		north = get_north();
-		led_green_off();
-
-		x1 = 63 + 25 * sin(north);
-		y1 = 31 - 25 * cos(north);
-
-		lcd_clear();
-
-		ftoa32(north, 3, buf);
-		lcd_print(0, 0, buf, 0);
-		lcd_draw_line(63, 31, x1, y1);
-
-		//view
-		lcd_update();
-		delay_cyc(20000);
-	}
-*/
 }
 
 
@@ -248,6 +221,7 @@ restart_cal:
 		lcd_set_pixel_plot(x_dot, y_dot);
 	}
 	lcd_print(0, 0, "Done", 0);
+	lcd_print(0, 14, "OK", 0);
 	lcd_update();
 
 	while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click to continue
