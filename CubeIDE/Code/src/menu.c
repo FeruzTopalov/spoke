@@ -27,8 +27,7 @@
 
 
 
-char *FW_VERSION = "1.0";	//firmware
-char *HW_VERSION = "2.5";		//hardware (2.5 means new firmware on old HW v2)
+char *HW_FW_VERSION = "v1.1";	//revision HW.FW
 
 
 
@@ -701,6 +700,7 @@ void draw_main(void)
     lcd_print(MAIN_ROW, MAIN_COL, "Navigation", 0);
     lcd_print(MAIN_ROW + 1, MAIN_COL, "Devices", 0);
     lcd_print(MAIN_ROW + 2, MAIN_COL, "Settings", 0);
+    lcd_print_viceversa(MAIN_ROW + 2, 15, HW_FW_VERSION, 0);
     lcd_print(MAIN_ROW + get_current_item(), MAIN_COL - 1, ">", 0);
     draw_bat_level();
 
