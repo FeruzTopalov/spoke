@@ -12,6 +12,10 @@
 
 
 
+const char *rumbs[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
+
+
+
 //Simple delay in cycles
 void delay_cyc(uint32_t cycles)
 {
@@ -282,6 +286,16 @@ void convert_main_alt_difference(int16_t dalt, char *buffer)
 		buffer[0] = 'X';
 		buffer[1] = 0;
 	}
+}
+
+
+
+const char *convert_heading(uint16_t heading)
+{
+	float rumb;
+
+	rumb = (heading + 22.5) / 45;
+	return rumbs[(uint8_t)rumb];
 }
 
 

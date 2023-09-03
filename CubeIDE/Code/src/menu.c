@@ -761,13 +761,46 @@ void draw_devices(void)
 				if (dev != this_device)
 				{
 					active_devs++;
+
 					itoa32(dev, &tmp_buf[0]);
 					lcd_print(active_row, 0, tmp_buf, 0);
+
 					lcd_char_pos(active_row, 1, pp_devices[dev]->device_id, 0);
+
+					convert_main_distance(pp_devices[dev]->distance, &tmp_buf[0]);
+					lcd_print_viceversa(active_row, 6, &tmp_buf[0], 0);
+					lcd_char_pos(active_row, 7, 'm', 0);
+
+					lcd_print(active_row, 9, convert_heading(pp_devices[dev]->heading_deg), 0);
+
+					if (pp_devices[dev]->timeout_flag)
+					{
+						lcd_char_pos(active_row, 13, SYMB8_TIMEOUT, 0);
+					}
+					else
+					{
+						lcd_char_pos(active_row, 13, pp_devices[dev]->rx_icon, 0); //Print RX icon only for real devices todo: delete
+					}
+
+			    	if (pp_devices[dev]->fence_flag)
+			    	{
+			    		lcd_char_pos(active_row, 14, SYMB8_FENCE, 0);
+			    	}
+
+			    	if (pp_devices[dev]->alarm_flag)
+			    	{
+			    		lcd_char_pos(active_row, 15, SYMB8_ALARM, 0);
+			    	}
+
 					active_row++;
 				}
 			}
 		}
+
+		//	lcd_print(0, 0, "1A  123m NW  TAF", 0);
+		//	lcd_print(1, 0, "2B  1.3m N   T  ", 0);
+		//	lcd_print(2, 0, "3C   27m SE   A ", 0);
+		//	lcd_print(3, 0, "5E 10.1m W     F", 0);
 
 		if (active_devs == 0)
 		{
@@ -786,6 +819,13 @@ void draw_devices(void)
 			{
 				active_pts++;
 				lcd_print(active_row, 0, get_memory_point_name(pt), 0);
+
+				convert_main_distance(pp_devices[pt]->distance, &tmp_buf[0]);
+				lcd_print_viceversa(active_row, 8, &tmp_buf[0], 0);
+				lcd_char_pos(active_row, 9, 'm', 0);
+
+				lcd_print(active_row, 11, convert_heading(pp_devices[pt]->heading_deg), 0);
+
 				active_row++;
 			}
 		}
@@ -797,10 +837,10 @@ void draw_devices(void)
 		}
 	}
 
-//	lcd_print(0, 0, "1A  123 NWW   AF", 0);
-//	lcd_print(1, 0, "2B  1.3 N    T  ", 0);
-//	lcd_print(2, 0, "3C   27 SE    A ", 0);
-//	lcd_print(3, 0, "5E 10.1 W      F", 0);
+	//	lcd_print(0, 0, "HOME  123m NW", 0);
+	//	lcd_print(1, 0, "CAR   1.3m N", 0);
+	//	lcd_print(2, 0, "FLAG   27m SE", 0);
+	//	lcd_print(3, 0, "PIN  10.1m W", 0);
 
 	lcd_update();
 }
