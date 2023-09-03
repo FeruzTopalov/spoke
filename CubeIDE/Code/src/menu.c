@@ -1006,7 +1006,7 @@ void draw_navigation(void)
 		}
 
 		//print distance
-		itoa32(pp_devices[navigate_to_device]->distance, &tmp_buf[0]);
+		convert_main_distance(pp_devices[navigate_to_device]->distance, &tmp_buf[0]);
 		lcd_print16_viceversa(1, 14, &tmp_buf[0], 0);
 
 		//print heading
@@ -1016,7 +1016,7 @@ void draw_navigation(void)
 
 		//print altitude diff
 		lcd_char_pos(3, 15, 'm', 0); //meter char
-		itoa32(pp_devices[navigate_to_device]->delta_altitude, &tmp_buf[0]);
+		convert_main_alt_difference(pp_devices[navigate_to_device]->delta_altitude, &tmp_buf[0]);
 		lcd_print_viceversa(3, 14, &tmp_buf[0], 0);
 		if (pp_devices[navigate_to_device]->delta_altitude > 0)
 		{

@@ -235,6 +235,57 @@ void convert_timeout(uint32_t timeout_val, char *buffer)
 
 
 
+void convert_main_distance(uint32_t distance, char *buffer)
+{
+	float tmpf = 0;
+
+	if (distance < 10000)
+	{
+		itoa32(distance, &buffer[0]);
+	}
+	else if (distance < 100000)
+	{
+		tmpf = distance / 1000.0;
+		ftoa32(tmpf, 1, &buffer[0]);
+	}
+	else if (distance < 1000000)
+	{
+		distance = distance / 1000;
+		itoa32(distance, &buffer[0]);
+		buffer[3] = '.';	//append '.'
+		buffer[4] = 0;
+	}
+	else
+	{
+		buffer[0] = 'X';
+		buffer[1] = 0;
+	}
+}
+
+
+
+void convert_main_alt_difference(int16_t dalt, char *buffer)
+{
+	float tmpf = 0;
+
+	if (absv(dalt) < 10000)
+	{
+		itoa32(dalt, &buffer[0]);
+	}
+	else if (absv(dalt) < 100000)
+	{
+		tmpf = dalt / 1000.0;
+		ftoa32(tmpf, 1, &buffer[0]);
+	}
+	else
+	{
+		buffer[0] = 'X';
+		buffer[1] = 0;
+	}
+}
+
+
+
 //Converts string to float
 float atof32(char *input)
 {

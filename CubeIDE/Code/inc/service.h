@@ -20,6 +20,8 @@ int32_t maxv(int32_t x, int32_t y);
 int32_t minv(int32_t x, int32_t y);
 int32_t limit_to(int32_t value, int32_t pos_lim, int32_t neg_lim);
 void convert_timeout(uint32_t timeout_val, char *buffer);
+void convert_main_distance(uint32_t distance, char *buffer);
+void convert_main_alt_difference(int16_t dalt, char *buffer);
 float atof32(char *input);
 void ftoa32(float value, uint8_t precision, char *buffer);
 int32_t atoi32(char *input);
