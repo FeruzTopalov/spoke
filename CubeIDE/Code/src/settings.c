@@ -13,6 +13,11 @@
 #include "service.h"
 
 
+
+void settings_interactive_save_default(void);
+
+
+
 #define UPDATE_INTERVAL_1S_VALUE		(1)
 #define UPDATE_INTERVAL_5S_VALUE		(5)
 #define UPDATE_INTERVAL_10S_VALUE		(10)
@@ -119,10 +124,9 @@ void settings_load(void)
     {
         settings_save_default();
     }
-    
-    if (!((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4))	//if both DOWN button and  OK button are pressed upon power up
+    else if (!((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4))	//if both DOWN button and OK button are pressed upon power up
     {
-    	settings_save_default();
+    	settings_interactive_save_default();
     }
 
     //read from flash
@@ -150,7 +154,7 @@ void settings_load(void)
 
 
 
-void settings_save_default(void)
+void settings_interactive_save_default(void)
 {
 	uint8_t ovf_cnt = 0;
 
@@ -183,6 +187,27 @@ void settings_save_default(void)
 
 
 process_erase:
+	settings_save_default();
+
+
+    //confirm reset by blinking
+    for (uint8_t i = 0; i < 6; i++)
+    {
+    	delay_cyc(50000);
+    	led_green_on();
+		led_red_on();
+		delay_cyc(50000);
+		led_green_off();
+		led_red_off();
+    }
+
+}
+
+
+
+void settings_save_default(void)
+{
+	//erase
 	erase_flash_page(FLASH_POINTS_PAGE);
 	erase_flash_page(FLASH_SETTINGS_PAGE);
 
@@ -209,19 +234,6 @@ process_erase:
     
     //write to flash
     write_flash_page(FLASH_SETTINGS_PAGE, &settings_array[0], SETTINGS_SIZE);
-
-
-    //confirm reset by blinking
-    for (uint8_t i = 0; i < 6; i++)
-    {
-    	delay_cyc(50000);
-    	led_green_on();
-		led_red_on();
-		delay_cyc(50000);
-		led_green_off();
-		led_red_off();
-    }
-
 }
 
 

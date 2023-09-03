@@ -90,7 +90,6 @@ int main(void)
     lcd_bitmap(&startup_screen[0]);
     lcd_update();
     delay_cyc(500000);
-    make_a_beep();
 
 
 
