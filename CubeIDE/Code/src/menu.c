@@ -23,11 +23,11 @@
 #include "lcd_bitmaps.h"
 #include "gps.h"
 #include "compass.h"
+#include "adc.h"
 
 
 
-char *FW_VERSION = "1.0";	//firmware
-char *HW_VERSION = "2.5";		//hardware (2.5 means new firmware on old HW v2)
+char *HW_FW_VERSION = "v1.1";	//revision HW.FW
 
 
 
@@ -46,6 +46,8 @@ void switch_backward(void);
 
 
 void draw_main(void);
+void draw_bat_level(void);
+void draw_devices(void);
 void draw_power(void);
 void draw_navigation(void);
 void draw_coordinates(void);
@@ -67,7 +69,6 @@ void draw_set_timeout(void);
 void draw_set_fence(void);
 void draw_set_timezone(void);
 void draw_confirm_settings_save(void);
-void draw_info(void);
 
 
 
@@ -78,7 +79,7 @@ void navigation_and_coordinates_down(void);
 void navigation_esc(void);
 void coordinates_esc(void);
 void main_ok(void);
-void main_navigation_coordinates_pwr_long(void);
+void main_navigation_coordinates_devices_pwr_long(void);
 void power_ok(void);
 void power_esc(void);
 void coordinates_ok(void);
@@ -133,6 +134,7 @@ enum
     M_MAIN = 1,
     M_NAVIGATION,
 	M_COORDINATES,
+	M_DEVICES,
 	M_POWER,
 	M_DEVICE_SUBMENU,
 	M_SAVE_DEVICE,
@@ -151,8 +153,7 @@ enum
 	M_SET_TIMEOUT,
 	M_SET_FENCE,
 	M_SET_TIMEZONE,
-	M_CONFIRM_SETTINGS_SAVE,
-	M_INFO
+	M_CONFIRM_SETTINGS_SAVE
 };
 
 
@@ -167,9 +168,19 @@ enum
 enum
 {
     M_MAIN_I_NAVIGATION = 0,
-    M_MAIN_I_SETTINGS,
-	M_MAIN_I_INFO,						//last item
-    M_MAIN_I_LAST = M_MAIN_I_INFO		//copy last item here
+	M_MAIN_I_DEVICES,
+	M_MAIN_I_SETTINGS,					//last item
+    M_MAIN_I_LAST = M_MAIN_I_SETTINGS	//copy last item here
+};
+
+
+
+//DEVICES
+enum
+{
+    M_DEVICES_I_DEVICES = 0,
+	M_DEVICES_I_POINTS,					//last item
+    M_DEVICES_I_LAST = M_DEVICES_I_POINTS	//copy last item here
 };
 
 
@@ -256,9 +267,10 @@ const struct
 	{M_COORDINATES,				BTN_DOWN,				navigation_and_coordinates_down},
 	{M_COORDINATES,				BTN_ESC,				coordinates_esc},
 	{M_MAIN,					BTN_OK,					main_ok},
-	{M_MAIN,					BTN_PWR_LONG,			main_navigation_coordinates_pwr_long},
-	{M_NAVIGATION,				BTN_PWR_LONG,			main_navigation_coordinates_pwr_long},
-	{M_COORDINATES,				BTN_PWR_LONG,			main_navigation_coordinates_pwr_long},
+	{M_MAIN,					BTN_PWR_LONG,			main_navigation_coordinates_devices_pwr_long},
+	{M_NAVIGATION,				BTN_PWR_LONG,			main_navigation_coordinates_devices_pwr_long},
+	{M_COORDINATES,				BTN_PWR_LONG,			main_navigation_coordinates_devices_pwr_long},
+	{M_DEVICES,					BTN_PWR_LONG,			main_navigation_coordinates_devices_pwr_long},
 	{M_POWER,					BTN_OK,					power_ok},
 	{M_POWER,					BTN_ESC,				power_esc},
 	{M_SAVE_DEVICE,				BTN_UP,					save_device_up},
@@ -342,6 +354,7 @@ const struct
 //  Current Menu                Next Menu
     {M_NAVIGATION,              M_MAIN},
 	{M_COORDINATES,				M_NAVIGATION},
+	{M_DEVICES,                 M_MAIN},
 	{M_DEVICE_SUBMENU,     		M_COORDINATES},
 	{M_DELETE_DEVICE,			M_DEVICE_SUBMENU},
 	{M_SAVED_POPUP,				M_COORDINATES},
@@ -350,7 +363,6 @@ const struct
     {M_EDIT_DEVICE,             M_SETTINGS},
 	{M_EDIT_RADIO,	            M_SETTINGS},
 	{M_EDIT_OTHER,              M_SETTINGS},
-	{M_INFO,                    M_MAIN},
     {0, 0}      //end marker
 };
 
@@ -367,6 +379,7 @@ struct
 {
 //  Current Menu                Current Item                Last Item in Current Menu
     {M_MAIN,                    M_ALL_I_FIRST,              M_MAIN_I_LAST},
+	{M_DEVICES,					M_ALL_I_FIRST,              M_DEVICES_I_LAST},
 	{M_POWER,					M_ALL_I_FIRST,				M_POWER_I_LAST},
 	{M_DEVICE_SUBMENU,			M_ALL_I_FIRST,				M_DEVICE_SUBMENU_I_LAST},
     {M_SETTINGS,                M_ALL_I_FIRST,              M_SETTINGS_I_LAST},
@@ -389,6 +402,7 @@ const struct
 	{M_NAVIGATION,				draw_navigation},
 	{M_COORDINATES,				draw_coordinates},
 	{M_MAIN,                    draw_main},
+	{M_DEVICES,                 draw_devices},
 	{M_POWER,					draw_power},
 	{M_DEVICE_SUBMENU,     		draw_device_submenu},
 	{M_SAVE_DEVICE,				draw_save_device},
@@ -407,7 +421,6 @@ const struct
 	{M_SET_TIMEOUT,				draw_set_timeout},
 	{M_SET_FENCE,				draw_set_fence},
 	{M_SET_TIMEZONE,			draw_set_timezone},
-    {M_INFO,                    draw_info},
 	{M_CONFIRM_SETTINGS_SAVE,	draw_confirm_settings_save},
     {0, 0}      //end marker
 };
@@ -458,27 +471,6 @@ void init_menu(void)
     current_menu = M_MAIN;
     return_from_power_menu = M_MAIN;
     set_current_item(M_MAIN_I_NAVIGATION);
-    draw_current_menu();
-
-    //Create fake devices
-//    pp_devices[this_device]->exist_flag = 1;
-//    pp_devices[this_device]->memory_point_flag = 0;
-//    pp_devices[this_device]->latitude.as_float = 59.907968;	//0
-//    pp_devices[this_device]->longitude.as_float = 30.455612;
-//
-//
-//    pp_devices[p_settings->devices_on_air]->exist_flag = 1;
-//    pp_devices[p_settings->devices_on_air]->device_id = 'F';
-//    pp_devices[p_settings->devices_on_air]->memory_point_flag = 0;
-//    pp_devices[p_settings->devices_on_air]->latitude.as_float = 59.906175;
-//    pp_devices[p_settings->devices_on_air]->longitude.as_float = 30.457254;
-//
-//
-//    pp_devices[p_settings->devices_on_air - 1]->exist_flag = 1;
-//    pp_devices[p_settings->devices_on_air - 1]->device_id = 'Z';
-//    pp_devices[p_settings->devices_on_air - 1]->memory_point_flag = 0;
-//    pp_devices[p_settings->devices_on_air - 1]->latitude.as_float = 59.909516;
-//    pp_devices[p_settings->devices_on_air - 1]->longitude.as_float = 30.462170;
 }
 
 
@@ -519,7 +511,11 @@ void change_menu(uint8_t button_code)
 				break;
 
 			case BTN_PWR:
-				lcd_display_off();
+				lcd_display_off_request();
+				if (current_menu == M_NAVIGATION)
+				{
+					timer4_stop(); //stop compass
+				}
 				break;
 
 			default:
@@ -528,6 +524,10 @@ void change_menu(uint8_t button_code)
 	}
 	else if (button_code == BTN_PWR_LONG)	//if lcd is off then check for PRW button was pressed. If so - toggle the lcd
 	{
+		if (current_menu == M_NAVIGATION)
+		{
+			timer4_start(); //start compass
+		}
 		lcd_display_on();
 	}
 }
@@ -698,11 +698,131 @@ void draw_main(void)
     lcd_clear();
     lcd_print(0, MAIN_COL, "MENU", 0);
     lcd_print(MAIN_ROW, MAIN_COL, "Navigation", 0);
-    lcd_print(MAIN_ROW + 1, MAIN_COL, "Settings", 0);
-    lcd_print(MAIN_ROW + 2, MAIN_COL, "Info", 0);
+    lcd_print(MAIN_ROW + 1, MAIN_COL, "Devices", 0);
+    lcd_print(MAIN_ROW + 2, MAIN_COL, "Settings", 0);
+    lcd_print_viceversa(MAIN_ROW + 2, 15, HW_FW_VERSION, 0);
     lcd_print(MAIN_ROW + get_current_item(), MAIN_COL - 1, ">", 0);
+    draw_bat_level();
 
     lcd_update();
+}
+
+
+
+//Draw an icon in top right corner
+void draw_bat_level(void)
+{
+	lcd_char_pos(0, 13, SYMB8_BAT_TAIL, 0);
+	lcd_char_pos(0, 14, SYMB8_BAT_MID, 0);
+	lcd_char_pos(0, 15, SYMB8_BAT_HEAD, 0);
+
+	for (uint8_t px = 0; px < (get_battery_level() + 1); px++)
+	{
+		lcd_byte2buf(108 + px, 0xF8);	//1st line, 108 is a start pixel position
+		lcd_byte2buf((128 + 108) + px, 0x0F);	//2nd line
+	}
+}
+
+
+
+void draw_devices(void)
+{
+	lcd_clear();
+
+	if (get_current_item() == M_DEVICES_I_DEVICES)	//draw all online devices
+	{
+		uint8_t active_devs = 0;
+		uint8_t active_row = 0;
+
+		for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)
+		{
+			if (pp_devices[dev]->exist_flag == 1)
+			{
+				if (dev != this_device)
+				{
+					active_devs++;
+
+					itoa32(dev, &tmp_buf[0]);
+					lcd_print(active_row, 0, tmp_buf, 0);
+
+					lcd_char_pos(active_row, 1, pp_devices[dev]->device_id, 0);
+
+					convert_main_distance(pp_devices[dev]->distance, &tmp_buf[0]);
+					lcd_print_viceversa(active_row, 6, &tmp_buf[0], 0);
+					lcd_char_pos(active_row, 7, 'm', 0);
+
+					lcd_print(active_row, 9, convert_heading(pp_devices[dev]->heading_deg), 0);
+
+					if (pp_devices[dev]->timeout_flag)
+					{
+						lcd_char_pos(active_row, 13, SYMB8_TIMEOUT, 0);
+					}
+					else
+					{
+						lcd_char_pos(active_row, 13, pp_devices[dev]->rx_icon, 0);
+					}
+
+			    	if (pp_devices[dev]->fence_flag)
+			    	{
+			    		lcd_char_pos(active_row, 14, SYMB8_FENCE, 0);
+			    	}
+
+			    	if (pp_devices[dev]->alarm_flag)
+			    	{
+			    		lcd_char_pos(active_row, 15, SYMB8_ALARM, 0);
+			    	}
+
+					active_row++;
+				}
+			}
+		}
+
+		//	lcd_print(0, 0, "1A  123m NW  TAF", 0);
+		//	lcd_print(1, 0, "2B  1.3m N   T  ", 0);
+		//	lcd_print(2, 0, "3C   27m SE   A ", 0);
+		//	lcd_print(3, 0, "5E 10.1m W     F", 0);
+
+		if (active_devs == 0)
+		{
+			lcd_print(1, 3, "No active", 0);
+			lcd_print(2, 4, "devices", 0);
+		}
+	}
+	else if (get_current_item() == M_DEVICES_I_POINTS)	//draw all saved points
+	{
+		uint8_t active_pts = 0;
+		uint8_t active_row = 0;
+
+		for (uint8_t pt = MEMORY_POINT_FIRST; pt < MEMORY_POINT_LAST + 1; pt++)
+		{
+			if (pp_devices[pt]->exist_flag == 1)
+			{
+				active_pts++;
+				lcd_print(active_row, 0, get_memory_point_name(pt), 0);
+
+				convert_main_distance(pp_devices[pt]->distance, &tmp_buf[0]);
+				lcd_print_viceversa(active_row, 8, &tmp_buf[0], 0);
+				lcd_char_pos(active_row, 9, 'm', 0);
+
+				lcd_print(active_row, 11, convert_heading(pp_devices[pt]->heading_deg), 0);
+
+				active_row++;
+			}
+		}
+
+		if (active_pts == 0)
+		{
+			lcd_print(1, 3, "No active", 0);
+			lcd_print(2, 4, "points", 0);
+		}
+	}
+
+	//	lcd_print(0, 0, "HOME  123m NW", 0);
+	//	lcd_print(1, 0, "CAR   1.3m N", 0);
+	//	lcd_print(2, 0, "FLAG   27m SE", 0);
+	//	lcd_print(3, 0, "PIN  10.1m W", 0);
+
+	lcd_update();
 }
 
 
@@ -717,7 +837,7 @@ void draw_power(void)
 	lcd_print(0, EDIT_POWER_COL + 4, "POWER", 0);
 
     lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL, "Alarm is ", 0);
-    if (get_alarm_status())
+    if (get_my_alarm_status())
     {
     	lcd_print_next("On", 0);
     }
@@ -738,6 +858,8 @@ void draw_power(void)
 
     lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL, "Power Off", 0);
     lcd_print(EDIT_POWER_ROW + get_current_item(), EDIT_POWER_COL - 1, ">", 0);
+
+    draw_bat_level();
 
     lcd_update();
 }
@@ -807,6 +929,16 @@ void draw_navigation(void)
 
     if (navigate_to_device == this_device)		//if navigate to this device
     {
+    	if (pp_devices[navigate_to_device]->timeout_flag)
+		{
+			lcd_char_pos(0, 8, SYMB8_TIMEOUT, 0);
+		}
+
+    	if (pp_devices[navigate_to_device]->alarm_flag)
+    	{
+    		lcd_char_pos(0, 10, SYMB8_ALARM, 0);
+    	}
+
     	itoa32(p_gps_num->hour_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
         lcd_print(1, 8, &tmp_buf[0], 0);
@@ -825,33 +957,46 @@ void draw_navigation(void)
     	itoa32(p_gps_num->day_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
         lcd_print(2, 8, &tmp_buf[0], 0);
-        lcd_print_next("/", 0);
+        lcd_print_next(".", 0);
 
     	itoa32(p_gps_num->month_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
     	lcd_print_next(&tmp_buf[0], 0);
-        lcd_print_next("/", 0);
+        lcd_print_next(".", 0);
 
     	itoa32(p_gps_num->year_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
         lcd_print_next(&tmp_buf[0], 0);
 
-
-//    	ssd1306_char16_pos(3, 14, SYMB16_TIMEOUT, 0);	//todo: those icons are not needed at all anymore
-//    	ssd1306_char16_pos(3, 12, SYMB16_ALARM, 0);
-//    	ssd1306_char16_pos(3, 10, SYMB16_FENCE, 0);
-
-
-		lcd_char_pos(3, 15, 'm', 0); 				//meter char
-		itoa32((int32_t)(p_gps_num->altitude), &tmp_buf[0]);
-		lcd_print_viceversa(3, 14, &tmp_buf[0], 0);
+        itoa32(p_gps_num->sat_view, &tmp_buf[0]);	//satellites in use|view
+		lcd_print_viceversa(3, 15, &tmp_buf[0], 0);
+		lcd_print_next_viceversa("/", 0);
+		itoa32(p_gps_num->sat_used, &tmp_buf[0]);
+		lcd_print_next_viceversa(&tmp_buf[0], 0);
 
     }
     else										//if navigate to another device
     {
     	if (pp_devices[navigate_to_device]->memory_point_flag == 0)
     	{
-    		lcd_char16_pos(0, 8, pp_devices[navigate_to_device]->rx_icon, 0); //Print RX icon only for real devices
+    		if (pp_devices[navigate_to_device]->timeout_flag)
+    		{
+    			lcd_char_pos(0, 8, SYMB8_TIMEOUT, 0);
+    		}
+    		else
+    		{
+    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon, 0);
+    		}
+    	}
+
+    	if (pp_devices[navigate_to_device]->fence_flag)
+    	{
+    		lcd_char_pos(0, 9, SYMB8_FENCE, 0);
+    	}
+
+    	if (pp_devices[navigate_to_device]->alarm_flag)
+    	{
+    		lcd_char_pos(0, 10, SYMB8_ALARM, 0);
     	}
 
 		//Draw notch
@@ -873,7 +1018,7 @@ void draw_navigation(void)
 		}
 
 		//print distance
-		itoa32(pp_devices[navigate_to_device]->distance, &tmp_buf[0]);
+		convert_main_distance(pp_devices[navigate_to_device]->distance, &tmp_buf[0]);
 		lcd_print16_viceversa(1, 14, &tmp_buf[0], 0);
 
 		//print heading
@@ -883,7 +1028,7 @@ void draw_navigation(void)
 
 		//print altitude diff
 		lcd_char_pos(3, 15, 'm', 0); //meter char
-		itoa32(pp_devices[navigate_to_device]->delta_altitude, &tmp_buf[0]);
+		convert_main_alt_difference(pp_devices[navigate_to_device]->delta_altitude, &tmp_buf[0]);
 		lcd_print_viceversa(3, 14, &tmp_buf[0], 0);
 		if (pp_devices[navigate_to_device]->delta_altitude > 0)
 		{
@@ -891,6 +1036,7 @@ void draw_navigation(void)
 		}
     }
 
+    draw_bat_level();
 
 	lcd_update();
 
@@ -911,7 +1057,16 @@ void draw_coordinates(void)
     {
 		lcd_print_next(" POINT ", 0);
 		lcd_print_next(get_memory_point_name(navigate_to_device), 0);
-		lcd_print(3, 0, "xx:xx   xx/xx/xx", 0);  //todo: finish
+
+		//save date
+		itoa32(pp_devices[navigate_to_device]->save_day, &tmp_buf[0]);
+		add_leading_zero(&tmp_buf[0]);
+		lcd_print(3, 11, &tmp_buf[0], 0);
+		lcd_print_next(".", 0);
+
+		itoa32(pp_devices[navigate_to_device]->save_month, &tmp_buf[0]);
+		add_leading_zero(&tmp_buf[0]);
+		lcd_print_next(&tmp_buf[0], 0);
     }
     else
     {
@@ -921,14 +1076,11 @@ void draw_coordinates(void)
 		if (navigate_to_device == this_device)
 		{
 			lcd_print(0, 8, "(YOU)", 0);
-			lcd_print(3, 0, "SAT xx/xx DOP xx", 0);  //todo: finish
-
-		}
-		else
-		{
-			lcd_print(3, 0, "ALR TOC xx:xx:xx", 0);	//todo: finish
 		}
 
+		//print timeout here for all
+		convert_timeout(pp_devices[navigate_to_device]->timeout, &tmp_buf[0]);
+		lcd_print(3, 10, &tmp_buf[0], 0);
     }
 
     lcd_print(1, 0, "LAT", 0);
@@ -938,6 +1090,7 @@ void draw_coordinates(void)
     {
         lcd_char('+', 0);
     }
+    lcd_char_pos(1, 15, SYMB8_DEGREE, 0); //degree char
 
 
     lcd_print(2, 0, "LON", 0);
@@ -947,7 +1100,16 @@ void draw_coordinates(void)
     {
         lcd_char('+', 0);
     }
+    lcd_char_pos(2, 15, SYMB8_DEGREE, 0); //degree char
 
+
+    //print ALT here for all
+    lcd_print(3, 0, "ALT", 0);
+    itoa32(pp_devices[navigate_to_device]->altitude.as_integer, &tmp_buf[0]);
+    lcd_print(3, 4, &tmp_buf[0], 0);
+    lcd_char('m', 0); //meter char
+
+    draw_bat_level();
 
     lcd_update();
 }
@@ -1326,40 +1488,6 @@ void draw_confirm_settings_save(void)
 
 
 
-//INFO
-void draw_info(void)
-{
-//ORIGINAL
-//    ssd1306_clear();
-//
-//    ssd1306_print(0, 0, "SPOKE", 0);
-//
-//    ssd1306_print(1, 0, "HW/FW: ", 0);
-//    ssd1306_print_next(HW_VERSION, 0);
-//    ssd1306_print_next("/", 0);
-//    ssd1306_print_next(FW_VERSION, 0);
-//
-//    ssd1306_print(2, 0, __DATE__, 0);
-//
-//    ssd1306_print(3, 0, "(C)'22 F.Topalov", 0);
-//
-//    ssd1306_update();
-
-
-
-//MOCK 1
-	lcd_clear();
-
-	lcd_print(0, 0, "1A  123 NWW   AF", 0);
-	lcd_print(1, 0, "2B  1.3 N    T  ", 0);
-	lcd_print(2, 0, "3C   27 SE    A ", 0);
-	lcd_print(3, 0, "5E 10.1 W      F", 0);
-
-	lcd_update();
-}
-
-
-
 //--------------------------------------------------------------
 //--------------------------- SET ------------------------------
 //--------------------------------------------------------------
@@ -1445,18 +1573,18 @@ void main_ok(void)
 			timer4_start();					//start compass activity
 			current_menu = M_NAVIGATION;
 			break;
+		case M_MAIN_I_DEVICES:
+			current_menu = M_DEVICES;
+			break;
 		case M_MAIN_I_SETTINGS:
 			current_menu = M_SETTINGS;
-			break;
-		case M_MAIN_I_INFO:
-			current_menu = M_INFO;
 			break;
 	}
 }
 
 
 
-void main_navigation_coordinates_pwr_long(void)
+void main_navigation_coordinates_devices_pwr_long(void)
 {
 	if (current_menu == M_NAVIGATION)
 	{
@@ -1474,7 +1602,7 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 	switch (get_current_item())
 	{
 		case M_POWER_I_ALARM:
-			toggle_alarm();
+			toggle_my_alarm();
 			break;
 
 		case M_POWER_I_SOUND:
@@ -1553,6 +1681,10 @@ void save_device_ok(void)
 	pp_devices[current_mem_point_to_save]->exist_flag = 1;
 	pp_devices[current_mem_point_to_save]->latitude.as_float = pp_devices[navigate_to_device]->latitude.as_float;
 	pp_devices[current_mem_point_to_save]->longitude.as_float = pp_devices[navigate_to_device]->longitude.as_float;
+	pp_devices[current_mem_point_to_save]->altitude.as_integer = pp_devices[navigate_to_device]->altitude.as_integer;
+	pp_devices[current_mem_point_to_save]->save_day = p_gps_num->day_tz;
+	pp_devices[current_mem_point_to_save]->save_month = p_gps_num->month_tz;
+	pp_devices[current_mem_point_to_save]->save_year = p_gps_num->year_tz;
 
 	//save to flash
 	store_memory_points();

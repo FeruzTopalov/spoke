@@ -12,6 +12,10 @@
 
 
 
+char rumbs[9][3] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
+
+
+
 //Simple delay in cycles
 void delay_cyc(uint32_t cycles)
 {
@@ -101,6 +105,197 @@ int32_t limit_to(int32_t value, int32_t pos_lim, int32_t neg_lim)
 	{
 		return value;
 	}
+}
+
+
+
+void convert_timeout(uint32_t timeout_val, char *buffer)
+{
+    uint32_t sec = 0;
+    uint32_t min = 0;
+    uint32_t hour = 0;
+    uint32_t day = 0;
+    char buf[3];
+
+
+    if (timeout_val >= 60)
+    {
+        min = timeout_val / 60;
+        sec = timeout_val % 60;
+
+        if (min >= 60)
+        {
+            hour = min / 60;
+            min = min % 60;
+
+            if (hour >= 24)
+            {
+                day = hour / 24;
+                hour = hour % 24;
+            }
+        }
+    }
+    else
+    {
+        sec = timeout_val;
+    }
+
+    if (day)
+    {
+        //XXdXXh
+        itoa32(day, &buf[0]);
+        if (day > 9)
+        {
+            buffer[0] = buf[0];
+            buffer[1] = buf[1];
+            buffer[2] = 'd';
+        }
+        else
+        {
+            buffer[0] = '0';
+            buffer[1] = buf[0];
+            buffer[2] = 'd';
+        }
+
+        itoa32(hour, &buf[0]);
+        if (hour > 9)
+        {
+            buffer[3] = buf[0];
+            buffer[4] = buf[1];
+            buffer[5] = 'h';
+        }
+        else
+        {
+            buffer[3] = '0';
+            buffer[4] = buf[0];
+            buffer[5] = 'h';
+        }
+    }
+    else if (hour)
+    {
+        //XXhXXm
+        itoa32(hour, &buf[0]);
+        if (hour > 9)
+        {
+            buffer[0] = buf[0];
+            buffer[1] = buf[1];
+            buffer[2] = 'h';
+        }
+        else
+        {
+            buffer[0] = '0';
+            buffer[1] = buf[0];
+            buffer[2] = 'h';
+        }
+
+        itoa32(min, &buf[0]);
+        if (min > 9)
+        {
+            buffer[3] = buf[0];
+            buffer[4] = buf[1];
+            buffer[5] = 'm';
+        }
+        else
+        {
+            buffer[3] = '0';
+            buffer[4] = buf[0];
+            buffer[5] = 'm';
+        }
+    }
+    else
+    {
+        //XXmXXs
+        itoa32(min, &buf[0]);
+        if (min > 9)
+        {
+            buffer[0] = buf[0];
+            buffer[1] = buf[1];
+            buffer[2] = 'm';
+        }
+        else
+        {
+            buffer[0] = '0';
+            buffer[1] = buf[0];
+            buffer[2] = 'm';
+        }
+
+        itoa32(sec, &buf[0]);
+        if (sec > 9)
+        {
+            buffer[3] = buf[0];
+            buffer[4] = buf[1];
+            buffer[5] = 's';
+        }
+        else
+        {
+            buffer[3] = '0';
+            buffer[4] = buf[0];
+            buffer[5] = 's';
+        }
+    }
+
+    buffer[6] = 0;  //string end
+}
+
+
+
+void convert_main_distance(uint32_t distance, char *buffer)
+{
+	float tmpf = 0;
+
+	if (distance < 10000)
+	{
+		itoa32(distance, &buffer[0]);
+	}
+	else if (distance < 100000)
+	{
+		tmpf = distance / 1000.0;
+		ftoa32(tmpf, 1, &buffer[0]);
+	}
+	else if (distance < 1000000)
+	{
+		distance = distance / 1000;
+		itoa32(distance, &buffer[0]);
+		buffer[3] = '.';	//append '.'
+		buffer[4] = 0;
+	}
+	else
+	{
+		buffer[0] = 'X';
+		buffer[1] = 0;
+	}
+}
+
+
+
+void convert_main_alt_difference(int16_t dalt, char *buffer)
+{
+	float tmpf = 0;
+
+	if (absv(dalt) < 10000)
+	{
+		itoa32(dalt, &buffer[0]);
+	}
+	else if (absv(dalt) < 100000)
+	{
+		tmpf = dalt / 1000.0;
+		ftoa32(tmpf, 1, &buffer[0]);
+	}
+	else
+	{
+		buffer[0] = 'X';
+		buffer[1] = 0;
+	}
+}
+
+
+
+char *convert_heading(uint16_t heading)
+{
+	float rumb;
+
+	rumb = (heading + 22.5) / 45;
+	return &rumbs[(uint8_t)rumb][0];
 }
 
 

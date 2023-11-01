@@ -199,15 +199,17 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 	while (!(I2C1->SR1 & I2C_SR1_ADDR))
 	{
 	}
-	//Clear
-	SR_tmp = I2C1->SR1;
-	SR_tmp = I2C1->SR2;
 
 	//NACK next byte
 	I2C1->CR1 &= ~I2C_CR1_ACK;
+
+	//Clear ADR
+	SR_tmp = I2C1->SR1;
+	SR_tmp = I2C1->SR2;
+
 	//Stop
 	I2C1->CR1 |= I2C_CR1_STOP;
-	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
+
 	//Wait for data register not empty
 	while (!(I2C1->SR1 & I2C_SR1_RXNE))
 	{
@@ -218,6 +220,8 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 	//Read requested byte
 	result = I2C1->DR;
 
+	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
+
     return result;
 }
 
@@ -225,6 +229,7 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 
 void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t *buffer)
 {
+//	uint8_t remaining = size; //only for size > 2
 	uint8_t SR_tmp;
 
 	//Start
@@ -273,31 +278,84 @@ void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t
 	SR_tmp = I2C1->SR1;
 	SR_tmp = I2C1->SR2;
 
-	for (uint8_t i = 0; i < size - 1; i++)
-	{
-		//ACK next byte
-		I2C1->CR1 |= I2C_CR1_ACK;
-		//Wait for data register not empty
-		while (!(I2C1->SR1 & I2C_SR1_RXNE))
-		{
-		}
+//todo: wrap in cycle
+	//ACK byte
+	I2C1->CR1 |= I2C_CR1_ACK;
 
-		//Read byte
-		buffer[i] = I2C1->DR;
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+
+	//Read byte 1
+	buffer[0] = I2C1->DR;
+
+
+
+	//ACK byte
+	I2C1->CR1 |= I2C_CR1_ACK;
+
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+
+	//Read byte 2
+	buffer[1] = I2C1->DR;
+
+
+
+	//ACK byte
+	I2C1->CR1 |= I2C_CR1_ACK;
+
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+
+	//Read byte 3
+	buffer[2] = I2C1->DR;
+
+
+
+	//ACK byte
+	I2C1->CR1 |= I2C_CR1_ACK;
+
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+
+
+/*
+	//ACK byte
+	I2C1->CR1 |= I2C_CR1_ACK;
+
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+*/
+
+	//Wait byte transfer finish
+	while (!(I2C1->SR1 & I2C_SR1_BTF))
+	{
 	}
 
-	//NACK last byte
+
+	//NACK
 	I2C1->CR1 &= ~I2C_CR1_ACK;
+
+
+	//Read byte 4
+	buffer[3] = I2C1->DR;
+
+
 	//Stop
 	I2C1->CR1 |= I2C_CR1_STOP;
-	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
-	//Wait for data register not empty
-	while (!(I2C1->SR1 & I2C_SR1_RXNE))
-	{
-	}
 
-	//Read last byte
-	buffer[size - 1] = I2C1->DR;
+
+	//Read byte 5
+	buffer[4] = I2C1->DR;
+
+
+
+	//Wait for data register not empty
+	while (!(I2C1->SR1 & I2C_SR1_RXNE)){}
+
+	//Read byte 6
+	buffer[5] = I2C1->DR;
+
 
 	SR_tmp = SR_tmp + 1;
 }

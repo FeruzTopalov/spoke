@@ -9,6 +9,13 @@
 #include "main.h"
 #include "settings.h"
 #include "memory.h"
+#include "gpio.h"
+#include "service.h"
+
+
+
+void settings_interactive_save_default(void);
+
 
 
 #define UPDATE_INTERVAL_1S_VALUE		(1)
@@ -115,9 +122,13 @@ void settings_load(void)
 
     if (settings_array[SETTINGS_INIT_FLAG_POS] != SETTINGS_INIT_FLAG_DEFAULT)     //if first power-up or FLASH had been erased
     {
-        settings_save_default();		//todo: add default load by OK & ESC button hold
+        settings_save_default();
     }
-    
+    else if (!((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4))	//if both DOWN button and OK button are pressed upon power up
+    {
+    	settings_interactive_save_default();
+    }
+
     //read from flash
     read_flash_page(FLASH_SETTINGS_PAGE, &settings_array[0], SETTINGS_SIZE);
     
@@ -143,8 +154,61 @@ void settings_load(void)
 
 
 
+void settings_interactive_save_default(void)
+{
+	uint8_t ovf_cnt = 0;
+
+    //indicate beginning of reset to default, blink green 10 times
+    for (uint8_t i = 0; i < 10; i++)
+    {
+    	if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4)) //if release DOWN and hold OK
+    	{
+    		ovf_cnt++;			//count OK hold times
+    		led_red_on();
+    	}
+    	else
+    	{
+    		ovf_cnt = 0;
+    		led_red_off();
+    	}
+
+    	if (ovf_cnt > 2)		//if hold for 3 green blink cycles, then erase all
+    	{
+    		goto process_erase;
+    	}
+
+		led_green_on();
+		delay_cyc(150000);
+		led_green_off();
+		delay_cyc(150000);
+    }
+
+    return;
+
+
+process_erase:
+	settings_save_default();
+
+
+    //confirm reset by blinking
+    for (uint8_t i = 0; i < 6; i++)
+    {
+    	delay_cyc(50000);
+    	led_green_on();
+		led_red_on();
+		delay_cyc(50000);
+		led_green_off();
+		led_red_off();
+    }
+
+}
+
+
+
 void settings_save_default(void)
 {
+	//erase
+	erase_flash_page(FLASH_POINTS_PAGE);
 	erase_flash_page(FLASH_SETTINGS_PAGE);
 
     //assign default values

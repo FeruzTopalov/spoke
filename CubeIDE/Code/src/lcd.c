@@ -16,11 +16,6 @@
 
 
 
-//#define LCD_SSD1306		//todo: delete 1306
-#define LCD_SH1106
-
-
-
 #define LCD_SIZE_BYTES    	(1024)
 
 
@@ -44,20 +39,10 @@
 uint8_t screen_buf[LCD_SIZE_BYTES];     		//public array 128x64 pixels
 uint16_t buf_pos = 0;                   		//public var 0 - 1023
 uint8_t current_page = 0;
+uint8_t lcd_busy = 0;	//is lcd update ongoing?
+uint8_t lcd_pending_off = 0; 	//pending command to off the lcd
+
 uint8_t display_status = LCD_DISPLAY_ON;	//lcd panel status on/off
-
-
-
-//SSD1306 init sequence (first byte in line = amount of config bytes in line)
-const uint8_t ssd1306_conf[] =
-{// len,  val1, val2, ...
-    0x02, 0x20, 0x00,           /* horizontal adressing */ \
-    0x02, 0xA1, 0xC8,           /* invert orientation */ \
-	0x02, 0x81, 0x80,			/* set contrast */ \
-    0x02, 0x8D, 0x14,		    /* enable charge pump */ \
-	0x01, 0xAF,     			/* enable display */ \
-    0x00                        /* end of the sequence */
-};
 
 
 
@@ -94,21 +79,6 @@ void lcd_init(void)
     uint8_t i = 0;
     uint8_t len = 0;
 
-#ifdef LCD_SSD1306
-    while (ssd1306_conf[i] != 0x00)
-    {
-        len = ssd1306_conf[i++];
-        
-        cs_lcd_active();
-        while (len--)
-        {
-            spi2_trx(ssd1306_conf[i++]);
-        }
-        cs_lcd_inactive();
-    }
-#endif
-
-#ifdef LCD_SH1106
     while (sh1106_conf[i] != 0x00)
     {
         len = sh1106_conf[i++];
@@ -120,8 +90,7 @@ void lcd_init(void)
         }
         cs_lcd_inactive();
     }
-#endif
-    
+
     //spi2_clock_disable();
 
     lcd_clear();
@@ -159,6 +128,20 @@ void lcd_display_off(void)
 
 
 
+void lcd_display_off_request(void)
+{
+	if (lcd_busy == 1)
+	{
+		lcd_pending_off = 1;
+	}
+	else
+	{
+		lcd_display_off();
+	}
+}
+
+
+
 uint8_t lcd_get_display_status(void)
 {
 	return display_status;
@@ -173,34 +156,9 @@ void lcd_update(void)
 	{
 		//spi2_clock_enable();
 
-#ifdef LCD_SSD1306
-		lcd_data_mode();
-		cs_lcd_active();
-		for (uint16_t i = 0; i < LCD_SIZE_BYTES; i++)
-		{
-			spi2_trx(screen_buf[i]);
-		}
-		cs_lcd_inactive();
-#endif
-
-#ifdef LCD_SH1106
-//		for (uint8_t page = 0; page < 8; page++)		//page means line for SH1106
-//		{
-//			lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
-//			lcd_send_command(0x10);			//reset column address high
-//			lcd_send_command(0xB0 | page);	//set page address
-//
-//			lcd_data_mode();
-//			cs_lcd_active();
-//			for (uint16_t i = (page * LCD_SIZE_X); i < ((page + 1) * LCD_SIZE_X); i++)
-//			{
-//				spi2_trx(screen_buf[i]);
-//			}
-//			cs_lcd_inactive();
-//		}
-
 
 		//todo: if current_page <> 0 to prevent glitches
+		lcd_busy = 1;
 		current_page = 0;
 		lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
 		lcd_send_command(0x10);			//reset column address high
@@ -208,9 +166,6 @@ void lcd_update(void)
 		lcd_data_mode();
 		cs_lcd_active();
 		spi2_dma_start(&screen_buf[0], LCD_SIZE_X);
-
-
-#endif
 
 		//spi2_clock_disable();
 	}
@@ -235,6 +190,12 @@ void lcd_continue_update(void)
 	else
 	{
 		current_page = 0;
+		if (lcd_pending_off == 1)
+		{
+			lcd_display_off();
+			lcd_pending_off = 0;
+		}
+		lcd_busy = 0;
 	}
 }
 
@@ -396,7 +357,7 @@ void lcd_char16_pos(uint8_t row, uint8_t col, char chr, uint8_t inv)
 
 
 
-//Print string on screen (with position)
+//Print string on screen (with position (rows 0-3, cols 0-15))
 void lcd_print(uint8_t row, uint8_t col, char *p_str, uint8_t inv)
 {
     lcd_pos(row, col);
@@ -489,6 +450,28 @@ void lcd_print_next(char *p_str, uint8_t inv)
 
 
 
+void lcd_print_next_viceversa(char *p_str, uint8_t inv)	//use only after lcd_print_viceversa()
+{
+    uint8_t symb_cntr = 0;
+
+    //buf_pos -= 4 * FONT_SIZE_X;         //minus two characters position
+
+    while (*p_str)
+    {
+        p_str++;
+        symb_cntr++;
+    }
+
+    while (symb_cntr)
+    {
+        symb_cntr--;
+        lcd_char(*--p_str, inv);
+        buf_pos -= 2 * FONT_SIZE_X;         //minus two characters position
+    }
+}
+
+
+
 //Show bitmap
 void lcd_bitmap(const uint8_t arr[])
 {
@@ -505,6 +488,13 @@ void lcd_print_byte(uint8_t row, uint8_t col, uint8_t byte)
 {
     lcd_pos(row, col);
     screen_buf[buf_pos++] = byte;
+}
+
+
+
+void lcd_byte2buf(uint16_t pos, uint8_t byte)
+{
+    screen_buf[pos++] = byte;
 }
 
 

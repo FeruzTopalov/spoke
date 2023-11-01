@@ -17,6 +17,7 @@
 #include "menu.h"
 #include "lcd.h"
 #include "gpio.h"
+#include "main.h"
 
 
 
@@ -68,7 +69,7 @@ void init_lrns(void)
     for (uint8_t dev = 1; dev <= NAV_OBJECTS_MAX; dev++)
     {
         memset(&devices[dev], 0, sizeof(devices[dev]));
-        devices[dev].rx_icon = SYMB16_RX13;
+        devices[dev].rx_icon = SYMB8_RX12;
     }
 
 	//Get external things
@@ -91,11 +92,12 @@ void init_lrns(void)
 
 
 
-void fill_air_packet(void)
+void fill_air_packet(uint32_t current_uptime)
 {
 	p_air_packet_tx[PACKET_NUM_ID_POS] = 			(this_device << BYTE_NUM_POS) | (devices[this_device].device_id - 'A');	   //transmit dev id as A-Z, but with 0x41 ('A') shift resulting in 0-25 dec
+	devices[this_device].timestamp =				current_uptime;
 
-	p_air_packet_tx[PACKET_FLAGS_POS] = 			0; 			//todo add flags here
+	p_air_packet_tx[PACKET_FLAGS_POS] = 			devices[this_device].alarm_flag;
 
 	p_air_packet_tx[PACKET_LATITUDE_POS] = 			devices[this_device].latitude.as_array[0];
 	p_air_packet_tx[PACKET_LATITUDE_POS + 1] = 		devices[this_device].latitude.as_array[1];
@@ -113,14 +115,15 @@ void fill_air_packet(void)
 
 
 
-void parse_air_packet(void)
+void parse_air_packet(uint32_t current_uptime)
 {
 	uint8_t rx_device = (p_air_packet_rx[PACKET_NUM_ID_POS] & PACKET_NUM_MASK) >> BYTE_NUM_POS; //extract device number from received packet
 
 	devices[rx_device].exist_flag 				=	1;
 	devices[rx_device].device_id				=	(p_air_packet_rx[PACKET_NUM_ID_POS] & PACKET_ID_MASK) + 'A';	//restore 0x41 shift
+	devices[rx_device].timestamp				=	current_uptime;
 
-	//todo read flags here
+	devices[rx_device].alarm_flag				=	p_air_packet_rx[PACKET_FLAGS_POS];
 
 	devices[rx_device].latitude.as_array[0]	=		p_air_packet_rx[PACKET_LATITUDE_POS];
 	devices[rx_device].latitude.as_array[1]	=		p_air_packet_rx[PACKET_LATITUDE_POS + 1];
@@ -143,9 +146,9 @@ void parse_air_packet(void)
 
 void update_reception_icon(uint8_t rx_device)
 {
-	if (devices[rx_device].rx_icon == SYMB16_RX33)
+	if (devices[rx_device].rx_icon == SYMB8_RX22)
 	{
-		devices[rx_device].rx_icon = SYMB16_RX13;
+		devices[rx_device].rx_icon = SYMB8_RX12;
 	}
 	else
 	{
@@ -169,20 +172,6 @@ void process_all_devices(void)
 			calc_relative_position(dev);
 		}
 	}
-}
-
-
-
-void process_current_device(void)
-{
-
-	uint8_t curr_dev = get_current_device();
-
-	if (curr_dev != this_device)
-	{
-		calc_relative_position(curr_dev);
-	}
-
 }
 
 
@@ -262,7 +251,87 @@ void calc_relative_position(uint8_t another_device)
 
 
 
-void toggle_alarm(void)
+void calc_timeout(uint32_t current_uptime)
+{
+	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)	//calculated even for this device and used to alarm about own timeout upon lost of PPS signal
+	{
+		if (devices[dev].exist_flag == 1)
+		{
+			devices[dev].timeout = current_uptime - devices[dev].timestamp; //calc timeout for each active device
+
+        	if (p_settings->timeout_threshold != TIMEOUT_ALARM_DISABLED) //if enabled
+        	{
+				if (devices[dev].timeout > p_settings->timeout_threshold)
+				{
+					if (dev == this_device)
+					{
+						if (get_abs_pps_cntr() <= PPS_SKIP)	//if this is a timeout right after power up, ignore timeout alarm, do not set the flag
+						{									//feature, not a bug: once first PPS appeared, a short beep occurs (do "<= PPS_SKIP" to disable this, #TBD)
+							devices[dev].timeout_flag = 0;
+						}
+						else
+						{
+							devices[dev].timeout_flag = 1;
+						}
+					}
+					else
+					{
+						devices[dev].timeout_flag = 1; //set flag for alarm
+					}
+				}
+				else
+				{
+					devices[dev].timeout_flag = 0;
+				}
+        	}
+        }
+    }
+}
+
+
+
+void calc_fence(void)		//all devices should be processed before calling this func
+{
+	if (p_settings->fence_threshold != FENCE_ALARM_DISABLED)
+	{
+		for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)		//devices only, not for mem point
+		{
+			if (devices[dev].exist_flag)
+			{
+				if (devices[dev].distance > p_settings->fence_threshold)
+				{
+					devices[dev].fence_flag = 1;
+				}
+				else
+				{
+					devices[dev].fence_flag = 0;
+				}
+			}
+		}
+	}
+}
+
+
+
+uint8_t check_any_alarm_fence_timeout(void)
+{
+	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < MEMORY_POINT_LAST + 1; dev++)		//devices + mem points
+	{
+		if (devices[dev].exist_flag)
+		{
+			if ((devices[dev].alarm_flag) || (devices[dev].fence_flag) || (devices[dev].timeout_flag))
+			{
+				return 1;
+			}
+		}
+	}
+
+	return 0;
+}
+
+
+
+void toggle_my_alarm(void)
 {
 	if (devices[this_device].alarm_flag == 0)
 	{
@@ -276,7 +345,7 @@ void toggle_alarm(void)
 
 
 
-uint8_t get_alarm_status(void)
+uint8_t get_my_alarm_status(void)
 {
 	return devices[this_device].alarm_flag;
 }

@@ -28,6 +28,7 @@
 #include "i2c.h"
 #include "compass.h"
 #include "sensors.h"
+#include "adc.h"
 
 
 
@@ -40,12 +41,13 @@ uint8_t button_code = 0;
 uint8_t processing_button = 0;
 
 //TIMERS
-uint32_t pps_counter = 0;
+uint32_t uptime = 0;
+uint32_t pps_absolute_counter = 0;
+uint32_t pps_relative_counter = 0;
 uint8_t time_slot_timer_ovf = 0;
 uint8_t time_slot = 0;
 
 uint8_t *p_update_interval_values;
-
 
 
 
@@ -64,11 +66,14 @@ int main(void)
     init_lrns();
     gps_init();
     i2c_init();
+    adc_init();
     init_compass();
     init_menu();
     init_memory_points();
     ext_int_init();
     enable_buttons_interrupts();
+    adc_start_bat_voltage_reading();
+
 
 
     p_settings = get_settings();
@@ -79,7 +84,12 @@ int main(void)
 
     __enable_irq();
 
-make_a_beep();
+
+
+    make_a_beep();
+    lcd_bitmap(&startup_screen[0]);
+    lcd_update();
+    delay_cyc(500000);
 
 
 
@@ -90,7 +100,7 @@ make_a_beep();
     	{
     		main_flags.buttons_scanned = 0;
 			change_menu(button_code);
-			main_flags.menu_changed = 1;
+			main_flags.update_screen = 1;
     	}
 
 
@@ -108,7 +118,7 @@ make_a_beep();
 					{
 						if ((p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt]) == 0)
 						{
-							fill_air_packet();
+							fill_air_packet(uptime);
 							main_flags.run_frame = 1;
 						}
 					}
@@ -122,11 +132,29 @@ make_a_beep();
 
 
 
+        //After each second
+        if (main_flags.tick_1s == 1)
+        {
+        	main_flags.tick_1s = 0;
+            adc_check_bat_voltage();
+
+            if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
+            {
+            	calc_timeout(uptime);
+            	main_flags.do_beep = check_any_alarm_fence_timeout();
+            }
+        }
+
+
+
         //Checks after receiving packets from all devices or after no txrx; performing beep
         if (main_flags.frame_ended == 1)
         {
         	main_flags.frame_ended = 0;
-        	main_flags.process_devices = 1;
+        	process_all_devices();
+        	calc_fence();
+        	calc_timeout(uptime);
+        	main_flags.do_beep = check_any_alarm_fence_timeout();
         	main_flags.update_screen = 1;
         }
 
@@ -138,33 +166,14 @@ make_a_beep();
         }
 
 
-		if (main_flags.menu_changed == 1)
-		{
-			main_flags.menu_changed = 0;
-			main_flags.update_screen = 1;
-
-//			if ((p_gps_num->status == GPS_DATA_VALID) && (main_flags.pps_synced == 1)) //prevent dist calc when no valid gps data
-//			{
-//	        	main_flags.process_device = 1;
-//			}
-		}
-
-
-		//rel pos calc only once
-    	if (main_flags.process_devices == 1)
-		{
-        	main_flags.process_devices = 0;
-        	process_all_devices();
-		}
-
 
     	if (main_flags.process_compass == 1)
 		{
     		main_flags.process_compass = 0;
-    		led_green_on();
-    		read_north();
-    		led_green_off();
-    		main_flags.update_screen = 1;
+    		if (read_north())		//todo: decide on applicability of this condition
+    		{
+    			main_flags.update_screen = 1;
+    		}
 		}
 
 
@@ -173,6 +182,15 @@ make_a_beep();
 		{
         	main_flags.update_screen = 0;
         	draw_current_menu();
+		}
+
+
+
+		//beep on alarm/fence/timeout
+    	if (main_flags.do_beep == 1)
+		{
+    		main_flags.do_beep = 0;
+    		make_a_beep();
 		}
 
 
@@ -194,10 +212,10 @@ void DMA1_Channel3_IRQHandler(void)
 
     if (main_flags.pps_synced == 1) 	//if last pps status was "sync" then make a beep because we lost PPS
     {
-    	//make a long beep
+    	make_a_long_beep();
     }
 
-    pps_counter = 0;
+    pps_relative_counter = 0;
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;
 
@@ -216,9 +234,10 @@ void EXTI2_IRQHandler(void)
 	backup_and_clear_uart_buffer();
 	uart3_dma_restart();
 
-	pps_counter++;
+	pps_absolute_counter++;
+	pps_relative_counter++;
 
-	if (pps_counter > 2) //skip first two pps impulses: skip first PPS - ignore previous nmea data; skip second PPS, but fix the nmea data acquired after first PPS
+	if (pps_relative_counter > PPS_SKIP) //skip first two pps impulses: skip first PPS - ignore previous nmea data; skip second PPS, but fix the nmea data acquired after first PPS
 	{
 		main_flags.pps_synced = 1;
 		main_flags.parse_nmea = 1;
@@ -236,27 +255,29 @@ void EXTI0_IRQHandler(void)
 	uint16_t current_radio_status = rf_get_irq_status();	//Process the radio interrupt
 	rf_clear_irq();		//clear all flags
 
-	//todo add rx timeout interrupt
 	if (current_radio_status & IRQ_RX_DONE)	//Packet received
 	{
 		main_flags.rx_state = 0;
-		led_green_off();
 
 		if (!(current_radio_status & IRQ_CRC_ERROR))	// if no CRC error
 		{
 			rf_get_rx_packet();
-			parse_air_packet();   //parse air data from another device (which has ended TX in the current time_slot)
+			parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
+
+			if (get_current_device() == time_slot)
+			{
+				led_green_on(); //indicate successful rx event only if received device is active in menu, it will be switched off at the next timeslot interrupt
+			}
 		}
 	}
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
-		led_red_off();
+		led_green_on(); //indicate successful tx event, led will be switched off at the next timeslot interrupt
 	}
 	else if (current_radio_status & IRQ_RX_TX_TIMEOUT)	//RX timeout only, because TX timeout feature is not used at all
 	{
 		main_flags.rx_state = 0;
-		led_green_off();
 		rf_set_standby_xosc();	//after RX TO it goes to Standby RC mode only (https://forum.lora-developers.semtech.com/t/sx1268-is-it-possible-to-configure-transition-to-stdby-xosc-after-cad-done-rx-timeout/1282)
 	}
 
@@ -279,6 +300,7 @@ const uint8_t timeslot_pattern[] = {	0, 	0, 	1,	0,	0,	1,	0,	0,	1,	0,	0,	1,	0,	0,
 void TIM1_UP_IRQHandler(void)
 {
     TIM1->SR &= ~TIM_SR_UIF;                    //clear interrupt
+    led_green_off();		//switch off green led after successful tx/rx event
 
     time_slot_timer_ovf++;             			//increment ovf counter
 
@@ -304,7 +326,6 @@ void TIM1_UP_IRQHandler(void)
     				if (rf_tx_packet())
     				{
     					main_flags.tx_state = 1;
-    					led_red_on();
     				}
     			}
     			else
@@ -312,7 +333,6 @@ void TIM1_UP_IRQHandler(void)
     				if (rf_start_rx())
     				{
     					main_flags.rx_state = 1;
-    					led_green_on();
     				}
     			}
     		}
@@ -403,10 +423,12 @@ void SysTick_Handler(void)
 {
 	timer2_stop();	//pwm
 	systick_stop();	//gating
+	led_red_off();
 }
 
 
 
+//Compass update interval
 void TIM4_IRQHandler(void)
 {
 	TIM4->SR &= ~TIM_SR_UIF;        //clear gating timer int
@@ -421,13 +443,39 @@ void DMA1_Channel5_IRQHandler(void)
 
 	DMA1->IFCR = DMA_IFCR_CGIF5;     //clear all interrupt flags for DMA channel 5
 
-	led_red_on();
-	led_red_off();
-
 	spi2_dma_stop();
 	cs_lcd_inactive();
 	lcd_continue_update();
 }
 
 
+
+//Uptime counter (every 1 second)
+void RTC_IRQHandler(void)
+{
+	RTC->CRL &= ~RTC_CRL_SECF;		//Clear interrupt
+
+    uptime++;
+    main_flags.tick_1s = 1;
+}
+
+
+
+//End of ADC conversion (battery voltage)
+void ADC1_2_IRQHandler(void)
+{
+	adc_read_bat_voltage_result(); 			//EOC is cleared automatically after ADC_DR reading
+}
+
+
+
+uint32_t get_abs_pps_cntr(void)
+{
+	return pps_absolute_counter;
+}
+
+
 //todo: setupt ints priorities
+
+
+
