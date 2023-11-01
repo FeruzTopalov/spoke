@@ -94,7 +94,7 @@ void configure_gps_receiver(void)	//GPS module-specific, edit according your mod
 
 void send_ubx(uint8_t class, uint8_t id, uint8_t payload[], uint8_t len)
 {
-	uint8_t ubx_message[64] = {0};
+	uint8_t ubx_message[255 + 8] = {0};
 	uint8_t CK_A = 0;
 	uint8_t CK_B = 0;
 

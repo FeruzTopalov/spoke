@@ -37,7 +37,7 @@ void uart1_tx_byte(uint8_t tx_data)		//todo: implement through dma1 channel 4 US
     while(!(USART1->SR & USART_SR_TXE))     //wait for transmit register empty
     {
     }
-    USART1->DR = tx_data;                      //transmit
+    USART3->DR = tx_data;                      //transmit
 }
 
 
