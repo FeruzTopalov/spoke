@@ -195,6 +195,11 @@ int main(void)
 
 
 
+        //Wait for interrupt
+        __WFI();
+
+
+
     } //while(1) end
 } //main() end
 
