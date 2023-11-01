@@ -84,9 +84,9 @@ void configure_gps_receiver(void)	//GPS module-specific, edit according your mod
 
 	send_ubx(UBX_CLASS_CFG, UBX_CFG_TP5, &timepulse_config[0], sizeof(timepulse_config));
 	delay_cyc(1000);
-	send_ubx(UBX_CLASS_CFG, UBX_CFG_GNSS, &gnss_config[0], sizeof(gnss_config));
+	//send_ubx(UBX_CLASS_CFG, UBX_CFG_GNSS, &gnss_config[0], sizeof(gnss_config));
 	delay_cyc(1000);
-	send_ubx(UBX_CLASS_CFG, UBX_CFG_PMS, &powermode_config[0], sizeof(powermode_config));
+	//send_ubx(UBX_CLASS_CFG, UBX_CFG_PMS, &powermode_config[0], sizeof(powermode_config));
 	delay_cyc(1000);
 }
 
@@ -122,7 +122,7 @@ void send_ubx(uint8_t class, uint8_t id, uint8_t payload[], uint8_t len)
 
 	for (uint8_t n = 0; n < (len + 8); n++)		//8 bytes header & checksum
 	{
-		uart1_tx_byte(ubx_message[n]);			//transmit
+		uart3_tx_byte(ubx_message[n]);			//transmit
 	}
 }
 
