@@ -469,7 +469,10 @@ void RTC_IRQHandler(void)
 //End of ADC conversion (battery voltage)
 void ADC1_2_IRQHandler(void)
 {
-	adc_read_bat_voltage_result(); 			//EOC is cleared automatically after ADC_DR reading
+	//JEOC cleared by SW
+	ADC1->SR &= ~ADC_SR_JEOC;
+
+	adc_read_bat_voltage_result();
 }
 
 
