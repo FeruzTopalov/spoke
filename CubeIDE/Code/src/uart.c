@@ -15,7 +15,7 @@
 char uart_buffer[UART_BUF_LEN];		//raw UART data
 char *backup_buf;					//backup for raw UART data
 
-
+//todo: unite all uart inits in one func
 
 //Console UART init
 void uart1_init(void)
@@ -37,7 +37,7 @@ void uart1_tx_byte(uint8_t tx_data)		//todo: implement through dma1 channel 4 US
     while(!(USART1->SR & USART_SR_TXE))     //wait for transmit register empty
     {
     }
-    USART1->DR = tx_data;                      //transmit
+    USART3->DR = tx_data;                      //transmit
 }
 
 
@@ -105,4 +105,14 @@ void clear_uart_buffer(void)
 	{
 		uart_buffer[i] = 0;
 	}
+}
+
+
+
+void uart3_tx_byte(uint8_t tx_data)
+{
+    while(!(USART3->SR & USART_SR_TXE))     //wait for transmit register empty
+    {
+    }
+    USART3->DR = tx_data;                      //transmit
 }
