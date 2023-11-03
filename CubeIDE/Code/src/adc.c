@@ -100,7 +100,7 @@ void adc_read_bat_voltage_result(void)
 	dr_vbat = ADC1->JDR2;
 
 	//Convert
-	bat_voltage = 2 * vrefint * (dr_vbat / dr_vref);     //x2 due to resistive voltage divider before ADC input
+	bat_voltage = 2 * vrefint * ((float)dr_vbat / (float)dr_vref);     //x2 due to resistive voltage divider before ADC input
 }
 
 
