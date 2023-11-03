@@ -134,7 +134,7 @@ uint8_t get_battery_level(void)
 	float lvl;
 	uint8_t lvl_scaled;
 	v_tmp = bat_voltage - V_BATTERY_MIN;
-	lvl = v_tmp * (V_BATTERY_MAX - V_BATTERY_MIN);
+	lvl = v_tmp / (V_BATTERY_MAX - V_BATTERY_MIN);
 	lvl_scaled = lvl * 16;
 
 	if (lvl_scaled > 15)
