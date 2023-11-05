@@ -11,6 +11,7 @@
 #include "memory.h"
 #include "gpio.h"
 #include "service.h"
+#include "lcd.h"
 
 
 
@@ -156,51 +157,32 @@ void settings_load(void)
 
 void settings_interactive_save_default(void)
 {
-	uint8_t ovf_cnt = 0;
+	//print instruction
+	lcd_clear();
+	lcd_print(0, 3, "Defaults", 0);
 
-    //indicate beginning of reset to default, blink green 10 times
-    for (uint8_t i = 0; i < 10; i++)
+	lcd_print(1, 0, "-Click OK", 0);
+	lcd_print(2, 0, " to reset to", 0);
+	lcd_print(3, 0, " defaults", 0);
+	lcd_update();
+
+	while (!((GPIOB->IDR) & GPIO_IDR_IDR3) || !((GPIOB->IDR) & GPIO_IDR_IDR4)){}		//wait for user to release OK or ESC after entering settings reset routine
+	delay_cyc(100000);
+
+    while (1)	//wait for user's decision
     {
-    	if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4)) //if release DOWN and hold OK
+    	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for exit
     	{
-    		ovf_cnt++;			//count OK hold times
-    		led_red_on();
-    	}
-    	else
-    	{
-    		ovf_cnt = 0;
-    		led_red_off();
+    		NVIC_SystemReset();
     	}
 
-    	if (ovf_cnt > 2)		//if hold for 3 green blink cycles, then erase all
+    	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for reset settings to default
     	{
-    		goto process_erase;
+    		settings_save_default();
+    		delay_cyc(100000);
+    		NVIC_SystemReset();
     	}
-
-		led_green_on();
-		delay_cyc(150000);
-		led_green_off();
-		delay_cyc(150000);
     }
-
-    return;
-
-
-process_erase:
-	settings_save_default();
-
-
-    //confirm reset by blinking
-    for (uint8_t i = 0; i < 6; i++)
-    {
-    	delay_cyc(50000);
-    	led_green_on();
-		led_red_on();
-		delay_cyc(50000);
-		led_green_off();
-		led_red_off();
-    }
-
 }
 
 
