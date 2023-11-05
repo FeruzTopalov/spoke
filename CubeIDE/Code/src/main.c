@@ -56,41 +56,63 @@ int main(void)
 {
     gpio_init();
     manage_power();
-    settings_load();
-    timers_init();
     spi_init();
+    __enable_irq();	//for LCD DMA operation
+    lcd_init();
+
+    //start screen
+    lcd_bitmap(&startup_screen[0]);
+    lcd_update();
+    delay_cyc(300000);
+
+    lcd_print_only(0, 0, "settings..", 0);
+    settings_load();
+
+    lcd_print_only(0, 0, "timers..", 0);
+    timers_init();
+
+    lcd_print_only(0, 0, "uart..", 0);
     uart1_init();
     uart3_dma_init();
-    lcd_init();
+
+    lcd_print_only(0, 0, "radio..", 0);
     rf_init();
+
+    lcd_print_only(0, 0, "core..", 0);
     init_lrns();
+
+    lcd_print_only(0, 0, "gps..", 0);
     gps_init();
+
+    lcd_print_only(0, 0, "i2c..", 0);
     i2c_init();
+
+    lcd_print_only(0, 0, "adc..", 0);
     adc_init();
+
+    lcd_print_only(0, 0, "compass..", 0);
     init_compass();
+
+    lcd_print_only(0, 0, "menu..", 0);
     init_menu();
+
+    lcd_print_only(0, 0, "points..", 0);
     init_memory_points();
+
+    lcd_print_only(0, 0, "interrupts..", 0);
     ext_int_init();
     enable_buttons_interrupts();
+
     adc_start_bat_voltage_reading();
 
 
-
+    //initial variables
     p_settings = get_settings();
     p_gps_num = get_gps_num();
     p_update_interval_values = get_update_interval_values();
 
 
-
-    __enable_irq();
-
-
-
-    make_a_beep();
-    lcd_bitmap(&startup_screen[0]);
-    lcd_update();
-    delay_cyc(500000);
-
+    make_a_beep();	//end of loading
 
 
     while (1)
@@ -445,7 +467,6 @@ void TIM4_IRQHandler(void)
 //DMA SPI2 TX LCD
 void DMA1_Channel5_IRQHandler(void)
 {
-
 	DMA1->IFCR = DMA_IFCR_CGIF5;     //clear all interrupt flags for DMA channel 5
 
 	spi2_dma_stop();
