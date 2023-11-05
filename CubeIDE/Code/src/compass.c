@@ -334,7 +334,7 @@ uint8_t is_north_ready(void)
 
 float get_north(void)
 {
-	north_ready = 0; //clear flag until next read_north()
+	//north_ready = 0; //commented out because it causes compass arrow blink
 	return north;
 }
 
