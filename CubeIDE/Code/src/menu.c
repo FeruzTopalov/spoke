@@ -704,6 +704,10 @@ void draw_main(void)
     lcd_print(MAIN_ROW + get_current_item(), MAIN_COL - 1, ">", 0);
     draw_bat_level();
 
+	//debug output bat voltage
+	ftoa32(get_bat_voltage(), 2, &tmp_buf[0]);
+	lcd_print_viceversa(0, 12, &tmp_buf[0], 0);
+
     lcd_update();
 }
 
