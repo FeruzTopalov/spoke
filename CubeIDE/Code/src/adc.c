@@ -20,11 +20,6 @@ void adc_start_bat_voltage_reading(void);
 
 
 
-#define V_BATTERY_MIN       (3.0)
-#define V_BATTERY_MAX     	(4.2)
-
-
-
 const float vrefint = 1.2;				//STM32 internal reference, channel 17
 uint8_t bat_interval_counter = 0;
 float bat_voltage;

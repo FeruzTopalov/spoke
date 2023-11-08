@@ -25,6 +25,7 @@ void calc_fence(void);
 uint8_t check_any_alarm_fence_timeout(void);
 void toggle_my_alarm(void);
 uint8_t get_my_alarm_status(void);
+void set_lowbat_flag(uint8_t value);
 struct devices_struct **get_devices(void);
 
 

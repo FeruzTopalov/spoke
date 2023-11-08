@@ -326,7 +326,7 @@ void calc_fence(void)		//all devices should be processed before calling this fun
 
 uint8_t check_any_alarm_fence_timeout(void)
 {
-	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < MEMORY_POINT_LAST + 1; dev++)		//devices + mem points
+	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < MEMORY_POINT_LAST + 1; dev++)		//devices + mem points. todo: mem points do not have alarm, fence and timeout - not needed to check them
 	{
 		if (devices[dev].exist_flag)
 		{
@@ -359,6 +359,13 @@ void toggle_my_alarm(void)
 uint8_t get_my_alarm_status(void)
 {
 	return devices[this_device].alarm_flag;
+}
+
+
+
+void set_lowbat_flag(uint8_t value)
+{
+	devices[this_device].lowbat_flag = value;
 }
 
 

@@ -160,10 +160,20 @@ int main(void)
         	main_flags.tick_1s = 0;
             adc_check_bat_voltage();
 
+            if (get_bat_voltage() < V_BATTERY_MIN)	//todo: move somewhere else, no need to check it every second
+            {
+            	set_lowbat_flag(1);
+            	main_flags.do_beep++;
+            }
+            else
+            {
+            	set_lowbat_flag(0);
+            }
+
             if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
             {
             	calc_timeout(uptime);
-            	main_flags.do_beep = check_any_alarm_fence_timeout();
+            	main_flags.do_beep += check_any_alarm_fence_timeout();
             }
         }
 
@@ -176,7 +186,7 @@ int main(void)
         	process_all_devices();
         	calc_fence();
         	calc_timeout(uptime);
-        	main_flags.do_beep = check_any_alarm_fence_timeout();
+        	main_flags.do_beep += check_any_alarm_fence_timeout();
         	main_flags.update_screen = 1;
         }
 
@@ -208,8 +218,8 @@ int main(void)
 
 
 
-		//beep on alarm/fence/timeout
-    	if (main_flags.do_beep == 1)
+		//beep on alarm/fence/timeout/lowbatt
+    	if (main_flags.do_beep != 0)
 		{
     		main_flags.do_beep = 0;
     		make_a_beep();
