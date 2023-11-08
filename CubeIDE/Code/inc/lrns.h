@@ -38,6 +38,7 @@ struct devices_struct
     uint8_t memory_point_flag;		//is this device a memory point?
 	uint8_t alarm_flag;				//is alarm reported by a device?
 	uint8_t fence_flag;				//is a predefined fence distance reached?
+	uint8_t lowbat_flag;			//did the device transmit low battery flag?
 
 
     //TIME
