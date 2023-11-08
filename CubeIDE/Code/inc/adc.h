@@ -11,6 +11,7 @@
 
 
 
+#define V_BATTERY_CRIT      (2.8)
 #define V_BATTERY_MIN       (3.0)
 #define V_BATTERY_MAX     	(4.2)
 
@@ -21,6 +22,8 @@ void adc_check_bat_voltage(void);
 void adc_start_bat_voltage_reading(void);
 void adc_read_bat_voltage_result(void);
 float get_bat_voltage(void);
+uint8_t is_battery_low(void);
+uint8_t is_battery_critical(void);
 uint8_t get_battery_level(void);
 
 
