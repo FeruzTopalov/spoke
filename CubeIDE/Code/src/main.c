@@ -113,6 +113,7 @@ int main(void)
 
 
     make_a_beep();	//end of device loading
+    draw_current_menu();
 
 
     while (1)

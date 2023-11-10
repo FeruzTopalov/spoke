@@ -86,12 +86,31 @@ void configure_gps_receiver(void)	//GPS module-specific, edit according your mod
 	uint8_t gnss_config_gps_glonass[] = {0x00, 0x00, 0x20, 0x07, 0x00, 0x08, 0x10, 0x00, 0x01, 0x00, 0x01, 0x01, 0x01, 0x01, 0x03, 0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x04, 0x08, 0x00, 0x00, 0x00, 0x01, 0x01, 0x03, 0x08, 0x10, 0x00, 0x00, 0x00, 0x01, 0x01, 0x04, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x01, 0x05, 0x00, 0x03, 0x00, 0x01, 0x00, 0x01, 0x01, 0x06, 0x08, 0x0E, 0x00, 0x01, 0x00, 0x01, 0x01};
 */
 
-	send_ubx(UBX_CLASS_CFG, UBX_CFG_TP5, &timepulse_config[0], sizeof(timepulse_config));
-	delay_cyc(100000);
-	send_ubx(UBX_CLASS_CFG, UBX_CFG_PMS, &powermode_config[0], sizeof(powermode_config));
-	delay_cyc(100000);
-	send_ubx(UBX_CLASS_CFG, UBX_CFG_GNSS, &gnss_config_gps[0], sizeof(gnss_config_gps));	//on preference, use either 'gnss_config_gps' or 'gnss_config_gps_glonass'
-	delay_cyc(100000);
+	//This resets config to default (clear + load)
+	uint8_t gnss_config_reset[] = {0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x03};
+
+	//This saves config to BBR and Flash (save)
+	uint8_t gnss_config_save[] = {0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03};
+
+/*
+	//Start
+	uart3_tx_byte(0xFF);	//wake the ublox if it is in idle
+	delay_cyc(150000);		//wait ~500 ms
+
+
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_CFG, &gnss_config_reset[0], sizeof(gnss_config_reset));
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_CFG, &gnss_config_save[0], sizeof(gnss_config_save));
+
+	//send_ubx(UBX_CLASS_CFG, UBX_CFG_GNSS, &gnss_config_gps[0], sizeof(gnss_config_gps));	//on preference, use either 'gnss_config_gps' or 'gnss_config_gps_glonass'
+	//delay_cyc(100000);
+
+	//send_ubx(UBX_CLASS_CFG, UBX_CFG_TP5, &timepulse_config[0], sizeof(timepulse_config));
+
+
+	//send_ubx(UBX_CLASS_CFG, UBX_CFG_PMS, &powermode_config[0], sizeof(powermode_config));
+*/
+
+
 }
 
 
