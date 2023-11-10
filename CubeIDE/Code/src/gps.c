@@ -92,23 +92,31 @@ void configure_gps_receiver(void)	//GPS module-specific, edit according your mod
 	//This saves config to BBR and Flash (save)
 	uint8_t gnss_config_save[] = {0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03};
 
-/*
+	//This performs forced HW restart + coldstart
+	uint8_t gnss_cold_restart[] = {0xFF, 0xB9, 0x00, 0x00};
+
 	//Start
+	delay_cyc(600000);
+
 	uart3_tx_byte(0xFF);	//wake the ublox if it is in idle
 	delay_cyc(150000);		//wait ~500 ms
 
-
 	send_ubx(UBX_CLASS_CFG, UBX_CFG_CFG, &gnss_config_reset[0], sizeof(gnss_config_reset));
+	delay_cyc(600000);
+
 	send_ubx(UBX_CLASS_CFG, UBX_CFG_CFG, &gnss_config_save[0], sizeof(gnss_config_save));
+	delay_cyc(600000);
+
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_RST, &gnss_cold_restart[0], sizeof(gnss_cold_restart));
 
 	//send_ubx(UBX_CLASS_CFG, UBX_CFG_GNSS, &gnss_config_gps[0], sizeof(gnss_config_gps));	//on preference, use either 'gnss_config_gps' or 'gnss_config_gps_glonass'
-	//delay_cyc(100000);
+
 
 	//send_ubx(UBX_CLASS_CFG, UBX_CFG_TP5, &timepulse_config[0], sizeof(timepulse_config));
 
 
 	//send_ubx(UBX_CLASS_CFG, UBX_CFG_PMS, &powermode_config[0], sizeof(powermode_config));
-*/
+
 
 
 }

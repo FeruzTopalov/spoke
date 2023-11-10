@@ -63,7 +63,7 @@ int main(void)
     //start screen
     lcd_bitmap(&startup_screen[0]);
     lcd_update();
-    delay_cyc(500000);
+    delay_cyc(400000);
 
     lcd_print_only(0, 0, "settings..", 0);
     settings_load();
