@@ -12,6 +12,7 @@
 #include "gpio.h"
 #include "service.h"
 #include "lcd.h"
+#include "gps.h"
 
 
 
@@ -178,8 +179,15 @@ void settings_interactive_save_default(void)
 
     	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for reset settings to default
     	{
+    		lcd_clear();
+    		lcd_print(0, 0, "Resetting...", 0);
+    		lcd_print(1, 0, "GPS & settings", 0);
+    		lcd_update();
+
     		settings_save_default();
-    		delay_cyc(100000);
+
+    		reset_to_defaults_gps_receiver();
+
     		NVIC_SystemReset();
     	}
     }

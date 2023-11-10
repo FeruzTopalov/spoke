@@ -65,12 +65,12 @@ int main(void)
     lcd_update();
     delay_cyc(400000);
 
-    lcd_print_only(0, 0, "settings..", 0);
-    settings_load();
-
     lcd_print_only(0, 0, "uart..", 0);
     uart1_init();
     uart3_dma_init();
+
+    lcd_print_only(0, 0, "settings..", 0);
+    settings_load();
 
     lcd_print_only(0, 0, "timers..", 0);
     timers_init();

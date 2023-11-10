@@ -77,6 +77,7 @@ struct gps_num_struct
 
 
 void gps_init(void);
+void reset_to_defaults_gps_receiver(void);
 uint8_t parse_gps(void);
 char *get_nmea_buf(void);
 struct gps_raw_struct *get_gps_raw(void);
