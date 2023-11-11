@@ -101,13 +101,16 @@ void configure_gps_receiver(void)
 	delay_cyc(150000);
 
 	send_ubx(UBX_CLASS_CFG, UBX_CFG_TP5, &cfg_tp5_timepulse[0], sizeof(cfg_tp5_timepulse));
-	delay_cyc(100000);
+	//delay_cyc(100000);
 
-	send_ubx(UBX_CLASS_CFG, UBX_CFG_GNSS, &cfg_gnss_gps[0], sizeof(cfg_gnss_gps));	//wait for ~1 s, required
-	delay_cyc(400000);
+	//send_ubx(UBX_CLASS_CFG, UBX_CFG_GNSS, &cfg_gnss_gps[0], sizeof(cfg_gnss_gps));	//wait for ~1 s, required
+	//delay_cyc(400000);
+
+	//send_ubx(UBX_CLASS_CFG, UBX_CFG_CFG, &cfg_cfg_config_save[0], sizeof(cfg_cfg_config_save));		//test save
+	//delay_cyc(100000);
 
 	send_ubx(UBX_CLASS_CFG, UBX_CFG_PMS, &cfg_pms_aggr1hz[0], sizeof(cfg_pms_aggr1hz));
-	delay_cyc(100000);
+	//delay_cyc(100000);
 
 	send_ubx(UBX_CLASS_CFG, UBX_CFG_CFG, &cfg_cfg_config_save[0], sizeof(cfg_cfg_config_save));		//save required after PMS configuration
 	delay_cyc(100000);
