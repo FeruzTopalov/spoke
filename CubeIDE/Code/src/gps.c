@@ -97,7 +97,20 @@ void gps_init(void)
 
 void configure_gps_receiver(void)
 {
-	;
+	uart1_tx_byte(0xFF);	//wake it up if it sleeps and wait 500 ms
+	delay_cyc(150000);
+
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_TP5, &cfg_tp5_timepulse[0], sizeof(cfg_tp5_timepulse));
+	delay_cyc(100000);
+
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_GNSS, &cfg_gnss_gps[0], sizeof(cfg_gnss_gps));	//wait for ~1 s, required
+	delay_cyc(400000);
+
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_PMS, &cfg_pms_aggr1hz[0], sizeof(cfg_pms_aggr1hz));
+	delay_cyc(100000);
+
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_CFG, &cfg_cfg_config_save[0], sizeof(cfg_cfg_config_save));		//save required after PMS configuration
+	delay_cyc(100000);
 }
 
 
@@ -146,7 +159,7 @@ void send_ubx(uint8_t class, uint8_t id, uint8_t payload[], uint8_t len)
 	for (uint8_t n = 0; n < (len + 8); n++)		//8 bytes header & checksum
 	{
 		uart3_tx_byte(ubx_message[n]);			//transmit
-		uart1_tx_byte(ubx_message[n]);//debug
+		uart1_tx_byte(ubx_message[n]);//debug	//todo: delete
 	}
 }
 
