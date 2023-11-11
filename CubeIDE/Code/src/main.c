@@ -211,8 +211,11 @@ int main(void)
     	//screen update (only once in a main cycle)
     	if (main_flags.update_screen == 1)
 		{
-        	main_flags.update_screen = 0;
-        	draw_current_menu();
+    		if (!get_lcd_busy())
+    		{
+    			main_flags.update_screen = 0;
+    			draw_current_menu();
+    		}
 		}
 
 
