@@ -212,6 +212,9 @@ static void SetSysClock(void);
   */
 void SystemInit (void)
 {
+  //Call for bootloader and check for start condition
+  call_bootloader();
+
   /* Reset the RCC clock configuration to the default reset state(for debug purpose) */
   /* Set HSION bit */
   RCC->CR |= (uint32_t)0x00000001;
@@ -257,9 +260,6 @@ void SystemInit (void)
     SystemInit_ExtMemCtl(); 
   #endif /* DATA_IN_ExtSRAM */
 #endif 
-
-  //Call for bootloader and check for start condition
-  call_bootloader();
 
   /* Configure the System clock frequency, HCLK, PCLK2 and PCLK1 prescalers */
   /* Configure the Flash Latency cycles and enable prefetch buffer */

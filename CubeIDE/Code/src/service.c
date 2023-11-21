@@ -12,6 +12,10 @@
 
 
 
+void (*SysMemBootJump)(void);
+
+
+
 char rumbs[9][3] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
 
 
@@ -53,6 +57,12 @@ void manage_power(void)
 //Startup condition: btn OK pressed, btn ESC released
 void call_bootloader(void)
 {
+	uint32_t BootAddrF10xx  = 0x1FFFF000;
+	SysMemBootJump = (void (*)(void)) (*((uint32_t *) ((BootAddrF10xx + 4))));
+
+    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;         //enable afio clock
+    AFIO->MAPR |= AFIO_MAPR_SWJ_CFG_JTAGDISABLE;
+
     //Port B
     RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
 
@@ -70,8 +80,8 @@ void call_bootloader(void)
 
     if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4))
     {
-    	__set_MSP(0x200001FC);
-		__ASM volatile ("BL 0x1FFFF004");
+		__set_MSP(*(uint32_t *)BootAddrF10xx);
+		SysMemBootJump();
     }
 }
 
