@@ -27,7 +27,7 @@
 
 
 
-char *HW_FW_VERSION = "v1.1";	//revision HW.FW
+char *HW_FW_VERSION = "H1F2";	//revision HW.FW
 
 
 
