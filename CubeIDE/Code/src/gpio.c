@@ -159,8 +159,8 @@ void gpio_init(void)
     //PB10 - USART3 TX (GPS)
     GPIOB->CRH &= ~GPIO_CRH_MODE10_0;    //output 2 MHz
     GPIOB->CRH |= GPIO_CRH_MODE10_1;
-    GPIOB->CRH &= ~GPIO_CRH_CNF10_0;     //alternate output push-pull
-    GPIOB->CRH |= GPIO_CRH_CNF10_1;
+    GPIOB->CRH &= ~GPIO_CRH_CNF10;       //output push-pull
+    GPIOB->ODR |= GPIO_ODR_ODR10;			//workaround, this sets RX pin of the GPS to high state and prevents RX frame error which takes place when this pin is low for a long time (between gpio and uart inits)
 
     //PB11 - USART3 RX (GPS)
     GPIOB->CRH &= ~GPIO_CRH_MODE11;      //input

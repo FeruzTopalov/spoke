@@ -77,6 +77,7 @@ void lcd_byte2buf(uint16_t pos, uint8_t byte);
 void lcd_draw_line(int8_t x1, int8_t y1, int8_t x2, int8_t y2);
 void lcd_draw_dot(int8_t x0, int8_t y0);
 uint8_t *get_lcd_buffer(void);
+uint8_t get_lcd_busy(void);
 
 
 

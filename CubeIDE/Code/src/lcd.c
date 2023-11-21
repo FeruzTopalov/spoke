@@ -152,22 +152,25 @@ uint8_t lcd_get_display_status(void)
 //Update screen with buffer content
 void lcd_update(void)
 {
-	if (display_status == LCD_DISPLAY_ON) //update display content only if the display is on
+	if (!lcd_busy)
 	{
-		//spi2_clock_enable();
+		if (display_status == LCD_DISPLAY_ON) //update display content only if the display is on
+		{
+			//spi2_clock_enable();
 
 
-		//todo: if current_page <> 0 to prevent glitches
-		lcd_busy = 1;
-		current_page = 0;
-		lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
-		lcd_send_command(0x10);			//reset column address high
-		lcd_send_command(0xB0);			//set 0 page address
-		lcd_data_mode();
-		cs_lcd_active();
-		spi2_dma_start(&screen_buf[0], LCD_SIZE_X);
+			//todo: if current_page <> 0 to prevent glitches
+			lcd_busy = 1;
+			current_page = 0;
+			lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
+			lcd_send_command(0x10);			//reset column address high
+			lcd_send_command(0xB0);			//set 0 page address
+			lcd_data_mode();
+			cs_lcd_active();
+			spi2_dma_start(&screen_buf[0], LCD_SIZE_X);
 
-		//spi2_clock_disable();
+			//spi2_clock_disable();
+		}
 	}
 }
 
@@ -594,4 +597,11 @@ void lcd_draw_dot(int8_t x0, int8_t y0)
 uint8_t *get_lcd_buffer(void)
 {
 	return &screen_buf[0];
+}
+
+
+
+uint8_t get_lcd_busy(void)
+{
+	return lcd_busy;
 }

@@ -56,41 +56,64 @@ int main(void)
 {
     gpio_init();
     manage_power();
-    settings_load();
-    timers_init();
     spi_init();
+    __enable_irq();	//for LCD DMA operation
+    lcd_init();
+
+    //start screen
+    lcd_bitmap(&startup_screen[0]);
+    lcd_update();
+    delay_cyc(400000);
+
+    lcd_print_only(0, 0, "uart..", 0);
     uart1_init();
     uart3_dma_init();
-    lcd_init();
-    rf_init();
-    init_lrns();
-    gps_init();
-    i2c_init();
+
+    lcd_print_only(0, 0, "settings..", 0);
+    settings_load();
+
+    lcd_print_only(0, 0, "timers..", 0);
+    timers_init();
+
+    lcd_print_only(0, 0, "adc..", 0);
     adc_init();
-    init_compass();
-    init_menu();
-    init_memory_points();
-    ext_int_init();
-    enable_buttons_interrupts();
     adc_start_bat_voltage_reading();
 
+    lcd_print_only(0, 0, "i2c..", 0);
+    i2c_init();
+
+    lcd_print_only(0, 0, "radio..", 0);
+    rf_init();
+
+    lcd_print_only(0, 0, "core..", 0);
+    init_lrns();
+
+    lcd_print_only(0, 0, "gps..", 0);
+    gps_init();
+
+    lcd_print_only(0, 0, "compass..", 0);
+    init_compass();
+
+    lcd_print_only(0, 0, "interrupts..", 0);
+    ext_int_init();
+    enable_buttons_interrupts();
+
+    lcd_print_only(0, 0, "mem points..", 0);
+    init_memory_points();
+
+    lcd_print_only(0, 0, "menu..", 0);
+    init_menu();
 
 
+
+    //initial variables
     p_settings = get_settings();
     p_gps_num = get_gps_num();
     p_update_interval_values = get_update_interval_values();
 
 
-
-    __enable_irq();
-
-
-
-    make_a_beep();
-    lcd_bitmap(&startup_screen[0]);
-    lcd_update();
-    delay_cyc(500000);
-
+    make_a_beep();	//end of device loading
+    draw_current_menu();
 
 
     while (1)
@@ -138,10 +161,16 @@ int main(void)
         	main_flags.tick_1s = 0;
             adc_check_bat_voltage();
 
+            if (is_battery_critical())
+            {
+            	release_power();	//just turn off for now
+            }
+
             if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
             {
             	calc_timeout(uptime);
-            	main_flags.do_beep = check_any_alarm_fence_timeout();
+            	main_flags.do_beep += check_any_alarm_fence_timeout();
+            	main_flags.do_beep += is_battery_low();
             }
         }
 
@@ -154,7 +183,8 @@ int main(void)
         	process_all_devices();
         	calc_fence();
         	calc_timeout(uptime);
-        	main_flags.do_beep = check_any_alarm_fence_timeout();
+        	main_flags.do_beep += check_any_alarm_fence_timeout();
+        	main_flags.do_beep += is_battery_low();
         	main_flags.update_screen = 1;
         }
 
@@ -177,17 +207,21 @@ int main(void)
 		}
 
 
+
     	//screen update (only once in a main cycle)
     	if (main_flags.update_screen == 1)
 		{
-        	main_flags.update_screen = 0;
-        	draw_current_menu();
+    		if (!get_lcd_busy())
+    		{
+    			main_flags.update_screen = 0;
+    			draw_current_menu();
+    		}
 		}
 
 
 
-		//beep on alarm/fence/timeout
-    	if (main_flags.do_beep == 1)
+		//beep on alarm/fence/timeout/lowbatt
+    	if (main_flags.do_beep != 0)
 		{
     		main_flags.do_beep = 0;
     		make_a_beep();
@@ -445,7 +479,6 @@ void TIM4_IRQHandler(void)
 //DMA SPI2 TX LCD
 void DMA1_Channel5_IRQHandler(void)
 {
-
 	DMA1->IFCR = DMA_IFCR_CGIF5;     //clear all interrupt flags for DMA channel 5
 
 	spi2_dma_stop();

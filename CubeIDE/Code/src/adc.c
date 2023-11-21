@@ -9,6 +9,7 @@
 #include "stm32f10x.h"
 #include "adc.h"
 #include "service.h"
+#include "lrns.h"
 
 
 
@@ -17,11 +18,6 @@ void adc_start_bat_voltage_reading(void);
 
 
 #define GET_BAT_VOLTAGE_INTERVAL    (10)
-
-
-
-#define V_BATTERY_MIN       (3.0)
-#define V_BATTERY_MAX     	(4.2)
 
 
 
@@ -123,6 +119,36 @@ void adc_check_bat_voltage(void)
 float get_bat_voltage(void)
 {
 	return bat_voltage;
+}
+
+
+
+uint8_t is_battery_low(void)
+{
+	if (bat_voltage < V_BATTERY_MIN)
+	{
+		set_lowbat_flag(1);
+		return 1;
+	}
+	else
+	{
+		set_lowbat_flag(0);
+		return 0;
+	}
+}
+
+
+
+uint8_t is_battery_critical(void)
+{
+	if (bat_voltage < V_BATTERY_CRIT)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 

@@ -37,7 +37,7 @@ void uart1_tx_byte(uint8_t tx_data)		//todo: implement through dma1 channel 4 US
     while(!(USART1->SR & USART_SR_TXE))     //wait for transmit register empty
     {
     }
-    USART3->DR = tx_data;                      //transmit
+    USART1->DR = tx_data;                      //transmit
 }
 
 
@@ -47,6 +47,13 @@ void uart3_dma_init(void)
 {
     RCC->APB1ENR |= RCC_APB1ENR_USART3EN;   //ENABLE usart clock
     
+    //see gpio.c for this pin
+    //PB10 - USART3 TX (GPS)
+    GPIOB->CRH &= ~GPIO_CRH_MODE10_0;    //output 2 MHz
+    GPIOB->CRH |= GPIO_CRH_MODE10_1;
+    GPIOB->CRH &= ~GPIO_CRH_CNF10_0;     //alternate output push-pull
+    GPIOB->CRH |= GPIO_CRH_CNF10_1;
+
     USART3->BRR = 0x0138;                   //9600 bod; mantissa 19, frac 8
     USART3->CR1 |= USART_CR1_TE;            //enable tx
     USART3->CR1 |= USART_CR1_RE;            //enable rx

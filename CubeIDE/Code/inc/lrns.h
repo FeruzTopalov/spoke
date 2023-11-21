@@ -25,6 +25,7 @@ void calc_fence(void);
 uint8_t check_any_alarm_fence_timeout(void);
 void toggle_my_alarm(void);
 uint8_t get_my_alarm_status(void);
+void set_lowbat_flag(uint8_t value);
 struct devices_struct **get_devices(void);
 
 
@@ -38,6 +39,7 @@ struct devices_struct
     uint8_t memory_point_flag;		//is this device a memory point?
 	uint8_t alarm_flag;				//is alarm reported by a device?
 	uint8_t fence_flag;				//is a predefined fence distance reached?
+	uint8_t lowbat_flag;			//did the device transmit low battery flag?
 
 
     //TIME

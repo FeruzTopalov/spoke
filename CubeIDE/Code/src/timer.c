@@ -49,7 +49,7 @@ void make_a_beep(void)
 		timer2_start();		//pwm
 		systick_set_100ms();
 		systick_start();	//gating
-		led_red_on();
+		led_red_on();		//todo: LED should blink even if sound is off
 	}
 }
 
