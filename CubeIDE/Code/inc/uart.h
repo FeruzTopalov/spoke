@@ -21,6 +21,7 @@ void uart1_tx_byte(uint8_t tx_data);
 void uart3_dma_init(void);
 void uart3_dma_stop(void);
 void uart3_dma_restart(void);
+void uart3_tx_byte(uint8_t tx_data);
 void backup_and_clear_uart_buffer(void);
 void clear_uart_buffer(void);
 

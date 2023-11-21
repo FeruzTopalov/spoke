@@ -102,7 +102,22 @@ restart_cal:
 	lcd_print(2, 0, "-Click OK", 0);
 	lcd_print(3, 0, "-Turnaround 360", 0);
 	lcd_update();
-	while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click to start cal
+
+	while (!((GPIOB->IDR) & GPIO_IDR_IDR3)){}		//wait for user to release ESC after entering compass calibration routine
+	delay_cyc(100000);
+
+    while (1)	//wait for user's decision
+    {
+    	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for exit
+    	{
+    		NVIC_SystemReset();
+    	}
+
+    	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for start cal
+    	{
+    		break;
+    	}
+    }
 
 	//init start value and min/max values
 	read_magn();
@@ -319,7 +334,7 @@ uint8_t is_north_ready(void)
 
 float get_north(void)
 {
-	north_ready = 0; //clear flag until next read_north()
+	//north_ready = 0; //commented out because it causes compass arrow blink
 	return north;
 }
 

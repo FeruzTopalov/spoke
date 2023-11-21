@@ -16,11 +16,13 @@
 #include "points.h"
 #include "lrns.h"
 #include "calendar.h"
+#include "ubx.h"
 
 
 
 void gps_raw_convert_to_numerical(void);
 void configure_gps_receiver(void);
+void send_ubx(uint8_t class, uint8_t id, uint8_t payload[], uint8_t len);
 void update_my_coordinates(void);
 void convert_time(void);
 
@@ -51,6 +53,34 @@ uint8_t tmp_uint8;
 float tmp_float;
 
 
+//GPS CONFIGURATION
+//GPS module-specific, edit according your module and mode of operation you need
+//works for u-blox m8 chip with protocol version 18, particularly for GN-801 GPS module
+//generated via u-center ver 23.08
+
+//This resets config to default (clear operation)
+uint8_t cfg_cfg_config_reset[] = {0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03};
+
+//This saves config to BBR and Flash (save operation)
+uint8_t cfg_cfg_config_save[] = {0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03};
+
+//This performs forced HW restart + coldstart
+uint8_t cfg_rst_cold_restart[] = {0xFF, 0xB9, 0x00, 0x00};
+
+//Set PPS timepulse length locked to 999900 us, so the module's LED will blink for only 100 us
+//This gives loong positive pulse, and short negative pulse where the LED is on
+uint8_t cfg_tp5_timepulse[] = {0x00, 0x01, 0x00, 0x00, 0x32, 0x00, 0x00, 0x00, 0x40, 0x42, 0x0F, 0x00, 0x40, 0x42, 0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0xDC, 0x41, 0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x77, 0x00, 0x00, 0x00};
+
+//This enables Aggressive 1 Hz power saving mode
+uint8_t cfg_pms_aggr1hz[] = {0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+//This disables SBAS and GLONASS (i.e. GPS + QZSS mode), To avoid cross-correlation issues, it is recommended that GPS and QZSS are always both enabled or both disabled
+uint8_t cfg_gnss_gps[] = {0x00, 0x00, 0x20, 0x07, 0x00, 0x08, 0x10, 0x00, 0x01, 0x00, 0x01, 0x01, 0x01, 0x01, 0x03, 0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x04, 0x08, 0x00, 0x00, 0x00, 0x01, 0x01, 0x03, 0x08, 0x10, 0x00, 0x00, 0x00, 0x01, 0x01, 0x04, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x01, 0x05, 0x00, 0x03, 0x00, 0x01, 0x00, 0x01, 0x01, 0x06, 0x08, 0x0E, 0x00, 0x00, 0x00, 0x01, 0x01};
+
+//This disables SBAS (i.e. GPS + QZSS + GLONASS mode), To avoid cross-correlation issues, it is recommended that GPS and QZSS are always both enabled or both disabled
+uint8_t cfg_gnss_gps_glonass[] = {0x00, 0x00, 0x20, 0x07, 0x00, 0x08, 0x10, 0x00, 0x01, 0x00, 0x01, 0x01, 0x01, 0x01, 0x03, 0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x04, 0x08, 0x00, 0x00, 0x00, 0x01, 0x01, 0x03, 0x08, 0x10, 0x00, 0x00, 0x00, 0x01, 0x01, 0x04, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x01, 0x05, 0x00, 0x03, 0x00, 0x01, 0x00, 0x01, 0x01, 0x06, 0x08, 0x0E, 0x00, 0x01, 0x00, 0x01, 0x01};
+
+
 
 void gps_init(void)
 {
@@ -67,7 +97,73 @@ void gps_init(void)
 
 void configure_gps_receiver(void)
 {
-	//todo: send UBX config here
+	uart1_tx_byte(0xFF);	//wake it up if it sleeps and wait 500 ms
+	delay_cyc(150000);
+
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_TP5, &cfg_tp5_timepulse[0], sizeof(cfg_tp5_timepulse));
+	//delay_cyc(100000);
+
+	//send_ubx(UBX_CLASS_CFG, UBX_CFG_GNSS, &cfg_gnss_gps[0], sizeof(cfg_gnss_gps));	//wait for ~1 s, required
+	//delay_cyc(400000);
+
+	//send_ubx(UBX_CLASS_CFG, UBX_CFG_CFG, &cfg_cfg_config_save[0], sizeof(cfg_cfg_config_save));		//test save
+	//delay_cyc(100000);
+
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_PMS, &cfg_pms_aggr1hz[0], sizeof(cfg_pms_aggr1hz));
+	//delay_cyc(100000);
+
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_CFG, &cfg_cfg_config_save[0], sizeof(cfg_cfg_config_save));		//save required after PMS configuration
+	delay_cyc(100000);
+}
+
+
+
+void reset_to_defaults_gps_receiver(void)
+{
+	//GPS module-specific, edit according your module and mode of operation you need
+
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_CFG, &cfg_cfg_config_reset[0], sizeof(cfg_cfg_config_reset));
+	delay_cyc(100000);
+
+	send_ubx(UBX_CLASS_CFG, UBX_CFG_RST, &cfg_rst_cold_restart[0], sizeof(cfg_rst_cold_restart));
+	delay_cyc(100000);
+}
+
+
+
+void send_ubx(uint8_t class, uint8_t id, uint8_t payload[], uint8_t len)
+{
+	uint8_t ubx_message[255 + 8] = {0};
+	uint8_t CK_A = 0;
+	uint8_t CK_B = 0;
+
+	ubx_message[0] = UBX_SYNCH_1;
+	ubx_message[1] = UBX_SYNCH_2;
+	ubx_message[2] = class;
+	ubx_message[3] = id;
+	ubx_message[4] = len;		//length of payload field LSB (expected len < 256)
+	ubx_message[5] = 0;			//length of payload field MSB
+	ubx_message[6] = 0;			//payload starts from here
+
+	for (uint8_t i = 0; i < len; i++)
+	{
+		ubx_message[6 + i] = payload[i];	//copy payload
+	}
+
+	for (uint8_t m = 2; m < (len + 6); m++)
+	{
+		CK_A = CK_A + ubx_message[m];		//calc checksums
+		CK_B = CK_B + CK_A;
+	}
+
+	ubx_message[6 + len] = CK_A;
+	ubx_message[6 + len + 1] = CK_B;
+
+	for (uint8_t n = 0; n < (len + 8); n++)		//8 bytes header & checksum
+	{
+		uart3_tx_byte(ubx_message[n]);			//transmit
+		uart1_tx_byte(ubx_message[n]);//debug	//todo: delete
+	}
 }
 
 
