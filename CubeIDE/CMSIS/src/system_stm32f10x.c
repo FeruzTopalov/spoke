@@ -63,6 +63,7 @@
   */
 
 #include "stm32f10x.h"
+#include "service.h"
 
 /**
   * @}
@@ -256,6 +257,9 @@ void SystemInit (void)
     SystemInit_ExtMemCtl(); 
   #endif /* DATA_IN_ExtSRAM */
 #endif 
+
+  //Call for bootloader and check for start condition
+  call_bootloader();
 
   /* Configure the System clock frequency, HCLK, PCLK2 and PCLK1 prescalers */
   /* Configure the Flash Latency cycles and enable prefetch buffer */

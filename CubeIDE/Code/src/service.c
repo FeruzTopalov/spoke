@@ -49,6 +49,34 @@ void manage_power(void)
 
 
 
+//This func is called once at power up and prior to any MCU configuration, see system_stm32f10x.c
+//Startup condition: btn OK pressed, btn ESC released
+void call_bootloader(void)
+{
+    //Port B
+    RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
+
+    //PB4 - Button OK
+    GPIOB->CRL &= ~GPIO_CRL_MODE4;      //input mode
+    GPIOB->CRL &= ~GPIO_CRL_CNF4_0;     //input with pull
+    GPIOB->CRL |= GPIO_CRL_CNF4_1;
+    GPIOB->ODR |= GPIO_ODR_ODR4;        //pull-up on
+
+    //PB3 - Button ESC
+    GPIOB->CRL &= ~GPIO_CRL_MODE3;      //input mode
+    GPIOB->CRL &= ~GPIO_CRL_CNF3_0;     //input with pull
+    GPIOB->CRL |= GPIO_CRL_CNF3_1;
+    GPIOB->ODR |= GPIO_ODR_ODR3;        //pull-up on
+
+    if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4))
+    {
+    	__set_MSP(0x200001FC);
+		__ASM volatile ("BL 0x1FFFF004");
+    }
+}
+
+
+
 uint32_t absv(int32_t value)
 {
 	if (value < 0)
