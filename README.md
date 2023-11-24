@@ -1,7 +1,7 @@
 # **SPOKE** - _Stay close!_
 
 <p align="center">
-  <img src="Pictures/Spoke.png">
+  <img src="Pictures/Spoke.BMP">
 </p>
 
 <p align="center">
@@ -69,7 +69,10 @@ Due to open-source and simple and cheap hardware, Spoke is highly flexible solut
 Spoke is written in pure C and runs on STM32 microcontroller. It has GPS module to receive positional data and synchronization signal, radio transceiver to exchange with radio packets between other devices, graphical display to show information on it, tactile buttons to control the device, buzzer to notify about events and couple of LEDs.
 
 
-![Spoke](Pictures/Spoke_rev1_pcb.jpg)
+<p align="center">
+  <img src="Pictures/Spoke_rev1_pcb_top.jpg">
+  <img src="Pictures/Spoke_rev1_pcb_bot.jpg">
+</p>
 
 
 GPS module provides NMEA-0183 stream at 9600 baud. Microcontroller process the stream using DMA and parse it. Fields being extracted are RMC, GGA, GSA, GSV. Those give us information about time, date, latitude, longitude, speed, course, altitude, satellites in view and in use, navigation mode and validness of data.
