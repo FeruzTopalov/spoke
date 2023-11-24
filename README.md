@@ -1,7 +1,7 @@
 # **SPOKE** - _Stay close!_
 
 <p align="center">
-  <img src="Pictures/Spoke.BMP">
+  <img src="Pictures/Spoke_render.jpg">
 </p>
 
 <p align="center">
@@ -70,8 +70,7 @@ Spoke is written in pure C and runs on STM32 microcontroller. It has GPS module 
 
 
 <p align="center">
-  <img src="Pictures/Spoke_rev1_pcb_top.jpg">
-  <img src="Pictures/Spoke_rev1_pcb_bot.jpg">
+  <img src="Pictures/Spoke_rev1_pcb.png">
 </p>
 
 
