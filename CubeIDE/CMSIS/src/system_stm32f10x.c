@@ -63,6 +63,7 @@
   */
 
 #include "stm32f10x.h"
+#include "service.h"
 
 /**
   * @}
@@ -211,6 +212,9 @@ static void SetSysClock(void);
   */
 void SystemInit (void)
 {
+  //Call for bootloader and check for start condition
+  call_bootloader();
+
   /* Reset the RCC clock configuration to the default reset state(for debug purpose) */
   /* Set HSION bit */
   RCC->CR |= (uint32_t)0x00000001;

@@ -14,6 +14,7 @@
 void delay_cyc(uint32_t cycles);
 void print_debug(char *string);
 void manage_power(void);
+void call_bootloader(void);
 
 uint32_t absv(int32_t value);
 int32_t maxv(int32_t x, int32_t y);
