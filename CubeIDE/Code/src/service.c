@@ -12,6 +12,10 @@
 
 
 
+void (*SysMemBootJump)(void);
+
+
+
 char rumbs[9][3] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
 
 
@@ -45,6 +49,40 @@ void manage_power(void)
     	delay_cyc(600000); //startup delay ~2sec
     }
 	hold_power();
+}
+
+
+
+//This func is called once at power up and prior to any MCU configuration, see system_stm32f10x.c
+//Startup condition: btn OK pressed, btn ESC released
+void call_bootloader(void)
+{
+	uint32_t BootAddrF10xx  = 0x1FFFF000;
+	SysMemBootJump = (void (*)(void)) (*((uint32_t *) ((BootAddrF10xx + 4))));
+
+    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;         //enable afio clock
+    AFIO->MAPR |= AFIO_MAPR_SWJ_CFG_JTAGDISABLE;
+
+    //Port B
+    RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
+
+    //PB4 - Button OK
+    GPIOB->CRL &= ~GPIO_CRL_MODE4;      //input mode
+    GPIOB->CRL &= ~GPIO_CRL_CNF4_0;     //input with pull
+    GPIOB->CRL |= GPIO_CRL_CNF4_1;
+    GPIOB->ODR |= GPIO_ODR_ODR4;        //pull-up on
+
+    //PB3 - Button ESC
+    GPIOB->CRL &= ~GPIO_CRL_MODE3;      //input mode
+    GPIOB->CRL &= ~GPIO_CRL_CNF3_0;     //input with pull
+    GPIOB->CRL |= GPIO_CRL_CNF3_1;
+    GPIOB->ODR |= GPIO_ODR_ODR3;        //pull-up on
+
+    if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4))
+    {
+		__set_MSP(*(uint32_t *)BootAddrF10xx);
+		SysMemBootJump();
+    }
 }
 
 
