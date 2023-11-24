@@ -20,7 +20,7 @@ Join our chat to see more: <[https://t.me/lrns_eleph](https://t.me/lrns_eleph)>
 
 
 <p align="center">
-  <img src="Pictures/Spokes_blink.png">
+  <img src="Pictures/Spokes_blink.gif">
 </p>
 
 
