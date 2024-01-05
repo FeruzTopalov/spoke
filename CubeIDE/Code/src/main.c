@@ -132,18 +132,14 @@ int main(void)
         if (main_flags.parse_nmea == 1)
         {
             main_flags.parse_nmea = 0;
-
+led_red_on();
             if (parse_gps() == 1)
             {
 				if 	(main_flags.pps_synced == 1)		//ready to txrx when pps exists, data is valid and current second divides by send interval without remainder
 				{
 					if (p_gps_num->status == GPS_DATA_VALID)
 					{
-						if ((p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt]) == 0)
-						{
-							fill_air_packet(uptime);
-							main_flags.run_frame = 1;
-						}
+						main_flags.process_all = 1;
 					}
 				}
 				else
@@ -151,6 +147,7 @@ int main(void)
 					main_flags.nmea_parsed_only = 1; //show results after successful parsing //only if pps does not exist; otherwise screen_update will be set after frame_end
 				}
             }
+led_red_off();
         }
 
 
@@ -177,9 +174,9 @@ int main(void)
 
 
         //Checks after receiving packets from all devices or after no txrx; performing beep
-        if (main_flags.frame_ended == 1)
+        if (main_flags.process_all == 1)
         {
-        	main_flags.frame_ended = 0;
+        	main_flags.process_all = 0;
         	process_all_devices();
         	calc_fence();
         	calc_timeout(uptime);
@@ -230,7 +227,7 @@ int main(void)
 
 
         //Wait for interrupt
-        __WFI();
+        //__WFI();
 
 
 
@@ -266,22 +263,17 @@ void DMA1_Channel3_IRQHandler(void)
 void EXTI2_IRQHandler(void)
 {
 
-	EXTI->PR = EXTI_PR_PR2;		//clear interrupt
-	timer1_start();                 //the first thing to do is to start time slot timer right after PPS
+	EXTI->PR = EXTI_PR_PR2;			//clear interrupt
+	timer1_start();                 //the first thing to do is to start gps acquire timer
 
-	uart3_dma_stop();				//fix the data
-	backup_and_clear_uart_buffer();
+	uart3_dma_stop();				//drop the previous data; there will be new after this PPS
+	clear_uart_buffer();
 	uart3_dma_restart();
 
 	pps_absolute_counter++;
 	pps_relative_counter++;
 
-	if (pps_relative_counter > PPS_SKIP) //skip first two pps impulses: skip first PPS - ignore previous nmea data; skip second PPS, but fix the nmea data acquired after first PPS
-	{
-		main_flags.pps_synced = 1;
-		main_flags.parse_nmea = 1;
-	}
-
+	main_flags.pps_synced = 1;
 }
 
 
@@ -319,80 +311,26 @@ void EXTI0_IRQHandler(void)
 		main_flags.rx_state = 0;
 		rf_set_standby_xosc();	//after RX TO it goes to Standby RC mode only (https://forum.lora-developers.semtech.com/t/sx1268-is-it-possible-to-configure-transition-to-stdby-xosc-after-cad-done-rx-timeout/1282)
 	}
-
-
 }
 
 
 
-								//	each byte is timer interrupt mask. timeslot_pattern[0] is the initial state and always zero
-								//	0 - skip interrupt
-								//	1 - do interrupt
-								//	2 - stop timer
-
-								//		|NMEA	|Slot 1		|Slot 2		|Slot 3		|Slot 4		|Slot 5		|Processing	|
-								//		|-------|-----------|-----------|-----------|-----------|-----------|-----------|
-								//   	0	50	100	150	200	250	300	350	400	450	500	550	600	650	700	750	800	850	900	950	1000 ms
-const uint8_t timeslot_pattern[] = {	0, 	0, 	1,	0,	0,	1,	0,	0,	1,	0,	0,	1,	0,	0,	1,	0,	0,	1,	0,	0,	0		};
-
-//Time slot interrupt
+//gps acquire timeout
 void TIM1_UP_IRQHandler(void)
 {
     TIM1->SR &= ~TIM_SR_UIF;                    //clear interrupt
-    led_green_off();		//switch off green led after successful tx/rx event
+    timer1_stop_reload();						//stop this timer
 
-    time_slot_timer_ovf++;             			//increment ovf counter
+led_green_on();
 
-    if (timeslot_pattern[time_slot_timer_ovf] == 1)
-    {
+    uart3_dma_stop();					//fix the nmea data
+    backup_and_clear_uart_buffer();
+    uart3_dma_restart();				//restart for a case when no next PPS occur, then dma ovf will trigger
+    									//otherwise next PPS will reset dma again before the upcoming nmea data
 
-    	time_slot++;
+    main_flags.parse_nmea = 1;			//ask to parse
 
-        if (main_flags.run_frame == 1)
-        {
-    		if (time_slot >= (p_settings->devices_on_air + 1)) //devices_on_air regulates how many time slots are active
-    		{
-    			timer1_stop_reload();			//end of the last time slot
-    			time_slot_timer_ovf = 0;
-    			time_slot = 0;
-    			main_flags.run_frame = 0;
-    			main_flags.frame_ended = 1;
-    		}
-    		else
-    		{
-    			if (time_slot == p_settings->device_number)
-    			{
-    				if (rf_tx_packet())
-    				{
-    					main_flags.tx_state = 1;
-    				}
-    			}
-    			else
-    			{
-    				if (rf_start_rx())
-    				{
-    					main_flags.rx_state = 1;
-    				}
-    			}
-    		}
-        }
-        else
-        {
-    		timer1_stop_reload();
-    		time_slot_timer_ovf = 0;
-    		time_slot = 0;
-
-    		if (p_gps_num->status == GPS_DATA_VALID)
-        	{
-        		main_flags.frame_ended = 1; //if gps is valid then calculate rel pos for all devices
-        	}
-        	else
-        	{
-        		main_flags.frame_ended = 0;
-        	}
-        }
-
-    }
+led_green_off();
 }
 
 
