@@ -44,8 +44,6 @@ uint8_t processing_button = 0;
 uint32_t uptime = 0;
 uint32_t pps_absolute_counter = 0;
 uint32_t pps_relative_counter = 0;
-uint8_t time_slot_timer_ovf = 0;
-uint8_t time_slot = 0;
 
 uint8_t *p_update_interval_values;
 
@@ -132,7 +130,7 @@ int main(void)
         if (main_flags.parse_nmea == 1)
         {
             main_flags.parse_nmea = 0;
-led_red_on();
+
             if (parse_gps() == 1)
             {
 				if 	(main_flags.pps_synced == 1)		//ready to txrx when pps exists, data is valid and current second divides by send interval without remainder
@@ -147,7 +145,6 @@ led_red_on();
 					main_flags.nmea_parsed_only = 1; //show results after successful parsing //only if pps does not exist; otherwise screen_update will be set after frame_end
 				}
             }
-led_red_off();
         }
 
 
@@ -266,6 +263,49 @@ void EXTI2_IRQHandler(void)
 	EXTI->PR = EXTI_PR_PR2;			//clear interrupt
 	timer1_start();                 //the first thing to do is to start gps acquire timer
 
+	//*** for test purposes
+    if (p_gps_num->second % 4 == 0)
+    {
+		if (p_settings->device_number == 1)
+		{
+			fill_air_packet(uptime);
+			if (rf_tx_packet())
+			{
+				main_flags.tx_state = 1;
+				led_red_on();
+			}
+		}
+		else
+		{
+			if (rf_start_rx())
+			{
+				main_flags.rx_state = 1;
+				led_green_on();
+			}
+		}
+    }
+    else if (p_gps_num->second % 4 == 2)
+    {
+		if (p_settings->device_number == 2)
+		{
+			fill_air_packet(uptime);
+			if (rf_tx_packet())
+			{
+				main_flags.tx_state = 1;
+				led_red_on();
+			}
+		}
+		else
+		{
+			if (rf_start_rx())
+			{
+				main_flags.rx_state = 1;
+				led_green_on();
+			}
+		}
+    }
+	//***
+
 	uart3_dma_stop();				//drop the previous data; there will be new after this PPS
 	clear_uart_buffer();
 	uart3_dma_restart();
@@ -289,6 +329,7 @@ void EXTI0_IRQHandler(void)
 	if (current_radio_status & IRQ_RX_DONE)	//Packet received
 	{
 		main_flags.rx_state = 0;
+		led_green_off();
 
 		rf_workaround_15_3();	//run if rx timeout was used
 
@@ -296,21 +337,17 @@ void EXTI0_IRQHandler(void)
 		{
 			rf_get_rx_packet();
 			parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
-
-			if (get_current_device() == time_slot)
-			{
-				led_green_on(); //indicate successful rx event only if received device is active in menu, it will be switched off at the next timeslot interrupt
-			}
 		}
 	}
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
-		led_green_on(); //indicate successful tx event, led will be switched off at the next timeslot interrupt
+		led_red_off();
 	}
 	else if (current_radio_status & IRQ_RX_TX_TIMEOUT)	//RX timeout only, because TX timeout feature is not used at all
 	{
 		main_flags.rx_state = 0;
+		led_green_off();
 		rf_set_standby_xosc();	//after RX TO it goes to Standby RC mode only (https://forum.lora-developers.semtech.com/t/sx1268-is-it-possible-to-configure-transition-to-stdby-xosc-after-cad-done-rx-timeout/1282)
 	}
 }
@@ -323,16 +360,12 @@ void TIM1_UP_IRQHandler(void)
     TIM1->SR &= ~TIM_SR_UIF;                    //clear interrupt
     timer1_stop_reload();						//stop this timer
 
-led_green_on();
-
     uart3_dma_stop();					//fix the nmea data
     backup_and_clear_uart_buffer();
     uart3_dma_restart();				//restart for a case when no next PPS occur, then dma ovf will trigger
     									//otherwise next PPS will reset dma again before the upcoming nmea data
 
     main_flags.parse_nmea = 1;			//ask to parse
-
-led_green_off();
 }
 
 
