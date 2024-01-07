@@ -245,6 +245,9 @@
 #define		LORA_PP5_CRC_OFF			(0x00)
 #define		LORA_PP6_IQ_STD				(0x00)
 
+// SX126X_SET_LORA_SYMB_NUM_TIMEOUT
+#define		LORA_SYMB_TIMEOUT_5_SYM		(0x05)
+
 // SET Sync Word
 #define		SYNC_WORD_0		(0x4B)
 #define		SYNC_WORD_1		(0xB2)
@@ -297,9 +300,13 @@
 #define		RX_TIMEOUT_50MS_1				(0x0C)
 #define		RX_TIMEOUT_50MS_2				(0x00)
 
-#define		RX_TIMEOUT_600MS_0				(0x00)	//For LoRa 600 ms for header detection
+#define		RX_TIMEOUT_600MS_0				(0x00)	//For LoRa; note SetLoRaSymbNumTimeout is enabled
 #define		RX_TIMEOUT_600MS_1				(0x96)
 #define		RX_TIMEOUT_600MS_2				(0x00)
+
+#define		RX_TIMEOUT_1500MS_0				(0x00)	//For LoRa; note SetLoRaSymbNumTimeout is enabled
+#define		RX_TIMEOUT_1500MS_1				(0x77)
+#define		RX_TIMEOUT_1500MS_2				(0x01)
 
 #define		RX_TIMEOUT_DISABLED_0				(0x00)
 #define		RX_TIMEOUT_DISABLED_1				(0x00)
