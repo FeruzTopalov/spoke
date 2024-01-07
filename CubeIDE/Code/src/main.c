@@ -290,6 +290,8 @@ void EXTI0_IRQHandler(void)
 	{
 		main_flags.rx_state = 0;
 
+		rf_workaround_15_3();	//run if rx timeout was used
+
 		if (!(current_radio_status & IRQ_CRC_ERROR))	// if no CRC error
 		{
 			rf_get_rx_packet();

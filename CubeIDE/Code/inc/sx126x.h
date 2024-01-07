@@ -181,7 +181,7 @@
 #define		BASE_ADDR_TX				(0x00)
 #define		BASE_ADDR_RX				(0x7F)
 
-// SX126X_SET_MODULATION_PARAMS
+// SX126X_SET_MODULATION_PARAMS FSK
 #define		FSK_MP1_BR_1200				(0x0D)
 #define		FSK_MP2_BR_1200				(0x05)
 #define		FSK_MP3_BR_1200				(0x55)
@@ -193,7 +193,36 @@
 #define		FSK_MP7_FDEV_1200			(0x04)
 #define		FSK_MP8_FDEV_1200			(0xEA)
 
-// SX126X_SET_PKT_PARAMS
+// SX126X_SET_MODULATION_PARAMS LORA
+#define SX126X_LORA_SF5  		(0x05)
+#define SX126X_LORA_SF6  		(0x06)
+#define SX126X_LORA_SF7  		(0x07)
+#define SX126X_LORA_SF8  		(0x08)
+#define SX126X_LORA_SF9  		(0x09)
+#define SX126X_LORA_SF10 		(0x0A)
+#define SX126X_LORA_SF11 		(0x0B)
+#define SX126X_LORA_SF12 		(0x0C)
+
+#define SX126X_LORA_BW_500 		(6)
+#define SX126X_LORA_BW_250 		(5)
+#define SX126X_LORA_BW_125 		(4)
+#define SX126X_LORA_BW_062 		(3)
+#define SX126X_LORA_BW_041 		(10)
+#define SX126X_LORA_BW_031 		(2)
+#define SX126X_LORA_BW_020 		(9)
+#define SX126X_LORA_BW_015 		(1)
+#define SX126X_LORA_BW_010 		(8)
+#define SX126X_LORA_BW_007 		(0)
+
+#define SX126X_LORA_CR_4_5		(0x01)
+#define SX126X_LORA_CR_4_6		(0x02)
+#define SX126X_LORA_CR_4_7		(0x03)
+#define SX126X_LORA_CR_4_8		(0x04)
+
+#define SX126X_LORA_LDROPT_ON	(0x01)
+#define SX126X_LORA_LDROPT_OFF	(0x00)
+
+// SX126X_SET_PKT_PARAMS FSK
 #define		FSK_PP1_PREAMB_3_BYTE		(0x00)	//24 bits
 #define		FSK_PP2_PREAMB_3_BYTE		(0x18)
 #define		FSK_PP3_PREAMB_THS_1_BYTE	(0x04)
@@ -203,6 +232,18 @@
 #define		FSK_PP7_PLOAD_LEN_12_BYTE	(0x0C)	//payload len only, no syncword/crc included
 #define		FSK_PP8_CRC_TYPE_2_BYTE		(0x02)
 #define		FSK_PP9_WHITE_NO			(0x00)
+
+// SX126X_SET_PKT_PARAMS LORA
+#define		LORA_PP1_PREAMB_8_SYM		(0x00)	//16 bits
+#define		LORA_PP2_PREAMB_8_SYM		(0x08)
+#define		LORA_PP1_PREAMB_10_SYM		(0x00)	//16 bits
+#define		LORA_PP2_PREAMB_10_SYM		(0x0A)
+#define		LORA_PP3_HEADER_EXPLCT		(0x00)
+#define		LORA_PP3_HEADER_IMPLCT		(0x01)
+#define		LORA_PP4_PLOAD_LEN_12_BYTE	(0x0C)
+#define		LORA_PP5_CRC_ON				(0x01)
+#define		LORA_PP5_CRC_OFF			(0x00)
+#define		LORA_PP6_IQ_STD				(0x00)
 
 // SET Sync Word
 #define		SYNC_WORD_0		(0x4B)
@@ -252,9 +293,14 @@
 #define		TX_TIMEOUT_DISABLED_2				(0x00)
 
 // SX126X_SET_RX
-#define		RX_TIMEOUT_50MS_0				(0x80)	//3 bytes preamble + 2 bytes sync word = 40 bit; 40 / 1200 = ~33 ms; make 50 ms to ensure sync word reception
+#define		RX_TIMEOUT_50MS_0				(0x80)	//For FSK 3 bytes preamble + 2 bytes sync word = 40 bit; 40 / 1200 = ~33 ms; make 50 ms to ensure sync word reception
 #define		RX_TIMEOUT_50MS_1				(0x0C)
 #define		RX_TIMEOUT_50MS_2				(0x00)
+
+#define		RX_TIMEOUT_600MS_0				(0x00)	//For LoRa 600 ms for header detection
+#define		RX_TIMEOUT_600MS_1				(0x96)
+#define		RX_TIMEOUT_600MS_2				(0x00)
+
 #define		RX_TIMEOUT_DISABLED_0				(0x00)
 #define		RX_TIMEOUT_DISABLED_1				(0x00)
 #define		RX_TIMEOUT_DISABLED_2				(0x00)
@@ -269,165 +315,6 @@
 #define SX126X_REG_ADDR_CRC_INIT_VAL		(0x06BC)
 #define SX126X_REG_ADDR_CRC_INIT_VAL_0		(0xBC)
 #define SX126X_REG_ADDR_CRC_INIT_VAL_1		(0x06)
-
-
-
-
-
-
-//REGISTERS ADDRESSES
-//
-///**
-// * @brief The address of the register holding the first byte defining the CRC seed
-// */
-//#define SX126X_REG_CRCSEEDBASEADDRESS 0x06BC
-//
-///**
-// * @brief The address of the register holding the first byte defining the CRC polynomial
-// */
-//#define SX126X_REG_CRCPOLYBASEADDRESS 0x06BE
-//
-///**
-// * @brief The address of the register holding the first byte defining the whitening seed
-// */
-//#define SX126X_REG_WHITSEEDBASEADDRESS 0x06B8
-//
-///**
-// * @brief The addresses of the registers holding SyncWords values
-// */
-//#define SX126X_REG_SYNCWORDBASEADDRESS 0x06C0
-//
-///**
-// * @brief The addresses of the register holding LoRa Modem SyncWord value
-// *        0x1424: LoRaWAN private network,
-// *        0x3444: LoRaWAN public network
-// */
-//#define SX126X_REG_LR_SYNCWORD 0x0740
-//
-///**
-// * @brief The address of the register holding the coding rate configuration extracted from a received LoRa header
-// */
-//#define SX126X_REG_LR_HEADER_CR 0x0749
-//#define SX126X_REG_LR_HEADER_CR_POS ( 4U )
-//#define SX126X_REG_LR_HEADER_CR_MASK ( 0x07UL << SX126X_REG_LR_HEADER_CR_POS )
-//
-///**
-// * @brief The address of the register holding the CRC configuration extracted from a received LoRa header
-// */
-//#define SX126X_REG_LR_HEADER_CRC 0x076B
-//#define SX126X_REG_LR_HEADER_CRC_POS ( 4U )
-//#define SX126X_REG_LR_HEADER_CRC_MASK ( 0x01UL << SX126X_REG_LR_HEADER_CRC_POS )
-//
-///*!
-// * The address of the register giving a 32-bit random number
-// */
-//#define SX126X_REG_RNGBASEADDRESS 0x0819
-//
-///*!
-// * The address of the register used to disable the LNA
-// */
-//#define SX126X_REG_ANA_LNA 0x08E2
-//
-///*!
-// * The address of the register used to disable the mixer
-// */
-//#define SX126X_REG_ANA_MIXER 0x08E5
-//
-///*!
-// * The address of the register holding RX Gain value
-// *     0x94: power saving,
-// *     0x96: rx boosted
-// */
-//#define SX126X_REG_RXGAIN 0x08AC
-//
-///**
-// * @brief Change the value on the device internal trimming capacitor
-// */
-//#define SX126X_REG_XTATRIM 0x0911
-//
-///**
-// * @brief Set the current max value in the over current protection
-// */
-//#define SX126X_REG_OCP 0x08E7
-//
-///**
-// * @brief WORKAROUND - Optimizing the Inverted IQ Operation, see DS_SX1261-2_V1.2 datasheet chapter 15.4
-// */
-//#define SX126X_REG_IQ_POLARITY 0x0736
-//
-///**
-// * @brief WORKAROUND - Modulation Quality with 500 kHz LoRa Bandwidth, see DS_SX1261-2_V1.2 datasheet chapter 15.1
-// */
-//#define SX126X_REG_TX_MODULATION 0x0889
-//
-///**
-// * @brief WORKAROUND - Better resistance to antenna mismatch, see DS_SX1261-2_V1.2 datasheet chapter 15.2
-// */
-//#define SX126X_REG_TX_CLAMP_CFG 0x08D8
-//#define SX126X_REG_TX_CLAMP_CFG_POS ( 1U )
-//#define SX126X_REG_TX_CLAMP_CFG_MASK ( 0x0FUL << SX126X_REG_TX_CLAMP_CFG_POS )
-//
-///**
-// * @brief RTC control
-// */
-//#define SX126X_REG_RTC_CTRL 0x0902
-//
-///**
-// * @brief Event clear
-// */
-//#define SX126X_REG_EVT_CLR 0x0944
-//#define SX126X_REG_EVT_CLR_TIMEOUT_POS ( 1U )
-//#define SX126X_REG_EVT_CLR_TIMEOUT_MASK ( 0x01UL << SX126X_REG_EVT_CLR_TIMEOUT_POS )
-//
-///**
-// * @brief RX address pointer
-// */
-//#define SX126X_REG_RX_ADDRESS_POINTER 0x0803
-//
-///**
-// * @brief RX/TX payload length
-// */
-//#define SX126X_REG_RXTX_PAYLOAD_LEN 0x06BB
-//
-///**
-// * @brief Output disable
-// */
-//#define SX126X_REG_OUT_DIS_REG 0x0580
-//#define SX126X_REG_OUT_DIS_REG_DIO3_POS ( 3U )
-//#define SX126X_REG_OUT_DIS_REG_DIO3_MASK ( 0x01UL << SX126X_REG_OUT_DIS_REG_DIO3_POS )
-//
-///**
-// * @brief Input enable
-// */
-//#define SX126X_REG_IN_EN_REG 0x0583
-//#define SX126X_REG_IN_EN_REG_DIO3_POS ( 3U )
-//#define SX126X_REG_IN_EN_REG_DIO3_MASK ( 0x01UL << SX126X_REG_IN_EN_REG_DIO3_POS )
-//
-///**
-// * @brief TX bitbang A
-// */
-//#define SX126X_REG_BITBANG_A_REG 0x0680
-//#define SX126X_REG_BITBANG_A_REG_ENABLE_POS ( 4U )
-//#define SX126X_REG_BITBANG_A_REG_ENABLE_MASK ( 0x07UL << SX126X_REG_BITBANG_A_REG_ENABLE_POS )
-//#define SX126X_REG_BITBANG_A_REG_ENABLE_VAL ( 0x01UL << SX126X_REG_BITBANG_A_REG_ENABLE_POS )
-//
-///**
-// * @brief TX bitbang B
-// */
-//#define SX126X_REG_BITBANG_B_REG 0x0587
-//#define SX126X_REG_BITBANG_B_REG_ENABLE_POS ( 0U )
-//#define SX126X_REG_BITBANG_B_REG_ENABLE_MASK ( 0x0FUL << SX126X_REG_BITBANG_B_REG_ENABLE_POS )
-//#define SX126X_REG_BITBANG_B_REG_ENABLE_VAL ( 0x0CUL << SX126X_REG_BITBANG_B_REG_ENABLE_POS )
-//
-///**
-// * @brief Number of symbols given as SX126X_REG_LR_SYNCH_TIMEOUT[7:3] * 2 ^ (2*SX126X_REG_LR_SYNCH_TIMEOUT[2:0] + 1)
-// */
-//#define SX126X_REG_LR_SYNCH_TIMEOUT 0x0706
-//
-///**
-// * @brief Base address of the register retention list
-// */
-//#define SX126X_REG_RETENTION_LIST_BASE_ADDRESS 0x029F
 
 
 
