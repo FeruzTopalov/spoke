@@ -259,61 +259,19 @@ void DMA1_Channel3_IRQHandler(void)
 //GPS PPS interrupt
 void EXTI2_IRQHandler(void)
 {
-
+led_green_on();
 	EXTI->PR = EXTI_PR_PR2;			//clear interrupt
-	timer1_start();                 //the first thing to do is to start gps acquire timer
-
-	//*** for test purposes
-    if (p_gps_num->second % 4 == 0)
-    {
-		if (p_settings->device_number == 1)
-		{
-			fill_air_packet(uptime);
-			if (rf_tx_packet())
-			{
-				main_flags.tx_state = 1;
-				led_red_on();
-			}
-		}
-		else
-		{
-			if (rf_start_rx())
-			{
-				main_flags.rx_state = 1;
-				led_green_on();
-			}
-		}
-    }
-    else if (p_gps_num->second % 4 == 2)
-    {
-		if (p_settings->device_number == 2)
-		{
-			fill_air_packet(uptime);
-			if (rf_tx_packet())
-			{
-				main_flags.tx_state = 1;
-				led_red_on();
-			}
-		}
-		else
-		{
-			if (rf_start_rx())
-			{
-				main_flags.rx_state = 1;
-				led_green_on();
-			}
-		}
-    }
-	//***
+	timer1_start_800ms();           //the first thing to do is to start gps acquire timer
 
 	uart3_dma_stop();				//drop the previous data; there will be new after this PPS
 	clear_uart_buffer();
 	uart3_dma_restart();
 
 	pps_absolute_counter++;
-	pps_relative_counter++;
+	pps_relative_counter++;	//todo: TBD needed?
 
 	main_flags.pps_synced = 1;
+led_green_off();
 }
 
 
@@ -354,18 +312,39 @@ void EXTI0_IRQHandler(void)
 
 
 
-//gps acquire timeout
+//gps acquire timeout + radio run
 void TIM1_UP_IRQHandler(void)
 {
     TIM1->SR &= ~TIM_SR_UIF;                    //clear interrupt
     timer1_stop_reload();						//stop this timer
 
-    uart3_dma_stop();					//fix the nmea data
-    backup_and_clear_uart_buffer();
-    uart3_dma_restart();				//restart for a case when no next PPS occur, then dma ovf will trigger
-    									//otherwise next PPS will reset dma again before the upcoming nmea data
+    if (timer1_get_intrvl_type() == 1) //long interval 800 ms ended
+    {
+    led_red_on();
+    	//parse NMEA, run short timer
+    	timer1_start_100ms();
 
-    main_flags.parse_nmea = 1;			//ask to parse
+		uart3_dma_stop();					//fix the nmea data after last pps (800 ms ago)
+		backup_and_clear_uart_buffer();
+		uart3_dma_restart();				//restart for a case when no next PPS occur, then dma ovf will trigger
+										//otherwise next PPS will reset dma again before the upcoming nmea data
+
+    	main_flags.parse_nmea = 1;			//ask to parse
+    led_red_off();
+    }
+    else if (timer1_get_intrvl_type() == 2) //short interval 100 ms ended, resulting 800 ms + 100 ms=900 ms after last pps
+    {
+    led_red_on();
+    	//important: NMEA must be parsed before execution of this code
+    	//start radio, run processing of all devices
+
+    	for (uint8_t i = 0; i < 255; i++)
+    	{
+    		__NOP();
+    	}
+
+    led_red_off();
+    }
 }
 
 
