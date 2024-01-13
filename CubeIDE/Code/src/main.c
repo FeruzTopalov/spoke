@@ -342,51 +342,30 @@ void TIM1_UP_IRQHandler(void)
     	{
     		main_flags.start_radio = 0;
 
-    		//*** for test purposes
-    	    if (p_gps_num->second % 4 == 0)
-    	    {
-    			if (p_settings->device_number == 1)
-    			{
-    				fill_air_packet(uptime);
-    				if (rf_tx_packet())
-    				{
-    					main_flags.tx_state = 1;
-    					led_red_on();
-    				}
-    			}
-    			else
-    			{
-    				if (rf_start_rx())
-    				{
-    					main_flags.rx_state = 1;
-    					led_green_on();
-    				}
-    			}
-    	    }
-    	    else if (p_gps_num->second % 4 == 2)
-    	    {
-    			if (p_settings->device_number == 2)
-    			{
-    				fill_air_packet(uptime);
-    				if (rf_tx_packet())
-    				{
-    					main_flags.tx_state = 1;
-    					led_red_on();
-    				}
-    			}
-    			else
-    			{
-    				if (rf_start_rx())
-    				{
-    					main_flags.rx_state = 1;
-    					led_green_on();
-    				}
-    			}
-    	    }
-    		//***
+    		uint8_t sec_modulo = 0;
+    		sec_modulo = p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt];
 
+    		if (sec_modulo == (2 * (p_settings->device_number - 1)))	//todo: add to settings as device_tx_second
+    		{
+    			//tx
+				fill_air_packet(uptime);
+				if (rf_tx_packet())
+				{
+					main_flags.tx_state = 1;
+					led_red_on();
+				}
+    		}
+    		else if ((sec_modulo <= (2 * (p_settings->devices_on_air - 1)))  && ((sec_modulo % 2) == 0))	//todo: add to settings as max_rx_second
+    		{
+    			//rx
+				if (rf_start_rx())
+				{
+					main_flags.rx_state = 1;
+					led_green_on();
+				}
+    		}
 
-    	    //after all do re-calculate all
+    	    //after all do a re-calculate all
     	    main_flags.process_all = 1;
     	}
 
