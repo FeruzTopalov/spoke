@@ -133,11 +133,11 @@ int main(void)
 
             if (parse_gps() == 1)
             {
-				if 	(main_flags.pps_synced == 1)		//ready to txrx when pps exists, data is valid and current second divides by send interval without remainder
+				if 	(main_flags.pps_synced == 1)		//ready to txrx when pps exists & data is valid
 				{
 					if (p_gps_num->status == GPS_DATA_VALID)
 					{
-						main_flags.process_all = 1;
+						main_flags.start_radio = 1;
 					}
 				}
 				else
@@ -256,10 +256,10 @@ void DMA1_Channel3_IRQHandler(void)
 
 
 
-//GPS PPS interrupt
+//GPS PPS Interrupt
 void EXTI2_IRQHandler(void)
 {
-led_green_on();
+
 	EXTI->PR = EXTI_PR_PR2;			//clear interrupt
 	timer1_start_800ms();           //the first thing to do is to start gps acquire timer
 
@@ -271,12 +271,12 @@ led_green_on();
 	pps_relative_counter++;	//todo: TBD needed?
 
 	main_flags.pps_synced = 1;
-led_green_off();
+
 }
 
 
 
-//Radio interrupt (PayloadReady or PacketSent)
+//Radio Interrupt (PayloadReady or PacketSent)
 void EXTI0_IRQHandler(void)
 {
     EXTI->PR = EXTI_PR_PR0;         //clear interrupt
@@ -312,7 +312,7 @@ void EXTI0_IRQHandler(void)
 
 
 
-//gps acquire timeout + radio run
+//Timer1 GPS Acquire + Radio Run
 void TIM1_UP_IRQHandler(void)
 {
     TIM1->SR &= ~TIM_SR_UIF;                    //clear interrupt
@@ -320,7 +320,7 @@ void TIM1_UP_IRQHandler(void)
 
     if (timer1_get_intrvl_type() == 1) //long interval 800 ms ended
     {
-    led_red_on();
+
     	//parse NMEA, run short timer
     	timer1_start_100ms();
 
@@ -330,20 +330,67 @@ void TIM1_UP_IRQHandler(void)
 										//otherwise next PPS will reset dma again before the upcoming nmea data
 
     	main_flags.parse_nmea = 1;			//ask to parse
-    led_red_off();
+
     }
     else if (timer1_get_intrvl_type() == 2) //short interval 100 ms ended, resulting 800 ms + 100 ms=900 ms after last pps
     {
-    led_red_on();
+
     	//important: NMEA must be parsed before execution of this code
     	//start radio, run processing of all devices
 
-    	for (uint8_t i = 0; i < 255; i++)
+    	if (main_flags.start_radio == 1)
     	{
-    		__NOP();
+    		main_flags.start_radio = 0;
+
+    		//*** for test purposes
+    	    if (p_gps_num->second % 4 == 0)
+    	    {
+    			if (p_settings->device_number == 1)
+    			{
+    				fill_air_packet(uptime);
+    				if (rf_tx_packet())
+    				{
+    					main_flags.tx_state = 1;
+    					led_red_on();
+    				}
+    			}
+    			else
+    			{
+    				if (rf_start_rx())
+    				{
+    					main_flags.rx_state = 1;
+    					led_green_on();
+    				}
+    			}
+    	    }
+    	    else if (p_gps_num->second % 4 == 2)
+    	    {
+    			if (p_settings->device_number == 2)
+    			{
+    				fill_air_packet(uptime);
+    				if (rf_tx_packet())
+    				{
+    					main_flags.tx_state = 1;
+    					led_red_on();
+    				}
+    			}
+    			else
+    			{
+    				if (rf_start_rx())
+    				{
+    					main_flags.rx_state = 1;
+    					led_green_on();
+    				}
+    			}
+    	    }
+    		//***
+
+
+    	    //after all do re-calculate all
+    	    main_flags.process_all = 1;
     	}
 
-    led_red_off();
+
     }
 }
 
