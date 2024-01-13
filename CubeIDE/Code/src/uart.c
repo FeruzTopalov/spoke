@@ -108,10 +108,7 @@ void backup_and_clear_uart_buffer(void)
 
 void clear_uart_buffer(void)
 {
-	for (uint16_t i = 0; i < UART_BUF_LEN; i++)
-	{
-		uart_buffer[i] = 0;
-	}
+	memset(uart_buffer, 0, UART_BUF_LEN);
 }
 
 

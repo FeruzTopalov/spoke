@@ -25,7 +25,7 @@ void timer4_init(void);
 
 
 
-uint8_t sound_enabled = 1; //status of the beep sound notification
+uint8_t sound_enabled = 0; //status of the beep sound notification
 
 
 
@@ -145,7 +145,7 @@ void timer1_init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;     //enable timer 1 clock
     TIM1->PSC = (uint16_t)2999;            	// 3MHz/(2999+1)=1kHz
-    TIM1->ARR = (uint16_t)49;               // 1kHz/(49+1)=20Hz (50ms)
+    TIM1->ARR = (uint16_t)499;              // 1kHz/(499+1)=2Hz (500ms)
     TIM1->CR1 |= TIM_CR1_URS;               //only overflow generates interrupt
     TIM1->EGR = TIM_EGR_UG;                 //software update generation
     TIM1->SR &= ~TIM_SR_UIF;                //clear update interrupt
