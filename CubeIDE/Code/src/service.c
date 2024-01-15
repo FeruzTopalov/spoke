@@ -538,9 +538,9 @@ void itoa32(int32_t value, char *buffer)
 
 
 
-void add_leading_zero(char *buf)	//todo: move in c file where it is used
+void time_date_add_leading_zero(char *buf)
 {
-    if (buf[1] == 0)
+    if (buf[1] == 0) //if single-char string, add leading zero
     {
     	buf[1] = buf[0];
     	buf[0] = '0';

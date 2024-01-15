@@ -944,32 +944,32 @@ void draw_navigation(void)
     	}
 
     	itoa32(p_gps_num->hour_tz, &tmp_buf[0]);
-    	add_leading_zero(&tmp_buf[0]);
+    	time_date_add_leading_zero(&tmp_buf[0]);
         lcd_print(1, 8, &tmp_buf[0]);
         lcd_print_next(":");
 
     	itoa32(p_gps_num->minute_tz, &tmp_buf[0]);
-    	add_leading_zero(&tmp_buf[0]);
+    	time_date_add_leading_zero(&tmp_buf[0]);
         lcd_print_next(&tmp_buf[0]);
         lcd_print_next(":");
 
     	itoa32(p_gps_num->second, &tmp_buf[0]);
-    	add_leading_zero(&tmp_buf[0]);
+    	time_date_add_leading_zero(&tmp_buf[0]);
         lcd_print_next(&tmp_buf[0]);
 
 
     	itoa32(p_gps_num->day_tz, &tmp_buf[0]);
-    	add_leading_zero(&tmp_buf[0]);
+    	time_date_add_leading_zero(&tmp_buf[0]);
         lcd_print(2, 8, &tmp_buf[0]);
         lcd_print_next(".");
 
     	itoa32(p_gps_num->month_tz, &tmp_buf[0]);
-    	add_leading_zero(&tmp_buf[0]);
+    	time_date_add_leading_zero(&tmp_buf[0]);
     	lcd_print_next(&tmp_buf[0]);
         lcd_print_next(".");
 
     	itoa32(p_gps_num->year_tz, &tmp_buf[0]);
-    	add_leading_zero(&tmp_buf[0]);
+    	time_date_add_leading_zero(&tmp_buf[0]);
         lcd_print_next(&tmp_buf[0]);
 
         itoa32(p_gps_num->sat_view, &tmp_buf[0]);	//satellites in use|view
@@ -1064,12 +1064,12 @@ void draw_coordinates(void)
 
 		//save date
 		itoa32(pp_devices[navigate_to_device]->save_day, &tmp_buf[0]);
-		add_leading_zero(&tmp_buf[0]);
+		time_date_add_leading_zero(&tmp_buf[0]);
 		lcd_print(3, 11, &tmp_buf[0]);
 		lcd_print_next(".");
 
 		itoa32(pp_devices[navigate_to_device]->save_month, &tmp_buf[0]);
-		add_leading_zero(&tmp_buf[0]);
+		time_date_add_leading_zero(&tmp_buf[0]);
 		lcd_print_next(&tmp_buf[0]);
     }
     else
@@ -1306,12 +1306,12 @@ void draw_edit_other(void)
 	}
 
 	itoa32(settings_copy.time_zone_hour, &tmp_buf[0]);
-	add_leading_zero(&tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
 	lcd_print_next(&tmp_buf[0]);
 	lcd_print_next(":");
 
 	itoa32(settings_copy.time_zone_minute, &tmp_buf[0]);
-	add_leading_zero(&tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
 	lcd_print_next(&tmp_buf[0]);
 
     lcd_print(EDIT_OTHER_ROW + get_current_item(), EDIT_OTHER_COL - 1, ">");
@@ -1460,12 +1460,12 @@ void draw_set_timezone(void)
 	}
 
 	itoa32(settings_copy.time_zone_hour, &tmp_buf[0]);
-	add_leading_zero(&tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
 	lcd_print_next(&tmp_buf[0]);
 	lcd_print_next(":");
 
 	itoa32(settings_copy.time_zone_minute, &tmp_buf[0]);
-	add_leading_zero(&tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
 	lcd_print_next(&tmp_buf[0]);
 
 	lcd_update();
