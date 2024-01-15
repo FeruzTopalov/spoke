@@ -97,10 +97,10 @@ restart_cal:
 
 	//print instruction
 	lcd_clear();
-	lcd_print(0, 3, "Compass cal", 0);
-	lcd_print(1, 0, "-Hold horizont.", 0);
-	lcd_print(2, 0, "-Click OK", 0);
-	lcd_print(3, 0, "-Turnaround 360", 0);
+	lcd_print(0, 3, "Compass cal");
+	lcd_print(1, 0, "-Hold horizont.");
+	lcd_print(2, 0, "-Click OK");
+	lcd_print(3, 0, "-Turnaround 360");
 	lcd_update();
 
 	while (!((GPIOB->IDR) & GPIO_IDR_IDR3)){}		//wait for user to release ESC after entering compass calibration routine
@@ -132,7 +132,7 @@ restart_cal:
 
 		//print pointer
 		itoa32(pt, buf);
-		lcd_print(0, 0, buf, 0);
+		lcd_print(0, 0, buf);
 
 		//read magnetometr
 		read_magn();
@@ -235,16 +235,16 @@ restart_cal:
 		y_dot = (uint8_t)((float)buf_y[i] * plot_scale + LCD_CNTR_Y);
 		lcd_set_pixel_plot(x_dot, y_dot);
 	}
-	lcd_print(0, 0, "Done", 0);
-	lcd_print(0, 14, "OK", 0);
+	lcd_print(0, 0, "Done");
+	lcd_print(0, 14, "OK");
 	lcd_update();
 
 	while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click to continue
 
 	lcd_clear();
-    lcd_print(0, 3, "Calibrated!", 0);
-    lcd_print(2, 0, "OK save & reboot", 0);
-    lcd_print(3, 3, "ESC restart", 0);
+    lcd_print(0, 3, "Calibrated!");
+    lcd_print(2, 0, "OK save & reboot");
+    lcd_print(3, 3, "ESC restart");
     lcd_update();
     delay_cyc(300000);
 

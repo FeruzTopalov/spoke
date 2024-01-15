@@ -272,33 +272,24 @@ void lcd_pos(uint8_t row, uint8_t col)
 
 
 //Put one char in buffer in position, defined previously via ssd1306_pos()
-void lcd_char(char chr, uint8_t inv)
+void lcd_char(char chr)
 {
 	uint16_t buf_pos_copy = buf_pos;
 	uint16_t font_char_pos, c;
 	uint8_t px;
-
-    if (inv)
-    {
-        inv = 0xFF;
-    }
-    else
-    {
-        inv = 0x00;
-    }
 
     //font_char_pos = ((uint8_t)chr - 32) * FONT_BYTES;
     font_char_pos = ((uint8_t)chr) * FONT_BYTES;
 
     for (px = 0, c = font_char_pos; px < FONT_BYTES_X; px++, c += 2)		//upper symbol row
     {
-        screen_buf[buf_pos++] = font_8x16[c] ^ inv;
+        screen_buf[buf_pos++] = font_8x16[c];
     }
 
     buf_pos = buf_pos_copy + LCD_SIZE_X; //point to the lower symbol's row
     for (px = 0, c = font_char_pos + 1; px < FONT_BYTES_X; px++, c += 2)	//lower symbol row
     {
-        screen_buf[buf_pos++] = font_8x16[c] ^ inv;
+        screen_buf[buf_pos++] = font_8x16[c];
     }
 
     buf_pos = buf_pos_copy + FONT_BYTES_X;	//point to the next LCD char
@@ -307,32 +298,23 @@ void lcd_char(char chr, uint8_t inv)
 
 
 
-void lcd_char16(char chr, uint8_t inv)
+void lcd_char16(char chr)
 {
 	uint16_t buf_pos_copy = buf_pos;
 	uint16_t font_char_pos, c;
 	uint8_t px;
 
-    if (inv)			//todo: delete inv everywhere, it is useless
-    {
-        inv = 0xFF;
-    }
-    else
-    {
-        inv = 0x00;
-    }
-
     font_char_pos = ((uint8_t)chr - 48) * FONT16_BYTES;
 
     for (px = 0, c = font_char_pos; px < FONT16_BYTES_X; px++, c += 2)		//upper symbol row
     {
-        screen_buf[buf_pos++] = font_16x16[c] ^ inv;
+        screen_buf[buf_pos++] = font_16x16[c];
     }
 
     buf_pos = buf_pos_copy + LCD_SIZE_X; //point to the lower symbol's row
     for (px = 0, c = font_char_pos + 1; px < FONT16_BYTES_X; px++, c += 2)	//lower symbol row
     {
-        screen_buf[buf_pos++] = font_16x16[c] ^ inv;
+        screen_buf[buf_pos++] = font_16x16[c];
     }
 
     buf_pos = buf_pos_copy + FONT16_BYTES_X;	//point to the next LCD char
@@ -342,61 +324,61 @@ void lcd_char16(char chr, uint8_t inv)
 
 
 //Put one char in defined pos
-void lcd_char_pos(uint8_t row, uint8_t col, char chr, uint8_t inv)
+void lcd_char_pos(uint8_t row, uint8_t col, char chr)
 {
     lcd_pos(row, col);
-    lcd_char(chr, inv);
+    lcd_char(chr);
 }
 
 
 
 //Put one char in defined pos
-void lcd_char16_pos(uint8_t row, uint8_t col, char chr, uint8_t inv)
+void lcd_char16_pos(uint8_t row, uint8_t col, char chr)
 {
     lcd_pos(row, col);
-    lcd_char16(chr, inv);
+    lcd_char16(chr);
 }
 
 
 
 //Print string on screen (with position (rows 0-3, cols 0-15))
-void lcd_print(uint8_t row, uint8_t col, char *p_str, uint8_t inv)
+void lcd_print(uint8_t row, uint8_t col, char *p_str)
 {
     lcd_pos(row, col);
     
     while (*p_str)
     {
-        lcd_char(*p_str++, inv);
+        lcd_char(*p_str++);
     }
 }
 
 
 
 //Clear, print, update
-void lcd_print_only(uint8_t row, uint8_t col, char *p_str, uint8_t inv)
+void lcd_print_only(uint8_t row, uint8_t col, char *p_str)
 {
 	lcd_clear();
-	lcd_print(row, col, p_str, inv);
+	lcd_print(row, col, p_str);
 	lcd_update();
 }
 
 
 
 
-void lcd_print16(uint8_t row, uint8_t col, char *p_str, uint8_t inv)
+void lcd_print16(uint8_t row, uint8_t col, char *p_str)
 {
     lcd_pos(row, col);
 
     while (*p_str)
     {
-        lcd_char16(*p_str++, inv);
+        lcd_char16(*p_str++);
     }
 }
 
 
 
 //Print string on screen (with position) in viceversa direction (decrease collumn)
-void lcd_print_viceversa(uint8_t row, uint8_t col, char *p_str, uint8_t inv)
+void lcd_print_viceversa(uint8_t row, uint8_t col, char *p_str)
 {
     uint8_t symb_cntr = 0;
     
@@ -411,7 +393,7 @@ void lcd_print_viceversa(uint8_t row, uint8_t col, char *p_str, uint8_t inv)
     while (symb_cntr)
     {
         symb_cntr--;
-        lcd_char(*--p_str, inv);
+        lcd_char(*--p_str);
         buf_pos -= 2 * FONT_SIZE_X;         //minus two characters position
     }
 }
@@ -419,7 +401,7 @@ void lcd_print_viceversa(uint8_t row, uint8_t col, char *p_str, uint8_t inv)
 
 
 //Print string on screen (with position) in viceversa direction (decrease collumn)
-void lcd_print16_viceversa(uint8_t row, uint8_t col, char *p_str, uint8_t inv)
+void lcd_print16_viceversa(uint8_t row, uint8_t col, char *p_str)
 {
     uint8_t symb_cntr = 0;
 
@@ -434,7 +416,7 @@ void lcd_print16_viceversa(uint8_t row, uint8_t col, char *p_str, uint8_t inv)
     while (symb_cntr)
     {
         symb_cntr--;
-        lcd_char16(*--p_str, inv);
+        lcd_char16(*--p_str);
         buf_pos -= 4 * FONT_SIZE_X;         //minus two characters position
     }
 }
@@ -442,17 +424,17 @@ void lcd_print16_viceversa(uint8_t row, uint8_t col, char *p_str, uint8_t inv)
 
 
 //Print string on screen
-void lcd_print_next(char *p_str, uint8_t inv)
+void lcd_print_next(char *p_str)
 {
     while (*p_str)
     {
-        lcd_char(*p_str++, inv);
+        lcd_char(*p_str++);
     }
 }
 
 
 
-void lcd_print_next_viceversa(char *p_str, uint8_t inv)	//use only after lcd_print_viceversa()
+void lcd_print_next_viceversa(char *p_str)	//use only after lcd_print_viceversa()
 {
     uint8_t symb_cntr = 0;
 
@@ -467,7 +449,7 @@ void lcd_print_next_viceversa(char *p_str, uint8_t inv)	//use only after lcd_pri
     while (symb_cntr)
     {
         symb_cntr--;
-        lcd_char(*--p_str, inv);
+        lcd_char(*--p_str);
         buf_pos -= 2 * FONT_SIZE_X;         //minus two characters position
     }
 }

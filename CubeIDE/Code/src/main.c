@@ -63,43 +63,43 @@ int main(void)
     lcd_update();
     delay_cyc(400000);
 
-    lcd_print_only(0, 0, "uart..", 0);
+    lcd_print_only(0, 0, "uart..");
     uart1_init();
     uart3_dma_init();
 
-    lcd_print_only(0, 0, "settings..", 0);
+    lcd_print_only(0, 0, "settings..");
     settings_load();
 
-    lcd_print_only(0, 0, "timers..", 0);
+    lcd_print_only(0, 0, "timers..");
     timers_init();
 
-    lcd_print_only(0, 0, "adc..", 0);
+    lcd_print_only(0, 0, "adc..");
     adc_init();
     adc_start_bat_voltage_reading();
 
-    lcd_print_only(0, 0, "i2c..", 0);
+    lcd_print_only(0, 0, "i2c..");
     i2c_init();
 
-    lcd_print_only(0, 0, "radio..", 0);
+    lcd_print_only(0, 0, "radio..");
     rf_init();
 
-    lcd_print_only(0, 0, "core..", 0);
+    lcd_print_only(0, 0, "core..");
     init_lrns();
 
-    lcd_print_only(0, 0, "gps..", 0);
+    lcd_print_only(0, 0, "gps..");
     gps_init();
 
-    lcd_print_only(0, 0, "compass..", 0);
+    lcd_print_only(0, 0, "compass..");
     init_compass();
 
-    lcd_print_only(0, 0, "interrupts..", 0);
+    lcd_print_only(0, 0, "interrupts..");
     ext_int_init();
     enable_buttons_interrupts();
 
-    lcd_print_only(0, 0, "mem points..", 0);
+    lcd_print_only(0, 0, "mem points..");
     init_memory_points();
 
-    lcd_print_only(0, 0, "menu..", 0);
+    lcd_print_only(0, 0, "menu..");
     init_menu();
 
 

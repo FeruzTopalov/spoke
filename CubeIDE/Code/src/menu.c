@@ -696,17 +696,17 @@ void draw_main(void)
     #define MAIN_COL               (1)
     
     lcd_clear();
-    lcd_print(0, MAIN_COL, "MENU", 0);
-    lcd_print(MAIN_ROW, MAIN_COL, "Navigation", 0);
-    lcd_print(MAIN_ROW + 1, MAIN_COL, "Devices", 0);
-    lcd_print(MAIN_ROW + 2, MAIN_COL, "Settings", 0);
-    lcd_print_viceversa(MAIN_ROW + 2, 15, HW_FW_VERSION, 0);
-    lcd_print(MAIN_ROW + get_current_item(), MAIN_COL - 1, ">", 0);
+    lcd_print(0, MAIN_COL, "MENU");
+    lcd_print(MAIN_ROW, MAIN_COL, "Navigation");
+    lcd_print(MAIN_ROW + 1, MAIN_COL, "Devices");
+    lcd_print(MAIN_ROW + 2, MAIN_COL, "Settings");
+    lcd_print_viceversa(MAIN_ROW + 2, 15, HW_FW_VERSION);
+    lcd_print(MAIN_ROW + get_current_item(), MAIN_COL - 1, ">");
     draw_bat_level();
 
 	//debug output bat voltage
 	ftoa32(get_bat_voltage(), 2, &tmp_buf[0]);
-	lcd_print_viceversa(0, 12, &tmp_buf[0], 0);
+	lcd_print_viceversa(0, 12, &tmp_buf[0]);
 
     lcd_update();
 }
@@ -716,9 +716,9 @@ void draw_main(void)
 //Draw an icon in top right corner
 void draw_bat_level(void)
 {
-	lcd_char_pos(0, 13, SYMB8_BAT_TAIL, 0);
-	lcd_char_pos(0, 14, SYMB8_BAT_MID, 0);
-	lcd_char_pos(0, 15, SYMB8_BAT_HEAD, 0);
+	lcd_char_pos(0, 13, SYMB8_BAT_TAIL);
+	lcd_char_pos(0, 14, SYMB8_BAT_MID);
+	lcd_char_pos(0, 15, SYMB8_BAT_HEAD);
 
 	for (uint8_t px = 0; px < (get_battery_level() + 1); px++)
 	{
@@ -747,33 +747,33 @@ void draw_devices(void)
 					active_devs++;
 
 					itoa32(dev, &tmp_buf[0]);
-					lcd_print(active_row, 0, tmp_buf, 0);
+					lcd_print(active_row, 0, tmp_buf);
 
-					lcd_char_pos(active_row, 1, pp_devices[dev]->device_id, 0);
+					lcd_char_pos(active_row, 1, pp_devices[dev]->device_id);
 
 					convert_main_distance(pp_devices[dev]->distance, &tmp_buf[0]);
-					lcd_print_viceversa(active_row, 6, &tmp_buf[0], 0);
-					lcd_char_pos(active_row, 7, 'm', 0);
+					lcd_print_viceversa(active_row, 6, &tmp_buf[0]);
+					lcd_char_pos(active_row, 7, 'm');
 
-					lcd_print(active_row, 9, convert_heading(pp_devices[dev]->heading_deg), 0);
+					lcd_print(active_row, 9, convert_heading(pp_devices[dev]->heading_deg));
 
 					if (pp_devices[dev]->timeout_flag)
 					{
-						lcd_char_pos(active_row, 13, SYMB8_TIMEOUT, 0);
+						lcd_char_pos(active_row, 13, SYMB8_TIMEOUT);
 					}
 					else
 					{
-						lcd_char_pos(active_row, 13, pp_devices[dev]->rx_icon, 0);
+						lcd_char_pos(active_row, 13, pp_devices[dev]->rx_icon);
 					}
 
 			    	if (pp_devices[dev]->fence_flag)
 			    	{
-			    		lcd_char_pos(active_row, 14, SYMB8_FENCE, 0);
+			    		lcd_char_pos(active_row, 14, SYMB8_FENCE);
 			    	}
 
 			    	if (pp_devices[dev]->alarm_flag)
 			    	{
-			    		lcd_char_pos(active_row, 15, SYMB8_ALARM, 0);
+			    		lcd_char_pos(active_row, 15, SYMB8_ALARM);
 			    	}
 
 					active_row++;
@@ -788,8 +788,8 @@ void draw_devices(void)
 
 		if (active_devs == 0)
 		{
-			lcd_print(1, 3, "No active", 0);
-			lcd_print(2, 4, "devices", 0);
+			lcd_print(1, 3, "No active");
+			lcd_print(2, 4, "devices");
 		}
 	}
 	else if (get_current_item() == M_DEVICES_I_POINTS)	//draw all saved points
@@ -802,13 +802,13 @@ void draw_devices(void)
 			if (pp_devices[pt]->exist_flag == 1)
 			{
 				active_pts++;
-				lcd_print(active_row, 0, get_memory_point_name(pt), 0);
+				lcd_print(active_row, 0, get_memory_point_name(pt));
 
 				convert_main_distance(pp_devices[pt]->distance, &tmp_buf[0]);
-				lcd_print_viceversa(active_row, 8, &tmp_buf[0], 0);
-				lcd_char_pos(active_row, 9, 'm', 0);
+				lcd_print_viceversa(active_row, 8, &tmp_buf[0]);
+				lcd_char_pos(active_row, 9, 'm');
 
-				lcd_print(active_row, 11, convert_heading(pp_devices[pt]->heading_deg), 0);
+				lcd_print(active_row, 11, convert_heading(pp_devices[pt]->heading_deg));
 
 				active_row++;
 			}
@@ -816,8 +816,8 @@ void draw_devices(void)
 
 		if (active_pts == 0)
 		{
-			lcd_print(1, 3, "No active", 0);
-			lcd_print(2, 4, "points", 0);
+			lcd_print(1, 3, "No active");
+			lcd_print(2, 4, "points");
 		}
 	}
 
@@ -838,30 +838,30 @@ void draw_power(void)
 	#define EDIT_POWER_COL               (1)
 
 	lcd_clear();
-	lcd_print(0, EDIT_POWER_COL + 4, "POWER", 0);
+	lcd_print(0, EDIT_POWER_COL + 4, "POWER");
 
-    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL, "Alarm is ", 0);
+    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL, "Alarm is ");
     if (get_my_alarm_status())
     {
-    	lcd_print_next("On", 0);
+    	lcd_print_next("On");
     }
     else
     {
-    	lcd_print_next("Off", 0);
+    	lcd_print_next("Off");
     }
 
-    lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL, "Sound is ", 0);
+    lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL, "Sound is ");
     if (get_sound_status())
     {
-    	lcd_print_next("On", 0);
+    	lcd_print_next("On");
     }
     else
     {
-    	lcd_print_next("Off", 0);
+    	lcd_print_next("Off");
     }
 
-    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL, "Power Off", 0);
-    lcd_print(EDIT_POWER_ROW + get_current_item(), EDIT_POWER_COL - 1, ">", 0);
+    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL, "Power Off");
+    lcd_print(EDIT_POWER_ROW + get_current_item(), EDIT_POWER_COL - 1, ">");
 
     draw_bat_level();
 
@@ -910,73 +910,73 @@ void draw_navigation(void)
     {
         if (p_gps_num->mode == GPS_POSITION_2DFIX)
         {
-            lcd_print(0, 11, "2D", 0);
+            lcd_print(0, 11, "2D");
         }
         else if (p_gps_num->mode == GPS_POSITION_3DFIX)
         {
-            lcd_print(0, 11, "3D", 0);
+            lcd_print(0, 11, "3D");
         }
         else
         {
-            lcd_print(0, 11, "NO", 0);
+            lcd_print(0, 11, "NO");
         }
     }
     else
     {
-        lcd_print(0, 11, "NA", 0);
+        lcd_print(0, 11, "NA");
     }
 
 
 	//print ID
-	lcd_char16_pos(3, 8, pp_devices[navigate_to_device]->device_id, 0);
+	lcd_char16_pos(3, 8, pp_devices[navigate_to_device]->device_id);
 
 
     if (navigate_to_device == this_device)		//if navigate to this device
     {
     	if (pp_devices[navigate_to_device]->timeout_flag)
 		{
-			lcd_char_pos(0, 8, SYMB8_TIMEOUT, 0);
+			lcd_char_pos(0, 8, SYMB8_TIMEOUT);
 		}
 
     	if (pp_devices[navigate_to_device]->alarm_flag)
     	{
-    		lcd_char_pos(0, 10, SYMB8_ALARM, 0);
+    		lcd_char_pos(0, 10, SYMB8_ALARM);
     	}
 
     	itoa32(p_gps_num->hour_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
-        lcd_print(1, 8, &tmp_buf[0], 0);
-        lcd_print_next(":", 0);
+        lcd_print(1, 8, &tmp_buf[0]);
+        lcd_print_next(":");
 
     	itoa32(p_gps_num->minute_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
-        lcd_print_next(&tmp_buf[0], 0);
-        lcd_print_next(":", 0);
+        lcd_print_next(&tmp_buf[0]);
+        lcd_print_next(":");
 
     	itoa32(p_gps_num->second, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
-        lcd_print_next(&tmp_buf[0], 0);
+        lcd_print_next(&tmp_buf[0]);
 
 
     	itoa32(p_gps_num->day_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
-        lcd_print(2, 8, &tmp_buf[0], 0);
-        lcd_print_next(".", 0);
+        lcd_print(2, 8, &tmp_buf[0]);
+        lcd_print_next(".");
 
     	itoa32(p_gps_num->month_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
-    	lcd_print_next(&tmp_buf[0], 0);
-        lcd_print_next(".", 0);
+    	lcd_print_next(&tmp_buf[0]);
+        lcd_print_next(".");
 
     	itoa32(p_gps_num->year_tz, &tmp_buf[0]);
     	add_leading_zero(&tmp_buf[0]);
-        lcd_print_next(&tmp_buf[0], 0);
+        lcd_print_next(&tmp_buf[0]);
 
         itoa32(p_gps_num->sat_view, &tmp_buf[0]);	//satellites in use|view
-		lcd_print_viceversa(3, 15, &tmp_buf[0], 0);
-		lcd_print_next_viceversa("/", 0);
+		lcd_print_viceversa(3, 15, &tmp_buf[0]);
+		lcd_print_next_viceversa("/");
 		itoa32(p_gps_num->sat_used, &tmp_buf[0]);
-		lcd_print_next_viceversa(&tmp_buf[0], 0);
+		lcd_print_next_viceversa(&tmp_buf[0]);
 
     }
     else										//if navigate to another device
@@ -985,22 +985,22 @@ void draw_navigation(void)
     	{
     		if (pp_devices[navigate_to_device]->timeout_flag)
     		{
-    			lcd_char_pos(0, 8, SYMB8_TIMEOUT, 0);
+    			lcd_char_pos(0, 8, SYMB8_TIMEOUT);
     		}
     		else
     		{
-    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon, 0);
+    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon);
     		}
     	}
 
     	if (pp_devices[navigate_to_device]->fence_flag)
     	{
-    		lcd_char_pos(0, 9, SYMB8_FENCE, 0);
+    		lcd_char_pos(0, 9, SYMB8_FENCE);
     	}
 
     	if (pp_devices[navigate_to_device]->alarm_flag)
     	{
-    		lcd_char_pos(0, 10, SYMB8_ALARM, 0);
+    		lcd_char_pos(0, 10, SYMB8_ALARM);
     	}
 
 		//Draw notch
@@ -1023,20 +1023,20 @@ void draw_navigation(void)
 
 		//print distance
 		convert_main_distance(pp_devices[navigate_to_device]->distance, &tmp_buf[0]);
-		lcd_print16_viceversa(1, 14, &tmp_buf[0], 0);
+		lcd_print16_viceversa(1, 14, &tmp_buf[0]);
 
 		//print heading
-		lcd_char_pos(2, 15, SYMB8_DEGREE, 0); //degree char
+		lcd_char_pos(2, 15, SYMB8_DEGREE); //degree char
 		itoa32(pp_devices[navigate_to_device]->heading_deg, &tmp_buf[0]);
-		lcd_print_viceversa(2, 14, &tmp_buf[0], 0);
+		lcd_print_viceversa(2, 14, &tmp_buf[0]);
 
 		//print altitude diff
-		lcd_char_pos(3, 15, 'm', 0); //meter char
+		lcd_char_pos(3, 15, 'm'); //meter char
 		convert_main_alt_difference(pp_devices[navigate_to_device]->delta_altitude, &tmp_buf[0]);
-		lcd_print_viceversa(3, 14, &tmp_buf[0], 0);
+		lcd_print_viceversa(3, 14, &tmp_buf[0]);
 		if (pp_devices[navigate_to_device]->delta_altitude > 0)
 		{
-			lcd_char('+', 0);
+			lcd_char('+');
 		}
     }
 
@@ -1053,65 +1053,65 @@ void draw_coordinates(void)
 {
     lcd_clear();
 
-    lcd_print(0, 0, "#", 0);
+    lcd_print(0, 0, "#");
     itoa32(navigate_to_device, &tmp_buf[0]);
-    lcd_print_next(&tmp_buf[0], 0);
+    lcd_print_next(&tmp_buf[0]);
 
     if (pp_devices[navigate_to_device]->memory_point_flag == 1)
     {
-		lcd_print_next(" POINT ", 0);
-		lcd_print_next(get_memory_point_name(navigate_to_device), 0);
+		lcd_print_next(" POINT ");
+		lcd_print_next(get_memory_point_name(navigate_to_device));
 
 		//save date
 		itoa32(pp_devices[navigate_to_device]->save_day, &tmp_buf[0]);
 		add_leading_zero(&tmp_buf[0]);
-		lcd_print(3, 11, &tmp_buf[0], 0);
-		lcd_print_next(".", 0);
+		lcd_print(3, 11, &tmp_buf[0]);
+		lcd_print_next(".");
 
 		itoa32(pp_devices[navigate_to_device]->save_month, &tmp_buf[0]);
 		add_leading_zero(&tmp_buf[0]);
-		lcd_print_next(&tmp_buf[0], 0);
+		lcd_print_next(&tmp_buf[0]);
     }
     else
     {
-		lcd_print(0, 3, "ID", 0);
-		lcd_char_pos(0, 6, pp_devices[navigate_to_device]->device_id, 0);
+		lcd_print(0, 3, "ID");
+		lcd_char_pos(0, 6, pp_devices[navigate_to_device]->device_id);
 
 		if (navigate_to_device == this_device)
 		{
-			lcd_print(0, 8, "(YOU)", 0);
+			lcd_print(0, 8, "(YOU)");
 		}
 
 		//print timeout here for all
 		convert_timeout(pp_devices[navigate_to_device]->timeout, &tmp_buf[0]);
-		lcd_print(3, 10, &tmp_buf[0], 0);
+		lcd_print(3, 10, &tmp_buf[0]);
     }
 
-    lcd_print(1, 0, "LAT", 0);
+    lcd_print(1, 0, "LAT");
     ftoa32(pp_devices[navigate_to_device]->latitude.as_float, 6, &tmp_buf[0]);
-    lcd_print_viceversa(1, 14, &tmp_buf[0], 0);
+    lcd_print_viceversa(1, 14, &tmp_buf[0]);
     if (pp_devices[navigate_to_device]->latitude.as_float >= 0)
     {
-        lcd_char('+', 0);
+        lcd_char('+');
     }
-    lcd_char_pos(1, 15, SYMB8_DEGREE, 0); //degree char
+    lcd_char_pos(1, 15, SYMB8_DEGREE); //degree char
 
 
-    lcd_print(2, 0, "LON", 0);
+    lcd_print(2, 0, "LON");
     ftoa32(pp_devices[navigate_to_device]->longitude.as_float, 6, &tmp_buf[0]);
-    lcd_print_viceversa(2, 14, &tmp_buf[0], 0);
+    lcd_print_viceversa(2, 14, &tmp_buf[0]);
     if (pp_devices[navigate_to_device]->longitude.as_float >= 0)
     {
-        lcd_char('+', 0);
+        lcd_char('+');
     }
-    lcd_char_pos(2, 15, SYMB8_DEGREE, 0); //degree char
+    lcd_char_pos(2, 15, SYMB8_DEGREE); //degree char
 
 
     //print ALT here for all
-    lcd_print(3, 0, "ALT", 0);
+    lcd_print(3, 0, "ALT");
     itoa32(pp_devices[navigate_to_device]->altitude.as_integer, &tmp_buf[0]);
-    lcd_print(3, 4, &tmp_buf[0], 0);
-    lcd_char('m', 0); //meter char
+    lcd_print(3, 4, &tmp_buf[0]);
+    lcd_char('m'); //meter char
 
     draw_bat_level();
 
@@ -1128,13 +1128,13 @@ void draw_device_submenu(void)
 
 	lcd_clear();
 
-	lcd_print(0, DEVICE_SUBMENU_COL, "DEVICE #", 0);
+	lcd_print(0, DEVICE_SUBMENU_COL, "DEVICE #");
     itoa32(navigate_to_device, &tmp_buf[0]);
-    lcd_print_next(&tmp_buf[0], 0);
+    lcd_print_next(&tmp_buf[0]);
 
-	lcd_print(DEVICE_SUBMENU_ROW, DEVICE_SUBMENU_COL, "Save", 0);
-	lcd_print(DEVICE_SUBMENU_ROW + 1, DEVICE_SUBMENU_COL, "Delete", 0);
-	lcd_print(DEVICE_SUBMENU_ROW + get_current_item(), DEVICE_SUBMENU_COL - 1, ">", 0);
+	lcd_print(DEVICE_SUBMENU_ROW, DEVICE_SUBMENU_COL, "Save");
+	lcd_print(DEVICE_SUBMENU_ROW + 1, DEVICE_SUBMENU_COL, "Delete");
+	lcd_print(DEVICE_SUBMENU_ROW + get_current_item(), DEVICE_SUBMENU_COL - 1, ">");
 
 	lcd_update();
 }
@@ -1146,16 +1146,16 @@ void draw_save_device(void)
 {
 	lcd_clear();
 
-	lcd_print(0, 2, "Save #", 0);
+	lcd_print(0, 2, "Save #");
 
     itoa32(navigate_to_device, &tmp_buf[0]);
-    lcd_print_next(&tmp_buf[0], 0);
-    lcd_print_next(" as:", 0);
+    lcd_print_next(&tmp_buf[0]);
+    lcd_print_next(" as:");
 
-    lcd_print(1, 5, get_memory_point_name(current_mem_point_to_save), 0);
+    lcd_print(1, 5, get_memory_point_name(current_mem_point_to_save));
 
-    lcd_print(2, 3, "OK save", 0);
-    lcd_print(3, 3, "ESC cancel", 0);
+    lcd_print(2, 3, "OK save");
+    lcd_print(3, 3, "ESC cancel");
 
 	lcd_update();
 }
@@ -1167,14 +1167,14 @@ void draw_delete_device(void)
 {
 	lcd_clear();
 
-	lcd_print(0, 3, "Delete #", 0);
+	lcd_print(0, 3, "Delete #");
 
     itoa32(navigate_to_device, &tmp_buf[0]);
-    lcd_print_next(&tmp_buf[0], 0);
-    lcd_print_next("?", 0);
+    lcd_print_next(&tmp_buf[0]);
+    lcd_print_next("?");
 
-    lcd_print(2, 3, "OK delete", 0);
-    lcd_print(3, 3, "ESC cancel", 0);
+    lcd_print(2, 3, "OK delete");
+    lcd_print(3, 3, "ESC cancel");
 
 	lcd_update();
 }
@@ -1185,8 +1185,8 @@ void draw_delete_device(void)
 void draw_saved_popup(void)
 {
 	lcd_clear();
-	lcd_print(0, 4, "Saved!", 0);
-    lcd_print(2, 3, "ESC close", 0);
+	lcd_print(0, 4, "Saved!");
+    lcd_print(2, 3, "ESC close");
 	lcd_update();
 }
 
@@ -1196,8 +1196,8 @@ void draw_saved_popup(void)
 void draw_deleted_popup(void)
 {
 	lcd_clear();
-	lcd_print(0, 3, "Deleted!", 0);
-    lcd_print(2, 3, "ESC close", 0);
+	lcd_print(0, 3, "Deleted!");
+    lcd_print(2, 3, "ESC close");
 	lcd_update();
 }
 
@@ -1210,11 +1210,11 @@ void draw_settings(void)
     #define SETTINGS_COL               (1)
     
     lcd_clear();
-    lcd_print(0, SETTINGS_COL, "SETTINGS", 0);
-    lcd_print(SETTINGS_ROW, SETTINGS_COL, "Device", 0);
-    lcd_print(SETTINGS_ROW + 1, SETTINGS_COL, "Radio", 0);
-    lcd_print(SETTINGS_ROW + 2, SETTINGS_COL, "Other", 0);
-    lcd_print(SETTINGS_ROW + get_current_item(), SETTINGS_COL - 1, ">", 0);
+    lcd_print(0, SETTINGS_COL, "SETTINGS");
+    lcd_print(SETTINGS_ROW, SETTINGS_COL, "Device");
+    lcd_print(SETTINGS_ROW + 1, SETTINGS_COL, "Radio");
+    lcd_print(SETTINGS_ROW + 2, SETTINGS_COL, "Other");
+    lcd_print(SETTINGS_ROW + get_current_item(), SETTINGS_COL - 1, ">");
     lcd_update();
 }
 
@@ -1227,21 +1227,21 @@ void draw_edit_device(void)
 	#define EDIT_DEVICE_COL               (1)
 
     lcd_clear();
-    lcd_print(0, EDIT_DEVICE_COL, "EDIT DEVICE", 0);
+    lcd_print(0, EDIT_DEVICE_COL, "EDIT DEVICE");
 
-    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL, "Number", 0);
+    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL, "Number");
     itoa32(settings_copy.device_number, &tmp_buf[0]);
-    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL + 10, &tmp_buf[0], 0);
-    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL + 11, "/", 0);
+    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL + 10, &tmp_buf[0]);
+    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL + 11, "/");
     itoa32(settings_copy.devices_on_air, &tmp_buf[0]);
-    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL + 12, &tmp_buf[0], 0);
+    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL + 12, &tmp_buf[0]);
 
-    lcd_print(EDIT_DEVICE_ROW + 1, EDIT_DEVICE_COL, "ID", 0);
+    lcd_print(EDIT_DEVICE_ROW + 1, EDIT_DEVICE_COL, "ID");
     tmp_buf[0] = settings_copy.device_id;
     tmp_buf[1] = 0;
-	lcd_print(EDIT_DEVICE_ROW + 1, EDIT_DEVICE_COL + 10, &tmp_buf[0], 0);
+	lcd_print(EDIT_DEVICE_ROW + 1, EDIT_DEVICE_COL + 10, &tmp_buf[0]);
 
-    lcd_print(EDIT_DEVICE_ROW + get_current_item(), EDIT_DEVICE_COL - 1, ">", 0);
+    lcd_print(EDIT_DEVICE_ROW + get_current_item(), EDIT_DEVICE_COL - 1, ">");
     lcd_update();
 }
 
@@ -1254,23 +1254,23 @@ void draw_edit_radio(void)
 	#define EDIT_RADIO_COL               (1)
 
     lcd_clear();
-    lcd_print(0, EDIT_RADIO_COL, "EDIT RADIO", 0);
+    lcd_print(0, EDIT_RADIO_COL, "EDIT RADIO");
 
-    lcd_print(EDIT_RADIO_ROW, EDIT_RADIO_COL, "Update", 0);
+    lcd_print(EDIT_RADIO_ROW, EDIT_RADIO_COL, "Update");
     itoa32(p_update_interval_values[settings_copy.update_interval_opt], &tmp_buf[0]);
-    lcd_print(EDIT_RADIO_ROW, EDIT_RADIO_COL + 10, &tmp_buf[0], 0);
-    lcd_print_next("s", 0);
+    lcd_print(EDIT_RADIO_ROW, EDIT_RADIO_COL + 10, &tmp_buf[0]);
+    lcd_print_next("s");
 
-    lcd_print(EDIT_RADIO_ROW + 1, EDIT_RADIO_COL, "Channel", 0);
+    lcd_print(EDIT_RADIO_ROW + 1, EDIT_RADIO_COL, "Channel");
     itoa32(settings_copy.freq_channel, &tmp_buf[0]);
-    lcd_print(EDIT_RADIO_ROW + 1, EDIT_RADIO_COL + 10, &tmp_buf[0], 0);
+    lcd_print(EDIT_RADIO_ROW + 1, EDIT_RADIO_COL + 10, &tmp_buf[0]);
 
-    lcd_print(EDIT_RADIO_ROW + 2, EDIT_RADIO_COL, "TX Power", 0);
+    lcd_print(EDIT_RADIO_ROW + 2, EDIT_RADIO_COL, "TX Power");
     itoa32(p_tx_power_values[settings_copy.tx_power_opt], &tmp_buf[0]);
-    lcd_print(EDIT_RADIO_ROW + 2, EDIT_RADIO_COL + 10, &tmp_buf[0], 0);
-    lcd_print_next("mW", 0);
+    lcd_print(EDIT_RADIO_ROW + 2, EDIT_RADIO_COL + 10, &tmp_buf[0]);
+    lcd_print_next("mW");
 
-    lcd_print(EDIT_RADIO_ROW + get_current_item(), EDIT_RADIO_COL - 1, ">", 0);
+    lcd_print(EDIT_RADIO_ROW + get_current_item(), EDIT_RADIO_COL - 1, ">");
     lcd_update();
 }
 
@@ -1283,38 +1283,38 @@ void draw_edit_other(void)
 	#define EDIT_OTHER_COL               (1)
 
     lcd_clear();
-    lcd_print(0, EDIT_OTHER_COL, "EDIT OTHER", 0);
+    lcd_print(0, EDIT_OTHER_COL, "EDIT OTHER");
 
-    lcd_print(EDIT_OTHER_ROW, EDIT_OTHER_COL, "Timeout", 0);
+    lcd_print(EDIT_OTHER_ROW, EDIT_OTHER_COL, "Timeout");
     itoa32(settings_copy.timeout_threshold, &tmp_buf[0]);
-    lcd_print(EDIT_OTHER_ROW, EDIT_OTHER_COL + 10, &tmp_buf[0], 0);
-    lcd_print_next("s", 0);
+    lcd_print(EDIT_OTHER_ROW, EDIT_OTHER_COL + 10, &tmp_buf[0]);
+    lcd_print_next("s");
 
-    lcd_print(EDIT_OTHER_ROW + 1, EDIT_OTHER_COL, "Fence", 0);
+    lcd_print(EDIT_OTHER_ROW + 1, EDIT_OTHER_COL, "Fence");
     itoa32(settings_copy.fence_threshold, &tmp_buf[0]);
-    lcd_print(EDIT_OTHER_ROW + 1, EDIT_OTHER_COL + 10, &tmp_buf[0], 0);
-    lcd_print_next("m", 0);
+    lcd_print(EDIT_OTHER_ROW + 1, EDIT_OTHER_COL + 10, &tmp_buf[0]);
+    lcd_print_next("m");
 
-    lcd_print(EDIT_OTHER_ROW + 2, EDIT_OTHER_COL, "Timezone", 0);
+    lcd_print(EDIT_OTHER_ROW + 2, EDIT_OTHER_COL, "Timezone");
 	if (settings_copy.time_zone_dir > 0)
 	{
-		lcd_print(EDIT_OTHER_ROW + 2, EDIT_OTHER_COL + 9, "+", 0);
+		lcd_print(EDIT_OTHER_ROW + 2, EDIT_OTHER_COL + 9, "+");
 	}
 	else
 	{
-		lcd_print(EDIT_OTHER_ROW + 2, EDIT_OTHER_COL + 9, "-", 0);
+		lcd_print(EDIT_OTHER_ROW + 2, EDIT_OTHER_COL + 9, "-");
 	}
 
 	itoa32(settings_copy.time_zone_hour, &tmp_buf[0]);
 	add_leading_zero(&tmp_buf[0]);
-	lcd_print_next(&tmp_buf[0], 0);
-	lcd_print_next(":", 0);
+	lcd_print_next(&tmp_buf[0]);
+	lcd_print_next(":");
 
 	itoa32(settings_copy.time_zone_minute, &tmp_buf[0]);
 	add_leading_zero(&tmp_buf[0]);
-	lcd_print_next(&tmp_buf[0], 0);
+	lcd_print_next(&tmp_buf[0]);
 
-    lcd_print(EDIT_OTHER_ROW + get_current_item(), EDIT_OTHER_COL - 1, ">", 0);
+    lcd_print(EDIT_OTHER_ROW + get_current_item(), EDIT_OTHER_COL - 1, ">");
     lcd_update();
 }
 
@@ -1326,15 +1326,15 @@ void draw_set_device_number(void)
 	#define DEVICE_NUMBER_COL               (5)
 
 	lcd_clear();
-	lcd_print(0, 1, "DEVICE NUMBER", 0);
+	lcd_print(0, 1, "DEVICE NUMBER");
 
     itoa32(settings_copy.device_number, &tmp_buf[0]);
-    lcd_print(DEVICE_NUMBER_ROW, DEVICE_NUMBER_COL, &tmp_buf[0], 0);
+    lcd_print(DEVICE_NUMBER_ROW, DEVICE_NUMBER_COL, &tmp_buf[0]);
 
-    lcd_print_next(" of ", 0);
+    lcd_print_next(" of ");
 
     itoa32(settings_copy.devices_on_air, &tmp_buf[0]);
-    lcd_print_next(&tmp_buf[0], 0);
+    lcd_print_next(&tmp_buf[0]);
 
 	lcd_update();
 }
@@ -1347,11 +1347,11 @@ void draw_set_device_id(void)
 	#define DEVICE_ID_COL               (7)
 
 	lcd_clear();
-	lcd_print(0, 3, "DEVICE ID", 0);
+	lcd_print(0, 3, "DEVICE ID");
 
 	tmp_buf[0] = settings_copy.device_id;
 	tmp_buf[1] = 0;
-	lcd_print(DEVICE_ID_ROW, DEVICE_ID_COL, &tmp_buf[0], 0);
+	lcd_print(DEVICE_ID_ROW, DEVICE_ID_COL, &tmp_buf[0]);
 
 	lcd_update();
 }
@@ -1364,10 +1364,10 @@ void draw_set_freq_channel(void)
 	#define FREQ_CHANNEL_COL               (7)
 
 	lcd_clear();
-	lcd_print(0, 2, "FREQ CHANNEL", 0);
+	lcd_print(0, 2, "FREQ CHANNEL");
 
     itoa32(settings_copy.freq_channel, &tmp_buf[0]);
-	lcd_print(FREQ_CHANNEL_ROW, FREQ_CHANNEL_COL, &tmp_buf[0], 0);
+	lcd_print(FREQ_CHANNEL_ROW, FREQ_CHANNEL_COL, &tmp_buf[0]);
 
 	lcd_update();
 }
@@ -1380,11 +1380,11 @@ void draw_set_tx_power(void)
 	#define TX_POWER_COL               (6)
 
 	lcd_clear();
-	lcd_print(0, 4, "TX POWER", 0);
+	lcd_print(0, 4, "TX POWER");
 
     itoa32(p_tx_power_values[settings_copy.tx_power_opt], &tmp_buf[0]);
-    lcd_print(TX_POWER_ROW, TX_POWER_COL, &tmp_buf[0], 0);
-    lcd_print_next("mW", 0);
+    lcd_print(TX_POWER_ROW, TX_POWER_COL, &tmp_buf[0]);
+    lcd_print_next("mW");
 
 	lcd_update();
 }
@@ -1397,11 +1397,11 @@ void draw_set_update_interval(void)
 	#define UPDATE_INTERVAL_COL               (6)
 
 	lcd_clear();
-	lcd_print(0, 0, "UPDATE INTERVAL", 0);
+	lcd_print(0, 0, "UPDATE INTERVAL");
 
     itoa32(p_update_interval_values[settings_copy.update_interval_opt], &tmp_buf[0]);
-    lcd_print(UPDATE_INTERVAL_ROW, UPDATE_INTERVAL_COL, &tmp_buf[0], 0);
-    lcd_print_next("s", 0);
+    lcd_print(UPDATE_INTERVAL_ROW, UPDATE_INTERVAL_COL, &tmp_buf[0]);
+    lcd_print_next("s");
 
 	lcd_update();
 }
@@ -1414,11 +1414,11 @@ void draw_set_timeout(void)
 	#define TIMEOUT_COL               (6)
 
 	lcd_clear();
-	lcd_print(0, 4, "TIMEOUT", 0);
+	lcd_print(0, 4, "TIMEOUT");
 
 	itoa32(settings_copy.timeout_threshold, &tmp_buf[0]);
-	lcd_print(TIMEOUT_ROW, TIMEOUT_COL, &tmp_buf[0], 0);
-	lcd_print_next("s", 0);
+	lcd_print(TIMEOUT_ROW, TIMEOUT_COL, &tmp_buf[0]);
+	lcd_print_next("s");
 
 	lcd_update();
 }
@@ -1431,11 +1431,11 @@ void draw_set_fence(void)
 	#define FENCE_COL               (6)
 
 	lcd_clear();
-	lcd_print(0, 3, "GEO FENCE", 0);
+	lcd_print(0, 3, "GEO FENCE");
 
 	itoa32(settings_copy.fence_threshold, &tmp_buf[0]);
-	lcd_print(FENCE_ROW, FENCE_COL, &tmp_buf[0], 0);
-	lcd_print_next("m", 0);
+	lcd_print(FENCE_ROW, FENCE_COL, &tmp_buf[0]);
+	lcd_print_next("m");
 
 	lcd_update();
 }
@@ -1448,25 +1448,25 @@ void draw_set_timezone(void)
 	#define TIMEZONE_COL               (4)
 
 	lcd_clear();
-	lcd_print(0, 3, "TIME ZONE", 0);
+	lcd_print(0, 3, "TIME ZONE");
 
 	if (settings_copy.time_zone_dir > 0)
 	{
-		lcd_print(TIMEZONE_ROW, TIMEZONE_COL, "+", 0);
+		lcd_print(TIMEZONE_ROW, TIMEZONE_COL, "+");
 	}
 	else
 	{
-		lcd_print(TIMEZONE_ROW, TIMEZONE_COL, "-", 0);
+		lcd_print(TIMEZONE_ROW, TIMEZONE_COL, "-");
 	}
 
 	itoa32(settings_copy.time_zone_hour, &tmp_buf[0]);
 	add_leading_zero(&tmp_buf[0]);
-	lcd_print_next(&tmp_buf[0], 0);
-	lcd_print_next(":", 0);
+	lcd_print_next(&tmp_buf[0]);
+	lcd_print_next(":");
 
 	itoa32(settings_copy.time_zone_minute, &tmp_buf[0]);
 	add_leading_zero(&tmp_buf[0]);
-	lcd_print_next(&tmp_buf[0], 0);
+	lcd_print_next(&tmp_buf[0]);
 
 	lcd_update();
 }
@@ -1478,9 +1478,9 @@ void draw_confirm_settings_save(void)
     if (flag_settings_changed)
     {
         lcd_clear();
-        lcd_print(0, 0, "Settings Changed", 0);
-        lcd_print(2, 0, "OK save & reboot", 0);
-        lcd_print(3, 1, "ESC cancel all", 0);
+        lcd_print(0, 0, "Settings Changed");
+        lcd_print(2, 0, "OK save & reboot");
+        lcd_print(3, 1, "ESC cancel all");
         lcd_update();
     }
     else
@@ -2236,7 +2236,7 @@ void set_timezone_esc(void)
 void confirm_settings_save_ok(void)
 {
     lcd_clear();
-    lcd_print(0, 3, "Saving...", 0);
+    lcd_print(0, 3, "Saving...");
     lcd_update();
     settings_save(&settings_copy);
     delay_cyc(200000);
