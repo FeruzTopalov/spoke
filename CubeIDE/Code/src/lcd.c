@@ -229,7 +229,7 @@ void lcd_pixel(uint8_t x, uint8_t y, int8_t action)
     switch (action)
     {
         case 0:     //clear pixel
-            screen_buf[x + (y / 8) * LCD_SIZE_X] &= ~(1 << (y % 8));		////todo: use bit band instead
+            screen_buf[x + (y / 8) * LCD_SIZE_X] &= ~(1 << (y % 8));
             break;
         case 1:     //set pixel
             screen_buf[x + (y / 8) * LCD_SIZE_X] |= 1 << (y % 8);
@@ -247,7 +247,7 @@ void lcd_pixel(uint8_t x, uint8_t y, int8_t action)
 void lcd_set_pixel(uint8_t x, uint8_t y)
 {
     //set pixel
-    screen_buf[x + (y / 8) * LCD_SIZE_X] |= 1 << (y % 8);			//todo: use bit band instead
+    screen_buf[x + (y / 8) * LCD_SIZE_X] |= 1 << (y % 8);
 }
 
 
@@ -258,7 +258,7 @@ void lcd_set_pixel_plot(uint8_t x, uint8_t y)
 {
     //set pixel
 	y = 63 - y;
-    screen_buf[x + (y / 8) * LCD_SIZE_X] |= 1 << (y % 8);			//todo: use bit band instead
+    screen_buf[x + (y / 8) * LCD_SIZE_X] |= 1 << (y % 8);
 }
 
 

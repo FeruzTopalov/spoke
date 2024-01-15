@@ -43,7 +43,6 @@ uint8_t processing_button = 0;
 //TIMERS
 uint32_t uptime = 0;
 uint32_t pps_absolute_counter = 0;
-uint32_t pps_relative_counter = 0;
 
 uint8_t *p_update_interval_values;
 
@@ -248,7 +247,6 @@ void DMA1_Channel3_IRQHandler(void)
     	make_a_long_beep();
     }
 
-    pps_relative_counter = 0;
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;
 
@@ -268,7 +266,6 @@ void EXTI2_IRQHandler(void)
 	uart3_dma_restart();
 
 	pps_absolute_counter++;
-	pps_relative_counter++;	//todo: TBD needed?
 
 	main_flags.pps_synced = 1;
 
