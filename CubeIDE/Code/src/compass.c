@@ -138,7 +138,7 @@ restart_cal:
 		read_magn();
 
 		//limit and store values
-		buf_x[pt] = limit_to(p_magnetic_field->mag_x.as_integer, 2047, -2048);	//todo: move to read_magn()
+		buf_x[pt] = limit_to(p_magnetic_field->mag_x.as_integer, 2047, -2048);
 		buf_y[pt] = limit_to(p_magnetic_field->mag_y.as_integer, 2047, -2048);
 
 		//find max/min

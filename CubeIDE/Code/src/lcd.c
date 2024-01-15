@@ -159,7 +159,6 @@ void lcd_update(void)
 			//spi2_clock_enable();
 
 
-			//todo: if current_page <> 0 to prevent glitches
 			lcd_busy = 1;
 			current_page = 0;
 			lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer

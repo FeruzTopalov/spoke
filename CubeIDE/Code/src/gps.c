@@ -88,7 +88,7 @@ void gps_init(void)
 	pp_devices = get_devices();
 
 	p_settings = get_settings();
-	this_device = p_settings->device_number;		//todo overall make this device number get as a function or as a more beautiful way
+	this_device = p_settings->device_number;
 
 	configure_gps_receiver();
 }
