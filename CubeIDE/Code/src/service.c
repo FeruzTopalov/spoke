@@ -156,28 +156,20 @@ void convert_timeout(uint32_t timeout_val, char *buffer)
     char buf[3];
 
 
-    if (timeout_val >= 60)
-    {
-        min = timeout_val / 60;
-        sec = timeout_val % 60;
 
-        if (min >= 60)
-        {
-            hour = min / 60;
-            min = min % 60;
+    //convert
+    day = timeout_val / (24 * 3600);
+    timeout_val %= (24 * 3600);
 
-            if (hour >= 24)
-            {
-                day = hour / 24;
-                hour = hour % 24;
-            }
-        }
-    }
-    else
-    {
-        sec = timeout_val;
-    }
+    hour = timeout_val / 3600;
+    timeout_val %= 3600;
 
+    min = timeout_val / 60;
+    sec = timeout_val % 60;
+
+
+
+    //store print
     if (day)
     {
         //XXdXXh
