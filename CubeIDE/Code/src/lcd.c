@@ -86,7 +86,7 @@ void lcd_init(void)
         cs_lcd_active();
         while (len--)
         {
-            spi2_trx(sh1106_conf[i++]);
+            spi2_tx(sh1106_conf[i++]);
         }
         cs_lcd_inactive();
     }
@@ -105,7 +105,7 @@ void lcd_send_command(uint8_t command)
 	//spi2_clock_enable();
 	lcd_command_mode();
 	cs_lcd_active();
-	spi2_trx(command);
+	spi2_tx(command);
 	cs_lcd_inactive();
 	//spi2_clock_disable();
 }

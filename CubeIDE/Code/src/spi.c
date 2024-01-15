@@ -128,7 +128,7 @@ void spi2_clock_enable(void)
 
 
 //TX one byte via SPI2, no reception from LCD needed
-void spi2_trx(uint8_t send_data)		//todo: rename to spi2_tx
+void spi2_tx(uint8_t send_data)
 {
     while (!(SPI2->SR & SPI_SR_TXE)){}      //while TXE bit = 0
     SPI2->DR = send_data;

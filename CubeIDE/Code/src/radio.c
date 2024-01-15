@@ -195,7 +195,7 @@ uint8_t rf_tx_packet(void)
 	spi1_trx(TX_TIMEOUT_DISABLED_0);
 	cs_rf_inactive();
 
-	return 1;	//todo: check for rf mode before tx
+	return 1;
 }
 
 

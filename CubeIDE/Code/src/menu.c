@@ -2136,7 +2136,7 @@ void set_timezone_up(void)
 		settings_copy.time_zone_dir = 1;
 	}
 
-	if (((settings_copy.time_zone_dir * settings_copy.time_zone_hour) >= 14) && (settings_copy.time_zone_minute >= 0))		//todo: make 14 as define
+	if (((settings_copy.time_zone_dir * settings_copy.time_zone_hour) >= 14) && (settings_copy.time_zone_minute >= 0))
 	{
 		settings_copy.time_zone_hour = 14;
 		settings_copy.time_zone_minute = 0;
