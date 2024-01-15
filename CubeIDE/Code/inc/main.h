@@ -23,6 +23,7 @@ struct main_flags_struct
 {
     uint8_t buttons_scanned;
     uint8_t parse_nmea;
+    uint8_t start_radio;
     uint8_t update_screen;
     uint8_t do_beep;
 

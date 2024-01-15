@@ -133,11 +133,11 @@ int main(void)
 
             if (parse_gps() == 1)
             {
-				if 	(main_flags.pps_synced == 1)		//ready to txrx when pps exists, data is valid and current second divides by send interval without remainder
+				if 	(main_flags.pps_synced == 1)		//ready to txrx when pps exists & data is valid
 				{
 					if (p_gps_num->status == GPS_DATA_VALID)
 					{
-						main_flags.process_all = 1;
+						main_flags.start_radio = 1;
 					}
 				}
 				else
@@ -157,7 +157,7 @@ int main(void)
 
             if (is_battery_critical())
             {
-            	release_power();	//just turn off for now
+            	release_power();	//todo: just turn off for now
             }
 
             if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
@@ -170,7 +170,7 @@ int main(void)
 
 
 
-        //Checks after receiving packets from all devices or after no txrx; performing beep
+        //Checks after receiving a packet from a device; performing beep
         if (main_flags.process_all == 1)
         {
         	main_flags.process_all = 0;
@@ -256,69 +256,27 @@ void DMA1_Channel3_IRQHandler(void)
 
 
 
-//GPS PPS interrupt
+//GPS PPS Interrupt
 void EXTI2_IRQHandler(void)
 {
 
 	EXTI->PR = EXTI_PR_PR2;			//clear interrupt
-	timer1_start();                 //the first thing to do is to start gps acquire timer
-
-	//*** for test purposes
-    if (p_gps_num->second % 4 == 0)
-    {
-		if (p_settings->device_number == 1)
-		{
-			fill_air_packet(uptime);
-			if (rf_tx_packet())
-			{
-				main_flags.tx_state = 1;
-				led_red_on();
-			}
-		}
-		else
-		{
-			if (rf_start_rx())
-			{
-				main_flags.rx_state = 1;
-				led_green_on();
-			}
-		}
-    }
-    else if (p_gps_num->second % 4 == 2)
-    {
-		if (p_settings->device_number == 2)
-		{
-			fill_air_packet(uptime);
-			if (rf_tx_packet())
-			{
-				main_flags.tx_state = 1;
-				led_red_on();
-			}
-		}
-		else
-		{
-			if (rf_start_rx())
-			{
-				main_flags.rx_state = 1;
-				led_green_on();
-			}
-		}
-    }
-	//***
+	timer1_start_800ms();           //the first thing to do is to start gps acquire timer
 
 	uart3_dma_stop();				//drop the previous data; there will be new after this PPS
 	clear_uart_buffer();
 	uart3_dma_restart();
 
 	pps_absolute_counter++;
-	pps_relative_counter++;
+	pps_relative_counter++;	//todo: TBD needed?
 
 	main_flags.pps_synced = 1;
+
 }
 
 
 
-//Radio interrupt (PayloadReady or PacketSent)
+//Radio Interrupt (PayloadReady or PacketSent)
 void EXTI0_IRQHandler(void)
 {
     EXTI->PR = EXTI_PR_PR0;         //clear interrupt
@@ -342,7 +300,7 @@ void EXTI0_IRQHandler(void)
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
-		led_red_off();
+		led_green_off();
 	}
 	else if (current_radio_status & IRQ_RX_TX_TIMEOUT)	//RX timeout only, because TX timeout feature is not used at all
 	{
@@ -354,18 +312,66 @@ void EXTI0_IRQHandler(void)
 
 
 
-//gps acquire timeout
+//Timer1 GPS Acquire + Radio Run
 void TIM1_UP_IRQHandler(void)
 {
     TIM1->SR &= ~TIM_SR_UIF;                    //clear interrupt
     timer1_stop_reload();						//stop this timer
 
-    uart3_dma_stop();					//fix the nmea data
-    backup_and_clear_uart_buffer();
-    uart3_dma_restart();				//restart for a case when no next PPS occur, then dma ovf will trigger
-    									//otherwise next PPS will reset dma again before the upcoming nmea data
+    if (timer1_get_intrvl_type() == 1) //long interval 800 ms ended
+    {
 
-    main_flags.parse_nmea = 1;			//ask to parse
+    	//parse NMEA, run short timer
+    	timer1_start_100ms();
+
+		uart3_dma_stop();					//fix the nmea data after last pps (800 ms ago)
+		backup_and_clear_uart_buffer();
+		uart3_dma_restart();				//restart for a case when no next PPS occur, then dma ovf will trigger
+										//otherwise next PPS will reset dma again before the upcoming nmea data
+
+    	main_flags.parse_nmea = 1;			//ask to parse
+
+    }
+    else if (timer1_get_intrvl_type() == 2) //short interval 100 ms ended, resulting 800 ms + 100 ms=900 ms after last pps
+    {
+
+    	//important: NMEA must be parsed before execution of this code
+    	//start radio, run processing of all devices
+
+    	if (main_flags.start_radio == 1)
+    	{
+    		main_flags.start_radio = 0;
+
+    		uint8_t sec_modulo = 0;
+    		sec_modulo = p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt];
+
+    		if (sec_modulo == (2 * (p_settings->device_number - 1)))	//todo: add to settings as device_tx_second
+    		{
+    			//tx
+				fill_air_packet(uptime);
+				if (rf_tx_packet())
+				{
+					main_flags.tx_state = 1;
+					led_green_on();
+				}
+    		}
+    		else if ((sec_modulo <= (2 * (p_settings->devices_on_air - 1)))  && ((sec_modulo % 2) == 0))	//todo: add to settings as max_rx_second
+    		{
+    			//rx
+				if (rf_start_rx())
+				{
+					main_flags.rx_state = 1;
+					if (sec_modulo == (2 * (get_current_device() - 1)))	//blink green if going to receive from current navigate-to device
+					{
+						led_green_on();
+					}
+				}
+    		}
+
+    	    //after all do a re-calculate all
+    	    main_flags.process_all = 1;
+    	}
+    }
 }
 
 
