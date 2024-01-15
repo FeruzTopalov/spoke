@@ -44,6 +44,11 @@ uint8_t processing_button = 0;
 uint32_t uptime = 0;
 uint32_t pps_absolute_counter = 0;
 
+uint8_t second_modulo = 0;
+uint8_t device_tx_second = 0;
+uint8_t max_rx_second = 0;
+
+
 uint8_t *p_update_interval_values;
 
 
@@ -107,6 +112,10 @@ int main(void)
     p_settings = get_settings();
     p_gps_num = get_gps_num();
     p_update_interval_values = get_update_interval_values();
+
+    device_tx_second = (2 * (p_settings->device_number - 1));
+    max_rx_second = (2 * (p_settings->devices_on_air - 1));
+
 
 
     make_a_beep();	//end of device loading
@@ -339,10 +348,11 @@ void TIM1_UP_IRQHandler(void)
     	{
     		main_flags.start_radio = 0;
 
-    		uint8_t sec_modulo = 0;
-    		sec_modulo = p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt];
+    		//calc a remainder of current second division by update interval
+    		second_modulo = p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt];
 
-    		if (sec_modulo == (2 * (p_settings->device_number - 1)))	//todo: add to settings as device_tx_second
+    		//timeslots are at X0, X2, X4, X6, X8 second; where X is 0, 1, 2, 3, 4, 5 depending on the update interval
+    		if (second_modulo == device_tx_second)
     		{
     			//tx
 				fill_air_packet(uptime);
@@ -352,13 +362,14 @@ void TIM1_UP_IRQHandler(void)
 					led_green_on();
 				}
     		}
-    		else if ((sec_modulo <= (2 * (p_settings->devices_on_air - 1)))  && ((sec_modulo % 2) == 0))	//todo: add to settings as max_rx_second
+    		else if ((second_modulo <= max_rx_second)  && ((second_modulo % 2) == 0))
     		{
     			//rx
 				if (rf_start_rx())
 				{
 					main_flags.rx_state = 1;
-					if (sec_modulo == (2 * (get_current_device() - 1)))	//blink green if going to receive from current navigate-to device
+
+					if (second_modulo == (2 * (get_current_device() - 1)))	//blink green if going to receive from current navigate-to device
 					{
 						led_green_on();
 					}
