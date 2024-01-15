@@ -162,7 +162,6 @@ void send_ubx(uint8_t class, uint8_t id, uint8_t payload[], uint8_t len)
 	for (uint8_t n = 0; n < (len + 8); n++)		//8 bytes header & checksum
 	{
 		uart3_tx_byte(ubx_message[n]);			//transmit
-		uart1_tx_byte(ubx_message[n]);//debug	//todo: delete
 	}
 }
 
