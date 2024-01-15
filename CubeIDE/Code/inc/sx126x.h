@@ -234,9 +234,9 @@
 #define		FSK_PP9_WHITE_NO			(0x00)
 
 // SX126X_SET_PKT_PARAMS LORA
-#define		LORA_PP1_PREAMB_8_SYM		(0x00)	//16 bits
+#define		LORA_PP1_PREAMB_8_SYM		(0x00)
 #define		LORA_PP2_PREAMB_8_SYM		(0x08)
-#define		LORA_PP1_PREAMB_10_SYM		(0x00)	//16 bits
+#define		LORA_PP1_PREAMB_10_SYM		(0x00)
 #define		LORA_PP2_PREAMB_10_SYM		(0x0A)
 #define		LORA_PP3_HEADER_EXPLCT		(0x00)
 #define		LORA_PP3_HEADER_IMPLCT		(0x01)

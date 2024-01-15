@@ -27,7 +27,9 @@ char *convert_heading(uint16_t heading);
 float atof32(char *input);
 void ftoa32(float value, uint8_t precision, char *buffer);
 int32_t atoi32(char *input);
+uint32_t fast_mul10(uint32_t num);
 void itoa32(int32_t value, char *buffer);
+uint32_t fast_div10(uint32_t num, uint8_t *rem);
 void time_date_add_leading_zero(char *buf);
 
 

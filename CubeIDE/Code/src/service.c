@@ -472,11 +472,18 @@ int32_t atoi32(char *input)
 
     while(input[i] != 0)
     {
-        result = result * 10 + (input[i] - '0');
+        result = fast_mul10(result) + (input[i] - '0');
         i++;
     }
 
     return result * sign;
+}
+
+
+
+uint32_t fast_mul10(uint32_t num)
+{
+	return ((num << 1) + (num << 3));
 }
 
 
@@ -505,8 +512,7 @@ void itoa32(int32_t value, char *buffer)
 
     while(value > 0)
     {
-        mod = value % 10;
-        value /= 10;
+        value = fast_div10(value, &mod);
         buffer[i++] = mod + '0';
     }
 
@@ -526,6 +532,32 @@ void itoa32(int32_t value, char *buffer)
         buffer[j] = buffer[i];
         buffer[i] = c;
     }
+}
+
+
+
+uint32_t fast_div10(uint32_t num, uint8_t *rem)
+{
+    // Perform fast division by 10 using binary shifts
+	uint32_t backup = 0;
+	uint32_t quotient = (num >> 1) + (num >> 2);
+    quotient = quotient + (quotient >> 4);
+    quotient = quotient + (quotient >> 8);
+    quotient = quotient + (quotient >> 16);
+    backup = quotient;
+    quotient = quotient >> 3;
+
+    // Remainder
+    *rem = (uint32_t)(num - ((quotient << 1) + (backup & ~((uint32_t)0x07))));
+
+    // Correct
+    if(*rem > 9)
+    {
+        *rem -= 10;
+        quotient++;
+    }
+
+    return quotient;
 }
 
 
