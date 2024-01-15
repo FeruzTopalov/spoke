@@ -68,8 +68,7 @@ int main(void)
     delay_cyc(400000);
 
     lcd_print_only(0, 0, "uart..");
-    uart1_init();
-    uart3_dma_init();
+    uart_init();
 
     lcd_print_only(0, 0, "settings..");
     settings_load();
