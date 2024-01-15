@@ -157,7 +157,7 @@ int main(void)
 
             if (is_battery_critical())
             {
-            	release_power();	//just turn off for now
+            	release_power();	//todo: just turn off for now
             }
 
             if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
@@ -170,7 +170,7 @@ int main(void)
 
 
 
-        //Checks after receiving packets from all devices or after no txrx; performing beep
+        //Checks after receiving a packet from a device; performing beep
         if (main_flags.process_all == 1)
         {
         	main_flags.process_all = 0;
@@ -300,7 +300,7 @@ void EXTI0_IRQHandler(void)
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
-		led_red_off();
+		led_green_off();
 	}
 	else if (current_radio_status & IRQ_RX_TX_TIMEOUT)	//RX timeout only, because TX timeout feature is not used at all
 	{
@@ -352,7 +352,7 @@ void TIM1_UP_IRQHandler(void)
 				if (rf_tx_packet())
 				{
 					main_flags.tx_state = 1;
-					led_red_on();
+					led_green_on();
 				}
     		}
     		else if ((sec_modulo <= (2 * (p_settings->devices_on_air - 1)))  && ((sec_modulo % 2) == 0))	//todo: add to settings as max_rx_second
@@ -361,15 +361,16 @@ void TIM1_UP_IRQHandler(void)
 				if (rf_start_rx())
 				{
 					main_flags.rx_state = 1;
-					led_green_on();
+					if (sec_modulo == (2 * (get_current_device() - 1)))	//blink green if going to receive from current navigate-to device
+					{
+						led_green_on();
+					}
 				}
     		}
 
     	    //after all do a re-calculate all
     	    main_flags.process_all = 1;
     	}
-
-
     }
 }
 
