@@ -17,7 +17,7 @@ void (*SysMemBootJump)(void);
 
 
 char rumbs[9][3] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
-
+uint32_t dec_pow_table[] = {1, 10, 100, 1000, 10000, 100000, 1000000};	//max precision 6 digits after point
 
 
 //Simple delay in cycles
@@ -335,7 +335,7 @@ float atof32(char *input)
 {
     uint8_t i = 0;
     int32_t sign = 1;
-    float power = 1.0;
+    uint8_t p = 0;
     float result = 0.0;
 
     if(input[0] == 0)
@@ -360,11 +360,11 @@ float atof32(char *input)
     while(input[i] != 0)
     {
         result = result * 10.0 + (input[i] - '0');
-        power *= 10.0;
+        p++;
         i++;
     }
 
-    return (sign * result / power);
+    return (sign * result / dec_pow_table[p]);
 }
 
 
@@ -374,7 +374,6 @@ void ftoa32(float value, uint8_t precision, char *buffer)
 {
     uint8_t i = 0;
     uint32_t mod = 0;
-    float pow = 1.0;
     char sgn = 0;
     float value_copy;
 
@@ -393,12 +392,7 @@ void ftoa32(float value, uint8_t precision, char *buffer)
 
     value_copy = value;
 
-    for(uint8_t p = 0; p < precision; p++)
-    {
-        pow = pow * 10.0;
-    }
-
-    value = value * pow;
+    value = value * dec_pow_table[precision];
     uint32_t ipart = value;
 
     buffer[i++] = 0;
