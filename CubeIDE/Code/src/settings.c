@@ -21,12 +21,10 @@ void settings_interactive_save_default(void);
 
 
 #define UPDATE_INTERVAL_10S_VALUE		(10)
-#define UPDATE_INTERVAL_20S_VALUE		(20)
 #define UPDATE_INTERVAL_30S_VALUE		(30)
 #define UPDATE_INTERVAL_60S_VALUE		(60)
 
 #define UPDATE_INTERVAL_VALUES_ARRAY 	{ 	UPDATE_INTERVAL_10S_VALUE, 	\
-											UPDATE_INTERVAL_20S_VALUE, 	\
 											UPDATE_INTERVAL_30S_VALUE, 	\
 											UPDATE_INTERVAL_60S_VALUE	}
 
