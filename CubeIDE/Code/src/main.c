@@ -231,7 +231,7 @@ int main(void)
 
 
         //Wait for interrupt
-        //__WFI();
+        __WFI();
 
 
 
