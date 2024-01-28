@@ -49,7 +49,7 @@ unfortunately all of them are commercial. But not the **Spoke**!
 * Timeout feature
 * Alarm button
 
-Due to open-source and simple and cheap hardware, Spoke is highly flexible solution that could be adapted to any use case you want:
+Due to open-source and simple & cheap hardware, Spoke is highly flexible solution that could be adapted to any use case you want:
 
 * Hiking
 * Climbing
@@ -66,7 +66,7 @@ Due to open-source and simple and cheap hardware, Spoke is highly flexible solut
 
 ## Technology
 
-Spoke is written in pure C and runs on STM32 microcontroller. It has GPS module to receive positional data and synchronization signal, radio transceiver to exchange with radio packets between other devices, graphical display to show information on it, tactile buttons to control the device, buzzer to notify about events and couple of LEDs.
+Spoke is written in pure C and runs on STM32F103C8T6 microcontroller. It has GPS module to receive positional data and synchronization signal, radio transceiver to exchange with radio packets between other devices, graphical display to show information on it, tactile buttons to control the device, buzzer to notify about events and couple of LEDs.
 
 
 <p align="center">
@@ -76,7 +76,7 @@ Spoke is written in pure C and runs on STM32 microcontroller. It has GPS module 
 
 GPS module provides NMEA-0183 stream at 9600 baud. Microcontroller process the stream using DMA and parse it. Fields being extracted are RMC, GGA, GSA, GSV. Those give us information about time, date, latitude, longitude, speed, course, altitude, satellites in view and in use, navigation mode and validness of data.
 
-GPS module also provides time synchronization signal - PPS. It is used as a time reference for the transmitting and receiving radio packets inside a current group of devices. Each group operates at the specific frequency channel, the way like regular radios. Each device in a group has unique predefined number from 1 to 5, so there are 5 members in a group maximum. Spoke uses TDMA technique to give channel access for each group member, so the device number corresponds to the time-slot occupied by device. There is a 900 ms timer which starts counting from the rising edge of the PPS pulse. Within this time NMEA is collected and parsed, the positional data of the device is prepared. Then, depending on the device number and current second of the time either RX or TX takes place. Valid active seconds for RX/TX are 0, 2, 4, 6, 8 for devices 1 to 5 respectively. Repeat occurs every 10, 30 or 60 seconds depending on settings.
+GPS module also provides time synchronization signal - PPS. It is used as a time reference for transmitting and receiving radio packets inside a current group of devices. Each group operates at the specific frequency channel, the way like regular radios. Each device in a group has unique predefined number from 1 to 5, so there are 5 members in a group maximum. Spoke uses TDMA technique to give channel access for each group member, so the device number corresponds to the time-slot occupied by device. There is a 900 ms timer which starts counting from the rising edge of the PPS pulse. Within this time the NMEA data is collected and parsed, the positional data of the device is prepared. Then, depending on the device number and current second of the time, either RX or TX takes place. Valid active seconds for RX/TX are 0, 2, 4, 6, 8 for devices 1 to 5 respectively. Repeat occurs every 10, 30 or 60 seconds depending on settings.
 
 
 
@@ -86,7 +86,24 @@ GPS module also provides time synchronization signal - PPS. It is used as a time
 
 
 
-Spoke uses LoRa transceiver and operates in LPD 433 MHz band (please make sure you are allowed to use those frequencies in your region, change otherwise). LoRa parameters are SF12, BW125, CR 4/8, Header off, CRC. Packet structure is shown below. It consist of 12 bytes payload and in total takes ~1.25 s to be transmitted over-the-air.
+Spoke uses Semtech SX126x LoRa transceiver and operates in LPD 433 MHz band (please make sure you are allowed to use those frequencies in your region, change otherwise). 
+
+
+
+| Channel | Frequency    |
+|---------|--------------|
+| CH1     | 433.175 MHz  |
+| CH2     | 433.375 MHz  |
+| CH3     | 433.575 MHz  |
+| CH4     | 433.775 MHz  |
+| CH5     | 433.975 MHz  |
+| CH6     | 434.175 MHz  |
+| CH7     | 434.375 MHz  |
+| CH8     | 434.575 MHz  |
+
+
+
+LoRa parameters are SF12, BW125, CR 4/8, Header off, CRC. Packet structure is shown below. It consist of 12 bytes payload and in total takes ~1.25 s to be transmitted over-the-air.
 
 
 | 10 symb  |    12 bytes     | 2 bytes |
