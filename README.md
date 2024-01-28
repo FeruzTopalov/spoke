@@ -76,26 +76,22 @@ Spoke is written in pure C and runs on STM32 microcontroller. It has GPS module 
 
 GPS module provides NMEA-0183 stream at 9600 baud. Microcontroller process the stream using DMA and parse it. Fields being extracted are RMC, GGA, GSA, GSV. Those give us information about time, date, latitude, longitude, speed, course, altitude, satellites in view and in use, navigation mode and validness of data.
 
-GPS module also provides time synchronization signal - PPS. It is used as a time reference for the transmitting and receiving radio packets inside a current group of devices. Each group operates at the specific frequency channel, the way like regular radios. Each device in a group has unique predefined number from 1 to 5, so there are 5 members in a group maximum. Spoke uses TDMA technique to give channel access for each group member, so the device number corresponds to the time-slot occupied by device. There is a 50 ms timer which starts counting from the rising edge of the PPS pulse. First 100 ms time-slot is used to parse and prepare positional data of the device. Next 5 time-slots are used to exchange with the positional data between devices via radio. A device is in TX state when time-slot number is equal to the device number, and in RX state otherwise. Remaining time before next PPS is reserved for relative positions calculation and displaying the results.
+GPS module also provides time synchronization signal - PPS. It is used as a time reference for the transmitting and receiving radio packets inside a current group of devices. Each group operates at the specific frequency channel, the way like regular radios. Each device in a group has unique predefined number from 1 to 5, so there are 5 members in a group maximum. Spoke uses TDMA technique to give channel access for each group member, so the device number corresponds to the time-slot occupied by device. There is a 900 ms timer which starts counting from the rising edge of the PPS pulse. Within this time NMEA is collected and parsed, the positional data of the device is prepared. Then, depending on the device number and current second of the time either RX or TX takes place. Valid active seconds for RX/TX are 0, 2, 4, 6, 8 for devices 1 to 5 respectively. Repeat occurs every 10, 30 or 60 seconds depending on settings.
 
 
 
-
-|  NMEA  | Time slot 1 | Time slot 2 | Time slot 3 | Time slot 4 | Time slot 5 | Processing |
-|--------|-------------|-------------|-------------|-------------|-------------|------------|
-| 100 ms | 150 ms      | 150 ms      | 150 ms      | 150 ms      | 150 ms      | 150 ms     |
-
+<p align="center">
+  <img src="Pictures/lora_tdma.png">
+</p>
 
 
 
+Spoke uses LoRa transceiver and operates in LPD 433 MHz band (please make sure you are allowed to use those frequencies in your region, change otherwise). LoRa parameters are SF12, BW125, CR 4/8, Header off, CRC. Packet structure is shown below. It consist of 12 bytes payload and in total takes ~1.25 s to be transmitted over-the-air.
 
 
-Spoke uses GFSK transceiver and operates in LPD 433 MHz band (please make sure you are allowed to use those frequencies in your region, change otherwise). Data rate is 1200 bps, deviation is 1200 Hz (mod index = 2), channel spacing is 25 kHz. Packet structure is shown below. It consist of 19 bytes total and takes ~126 ms to be transmitted over-the-air.
-
-
-| 3 bytes  |  2 bytes  |    12 bytes     | 2 bytes |
-|----------|-----------|-----------------|---------|
-| Preamble | Sync Word | Payload (below) | CRC     |
+| 10 symb  |    12 bytes     | 2 bytes |
+|----------|-----------------|---------|
+| Preamble | Payload (below) | CRC     |
 
 
 |       1 byte       | 1 byte | 4 bytes  |  4 bytes  | 2 bytes  |
