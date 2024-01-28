@@ -326,7 +326,7 @@ void calc_fence(void)		//all devices should be processed before calling this fun
 
 uint8_t check_any_alarm_fence_timeout(void)
 {
-	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < MEMORY_POINT_LAST + 1; dev++)		//devices + mem points. todo: mem points do not have alarm, fence and timeout - not needed to check them
+	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)
 	{
 		if (devices[dev].exist_flag)
 		{

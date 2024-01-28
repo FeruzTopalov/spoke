@@ -23,7 +23,7 @@ void timer4_init(void);
 
 
 
-uint8_t sound_enabled = 0; //status of the beep sound notification
+uint8_t sound_enabled = 1; //status of the beep sound notification
 uint8_t timer1_interval_type = 0; // 1 - long; 2 - short
 
 
@@ -46,10 +46,11 @@ void make_a_beep(void)
 	if (sound_enabled)
 	{
 		timer2_start();		//pwm
-		systick_set_100ms();
-		systick_start();	//gating
-		led_red_on();		//todo: LED should blink even if sound is off
 	}
+
+	systick_set_100ms();
+	systick_start();	//gating
+	led_red_on();
 }
 
 
@@ -59,10 +60,11 @@ void make_a_long_beep(void)
 	if (sound_enabled)
 	{
 		timer2_start();		//pwm
-		systick_set_1000ms();
-		systick_start();	//gating
-		led_red_on();
 	}
+
+	systick_set_1000ms();
+	systick_start();	//gating
+	led_red_on();
 }
 
 

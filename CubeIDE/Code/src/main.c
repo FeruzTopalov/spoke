@@ -43,7 +43,11 @@ uint8_t processing_button = 0;
 //TIMERS
 uint32_t uptime = 0;
 uint32_t pps_absolute_counter = 0;
-uint32_t pps_relative_counter = 0;
+
+uint8_t second_modulo = 0;
+uint8_t device_tx_second = 0;
+uint8_t max_rx_second = 0;
+
 
 uint8_t *p_update_interval_values;
 
@@ -63,43 +67,42 @@ int main(void)
     lcd_update();
     delay_cyc(400000);
 
-    lcd_print_only(0, 0, "uart..", 0);
-    uart1_init();
-    uart3_dma_init();
+    lcd_print_only(0, 0, "uart..");
+    uart_init();
 
-    lcd_print_only(0, 0, "settings..", 0);
+    lcd_print_only(0, 0, "settings..");
     settings_load();
 
-    lcd_print_only(0, 0, "timers..", 0);
+    lcd_print_only(0, 0, "timers..");
     timers_init();
 
-    lcd_print_only(0, 0, "adc..", 0);
+    lcd_print_only(0, 0, "adc..");
     adc_init();
     adc_start_bat_voltage_reading();
 
-    lcd_print_only(0, 0, "i2c..", 0);
+    lcd_print_only(0, 0, "i2c..");
     i2c_init();
 
-    lcd_print_only(0, 0, "radio..", 0);
+    lcd_print_only(0, 0, "radio..");
     rf_init();
 
-    lcd_print_only(0, 0, "core..", 0);
+    lcd_print_only(0, 0, "core..");
     init_lrns();
 
-    lcd_print_only(0, 0, "gps..", 0);
+    lcd_print_only(0, 0, "gps..");
     gps_init();
 
-    lcd_print_only(0, 0, "compass..", 0);
+    lcd_print_only(0, 0, "compass..");
     init_compass();
 
-    lcd_print_only(0, 0, "interrupts..", 0);
+    lcd_print_only(0, 0, "interrupts..");
     ext_int_init();
     enable_buttons_interrupts();
 
-    lcd_print_only(0, 0, "mem points..", 0);
+    lcd_print_only(0, 0, "mem points..");
     init_memory_points();
 
-    lcd_print_only(0, 0, "menu..", 0);
+    lcd_print_only(0, 0, "menu..");
     init_menu();
 
 
@@ -108,6 +111,10 @@ int main(void)
     p_settings = get_settings();
     p_gps_num = get_gps_num();
     p_update_interval_values = get_update_interval_values();
+
+    device_tx_second = (2 * (p_settings->device_number - 1));
+    max_rx_second = (2 * (p_settings->devices_on_air - 1));
+
 
 
     make_a_beep();	//end of device loading
@@ -248,7 +255,6 @@ void DMA1_Channel3_IRQHandler(void)
     	make_a_long_beep();
     }
 
-    pps_relative_counter = 0;
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;
 
@@ -268,7 +274,6 @@ void EXTI2_IRQHandler(void)
 	uart3_dma_restart();
 
 	pps_absolute_counter++;
-	pps_relative_counter++;	//todo: TBD needed?
 
 	main_flags.pps_synced = 1;
 
@@ -342,10 +347,11 @@ void TIM1_UP_IRQHandler(void)
     	{
     		main_flags.start_radio = 0;
 
-    		uint8_t sec_modulo = 0;
-    		sec_modulo = p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt];
+    		//calc a remainder of current second division by update interval
+    		second_modulo = p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt];
 
-    		if (sec_modulo == (2 * (p_settings->device_number - 1)))	//todo: add to settings as device_tx_second
+    		//timeslots are at X0, X2, X4, X6, X8 second; where X is 0, 1, 2, 3, 4, 5 depending on the update interval
+    		if (second_modulo == device_tx_second)
     		{
     			//tx
 				fill_air_packet(uptime);
@@ -355,13 +361,14 @@ void TIM1_UP_IRQHandler(void)
 					led_green_on();
 				}
     		}
-    		else if ((sec_modulo <= (2 * (p_settings->devices_on_air - 1)))  && ((sec_modulo % 2) == 0))	//todo: add to settings as max_rx_second
+    		else if ((second_modulo <= max_rx_second)  && ((second_modulo % 2) == 0))
     		{
     			//rx
 				if (rf_start_rx())
 				{
 					main_flags.rx_state = 1;
-					if (sec_modulo == (2 * (get_current_device() - 1)))	//blink green if going to receive from current navigate-to device
+
+					if (second_modulo == (2 * (get_current_device() - 1)))	//blink green if going to receive from current navigate-to device
 					{
 						led_green_on();
 					}

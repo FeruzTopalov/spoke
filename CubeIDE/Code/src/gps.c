@@ -88,7 +88,7 @@ void gps_init(void)
 	pp_devices = get_devices();
 
 	p_settings = get_settings();
-	this_device = p_settings->device_number;		//todo overall make this device number get as a function or as a more beautiful way
+	this_device = p_settings->device_number;
 
 	configure_gps_receiver();
 }
@@ -162,7 +162,6 @@ void send_ubx(uint8_t class, uint8_t id, uint8_t payload[], uint8_t len)
 	for (uint8_t n = 0; n < (len + 8); n++)		//8 bytes header & checksum
 	{
 		uart3_tx_byte(ubx_message[n]);			//transmit
-		uart1_tx_byte(ubx_message[n]);//debug	//todo: delete
 	}
 }
 

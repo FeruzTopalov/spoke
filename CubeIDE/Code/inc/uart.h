@@ -15,6 +15,8 @@
 
 
 
+void uart_init(void);
+
 void uart1_init(void);
 void uart1_tx_byte(uint8_t tx_data);
 

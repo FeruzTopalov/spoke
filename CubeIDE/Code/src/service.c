@@ -17,7 +17,7 @@ void (*SysMemBootJump)(void);
 
 
 char rumbs[9][3] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
-
+uint32_t dec_pow_table[] = {1, 10, 100, 1000, 10000, 100000, 1000000};	//max precision 6 digits after point
 
 
 //Simple delay in cycles
@@ -156,28 +156,20 @@ void convert_timeout(uint32_t timeout_val, char *buffer)
     char buf[3];
 
 
-    if (timeout_val >= 60)
-    {
-        min = timeout_val / 60;
-        sec = timeout_val % 60;
 
-        if (min >= 60)
-        {
-            hour = min / 60;
-            min = min % 60;
+    //convert
+    day = timeout_val / (24 * 3600);
+    timeout_val %= (24 * 3600);
 
-            if (hour >= 24)
-            {
-                day = hour / 24;
-                hour = hour % 24;
-            }
-        }
-    }
-    else
-    {
-        sec = timeout_val;
-    }
+    hour = timeout_val / 3600;
+    timeout_val %= 3600;
 
+    min = timeout_val / 60;
+    sec = timeout_val % 60;
+
+
+
+    //store print
     if (day)
     {
         //XXdXXh
@@ -343,7 +335,7 @@ float atof32(char *input)
 {
     uint8_t i = 0;
     int32_t sign = 1;
-    float power = 1.0;
+    uint8_t p = 0;
     float result = 0.0;
 
     if(input[0] == 0)
@@ -368,11 +360,11 @@ float atof32(char *input)
     while(input[i] != 0)
     {
         result = result * 10.0 + (input[i] - '0');
-        power *= 10.0;
+        p++;
         i++;
     }
 
-    return (sign * result / power);
+    return (sign * result / dec_pow_table[p]);
 }
 
 
@@ -382,7 +374,6 @@ void ftoa32(float value, uint8_t precision, char *buffer)
 {
     uint8_t i = 0;
     uint32_t mod = 0;
-    float pow = 1.0;
     char sgn = 0;
     float value_copy;
 
@@ -401,12 +392,7 @@ void ftoa32(float value, uint8_t precision, char *buffer)
 
     value_copy = value;
 
-    for(uint8_t p = 0; p < precision; p++)
-    {
-        pow = pow * 10.0;
-    }
-
-    value = value * pow;
+    value = value * dec_pow_table[precision];
     uint32_t ipart = value;
 
     buffer[i++] = 0;
@@ -538,9 +524,9 @@ void itoa32(int32_t value, char *buffer)
 
 
 
-void add_leading_zero(char *buf)	//todo: move in c file where it is used
+void time_date_add_leading_zero(char *buf)
 {
-    if (buf[1] == 0)
+    if (buf[1] == 0) //if single-char string, add leading zero
     {
     	buf[1] = buf[0];
     	buf[0] = '0';
