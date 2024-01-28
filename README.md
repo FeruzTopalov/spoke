@@ -66,7 +66,7 @@ Due to open-source and simple & cheap hardware, Spoke is highly flexible solutio
 
 ## Technology
 
-Spoke is written in pure C and runs on STM32F103C8T6 microcontroller. It has UBLOX M8 GPS module to receive positional data and synchronization signal, Semtech SX126x radio transceiver to exchange with radio packets between other devices, graphical 1.3" SH1106 OLED display to show information on it, tactile buttons to control the device, passive buzzer to notify about events and couple of LEDs.
+Spoke is written in pure C and runs on STM32F103C8T6 microcontroller. It has UBLOX M8 GPS module to receive positional data and synchronization signal, Semtech SX126x radio transceiver to exchange with radio packets between other devices, LSM303DLHC accelerometer/magnetometer for quick orientation, graphical 1.3" SH1106 OLED display to show information on it, tactile buttons to control the device, passive buzzer to notify about events and couple of LEDs.
 
 
 <p align="center">
