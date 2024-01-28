@@ -1,3 +1,15 @@
+# Release HW Rev.1.1 28-Jan-2024 
+Fix of the HW release 1
+
+
+Implemented:
+- TEMP pin of the TP4056 connected to the GND directly
+
+
+Known issues:
+- No known issues
+
+
 # Release FW Rev.3 (for HW Rev.1) 28-Jan-2024 
 Switch to LoRa modulation, new TDMA approach, minor fixes
 
