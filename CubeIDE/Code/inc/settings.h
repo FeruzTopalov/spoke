@@ -39,7 +39,7 @@
 
 //FREQ
 #define FREQ_CHANNEL_FIRST  (1)
-#define FREQ_CHANNEL_LAST   (69)
+#define FREQ_CHANNEL_LAST   (8)	//see radio.c
 
 
 

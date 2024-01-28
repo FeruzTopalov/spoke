@@ -28,8 +28,16 @@ void rf_set_cw_tx(void);
 
 
 
-#define BASE_CHANNEL_FREQUENCY 			(433050000)	// = LDP Ch1 freq minus freq step
-#define CHANNEL_FREQUENCY_STEP			(25000)
+//CH1 - 433.175 MHz
+//CH2 - 433.375 MHz
+//CH3 - 433.575 MHz
+//CH4 - 433.775 MHz
+//CH5 - 433.975 MHz
+//CH6 - 434.175 MHz
+//CH7 - 434.375 MHz
+//CH8 - 434.575 MHz
+#define BASE_CHANNEL_FREQUENCY 			(432975000)	// base freq or ch0, not used actually
+#define CHANNEL_FREQUENCY_STEP			(200000)
 #define RADIO_CRYSTAL					(32000000)
 #define POWER_2_TO_25					(33554432)
 
