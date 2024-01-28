@@ -81,7 +81,7 @@ GPS module also provides time synchronization signal - PPS. It is used as a time
 
 
 <p align="center">
-  <img src="Pictures/lora_tdma.png">
+  <img src="Pictures/lora_tdma_struct.png">
 </p>
 
 
