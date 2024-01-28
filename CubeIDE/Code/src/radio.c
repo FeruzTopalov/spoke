@@ -18,7 +18,9 @@
 
 
 void rf_wait_busy(void);
+void rf_workaround_15_1(void);
 void rf_workaround_15_2(void);
+void rf_workaround_15_4(void);
 void rf_tx_power_test(void);
 void rf_config_frequency(uint8_t channel_num);
 void rf_config_tx_power(int8_t power_dbm);
@@ -26,8 +28,16 @@ void rf_set_cw_tx(void);
 
 
 
-#define BASE_CHANNEL_FREQUENCY 			(433050000)	// = LDP Ch1 freq minus freq step
-#define CHANNEL_FREQUENCY_STEP			(25000)
+//CH1 - 433.175 MHz
+//CH2 - 433.375 MHz
+//CH3 - 433.575 MHz
+//CH4 - 433.775 MHz
+//CH5 - 433.975 MHz
+//CH6 - 434.175 MHz
+//CH7 - 434.375 MHz
+//CH8 - 434.575 MHz
+#define BASE_CHANNEL_FREQUENCY 			(432975000)	// base freq or ch0, not used actually
+#define CHANNEL_FREQUENCY_STEP			(200000)
 #define RADIO_CRYSTAL					(32000000)
 #define POWER_2_TO_25					(33554432)
 
@@ -42,7 +52,7 @@ void rf_set_cw_tx(void);
 //4 bytes lon
 //2 bytes altitude
 //TOTAL 12 bytes
-#define AIR_PACKET_LEN      (FSK_PP7_PLOAD_LEN_12_BYTE)
+#define AIR_PACKET_LEN      (LORA_PP4_PLOAD_LEN_12_BYTE)
 
 
 
@@ -78,7 +88,7 @@ void rf_init(void)
     res_rf_inactive();
     rf_wait_busy();
 
-    rf_workaround_15_2();
+
 
     uint8_t rf_init_arr[] = SX126X_CONFIG_ARRAY;    	//array with init data
     uint8_t i = 0;
@@ -98,7 +108,9 @@ void rf_init(void)
         cs_rf_inactive();
     }
 
-
+    //required workarounds
+    rf_workaround_15_2();
+    rf_workaround_15_4();
 
     //Get current settings
     p_settings = get_settings();
@@ -167,6 +179,8 @@ void rf_config_tx_power(int8_t power_dbm)
 //sx126x TX packet
 uint8_t rf_tx_packet(void)
 {
+	rf_workaround_15_1();
+
 	//fill tx buffer
 	cs_rf_active();
 	spi1_trx(SX126X_WRITE_BUFFER);		//command
@@ -189,7 +203,7 @@ uint8_t rf_tx_packet(void)
 	spi1_trx(TX_TIMEOUT_DISABLED_0);
 	cs_rf_inactive();
 
-	return 1;	//todo: check for rf mode before tx
+	return 1;
 }
 
 
@@ -203,9 +217,9 @@ uint8_t rf_start_rx(void)
 	//start rx
 	cs_rf_active();
 	spi1_trx(SX126X_SET_RX);			//command
-	spi1_trx(RX_TIMEOUT_50MS_2);		//50 ms timeout
-	spi1_trx(RX_TIMEOUT_50MS_1);
-	spi1_trx(RX_TIMEOUT_50MS_0);
+	spi1_trx(RX_TIMEOUT_1500MS_2);		//1500 ms rx timeout for full packet (no header used) + additional SetLoRaSymbNumTimeout enabled todo: test all timeout features
+	spi1_trx(RX_TIMEOUT_1500MS_1);
+	spi1_trx(RX_TIMEOUT_1500MS_0);
 	cs_rf_inactive();
 
 	return 1;
@@ -296,9 +310,36 @@ uint8_t *get_air_packet_rx(void)
 
 
 
+void rf_workaround_15_1(void)
+{
+    //workaround 15.1 Modulation Quality with 500 kHz LoRa Bandwidth
+	//run before each packet TX
+    uint8_t spec_reg = 0;
+
+    cs_rf_active();
+    spi1_trx(SX126X_READ_REGISTER);
+    spi1_trx(0x08); //Specific reg 0x0889
+    spi1_trx(0x89);
+    spi1_trx(0);	//NOP
+    spec_reg = spi1_trx(0);
+    cs_rf_inactive();
+
+    spec_reg |= 0x04;
+
+    cs_rf_active();
+    spi1_trx(SX126X_WRITE_REGISTER);
+    spi1_trx(0x08); //Specific reg 0x0889
+    spi1_trx(0x89);
+    spi1_trx(spec_reg);
+    cs_rf_inactive();
+}
+
+
+
 void rf_workaround_15_2(void)
 {
     //workaround 15.2 Better Resistance of the SX1268 Tx to Antenna Mismatch
+	//run one after power up
     uint8_t tx_clamp_reg = 0;
 
     cs_rf_active();
@@ -316,6 +357,67 @@ void rf_workaround_15_2(void)
     spi1_trx(0x08); //TxClampConfig 0x08D8
     spi1_trx(0xD8);
     spi1_trx(tx_clamp_reg);
+    cs_rf_inactive();
+}
+
+
+
+void rf_workaround_15_3(void)
+{
+    //workaround 15.3 Implicit Header Mode Timeout Behavior
+	//run after every RxDone if RX timeout was active
+    uint8_t tmp_reg = 0;
+
+    //stop broken counter
+    cs_rf_active();
+    spi1_trx(SX126X_WRITE_REGISTER);
+    spi1_trx(0x09); //0x0902
+    spi1_trx(0x02);
+    spi1_trx(tmp_reg);
+    cs_rf_inactive();
+
+    //clear potential broken even
+    cs_rf_active();
+    spi1_trx(SX126X_READ_REGISTER);
+    spi1_trx(0x09); //0x0944
+    spi1_trx(0x44);
+    spi1_trx(0);	//NOP
+    tmp_reg = spi1_trx(0);
+    cs_rf_inactive();
+
+    tmp_reg |= 0x02;
+
+    cs_rf_active();
+    spi1_trx(SX126X_WRITE_REGISTER);
+    spi1_trx(0x09); //0x0944
+    spi1_trx(0x44);
+    spi1_trx(tmp_reg);
+    cs_rf_inactive();
+}
+
+
+
+void rf_workaround_15_4(void)
+{
+    //workaround 15.4 Optimizing the Inverted IQ Operation
+	//run once upon configuration
+    uint8_t iq_reg = 0;
+
+    cs_rf_active();
+    spi1_trx(SX126X_READ_REGISTER);
+    spi1_trx(0x07); //IQ reg 0x0736
+    spi1_trx(0x36);
+    spi1_trx(0);	//NOP
+    iq_reg = spi1_trx(0);
+    cs_rf_inactive();
+
+    iq_reg |= 0x04;
+
+    cs_rf_active();
+    spi1_trx(SX126X_WRITE_REGISTER);
+    spi1_trx(0x07); //IQ reg 0x0736
+    spi1_trx(0x36);
+    spi1_trx(iq_reg);
     cs_rf_inactive();
 }
 

@@ -1,3 +1,17 @@
+# Release FW Rev.3 (for HW Rev.1) 28-Jan-2024 
+Switch to LoRa modulation, new TDMA approach, minor fixes
+
+
+Implemented:
+- LoRa modulation: SF12, BW125, CR 4/8, Header off, CRC
+- TDMA approach: timeslot each even second (0, 2, 4...), RX/TX in 900 ms after PPS interrupt based on NMEA parsed in the same slot
+- Other minor fixes
+
+
+Known issues:
+- Might be not stable, need to be tested for a long run
+
+
 # Release FW Rev.2 (for HW Rev.1) 21-Nov-2023 
 Lots of fixes, power consumption improvements, changes in apperance
 

@@ -15,7 +15,16 @@
 char uart_buffer[UART_BUF_LEN];		//raw UART data
 char *backup_buf;					//backup for raw UART data
 
-//todo: unite all uart inits in one func
+
+
+//init all uart
+void uart_init(void)
+{
+	uart1_init();
+	uart3_dma_init();
+}
+
+
 
 //Console UART init
 void uart1_init(void)
@@ -108,10 +117,7 @@ void backup_and_clear_uart_buffer(void)
 
 void clear_uart_buffer(void)
 {
-	for (uint16_t i = 0; i < UART_BUF_LEN; i++)
-	{
-		uart_buffer[i] = 0;
-	}
+	memset(uart_buffer, 0, UART_BUF_LEN);
 }
 
 

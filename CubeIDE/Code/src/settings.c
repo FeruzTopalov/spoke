@@ -20,15 +20,11 @@ void settings_interactive_save_default(void);
 
 
 
-#define UPDATE_INTERVAL_1S_VALUE		(1)
-#define UPDATE_INTERVAL_5S_VALUE		(5)
 #define UPDATE_INTERVAL_10S_VALUE		(10)
 #define UPDATE_INTERVAL_30S_VALUE		(30)
 #define UPDATE_INTERVAL_60S_VALUE		(60)
 
-#define UPDATE_INTERVAL_VALUES_ARRAY 	{ 	UPDATE_INTERVAL_1S_VALUE, 	\
-											UPDATE_INTERVAL_5S_VALUE, 	\
-											UPDATE_INTERVAL_10S_VALUE, 	\
+#define UPDATE_INTERVAL_VALUES_ARRAY 	{ 	UPDATE_INTERVAL_10S_VALUE, 	\
 											UPDATE_INTERVAL_30S_VALUE, 	\
 											UPDATE_INTERVAL_60S_VALUE	}
 
@@ -69,7 +65,7 @@ void settings_interactive_save_default(void);
 #define SETTINGS_DEVICE_NUMBER_DEFAULT  	(DEVICE_NUMBER_FIRST)
 #define SETTINGS_DEVICES_ON_AIR_DEFAULT		(DEVICE_NUMBER_LAST)
 #define SETTINGS_DEVICE_ID_DEFAULT 			(DEVICE_ID_FIRST_SYMBOL)
-#define SETTINGS_UPDATE_INTERVAL_DEFAULT    (UPDATE_INTERVAL_1S_SETTING)
+#define SETTINGS_UPDATE_INTERVAL_DEFAULT    (UPDATE_INTERVAL_10S_SETTING)
 #define SETTINGS_FREQ_CHANNEL_DEFAULT   	(FREQ_CHANNEL_FIRST)             //base freq is 433.050 and freq step is 25kHz, so CH0 - 433.050 (not valid, not used); CH1 - 433.075 (first LPD channel)
 #define SETTINGS_TX_POWER_DEFAULT       	(TX_POWER_10MILLIW_SETTING)
 #define SETTINGS_TIMEOUT_THRESHOLD_DEFAULT  (60)
@@ -160,11 +156,11 @@ void settings_interactive_save_default(void)
 {
 	//print instruction
 	lcd_clear();
-	lcd_print(0, 3, "Defaults", 0);
+	lcd_print(0, 3, "Defaults");
 
-	lcd_print(1, 0, "-Click OK", 0);
-	lcd_print(2, 0, " to reset to", 0);
-	lcd_print(3, 0, " defaults", 0);
+	lcd_print(1, 0, "-Click OK");
+	lcd_print(2, 0, " to reset to");
+	lcd_print(3, 0, " defaults");
 	lcd_update();
 
 	while (!((GPIOB->IDR) & GPIO_IDR_IDR3) || !((GPIOB->IDR) & GPIO_IDR_IDR4)){}		//wait for user to release OK or ESC after entering settings reset routine
@@ -180,8 +176,8 @@ void settings_interactive_save_default(void)
     	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for reset settings to default
     	{
     		lcd_clear();
-    		lcd_print(0, 0, "Resetting...", 0);
-    		lcd_print(1, 0, "GPS & settings", 0);
+    		lcd_print(0, 0, "Resetting...");
+    		lcd_print(1, 0, "GPS & settings");
     		lcd_update();
 
     		settings_save_default();
