@@ -2586,7 +2586,7 @@
   (gr_text "T\nR\nG" (at 112.5 85) (layer "B.SilkS") (tstamp a8bc964a-b7d9-4000-b4aa-20b98a30a7b4)
     (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
   )
-  (gr_text "Rev.1" (at 83 61.75) (layer "B.SilkS") (tstamp f30e7574-a4cf-4d0a-b1ff-d312be554614)
+  (gr_text "Rev.1.1" (at 84 61.75) (layer "B.SilkS") (tstamp f30e7574-a4cf-4d0a-b1ff-d312be554614)
     (effects (font (size 1.2 1) (thickness 0.2)) (justify mirror))
   )
   (gr_text "21700" (at 138 56.5) (layer "Dwgs.User") (tstamp 46f4cbef-6395-4201-bca7-3f2346fa64c6)
