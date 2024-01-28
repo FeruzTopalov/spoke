@@ -24,6 +24,10 @@ Join our chat to see more: <[https://t.me/lrns_eleph](https://t.me/lrns_eleph)>
 </p>
 
 
+<p align="center">
+  <img src="Pictures/ui_legend.png">
+</p>
+
 
 
 ## Problem & Solution
