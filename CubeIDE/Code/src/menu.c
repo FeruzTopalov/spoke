@@ -940,7 +940,7 @@ void draw_navigation(void)
 
     	if (pp_devices[navigate_to_device]->alarm_flag)
     	{
-    		lcd_char_pos(0, 10, SYMB8_ALARM);
+    		lcd_char_pos(0, 9, SYMB8_ALARM);
     	}
 
     	itoa32(p_gps_num->hour_tz, &tmp_buf[0]);
@@ -989,19 +989,18 @@ void draw_navigation(void)
     		}
     		else
     		{
-    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon);
+    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon); //todo timeout graphical indicator
     		}
-    	}
-
-    	if (pp_devices[navigate_to_device]->fence_flag)
-    	{
-    		lcd_char_pos(0, 9, SYMB8_FENCE);
     	}
 
     	if (pp_devices[navigate_to_device]->alarm_flag)
     	{
-    		lcd_char_pos(0, 10, SYMB8_ALARM);
+    		lcd_char_pos(0, 9, SYMB8_ALARM);
     	}
+    	else if (pp_devices[navigate_to_device]->fence_flag)
+		{
+    		lcd_char_pos(0, 9, SYMB8_FENCE);
+		}
 
 		//Draw notch
 		#define NOTCH_START		(21)
