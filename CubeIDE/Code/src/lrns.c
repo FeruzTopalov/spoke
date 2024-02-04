@@ -21,10 +21,6 @@
 
 
 
-void update_reception_icon(uint8_t rx_device);
-
-
-
 const double rad_to_deg = 57.29577951308232;        //rad to deg multiplyer
 const double deg_to_rad = 0.0174532925199433;       //deg to rad multiplyer
 const double twice_mean_earth_radius = 12742016.0;  // 2 * 6371008 meters
@@ -79,7 +75,6 @@ void init_lrns(void)
     for (uint8_t dev = 1; dev <= NAV_OBJECTS_MAX; dev++)
     {
         memset(&devices[dev], 0, sizeof(devices[dev]));
-        devices[dev].rx_icon = SYMB8_RX12;
     }
 
 	//Get external things
@@ -148,23 +143,6 @@ void parse_air_packet(uint32_t current_uptime)
 
 	devices[rx_device].altitude.as_array[0] =		p_air_packet_rx[INPACKET_ALTITUDE_POS];
 	devices[rx_device].altitude.as_array[1] = 		p_air_packet_rx[INPACKET_ALTITUDE_POS + 1];
-
-
-	update_reception_icon(rx_device);
-}
-
-
-
-void update_reception_icon(uint8_t rx_device)
-{
-	if (devices[rx_device].rx_icon == SYMB8_RX22)
-	{
-		devices[rx_device].rx_icon = SYMB8_RX12;
-	}
-	else
-	{
-		devices[rx_device].rx_icon++;
-	}
 }
 
 

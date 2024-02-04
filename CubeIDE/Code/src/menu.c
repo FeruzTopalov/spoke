@@ -763,7 +763,7 @@ void draw_devices(void)
 					}
 					else
 					{
-						lcd_char_pos(active_row, 13, pp_devices[dev]->rx_icon);
+						//lcd_char_pos(active_row, 13, pp_devices[dev]->rx_icon); //todo timeout graphical indicator
 					}
 
 			    	if (pp_devices[dev]->fence_flag)
@@ -989,7 +989,7 @@ void draw_navigation(void)
     		}
     		else
     		{
-    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon); //todo timeout graphical indicator
+    			//lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon); //todo timeout graphical indicator
     		}
     	}
 

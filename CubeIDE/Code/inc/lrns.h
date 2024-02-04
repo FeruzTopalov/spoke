@@ -77,10 +77,6 @@ struct devices_struct
     uint16_t heading_deg;       //heading to a device, degrees
     float heading_rad;			//heading to a device, radians
     int16_t delta_altitude;		//delta altitude
-
-
-    //MISC
-    uint8_t rx_icon;					//rx icon rotator
 };
 
 
