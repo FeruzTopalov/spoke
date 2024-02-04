@@ -32,11 +32,9 @@
 #define SYMB8_BAT_TAIL    	('\x81')
 #define SYMB8_BAT_MID    	('\x82')
 #define SYMB8_BAT_HEAD    	('\x83')
-#define SYMB8_RX12        	('\x84')		//todo delete, not used
-#define SYMB8_RX22        	('\x85')		//todo delete, not used
-#define SYMB8_TIMEOUT       ('\x86')
-#define SYMB8_FENCE       	('\x87')
-#define SYMB8_ALARM       	('\x88')
+#define SYMB8_TIMEOUT       ('\x84')
+#define SYMB8_FENCE       	('\x85')
+#define SYMB8_ALARM       	('\x86')
 
 
 
