@@ -67,6 +67,8 @@ uint8_t this_device;
 struct devices_struct devices[NAV_OBJECTS_MAX + 1];        //structures array for devices from 1 to DEVICES_IN_GROUP. Index 0 is invalid and always empty.
 struct devices_struct *p_devices[NAV_OBJECTS_MAX + 1];		//structure pointers array
 
+uint8_t *p_update_interval_values;
+
 
 
 void init_lrns(void)
@@ -89,6 +91,9 @@ void init_lrns(void)
     //Activate this device
 	devices[this_device].exist_flag = 1;
 	devices[this_device].device_id = p_settings->device_id;
+
+	//Get update interval
+	p_update_interval_values = get_update_interval_values();
 }
 
 
@@ -242,12 +247,40 @@ void calc_relative_position(uint8_t another_device)
 
 void calc_timeout(uint32_t current_uptime)
 {
+	uint32_t update_countdown;
+
 	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)	//calculated even for this device and used to alarm about own timeout upon lost of PPS signal
 	{
 		if (devices[dev].exist_flag == 1)
 		{
 			devices[dev].timeout = current_uptime - devices[dev].timestamp; //calc timeout for each active device
 
+			//calc next update countdown
+			if (devices[dev].timeout > p_update_interval_values[p_settings->update_interval_opt])
+			{
+				devices[dev].update_countdown = '?'; //when rx from device did not happen but timeout has not triggered yet we show questionmark
+			}
+			else
+			{
+				update_countdown = 10 * (p_update_interval_values[p_settings->update_interval_opt] - devices[dev].timeout);  //countdown in seconds mul by 10
+				update_countdown /= p_update_interval_values[p_settings->update_interval_opt]; //countdown to 0-10 range
+
+				if (update_countdown > 9)
+				{
+					update_countdown = 9;
+				}
+
+				if (update_countdown == 0)
+				{
+					devices[dev].update_countdown = ' '; //do not print zero countdown
+				}
+				else
+				{
+					devices[dev].update_countdown = update_countdown + '0'; //convert to symbol
+				}
+			}
+
+			//assign timeout flag
         	if (p_settings->timeout_threshold != TIMEOUT_ALARM_DISABLED) //if enabled
         	{
 				if (devices[dev].timeout > p_settings->timeout_threshold)
