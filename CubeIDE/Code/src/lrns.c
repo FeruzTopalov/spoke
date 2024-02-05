@@ -258,26 +258,20 @@ void calc_timeout(uint32_t current_uptime)
 			//calc next update countdown
 			if (devices[dev].timeout > p_update_interval_values[p_settings->update_interval_opt])
 			{
-				devices[dev].update_countdown = '?'; //when rx from device did not happen but timeout has not triggered yet we show questionmark
+				devices[dev].update_countdown = SYMB8_CNTDWN_QU; //when rx from device did not happen but timeout has not triggered yet we show questionmark
 			}
 			else
 			{
-				update_countdown = 10 * (p_update_interval_values[p_settings->update_interval_opt] - devices[dev].timeout);  //countdown in seconds mul by 10
-				update_countdown /= p_update_interval_values[p_settings->update_interval_opt]; //countdown to 0-10 range
+				update_countdown = 5 * (p_update_interval_values[p_settings->update_interval_opt] - devices[dev].timeout);  //countdown in seconds mul by 10
+				update_countdown /= p_update_interval_values[p_settings->update_interval_opt]; //countdown to 0-5 range
 
-				if (update_countdown > 9)
+				if (update_countdown > 4)
 				{
-					update_countdown = 9;
+					update_countdown = 4;
 				}
 
-				if (update_countdown == 0)
-				{
-					devices[dev].update_countdown = ' '; //do not print zero countdown
-				}
-				else
-				{
-					devices[dev].update_countdown = update_countdown + '0'; //convert to symbol
-				}
+				devices[dev].update_countdown = update_countdown + SYMB8_CNTDWN_EX; //convert to symbol
+
 			}
 
 			//assign timeout flag
