@@ -247,8 +247,6 @@ void calc_relative_position(uint8_t another_device)
 
 void calc_timeout(uint32_t current_uptime)
 {
-	uint32_t update_countdown;
-
 	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)	//calculated even for this device and used to alarm about own timeout upon lost of PPS signal
 	{
 		if (devices[dev].exist_flag == 1)
@@ -258,20 +256,11 @@ void calc_timeout(uint32_t current_uptime)
 			//calc next update countdown
 			if (devices[dev].timeout > p_update_interval_values[p_settings->update_interval_opt])
 			{
-				devices[dev].update_countdown = SYMB8_CNTDWN_QU; //when rx from device did not happen but timeout has not triggered yet we show questionmark
+				devices[dev].link_status = SYMB8_LINK_LOST; //when rx from device did not happen but timeout has not triggered yet we show questionmark
 			}
 			else
 			{
-				update_countdown = 5 * (p_update_interval_values[p_settings->update_interval_opt] - devices[dev].timeout);  //countdown in seconds mul by 10
-				update_countdown /= p_update_interval_values[p_settings->update_interval_opt]; //countdown to 0-5 range
-
-				if (update_countdown > 4)
-				{
-					update_countdown = 4;
-				}
-
-				devices[dev].update_countdown = update_countdown + SYMB8_CNTDWN_EX; //convert to symbol
-
+				devices[dev].link_status = SYMB8_LINK_OK; //show checkmark if the device is "online"
 			}
 
 			//assign timeout flag

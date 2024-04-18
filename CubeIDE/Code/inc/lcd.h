@@ -35,12 +35,8 @@
 #define SYMB8_TIMEOUT       ('\x84')
 #define SYMB8_FENCE       	('\x85')
 #define SYMB8_ALARM       	('\x86')
-#define SYMB8_CNTDWN_EX    	('\x87')
-#define SYMB8_CNTDWN_14    	('\x88')
-#define SYMB8_CNTDWN_24     ('\x89')
-#define SYMB8_CNTDWN_34     ('\x8A')
-#define SYMB8_CNTDWN_44     ('\x8B')
-#define SYMB8_CNTDWN_QU     ('\x8C')
+#define SYMB8_LINK_OK    	('\x87')	//check mark
+#define SYMB8_LINK_LOST    	('\x88')	//question mark
 
 
 
