@@ -164,7 +164,7 @@ int main(void)
 
             if (is_battery_critical())
             {
-            	release_power();	//todo: just turn off for now
+            	release_power();	//todo: just turn off for now; then add a banner before turn off
             }
 
             if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
@@ -201,7 +201,7 @@ int main(void)
     	if (main_flags.process_compass == 1)
 		{
     		main_flags.process_compass = 0;
-    		if (read_north())		//todo: decide on applicability of this condition
+    		if (read_north())		//todo: decide on applicability of this condition, may freeze the updating if north reading is unsuccessful
     		{
     			main_flags.update_screen = 1;
     		}
@@ -249,11 +249,6 @@ void DMA1_Channel3_IRQHandler(void)
     uart3_dma_stop();
     backup_and_clear_uart_buffer();
     uart3_dma_restart();
-
-    if (main_flags.pps_synced == 1) 	//if last pps status was "sync" then make a beep because we lost PPS
-    {
-    	make_a_long_beep();
-    }
 
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;
