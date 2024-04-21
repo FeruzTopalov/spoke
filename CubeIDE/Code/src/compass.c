@@ -32,6 +32,7 @@ struct settings_struct settings_copy;
 struct gps_num_struct *p_gps_num;
 float north; //calculated north, +-pi
 uint8_t north_ready = 0; //flag is north value ready to readout
+uint8_t last_is_horizontal = 0;
 
 
 
@@ -293,8 +294,11 @@ restart_cal:
 uint8_t read_north(void)
 {
 	float comp_x, comp_y;
+	uint8_t current_is_horizontal;
 
-	if (is_horizontal())	//if the device is oriented horizontally
+	current_is_horizontal = is_horizontal();
+
+	if (current_is_horizontal)	//if the device is oriented horizontally
 	{
 		read_magn();
 
@@ -305,6 +309,7 @@ uint8_t read_north(void)
 
 		north_ready = 1;
 
+		last_is_horizontal = current_is_horizontal;
 		return 1; //return 1 if horizontal
 	}
 	else	//otherwise use GPS course
@@ -319,7 +324,17 @@ uint8_t read_north(void)
 			north_ready = 0;
 		}
 
-		return 0; //return 0 if not horizontal
+		if (last_is_horizontal == 1)
+		{
+			last_is_horizontal = current_is_horizontal;
+			return 2; //in order to update the LCD last time and, potentially, hide the compass arrow; i.e. fix the arrow freeze after going from horizontal
+		}
+		else
+		{
+			last_is_horizontal = current_is_horizontal;
+			return 0; //return 0 if not horizontal
+		}
+
 	}
 }
 
