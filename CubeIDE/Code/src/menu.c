@@ -889,6 +889,11 @@ void draw_navigation(void)
 
 	if (is_north_ready())	//only when north value is available
 	{
+		if (is_gps_course()) //if course is from GPS data, show a bigger center dot to distinguish from magnetic course
+		{
+			lcd_draw_dot(4, 59);
+		}
+
 		float x1, y1;
 		float arrow_ang_rad;
 

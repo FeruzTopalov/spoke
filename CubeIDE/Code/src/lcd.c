@@ -575,6 +575,22 @@ void lcd_draw_dot(int8_t x0, int8_t y0)
 
 
 
+void lcd_draw_big_dot(int8_t x0, int8_t y0)
+{
+	for (int8_t px = -3; px <= 3; px++)
+	{
+		for (int8_t py = -3; py <= 3; py++)
+		{
+			if ((absv(px) + absv(py)) < 5)
+			{
+				lcd_set_pixel(x0 + px, y0 + py);
+			}
+		}
+	}
+}
+
+
+
 uint8_t *get_lcd_buffer(void)
 {
 	return &screen_buf[0];

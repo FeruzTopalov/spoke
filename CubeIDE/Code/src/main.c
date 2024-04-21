@@ -208,7 +208,7 @@ int main(void)
 		{
     		main_flags.process_compass = 0;
 
-    		if (read_north())		//todo: decide on applicability of this condition, may freeze the updating if north reading is unsuccessful
+    		if (read_north())
     		{
     			main_flags.update_screen = 1;
     		}

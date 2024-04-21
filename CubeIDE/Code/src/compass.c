@@ -31,6 +31,7 @@ struct settings_struct *p_settings;
 struct settings_struct settings_copy;
 struct gps_num_struct *p_gps_num;
 float north; //calculated north, +-pi
+uint8_t gps_course = 0; //gps course is used instead of magnet course
 uint8_t north_ready = 0; //flag is north value ready to readout
 uint8_t last_is_horizontal = 0;
 
@@ -307,6 +308,7 @@ uint8_t read_north(void)
 
 		north = atan2(-comp_x, comp_y);		//from atan2(y, x) to atan2(-x, y) to rotate result pi/2 CCW
 
+		gps_course = 0;
 		north_ready = 1;
 
 		last_is_horizontal = current_is_horizontal;
@@ -317,6 +319,7 @@ uint8_t read_north(void)
 		if (p_gps_num->speed > GPS_SPEED_THRS)	//only when moving
 		{
 			north = p_gps_num->course * deg_to_rad;
+			gps_course = 1;
 			north_ready = 1;
 		}
 		else
@@ -347,9 +350,17 @@ uint8_t is_north_ready(void)
 
 
 
+uint8_t is_gps_course(void)
+{
+	return gps_course;
+}
+
+
+
 float get_north(void)
 {
-	//north_ready = 0; //commented out because it causes compass arrow blink
 	return north;
 }
+
+
 
