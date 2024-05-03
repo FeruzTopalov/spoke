@@ -11,11 +11,17 @@
 #include "gps.h"
 #include "lrns.h"
 #include "config.h"
+#include "service.h"
+
+
+
+void console_data_conv_to_hex();
 
 
 
 char uart_buffer[UART_BUF_LEN];		//raw UART data for GPS
-char console_buffer[200];			//for console
+uint8_t console_buffer[100];		//for console, raw data
+char console_buffer_hex[200];		//for console, hex-converted data
 char *backup_buf;					//backup for raw UART data
 struct devices_struct **pp_devices;
 
@@ -63,8 +69,8 @@ void uart1_dma_init(void)
 
 void uart1_dma_start(void)
 {
-	DMA1_Channel4->CMAR = (uint32_t)(&console_buffer[1]);
-	DMA1_Channel4->CNDTR = console_buffer[0];
+	DMA1_Channel4->CMAR = (uint32_t)(&console_buffer_hex[1]);
+	DMA1_Channel4->CNDTR = console_buffer_hex[0];
 	DMA1_Channel4->CCR |= DMA_CCR4_EN;      //enable channel
 }
 
@@ -113,6 +119,25 @@ void console_prepare_data(void)
 	}
 
 	console_buffer[0] = --i;	//zero byte is the data length
+
+	console_data_conv_to_hex();
+}
+
+
+
+void console_data_conv_to_hex()
+{
+	uint8_t i;
+
+	for (i = 1; i < (console_buffer[0] + 1); i++)
+	{
+		byte2hex(console_buffer[i], &console_buffer_hex[2 * i - 1]);
+	}
+
+	console_buffer_hex[2 * i - 1] = 0x0D;	// +2 symbols of CR+LF
+	console_buffer_hex[2 * i] = 0x0A;
+
+	console_buffer_hex[0] = 2 * console_buffer[0] + 2;
 }
 
 

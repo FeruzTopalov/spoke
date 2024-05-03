@@ -462,7 +462,8 @@ void USART1_IRQHandler(void)
 {
     uint8_t rx_data;
     rx_data = USART1->DR;
-    rx_data++;
+
+    uart1_tx_byte(rx_data); //simple echo
 }
 
 
