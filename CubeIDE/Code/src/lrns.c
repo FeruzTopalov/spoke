@@ -125,7 +125,7 @@ void fill_air_packet(uint32_t current_uptime)
 
 
 
-void parse_air_packet(uint32_t current_uptime)
+uint8_t parse_air_packet(uint32_t current_uptime)
 {
 	uint8_t rx_device = (p_air_packet_rx[INPACKET_HEADER_POS] & INBYTE_HEADER_NUM_MASK) >> INBYTE_HEADER_NUM_POS; //extract device number from received packet
 
@@ -148,6 +148,8 @@ void parse_air_packet(uint32_t current_uptime)
 
 	devices[rx_device].altitude.as_array[0] =		p_air_packet_rx[INPACKET_ALTITUDE_POS];
 	devices[rx_device].altitude.as_array[1] = 		p_air_packet_rx[INPACKET_ALTITUDE_POS + 1];
+
+	return rx_device;
 }
 
 

@@ -35,6 +35,8 @@
 struct main_flags_struct main_flags = {0};
 struct gps_num_struct *p_gps_num;
 struct settings_struct *p_settings;
+struct devices_struct **pp_devices;
+
 
 
 uint8_t button_code = 0;
@@ -111,6 +113,7 @@ int main(void)
     p_settings = get_settings();
     p_gps_num = get_gps_num();
     p_update_interval_values = get_update_interval_values();
+    pp_devices = get_devices();
 
     device_tx_second = (2 * (p_settings->device_number - 1));
     max_rx_second = (2 * (p_settings->devices_on_air - 1));
@@ -312,8 +315,11 @@ void EXTI0_IRQHandler(void)
 
 		if (!(current_radio_status & IRQ_CRC_ERROR))	// if no CRC error
 		{
+			uint8_t rx_dev = 0;
+
 			rf_get_rx_packet();
-			parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
+			rx_dev = parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
+			pp_devices[rx_dev]->lora_snr = rf_get_last_snr();	//read and save SNR
 		}
 	}
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
