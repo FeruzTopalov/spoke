@@ -12,7 +12,8 @@
 
 
 
-char uart_buffer[UART_BUF_LEN];		//raw UART data
+char uart_buffer[UART_BUF_LEN];		//raw UART data for GPS
+char console_buffer[5] = {1, 2, 3, 4, 5};			//for console
 char *backup_buf;					//backup for raw UART data
 
 
@@ -20,14 +21,14 @@ char *backup_buf;					//backup for raw UART data
 //init all uart
 void uart_init(void)
 {
-	uart1_init();
+	uart1_dma_init();
 	uart3_dma_init();
 }
 
 
 
 //Console UART init
-void uart1_init(void)
+void uart1_dma_init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_USART1EN;   //ENABLE usart clock
 
@@ -36,7 +37,38 @@ void uart1_init(void)
     USART1->CR1 |= USART_CR1_TE;        	//enable tx
     USART1->CR1 |= USART_CR1_RE;        	//enable rx
     USART1->CR1 |= USART_CR1_UE;        	//uart enable
-    NVIC_EnableIRQ(USART1_IRQn);
+
+    USART1->CR3 |= USART_CR3_DMAT;          //enable DMA mode USART TX
+    RCC->AHBENR |= RCC_AHBENR_DMA1EN;       //enable dma1 clock
+
+    DMA1_Channel4->CPAR = (uint32_t)(&(USART1->DR));    	//transfer destination
+    DMA1_Channel4->CMAR = (uint32_t)(&console_buffer[0]);  	//transfer source
+    DMA1_Channel4->CNDTR = 5;                				//bytes amount to transmit
+
+    DMA1_Channel4->CCR |= DMA_CCR4_DIR;		//direction mem -> periph
+    DMA1_Channel4->CCR |= DMA_CCR4_MINC;    //enable memory increment
+    DMA1_Channel4->CCR |= DMA_CCR4_TCIE;    //enable transfer complete interrupt
+    DMA1_Channel4->CCR |= DMA_CCR4_EN;      //enable channel
+
+    NVIC_EnableIRQ(DMA1_Channel4_IRQn);     //enable DMA interrupt
+    DMA1->IFCR = DMA_IFCR_CGIF4;            //clear all interrupt flags for DMA channel 3
+
+    NVIC_EnableIRQ(USART1_IRQn);			//enable UART RX interrupt
+}
+
+
+
+void uart1_dma_start(void)
+{
+	DMA1_Channel4->CNDTR = 5;
+	DMA1_Channel4->CCR |= DMA_CCR4_EN;      //enable channel
+}
+
+
+
+void uart1_dma_stop(void)
+{
+	DMA1_Channel4->CCR &= ~DMA_CCR4_EN;     //disable channel
 }
 
 
@@ -68,7 +100,7 @@ void uart3_dma_init(void)
     USART3->CR1 |= USART_CR1_RE;            //enable rx
     USART3->CR1 |= USART_CR1_UE;            //uart enable
     
-    USART3->CR3 |= USART_CR3_DMAR;          //enable DMA mode USART
+    USART3->CR3 |= USART_CR3_DMAR;          //enable DMA mode USART RX
     RCC->AHBENR |= RCC_AHBENR_DMA1EN;       //enable dma1 clock
     
     DMA1_Channel3->CPAR = (uint32_t)(&(USART3->DR));    //transfer source

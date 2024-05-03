@@ -320,9 +320,6 @@ void EXTI0_IRQHandler(void)
 			rf_get_rx_packet();
 			rx_dev = parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
 			pp_devices[rx_dev]->lora_snr = rf_get_last_snr();	//read and save SNR
-
-				uart1_tx_byte(pp_devices[rx_dev]->lora_snr); //test
-
 		}
 	}
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
@@ -461,7 +458,22 @@ void USART1_IRQHandler(void)
 {
     uint8_t rx_data;
     rx_data = USART1->DR;
-    uart1_tx_byte(++rx_data);	//simple incremental echo test
+    rx_data++;
+
+    uart1_dma_start();
+
+}
+
+
+
+//Console UART TX DMA completed
+void DMA1_Channel4_IRQHandler(void)
+{
+	DMA1->IFCR = DMA_IFCR_CGIF4;     //clear all interrupt flags for DMA channel 4
+
+	uart1_dma_stop();
+
+	uart1_tx_byte(0xFF);	//confirmation
 }
 
 
