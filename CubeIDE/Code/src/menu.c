@@ -763,7 +763,7 @@ void draw_devices(void)
 					}
 					else
 					{
-						lcd_char_pos(active_row, 13, pp_devices[dev]->rx_icon);
+						lcd_char_pos(active_row, 13, pp_devices[dev]->link_status);
 					}
 
 			    	if (pp_devices[dev]->fence_flag)
@@ -889,6 +889,11 @@ void draw_navigation(void)
 
 	if (is_north_ready())	//only when north value is available
 	{
+		if (is_gps_course()) //if course is from GPS data, show a bigger center dot to distinguish from magnetic course
+		{
+			lcd_draw_dot(4, 59);
+		}
+
 		float x1, y1;
 		float arrow_ang_rad;
 
@@ -940,7 +945,7 @@ void draw_navigation(void)
 
     	if (pp_devices[navigate_to_device]->alarm_flag)
     	{
-    		lcd_char_pos(0, 10, SYMB8_ALARM);
+    		lcd_char_pos(0, 9, SYMB8_ALARM);
     	}
 
     	itoa32(p_gps_num->hour_tz, &tmp_buf[0]);
@@ -989,19 +994,18 @@ void draw_navigation(void)
     		}
     		else
     		{
-    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->rx_icon);
+    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->link_status);
     		}
-    	}
-
-    	if (pp_devices[navigate_to_device]->fence_flag)
-    	{
-    		lcd_char_pos(0, 9, SYMB8_FENCE);
     	}
 
     	if (pp_devices[navigate_to_device]->alarm_flag)
     	{
-    		lcd_char_pos(0, 10, SYMB8_ALARM);
+    		lcd_char_pos(0, 9, SYMB8_ALARM);
     	}
+    	else if (pp_devices[navigate_to_device]->fence_flag)
+		{
+    		lcd_char_pos(0, 9, SYMB8_FENCE);
+		}
 
 		//Draw notch
 		#define NOTCH_START		(21)

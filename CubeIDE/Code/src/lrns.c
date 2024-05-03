@@ -21,10 +21,6 @@
 
 
 
-void update_reception_icon(uint8_t rx_device);
-
-
-
 const double rad_to_deg = 57.29577951308232;        //rad to deg multiplyer
 const double deg_to_rad = 0.0174532925199433;       //deg to rad multiplyer
 const double twice_mean_earth_radius = 12742016.0;  // 2 * 6371008 meters
@@ -71,6 +67,8 @@ uint8_t this_device;
 struct devices_struct devices[NAV_OBJECTS_MAX + 1];        //structures array for devices from 1 to DEVICES_IN_GROUP. Index 0 is invalid and always empty.
 struct devices_struct *p_devices[NAV_OBJECTS_MAX + 1];		//structure pointers array
 
+uint8_t *p_update_interval_values;
+
 
 
 void init_lrns(void)
@@ -79,7 +77,6 @@ void init_lrns(void)
     for (uint8_t dev = 1; dev <= NAV_OBJECTS_MAX; dev++)
     {
         memset(&devices[dev], 0, sizeof(devices[dev]));
-        devices[dev].rx_icon = SYMB8_RX12;
     }
 
 	//Get external things
@@ -94,6 +91,9 @@ void init_lrns(void)
     //Activate this device
 	devices[this_device].exist_flag = 1;
 	devices[this_device].device_id = p_settings->device_id;
+
+	//Get update interval
+	p_update_interval_values = get_update_interval_values();
 }
 
 
@@ -148,23 +148,6 @@ void parse_air_packet(uint32_t current_uptime)
 
 	devices[rx_device].altitude.as_array[0] =		p_air_packet_rx[INPACKET_ALTITUDE_POS];
 	devices[rx_device].altitude.as_array[1] = 		p_air_packet_rx[INPACKET_ALTITUDE_POS + 1];
-
-
-	update_reception_icon(rx_device);
-}
-
-
-
-void update_reception_icon(uint8_t rx_device)
-{
-	if (devices[rx_device].rx_icon == SYMB8_RX22)
-	{
-		devices[rx_device].rx_icon = SYMB8_RX12;
-	}
-	else
-	{
-		devices[rx_device].rx_icon++;
-	}
 }
 
 
@@ -270,6 +253,17 @@ void calc_timeout(uint32_t current_uptime)
 		{
 			devices[dev].timeout = current_uptime - devices[dev].timestamp; //calc timeout for each active device
 
+			//calc next update countdown
+			if (devices[dev].timeout > p_update_interval_values[p_settings->update_interval_opt])
+			{
+				devices[dev].link_status = SYMB8_LINK_LOST; //when rx from device did not happen but timeout has not triggered yet we show questionmark
+			}
+			else
+			{
+				devices[dev].link_status = SYMB8_LINK_OK; //show checkmark if the device is "online"
+			}
+
+			//assign timeout flag
         	if (p_settings->timeout_threshold != TIMEOUT_ALARM_DISABLED) //if enabled
         	{
 				if (devices[dev].timeout > p_settings->timeout_threshold)

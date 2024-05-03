@@ -91,7 +91,7 @@ uint32_t absv(int32_t value)
 {
 	if (value < 0)
 	{
-		return (-1 * value);
+		return (-value);
 	}
 	else
 	{

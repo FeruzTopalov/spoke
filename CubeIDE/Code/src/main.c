@@ -145,6 +145,12 @@ int main(void)
 					if (p_gps_num->status == GPS_DATA_VALID)
 					{
 						main_flags.start_radio = 1;
+
+						if (main_flags.started == 0)
+						{
+							main_flags.started = 1; //set once when started; used to mute all beeps after power up and before the actual operation start
+							make_a_beep(); //notify we have started
+						}
 					}
 				}
 				else
@@ -164,7 +170,7 @@ int main(void)
 
             if (is_battery_critical())
             {
-            	release_power();	//todo: just turn off for now
+            	release_power();	//todo: just turn off for now; then add a banner before turn off
             }
 
             if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
@@ -201,7 +207,8 @@ int main(void)
     	if (main_flags.process_compass == 1)
 		{
     		main_flags.process_compass = 0;
-    		if (read_north())		//todo: decide on applicability of this condition
+
+    		if (read_north())
     		{
     			main_flags.update_screen = 1;
     		}
@@ -225,7 +232,11 @@ int main(void)
     	if (main_flags.do_beep != 0)
 		{
     		main_flags.do_beep = 0;
-    		make_a_beep();
+
+    		if (main_flags.started)
+    		{
+    			make_a_beep();
+    		}
 		}
 
 
@@ -243,7 +254,6 @@ int main(void)
 //DMA UART RX overflow
 void DMA1_Channel3_IRQHandler(void)
 {
-
 	DMA1->IFCR = DMA_IFCR_CGIF3;     //clear all interrupt flags for DMA channel 3
 
     uart3_dma_stop();
@@ -252,8 +262,12 @@ void DMA1_Channel3_IRQHandler(void)
 
     if (main_flags.pps_synced == 1) 	//if last pps status was "sync" then make a beep because we lost PPS
     {
-    	make_a_long_beep();
+		if (main_flags.started)
+		{
+			make_a_long_beep();			//todo: might be annoying when the PPS is lost further after power up
+		}
     }
+
 
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;

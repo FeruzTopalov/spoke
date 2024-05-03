@@ -27,6 +27,8 @@ struct main_flags_struct
     uint8_t update_screen;
     uint8_t do_beep;
 
+    uint8_t started;
+
     uint8_t tx_state;
     uint8_t rx_state;
 

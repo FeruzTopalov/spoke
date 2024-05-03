@@ -32,11 +32,11 @@
 #define SYMB8_BAT_TAIL    	('\x81')
 #define SYMB8_BAT_MID    	('\x82')
 #define SYMB8_BAT_HEAD    	('\x83')
-#define SYMB8_RX12        	('\x84')
-#define SYMB8_RX22        	('\x85')
-#define SYMB8_TIMEOUT       ('\x86')
-#define SYMB8_FENCE       	('\x87')
-#define SYMB8_ALARM       	('\x88')
+#define SYMB8_TIMEOUT       ('\x84')
+#define SYMB8_FENCE       	('\x85')
+#define SYMB8_ALARM       	('\x86')
+#define SYMB8_LINK_OK    	('\x87')	//check mark
+#define SYMB8_LINK_LOST    	('\x88')	//question mark
 
 
 
@@ -76,6 +76,7 @@ void lcd_print_byte(uint8_t row, uint8_t col, uint8_t byte);
 void lcd_byte2buf(uint16_t pos, uint8_t byte);
 void lcd_draw_line(int8_t x1, int8_t y1, int8_t x2, int8_t y2);
 void lcd_draw_dot(int8_t x0, int8_t y0);
+void lcd_draw_big_dot(int8_t x0, int8_t y0);
 uint8_t *get_lcd_buffer(void);
 uint8_t get_lcd_busy(void);
 
