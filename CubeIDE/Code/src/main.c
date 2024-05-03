@@ -191,6 +191,10 @@ int main(void)
         {
         	main_flags.process_all = 0;
         	process_all_devices();
+
+        	console_prepare_data();	//send fresh data to console
+        	uart1_dma_start();
+
         	calc_fence();
         	calc_timeout(uptime);
         	main_flags.do_beep += check_any_alarm_fence_timeout();
@@ -459,9 +463,6 @@ void USART1_IRQHandler(void)
     uint8_t rx_data;
     rx_data = USART1->DR;
     rx_data++;
-
-    uart1_dma_start();
-
 }
 
 
@@ -470,10 +471,7 @@ void USART1_IRQHandler(void)
 void DMA1_Channel4_IRQHandler(void)
 {
 	DMA1->IFCR = DMA_IFCR_CGIF4;     //clear all interrupt flags for DMA channel 4
-
 	uart1_dma_stop();
-
-	uart1_tx_byte(0xFF);	//confirmation
 }
 
 

@@ -9,18 +9,22 @@
 #include "main.h"
 #include "uart.h"
 #include "gps.h"
+#include "lrns.h"
+#include "config.h"
 
 
 
 char uart_buffer[UART_BUF_LEN];		//raw UART data for GPS
-char console_buffer[5] = {1, 2, 3, 4, 5};			//for console
+char console_buffer[200];			//for console
 char *backup_buf;					//backup for raw UART data
+struct devices_struct **pp_devices;
 
 
 
 //init all uart
 void uart_init(void)
 {
+	pp_devices = get_devices();
 	uart1_dma_init();
 	uart3_dma_init();
 }
@@ -43,15 +47,14 @@ void uart1_dma_init(void)
 
     DMA1_Channel4->CPAR = (uint32_t)(&(USART1->DR));    	//transfer destination
     DMA1_Channel4->CMAR = (uint32_t)(&console_buffer[0]);  	//transfer source
-    DMA1_Channel4->CNDTR = 5;                				//bytes amount to transmit
+    DMA1_Channel4->CNDTR = 1;                				//bytes amount to transmit
 
     DMA1_Channel4->CCR |= DMA_CCR4_DIR;		//direction mem -> periph
     DMA1_Channel4->CCR |= DMA_CCR4_MINC;    //enable memory increment
     DMA1_Channel4->CCR |= DMA_CCR4_TCIE;    //enable transfer complete interrupt
-    DMA1_Channel4->CCR |= DMA_CCR4_EN;      //enable channel
 
     NVIC_EnableIRQ(DMA1_Channel4_IRQn);     //enable DMA interrupt
-    DMA1->IFCR = DMA_IFCR_CGIF4;            //clear all interrupt flags for DMA channel 3
+    DMA1->IFCR = DMA_IFCR_CGIF4;            //clear all interrupt flags for DMA channel 4
 
     NVIC_EnableIRQ(USART1_IRQn);			//enable UART RX interrupt
 }
@@ -60,7 +63,8 @@ void uart1_dma_init(void)
 
 void uart1_dma_start(void)
 {
-	DMA1_Channel4->CNDTR = 5;
+	DMA1_Channel4->CMAR = (uint32_t)(&console_buffer[1]);
+	DMA1_Channel4->CNDTR = console_buffer[0];
 	DMA1_Channel4->CCR |= DMA_CCR4_EN;      //enable channel
 }
 
@@ -73,12 +77,42 @@ void uart1_dma_stop(void)
 
 
 
-void uart1_tx_byte(uint8_t tx_data)		//todo: implement through dma1 channel 4 USART1_TX
+void uart1_tx_byte(uint8_t tx_data)
 {
     while(!(USART1->SR & USART_SR_TXE))     //wait for transmit register empty
     {
     }
     USART1->DR = tx_data;                      //transmit
+}
+
+
+
+//What we transmit to console
+void console_prepare_data(void)
+{
+	uint8_t i = 1;	//data starts from 1
+
+	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)
+	{
+		console_buffer[i++] = dev;
+		console_buffer[i++] = pp_devices[dev]->exist_flag;
+		console_buffer[i++] = pp_devices[dev]->device_id;
+		console_buffer[i++] = pp_devices[dev]->lora_snr;
+
+		memcpy(&console_buffer[i], &(pp_devices[dev]->timeout), 4);
+		i += 4;
+
+		memcpy(&console_buffer[i], &(pp_devices[dev]->latitude.as_float), 4);
+		i += 4;
+
+		memcpy(&console_buffer[i], &(pp_devices[dev]->longitude.as_float), 4);
+		i += 4;
+
+		memcpy(&console_buffer[i], &(pp_devices[dev]->altitude), 2);
+		i += 2;
+	}
+
+	console_buffer[0] = --i;	//zero byte is the data length
 }
 
 

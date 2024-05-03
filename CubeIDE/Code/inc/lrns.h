@@ -42,7 +42,6 @@ struct devices_struct
 	uint8_t lowbat_flag;			//did the device transmit low battery flag?
 	int8_t lora_snr;				//SNR of the last received packet
 
-
     //TIME
     uint32_t timestamp;					//time stamp in seconds when the last activity was detected
     uint32_t timeout;					//timeout in seconds since last activity (RX of coordinates)
