@@ -40,7 +40,7 @@ struct devices_struct
 	uint8_t alarm_flag;				//is alarm reported by a device?
 	uint8_t fence_flag;				//is a predefined fence distance reached?
 	uint8_t lowbat_flag;			//did the device transmit low battery flag?
-	int8_t lora_snr;				//SNR of the last received packet
+	int8_t lora_rssi;				//RSSI of the last received packet
 
     //TIME
     uint32_t timestamp;					//time stamp in seconds when the last activity was detected

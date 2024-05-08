@@ -103,7 +103,7 @@ void console_prepare_data(void)
 		console_buffer[i++] = dev;
 		console_buffer[i++] = pp_devices[dev]->exist_flag;
 		console_buffer[i++] = pp_devices[dev]->device_id;
-		console_buffer[i++] = pp_devices[dev]->lora_snr;
+		console_buffer[i++] = pp_devices[dev]->lora_rssi;
 
 		memcpy(&console_buffer[i], &(pp_devices[dev]->timeout), 4);
 		i += 4;
