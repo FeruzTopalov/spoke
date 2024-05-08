@@ -12,6 +12,7 @@
 #include "lrns.h"
 #include "config.h"
 #include "service.h"
+#include "settings.h"
 
 
 
@@ -24,6 +25,7 @@ uint8_t console_buffer[100];		//for console, raw data
 char console_buffer_hex[200];		//for console, hex-converted data
 char *backup_buf;					//backup for raw UART data
 struct devices_struct **pp_devices;
+struct settings_struct *p_settings;
 
 
 
@@ -31,6 +33,7 @@ struct devices_struct **pp_devices;
 void uart_init(void)
 {
 	pp_devices = get_devices();
+	p_settings = get_settings();
 	uart1_dma_init();
 	uart3_dma_init();
 }
@@ -107,12 +110,22 @@ void console_prepare_data(void)
 			console_buffer[i++] = pp_devices[dev]->device_id;
 
 			all_flags = 0;
-			all_flags = (	((pp_devices[dev]->memory_point_flag) << 0) 		|\
-							((pp_devices[dev]->alarm_flag) << 1) 				|\
-							((pp_devices[dev]->fence_flag) << 2) 				|\
-							((pp_devices[dev]->timeout_flag) << 3) 				|\
-							((pp_devices[dev]->lowbat_flag) << 4) 				|\
-							((pp_devices[dev]->link_status_flag) << 5) 				);
+
+			if ((p_settings->device_number) == dev)	//set flag if it is you
+			{
+				all_flags |= 0x01 << 0;
+			}
+			else
+			{
+				all_flags |= 0x00 << 0;
+			}
+
+			all_flags = (	((pp_devices[dev]->memory_point_flag) << 1) 		|\
+							((pp_devices[dev]->alarm_flag) << 2) 				|\
+							((pp_devices[dev]->fence_flag) << 3) 				|\
+							((pp_devices[dev]->timeout_flag) << 4) 				|\
+							((pp_devices[dev]->lowbat_flag) << 5) 				|\
+							((pp_devices[dev]->link_status_flag) << 6) 			);
 
 			console_buffer[i++] = all_flags;
 			console_buffer[i++] = pp_devices[dev]->lora_rssi;
