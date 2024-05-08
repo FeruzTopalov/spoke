@@ -258,11 +258,11 @@ void calc_timeout(uint32_t current_uptime)
 			//calc next update countdown
 			if (devices[dev].timeout > p_update_interval_values[p_settings->update_interval_opt])
 			{
-				devices[dev].link_status = SYMB8_LINK_LOST; //when rx from device did not happen but timeout has not triggered yet we show questionmark
+				devices[dev].link_status_flag = 0; //when rx from device did not happen but timeout has not triggered yet we show questionmark
 			}
 			else
 			{
-				devices[dev].link_status = SYMB8_LINK_OK; //show checkmark if the device is "online"
+				devices[dev].link_status_flag = 1; //show checkmark if the device is "online"
 			}
 
 			//assign timeout flag

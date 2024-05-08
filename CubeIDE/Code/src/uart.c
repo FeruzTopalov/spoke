@@ -100,22 +100,36 @@ void console_prepare_data(void)
 
 	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)
 	{
-		console_buffer[i++] = dev;
-		console_buffer[i++] = pp_devices[dev]->exist_flag;
-		console_buffer[i++] = pp_devices[dev]->device_id;
-		console_buffer[i++] = pp_devices[dev]->lora_rssi;
+		if (pp_devices[dev]->exist_flag == 1)
+		{
+			console_buffer[i++] = dev;
+			console_buffer[i++] = pp_devices[dev]->device_id;
+			console_buffer[i++] = pp_devices[dev]->link_status_flag;
 
-		memcpy(&console_buffer[i], &(pp_devices[dev]->timeout), 4);
-		i += 4;
+			/* WIP
+			memory_point_flag
+			alarm_flag
+			fence_flag
+			lowbat_flag
+			timeout_flag
+			link_status_flag
+			*/
 
-		memcpy(&console_buffer[i], &(pp_devices[dev]->latitude.as_float), 4);
-		i += 4;
+			console_buffer[i++] = pp_devices[dev]->lora_rssi;
 
-		memcpy(&console_buffer[i], &(pp_devices[dev]->longitude.as_float), 4);
-		i += 4;
+			memcpy(&console_buffer[i], &(pp_devices[dev]->timeout), 4);
+			i += 4;
 
-		memcpy(&console_buffer[i], &(pp_devices[dev]->altitude), 2);
-		i += 2;
+			memcpy(&console_buffer[i], &(pp_devices[dev]->latitude.as_float), 4);
+			i += 4;
+
+			memcpy(&console_buffer[i], &(pp_devices[dev]->longitude.as_float), 4);
+			i += 4;
+
+			memcpy(&console_buffer[i], &(pp_devices[dev]->altitude), 2);
+			i += 2;
+		}
+
 	}
 
 	console_buffer[0] = --i;	//zero byte is the data length

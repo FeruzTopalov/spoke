@@ -763,7 +763,14 @@ void draw_devices(void)
 					}
 					else
 					{
-						lcd_char_pos(active_row, 13, pp_devices[dev]->link_status);
+						if (pp_devices[dev]->link_status_flag == 1)
+						{
+							lcd_char_pos(active_row, 13, SYMB8_LINK_OK);
+						}
+						else
+						{
+							lcd_char_pos(active_row, 13, SYMB8_LINK_LOST);
+						}
 					}
 
 			    	if (pp_devices[dev]->fence_flag)
@@ -994,7 +1001,14 @@ void draw_navigation(void)
     		}
     		else
     		{
-    			lcd_char_pos(0, 8, pp_devices[navigate_to_device]->link_status);
+				if (pp_devices[navigate_to_device]->link_status_flag == 1)
+				{
+					lcd_char_pos(0, 8, SYMB8_LINK_OK);
+				}
+				else
+				{
+					lcd_char_pos(0, 8, SYMB8_LINK_LOST);
+				}
     		}
     	}
 

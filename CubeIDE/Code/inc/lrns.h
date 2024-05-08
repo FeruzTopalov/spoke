@@ -46,7 +46,7 @@ struct devices_struct
     uint32_t timestamp;					//time stamp in seconds when the last activity was detected
     uint32_t timeout;					//timeout in seconds since last activity (RX of coordinates)
     uint8_t timeout_flag;				//set when predefined timeout occurs
-    uint8_t link_status;				//update status symbol for navigation screen
+    uint8_t link_status_flag;			//update status symbol for navigation screen
 
     //DATE (only for memory points)
     uint8_t save_day;
