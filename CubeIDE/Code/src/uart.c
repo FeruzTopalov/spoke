@@ -120,7 +120,7 @@ void console_prepare_data(void)
 				all_flags |= 0x00 << 0;
 			}
 
-			all_flags = (	((pp_devices[dev]->memory_point_flag) << 1) 		|\
+			all_flags |= (	((pp_devices[dev]->memory_point_flag) << 1) 		|\
 							((pp_devices[dev]->alarm_flag) << 2) 				|\
 							((pp_devices[dev]->fence_flag) << 3) 				|\
 							((pp_devices[dev]->timeout_flag) << 4) 				|\
