@@ -69,8 +69,8 @@ void uart1_dma_init(void)
 
 void uart1_dma_start(void)
 {
-	DMA1_Channel4->CMAR = (uint32_t)(&console_buffer_hex[1]);
-	DMA1_Channel4->CNDTR = console_buffer_hex[0];
+	DMA1_Channel4->CMAR = (uint32_t)(&console_buffer_hex[1]);	//data starts from index 1
+	DMA1_Channel4->CNDTR = console_buffer_hex[0];	//data size in index 0
 	DMA1_Channel4->CCR |= DMA_CCR4_EN;      //enable channel
 }
 
@@ -96,25 +96,25 @@ void uart1_tx_byte(uint8_t tx_data)
 //What we transmit to console
 void console_prepare_data(void)
 {
-	uint8_t i = 1;	//data starts from 1
+	uint8_t i = 1;	//data starts from index 1
+	uint8_t all_flags = 0;
 
-	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)
+	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)	//todo: only devices for now; add mem points then and increase the buffer size
 	{
-		if (pp_devices[dev]->exist_flag == 1)
+		if (pp_devices[dev]->exist_flag == 1)	//only existing devices
 		{
 			console_buffer[i++] = dev;
 			console_buffer[i++] = pp_devices[dev]->device_id;
-			console_buffer[i++] = pp_devices[dev]->link_status_flag;
 
-			/* WIP
-			memory_point_flag
-			alarm_flag
-			fence_flag
-			lowbat_flag
-			timeout_flag
-			link_status_flag
-			*/
+			all_flags = 0;
+			all_flags = (	((pp_devices[dev]->memory_point_flag) << 0) 		|\
+							((pp_devices[dev]->alarm_flag) << 1) 				|\
+							((pp_devices[dev]->fence_flag) << 2) 				|\
+							((pp_devices[dev]->timeout_flag) << 3) 				|\
+							((pp_devices[dev]->lowbat_flag) << 4) 				|\
+							((pp_devices[dev]->link_status_flag) << 5) 				);
 
+			console_buffer[i++] = all_flags;
 			console_buffer[i++] = pp_devices[dev]->lora_rssi;
 
 			memcpy(&console_buffer[i], &(pp_devices[dev]->timeout), 4);
