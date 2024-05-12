@@ -192,8 +192,7 @@ int main(void)
         	main_flags.process_all = 0;
         	process_all_devices();
 
-        	console_prepare_data();	//send fresh data to console
-        	uart1_dma_start();
+        	console_report(); //send fresh devices data to console
 
         	calc_fence();
         	calc_timeout(uptime);
@@ -463,7 +462,14 @@ void USART1_IRQHandler(void)
     uint8_t rx_data;
     rx_data = USART1->DR;
 
-    uart1_tx_byte(rx_data); //simple echo
+    if (rx_data == '1')
+    {
+    	toggle_console_reports(1);
+    }
+    else if (rx_data == '0')
+    {
+    	toggle_console_reports(0);
+    }
 }
 
 

@@ -16,14 +16,16 @@
 
 
 
-void console_data_conv_to_hex();
+void console_prepare_data(void);
+void console_data_conv_to_hex(void);
 
 
 
 char uart_buffer[UART_BUF_LEN];		//raw UART data for GPS
+char *backup_buf;					//backup for raw UART data
 uint8_t console_buffer[100];		//for console, raw data
 char console_buffer_hex[200];		//for console, hex-converted data
-char *backup_buf;					//backup for raw UART data
+uint8_t console_report_enabled = 0;	//enable send logs via console
 struct devices_struct **pp_devices;
 struct settings_struct *p_settings;
 
@@ -96,6 +98,34 @@ void uart1_tx_byte(uint8_t tx_data)
 
 
 
+//switch on/off console reports
+void toggle_console_reports(uint8_t enabled)
+{
+	if (enabled == 0)
+	{
+		console_report_enabled = 0;
+	}
+	else
+	{
+		console_report_enabled = 1;
+	}
+}
+
+
+
+//Send all active devices via console to either BLE or terminal
+void console_report(void)
+{
+	if (console_report_enabled == 1)
+	{
+		console_prepare_data();			//fill buffer with data
+		console_data_conv_to_hex();		//convert to readable HEX
+		uart1_dma_start();				//send using DMA
+	}
+}
+
+
+
 //What we transmit to console
 void console_prepare_data(void)
 {
@@ -111,7 +141,7 @@ void console_prepare_data(void)
 
 			all_flags = 0;
 
-			if ((p_settings->device_number) == dev)	//set flag if it is you
+			if ((p_settings->device_number) == dev)	//set 0s flag if it is you
 			{
 				all_flags |= 0x01 << 0;
 			}
@@ -146,8 +176,6 @@ void console_prepare_data(void)
 	}
 
 	console_buffer[0] = --i;	//zero byte is the data length
-
-	console_data_conv_to_hex();
 }
 
 
