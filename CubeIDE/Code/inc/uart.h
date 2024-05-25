@@ -22,7 +22,7 @@ void uart1_dma_start(void);
 void uart1_dma_stop(void);
 void uart1_tx_byte(uint8_t tx_data);
 void toggle_console_reports(uint8_t enabled);
-void console_report(void);
+void report_to_console(void);
 
 void uart3_dma_init(void);
 void uart3_dma_stop(void);

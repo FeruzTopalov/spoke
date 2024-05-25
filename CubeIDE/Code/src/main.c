@@ -192,7 +192,7 @@ int main(void)
         	main_flags.process_all = 0;
         	process_all_devices();
 
-        	console_report(); //send fresh devices data to console
+        	report_to_console(); //send fresh devices data to console
 
         	calc_fence();
         	calc_timeout(uptime);

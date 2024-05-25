@@ -113,8 +113,8 @@ void toggle_console_reports(uint8_t enabled)
 
 
 
-//Send all active devices via console to either BLE or terminal
-void console_report(void)
+//Send all active devices via console to either BLE or just a terminal
+void report_to_console(void)
 {
 	if (console_report_enabled == 1)
 	{
