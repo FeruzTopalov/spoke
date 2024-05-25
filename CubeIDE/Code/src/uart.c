@@ -9,44 +9,190 @@
 #include "main.h"
 #include "uart.h"
 #include "gps.h"
+#include "lrns.h"
+#include "config.h"
+#include "service.h"
+#include "settings.h"
 
 
 
-char uart_buffer[UART_BUF_LEN];		//raw UART data
+void console_prepare_data(void);
+void console_data_conv_to_hex(void);
+
+
+
+char uart_buffer[UART_BUF_LEN];		//raw UART data for GPS
 char *backup_buf;					//backup for raw UART data
+uint8_t console_buffer[100];		//for console, raw data
+char console_buffer_hex[200];		//for console, hex-converted data
+uint8_t console_report_enabled = 0;	//enable send logs via console
+struct devices_struct **pp_devices;
+struct settings_struct *p_settings;
 
 
 
 //init all uart
 void uart_init(void)
 {
-	uart1_init();
+	pp_devices = get_devices();
+	p_settings = get_settings();
+	uart1_dma_init();
 	uart3_dma_init();
 }
 
 
 
 //Console UART init
-void uart1_init(void)
+void uart1_dma_init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_USART1EN;   //ENABLE usart clock
 
-    USART1->BRR = 0x0138; 					//9600 bod
+    USART1->BRR = 0x001A; 					//115200 bod
     USART1->CR1 |= USART_CR1_RXNEIE;    	//enable rx interrupt
     USART1->CR1 |= USART_CR1_TE;        	//enable tx
     USART1->CR1 |= USART_CR1_RE;        	//enable rx
     USART1->CR1 |= USART_CR1_UE;        	//uart enable
-    NVIC_EnableIRQ(USART1_IRQn);
+
+    USART1->CR3 |= USART_CR3_DMAT;          //enable DMA mode USART TX
+    RCC->AHBENR |= RCC_AHBENR_DMA1EN;       //enable dma1 clock
+
+    DMA1_Channel4->CPAR = (uint32_t)(&(USART1->DR));    	//transfer destination
+    DMA1_Channel4->CMAR = (uint32_t)(&console_buffer[0]);  	//transfer source
+    DMA1_Channel4->CNDTR = 1;                				//bytes amount to transmit
+
+    DMA1_Channel4->CCR |= DMA_CCR4_DIR;		//direction mem -> periph
+    DMA1_Channel4->CCR |= DMA_CCR4_MINC;    //enable memory increment
+    DMA1_Channel4->CCR |= DMA_CCR4_TCIE;    //enable transfer complete interrupt
+
+    NVIC_EnableIRQ(DMA1_Channel4_IRQn);     //enable DMA interrupt
+    DMA1->IFCR = DMA_IFCR_CGIF4;            //clear all interrupt flags for DMA channel 4
+
+    NVIC_EnableIRQ(USART1_IRQn);			//enable UART RX interrupt
 }
 
 
 
-void uart1_tx_byte(uint8_t tx_data)		//todo: implement through dma1 channel 4 USART1_TX
+void uart1_dma_start(void)
+{
+	DMA1_Channel4->CMAR = (uint32_t)(&console_buffer_hex[1]);	//data starts from index 1
+	DMA1_Channel4->CNDTR = console_buffer_hex[0];	//data size in index 0
+	DMA1_Channel4->CCR |= DMA_CCR4_EN;      //enable channel
+}
+
+
+
+void uart1_dma_stop(void)
+{
+	DMA1_Channel4->CCR &= ~DMA_CCR4_EN;     //disable channel
+}
+
+
+
+void uart1_tx_byte(uint8_t tx_data)
 {
     while(!(USART1->SR & USART_SR_TXE))     //wait for transmit register empty
     {
     }
     USART1->DR = tx_data;                      //transmit
+}
+
+
+
+//switch on/off console reports
+void toggle_console_reports(uint8_t enabled)
+{
+	if (enabled == 0)
+	{
+		console_report_enabled = 0;
+	}
+	else
+	{
+		console_report_enabled = 1;
+	}
+}
+
+
+
+//Send all active devices via console to either BLE or just a terminal
+void report_to_console(void)
+{
+	if (console_report_enabled == 1)
+	{
+		console_prepare_data();			//fill buffer with data
+		console_data_conv_to_hex();		//convert to readable HEX
+		uart1_dma_start();				//send using DMA
+	}
+}
+
+
+
+//What we transmit to console
+void console_prepare_data(void)
+{
+	uint8_t i = 1;	//data starts from index 1
+	uint8_t all_flags = 0;
+
+	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)	//todo: only devices for now; add mem points then and increase the buffer size
+	{
+		if (pp_devices[dev]->exist_flag == 1)	//only existing devices
+		{
+			console_buffer[i++] = dev;
+			console_buffer[i++] = pp_devices[dev]->device_id;
+
+			all_flags = 0;
+
+			if ((p_settings->device_number) == dev)	//set 0s flag if it is you
+			{
+				all_flags |= 0x01 << 0;
+			}
+			else
+			{
+				all_flags |= 0x00 << 0;
+			}
+
+			all_flags |= (	((pp_devices[dev]->memory_point_flag) << 1) 		|\
+							((pp_devices[dev]->alarm_flag) << 2) 				|\
+							((pp_devices[dev]->fence_flag) << 3) 				|\
+							((pp_devices[dev]->timeout_flag) << 4) 				|\
+							((pp_devices[dev]->lowbat_flag) << 5) 				|\
+							((pp_devices[dev]->link_status_flag) << 6) 			);
+
+			console_buffer[i++] = all_flags;
+			console_buffer[i++] = pp_devices[dev]->lora_rssi;
+
+			memcpy(&console_buffer[i], &(pp_devices[dev]->timeout), 4);
+			i += 4;
+
+			memcpy(&console_buffer[i], &(pp_devices[dev]->latitude.as_float), 4);
+			i += 4;
+
+			memcpy(&console_buffer[i], &(pp_devices[dev]->longitude.as_float), 4);
+			i += 4;
+
+			memcpy(&console_buffer[i], &(pp_devices[dev]->altitude), 2);
+			i += 2;
+		}
+
+	}
+
+	console_buffer[0] = --i;	//zero byte is the data length
+}
+
+
+
+void console_data_conv_to_hex()
+{
+	uint8_t i;
+
+	for (i = 1; i < (console_buffer[0] + 1); i++)
+	{
+		byte2hex(console_buffer[i], &console_buffer_hex[2 * i - 1]);
+	}
+
+	console_buffer_hex[2 * i - 1] = 0x0D;	// +2 symbols of CR+LF
+	console_buffer_hex[2 * i] = 0x0A;
+
+	console_buffer_hex[0] = 2 * console_buffer[0] + 2;
 }
 
 
@@ -68,7 +214,7 @@ void uart3_dma_init(void)
     USART3->CR1 |= USART_CR1_RE;            //enable rx
     USART3->CR1 |= USART_CR1_UE;            //uart enable
     
-    USART3->CR3 |= USART_CR3_DMAR;          //enable DMA mode USART
+    USART3->CR3 |= USART_CR3_DMAR;          //enable DMA mode USART RX
     RCC->AHBENR |= RCC_AHBENR_DMA1EN;       //enable dma1 clock
     
     DMA1_Channel3->CPAR = (uint32_t)(&(USART3->DR));    //transfer source

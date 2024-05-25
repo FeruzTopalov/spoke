@@ -125,7 +125,7 @@ void fill_air_packet(uint32_t current_uptime)
 
 
 
-void parse_air_packet(uint32_t current_uptime)
+uint8_t parse_air_packet(uint32_t current_uptime)
 {
 	uint8_t rx_device = (p_air_packet_rx[INPACKET_HEADER_POS] & INBYTE_HEADER_NUM_MASK) >> INBYTE_HEADER_NUM_POS; //extract device number from received packet
 
@@ -148,6 +148,8 @@ void parse_air_packet(uint32_t current_uptime)
 
 	devices[rx_device].altitude.as_array[0] =		p_air_packet_rx[INPACKET_ALTITUDE_POS];
 	devices[rx_device].altitude.as_array[1] = 		p_air_packet_rx[INPACKET_ALTITUDE_POS + 1];
+
+	return rx_device;
 }
 
 
@@ -256,11 +258,11 @@ void calc_timeout(uint32_t current_uptime)
 			//calc next update countdown
 			if (devices[dev].timeout > p_update_interval_values[p_settings->update_interval_opt])
 			{
-				devices[dev].link_status = SYMB8_LINK_LOST; //when rx from device did not happen but timeout has not triggered yet we show questionmark
+				devices[dev].link_status_flag = 0; //when rx from device did not happen but timeout has not triggered yet we show questionmark
 			}
 			else
 			{
-				devices[dev].link_status = SYMB8_LINK_OK; //show checkmark if the device is "online"
+				devices[dev].link_status_flag = 1; //show checkmark if the device is "online"
 			}
 
 			//assign timeout flag

@@ -20,6 +20,9 @@ char rumbs[9][3] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
 uint32_t dec_pow_table[] = {1, 10, 100, 1000, 10000, 100000, 1000000};	//max precision 6 digits after point
 
 
+const char hex_chars[] = "0123456789ABCDEF";
+
+
 //Simple delay in cycles
 void delay_cyc(uint32_t cycles)
 {
@@ -520,6 +523,14 @@ void itoa32(int32_t value, char *buffer)
         buffer[j] = buffer[i];
         buffer[i] = c;
     }
+}
+
+
+
+void byte2hex(uint8_t byte, char *array)
+{
+    array[0] = hex_chars[(byte >> 4) & 0x0F];
+    array[1] = hex_chars[byte & 0x0F];
 }
 
 

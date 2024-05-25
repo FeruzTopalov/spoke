@@ -35,6 +35,8 @@
 struct main_flags_struct main_flags = {0};
 struct gps_num_struct *p_gps_num;
 struct settings_struct *p_settings;
+struct devices_struct **pp_devices;
+
 
 
 uint8_t button_code = 0;
@@ -111,6 +113,7 @@ int main(void)
     p_settings = get_settings();
     p_gps_num = get_gps_num();
     p_update_interval_values = get_update_interval_values();
+    pp_devices = get_devices();
 
     device_tx_second = (2 * (p_settings->device_number - 1));
     max_rx_second = (2 * (p_settings->devices_on_air - 1));
@@ -188,6 +191,9 @@ int main(void)
         {
         	main_flags.process_all = 0;
         	process_all_devices();
+
+        	report_to_console(); //send fresh devices data to console
+
         	calc_fence();
         	calc_timeout(uptime);
         	main_flags.do_beep += check_any_alarm_fence_timeout();
@@ -312,8 +318,11 @@ void EXTI0_IRQHandler(void)
 
 		if (!(current_radio_status & IRQ_CRC_ERROR))	// if no CRC error
 		{
+			uint8_t rx_dev = 0;
+
 			rf_get_rx_packet();
-			parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
+			rx_dev = parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
+			pp_devices[rx_dev]->lora_rssi = rf_get_last_rssi();	//read and save RSSI
 		}
 	}
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
@@ -452,7 +461,24 @@ void USART1_IRQHandler(void)
 {
     uint8_t rx_data;
     rx_data = USART1->DR;
-    uart1_tx_byte(++rx_data);	//simple incremental echo test
+
+    if (rx_data == '1')
+    {
+    	toggle_console_reports(1);
+    }
+    else if (rx_data == '0')
+    {
+    	toggle_console_reports(0);
+    }
+}
+
+
+
+//Console UART TX DMA completed
+void DMA1_Channel4_IRQHandler(void)
+{
+	DMA1->IFCR = DMA_IFCR_CGIF4;     //clear all interrupt flags for DMA channel 4
+	uart1_dma_stop();
 }
 
 

@@ -17,7 +17,7 @@ extern const double deg_to_rad;       //deg to rad multiplyer
 
 void init_lrns(void);
 void fill_air_packet(uint32_t current_uptime);
-void parse_air_packet(uint32_t current_uptime);
+uint8_t parse_air_packet(uint32_t current_uptime);
 void process_all_devices(void);
 void calc_relative_position(uint8_t another_device);
 void calc_timeout(uint32_t current_uptime);
@@ -40,13 +40,13 @@ struct devices_struct
 	uint8_t alarm_flag;				//is alarm reported by a device?
 	uint8_t fence_flag;				//is a predefined fence distance reached?
 	uint8_t lowbat_flag;			//did the device transmit low battery flag?
-
+	int8_t lora_rssi;				//RSSI of the last received packet
 
     //TIME
     uint32_t timestamp;					//time stamp in seconds when the last activity was detected
     uint32_t timeout;					//timeout in seconds since last activity (RX of coordinates)
     uint8_t timeout_flag;				//set when predefined timeout occurs
-    uint8_t link_status;				//update status symbol for navigation screen
+    uint8_t link_status_flag;			//update status symbol for navigation screen
 
     //DATE (only for memory points)
     uint8_t save_day;
