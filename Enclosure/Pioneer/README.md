@@ -7,5 +7,5 @@ Fix with 4x M3*20 DIN 7985
 </p>
 
 <p align="center">
-  <img src="Pioneer_top.jpg">
+  <img src="Pioneer_top.JPG">
 </p>
