@@ -5,20 +5,20 @@
       "Application": "Pcbnew",
       "Version": "(6.0.9)"
     },
-    "CreationDate": "2024-01-28T17:54:01+01:00"
+    "CreationDate": "2024-06-02T17:02:14+02:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
       "Name": "Spoke",
       "GUID": "53706f6b-652e-46b6-9963-61645f706362",
-      "Revision": "1.1"
+      "Revision": "1.2"
     },
     "Size": {
       "X": 40.1,
       "Y": 90.1
     },
     "LayerNumber": 2,
-    "BoardThickness": 1.09,
+    "BoardThickness": 1.6,
     "Finish": "HAL SnPb"
   },
   "DesignRules": [
@@ -90,7 +90,7 @@
     },
     {
       "Type": "Dielectric",
-      "Thickness": 1.0,
+      "Thickness": 1.51,
       "Material": "FR4",
       "Name": "F.Cu/B.Cu",
       "Notes": "Type: dielectric layer 1 (from F.Cu to B.Cu)"
