@@ -1,14 +1,14 @@
 (kicad_pcb (version 20211014) (generator pcbnew)
 
   (general
-    (thickness 1.09)
+    (thickness 1.67)
   )
 
   (paper "A4")
   (title_block
     (title "LRNS SPOKE")
     (date "2023-03-26")
-    (rev "1.1")
+    (rev "1.2")
     (company "https://github.com/FeruzTopalov")
   )
 
@@ -50,7 +50,7 @@
       (layer "F.Paste" (type "Top Solder Paste"))
       (layer "F.Mask" (type "Top Solder Mask") (thickness 0.01))
       (layer "F.Cu" (type "copper") (thickness 0.035))
-      (layer "dielectric 1" (type "core") (thickness 1) (material "FR4") (epsilon_r 4.5) (loss_tangent 0.02))
+      (layer "dielectric 1" (type "core") (thickness 1.58) (material "FR4") (epsilon_r 4.5) (loss_tangent 0.02))
       (layer "B.Cu" (type "copper") (thickness 0.035))
       (layer "B.Mask" (type "Bottom Solder Mask") (thickness 0.01))
       (layer "B.Paste" (type "Bottom Solder Paste"))
