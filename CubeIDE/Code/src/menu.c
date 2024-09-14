@@ -898,7 +898,11 @@ void draw_navigation(void)
 	{
 		if (is_gps_course()) //if course is from GPS data, show a bigger center dot to distinguish from magnetic course
 		{
-			lcd_draw_dot(4, 59);
+			lcd_char_overlay_pos(3, 0, SYMB8_TRUE_NORTH); //true north, from GPS
+		}
+		else
+		{
+			lcd_char_overlay_pos(3, 0, SYMB8_MAG_NORTH); //magnetic north, from acc/mag sensor
 		}
 
 		float x1, y1;

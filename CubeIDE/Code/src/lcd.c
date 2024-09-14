@@ -278,7 +278,6 @@ void lcd_char(char chr)
 	uint16_t font_char_pos, c;
 	uint8_t px;
 
-    //font_char_pos = ((uint8_t)chr - 32) * FONT_BYTES;
     font_char_pos = ((uint8_t)chr) * FONT_BYTES;
 
     for (px = 0, c = font_char_pos; px < FONT_BYTES_X; px++, c += 2)		//upper symbol row
@@ -290,6 +289,32 @@ void lcd_char(char chr)
     for (px = 0, c = font_char_pos + 1; px < FONT_BYTES_X; px++, c += 2)	//lower symbol row
     {
         screen_buf[buf_pos++] = font_8x16[c];
+    }
+
+    buf_pos = buf_pos_copy + FONT_BYTES_X;	//point to the next LCD char
+    //no new line/carriage return
+}
+
+
+
+//Put one char in buffer in position with content overlay, defined previously via ssd1306_pos()
+void lcd_char_overlay(char chr)
+{
+	uint16_t buf_pos_copy = buf_pos;
+	uint16_t font_char_pos, c;
+	uint8_t px;
+
+    font_char_pos = ((uint8_t)chr) * FONT_BYTES;
+
+    for (px = 0, c = font_char_pos; px < FONT_BYTES_X; px++, c += 2)		//upper symbol row
+    {
+        screen_buf[buf_pos++] |= font_8x16[c];
+    }
+
+    buf_pos = buf_pos_copy + LCD_SIZE_X; //point to the lower symbol's row
+    for (px = 0, c = font_char_pos + 1; px < FONT_BYTES_X; px++, c += 2)	//lower symbol row
+    {
+        screen_buf[buf_pos++] |= font_8x16[c];
     }
 
     buf_pos = buf_pos_copy + FONT_BYTES_X;	//point to the next LCD char
@@ -328,6 +353,15 @@ void lcd_char_pos(uint8_t row, uint8_t col, char chr)
 {
     lcd_pos(row, col);
     lcd_char(chr);
+}
+
+
+
+//Put one char in defined pos, with overlay
+void lcd_char_overlay_pos(uint8_t row, uint8_t col, char chr)
+{
+    lcd_pos(row, col);
+    lcd_char_overlay(chr);
 }
 
 
