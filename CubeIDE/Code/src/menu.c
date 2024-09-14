@@ -1063,8 +1063,12 @@ void draw_navigation(void)
     }
 
     draw_bat_level();
-
 	lcd_update();
+
+    //clear beep for a device shown on the screen
+    pp_devices[navigate_to_device]->alarm_flag_for_beep = 0;
+    pp_devices[navigate_to_device]->fence_flag_for_beep = 0;
+    pp_devices[navigate_to_device]->timeout_flag_for_beep = 0;
 
 }
 

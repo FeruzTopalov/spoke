@@ -11,10 +11,6 @@
 
 
 
-#define PPS_SKIP	(2)		//how many first PPS pulses are skipped before switching to active mode
-
-
-
 uint32_t get_abs_pps_cntr(void);
 
 
