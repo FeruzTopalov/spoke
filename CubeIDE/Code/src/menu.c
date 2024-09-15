@@ -1555,7 +1555,10 @@ void navigation_and_coordinates_up(void)
 {
 	scroll_devices_up();
 
-	clear_beep_for_active_dev(navigate_to_device);
+	if (current_menu == M_NAVIGATION)
+	{
+		clear_beep_for_active_dev(navigate_to_device);
+	}
 
     //draw_current_menu();
 }
@@ -1577,7 +1580,10 @@ void navigation_and_coordinates_down(void)
     }
     while (pp_devices[navigate_to_device]->exist_flag == 0);
 
-    clear_beep_for_active_dev(navigate_to_device);
+	if (current_menu == M_NAVIGATION)
+	{
+		clear_beep_for_active_dev(navigate_to_device);
+	}
 
     //draw_current_menu();
 }
