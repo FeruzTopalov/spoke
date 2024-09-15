@@ -149,7 +149,6 @@ int main(void)
 					if (p_gps_num->status == GPS_DATA_VALID)
 					{
 						main_flags.start_radio = 1;
-						main_flags.started = 1; //set once when started; used to mute all beeps after power up and before the actual operation start
 					}
 				}
 				else
@@ -234,11 +233,7 @@ int main(void)
     	if (main_flags.do_beep != 0)
 		{
     		main_flags.do_beep = 0;
-
-    		if (main_flags.started)
-    		{
-    			make_a_beep();
-    		}
+    		make_a_beep();
 		}
 
 
@@ -283,9 +278,9 @@ void EXTI2_IRQHandler(void)
 	pps_continuous_counter++;
 	pps_absolute_counter++;
 
-	if (pps_continuous_counter > 3)		//drop all possible "glitch" pps, or 3 first pps to get it stabilized
+	if (pps_continuous_counter > MIN_CONT_PPS)		//drop all possible "glitch" pps, or several first pps to get it stabilized
 	{
-		timer1_start_800ms();           //the first thing to do is to start gps acquire timer
+		timer1_start_800ms();           //start gps acquire timer
 		main_flags.pps_synced = 1;
 	}
 
