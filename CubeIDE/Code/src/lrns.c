@@ -98,10 +98,6 @@ void init_lrns(void)
 
 
 
-
-
-
-
 void fill_air_packet(uint32_t current_uptime)
 {
 	p_air_packet_tx[INPACKET_HEADER_POS] = 			(this_device << INBYTE_HEADER_NUM_POS) | ((devices[this_device].device_id - 'A') << INBYTE_HEADER_ID_POS);	   //transmit dev id as A-Z, but with 0x41 ('A') shift resulting in 0-25 dec
@@ -364,10 +360,12 @@ void toggle_my_alarm(void)
 	if (devices[this_device].alarm_flag == 0)
 	{
 		devices[this_device].alarm_flag = 1;
+		devices[this_device].alarm_flag_for_beep = 1;
 	}
 	else
 	{
 		devices[this_device].alarm_flag = 0;
+		devices[this_device].alarm_flag_for_beep = 0;
 	}
 }
 

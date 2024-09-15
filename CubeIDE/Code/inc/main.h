@@ -11,7 +11,7 @@
 
 
 
-#define MIN_CONT_PPS	(3)
+#define MIN_CONT_PPS	(2)
 
 
 
