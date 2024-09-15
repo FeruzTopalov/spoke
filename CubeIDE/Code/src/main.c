@@ -45,6 +45,7 @@ uint8_t processing_button = 0;
 //TIMERS
 uint32_t uptime = 0;
 uint32_t pps_absolute_counter = 0;
+uint32_t pps_continuous_counter = 0;
 
 uint8_t second_modulo = 0;
 uint8_t device_tx_second = 0;
@@ -171,7 +172,7 @@ int main(void)
             	release_power();	//todo: just turn off for now; then add a banner before turn off
             }
 
-            if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
+            if (main_flags.pps_synced == 0) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
             {
             	calc_timeout(uptime);
             	main_flags.do_beep += check_any_alarm_fence_timeout();
@@ -261,6 +262,7 @@ void DMA1_Channel3_IRQHandler(void)
     backup_and_clear_uart_buffer();
     uart3_dma_restart();
 
+    pps_continuous_counter = 0;
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;
 
@@ -273,15 +275,19 @@ void EXTI2_IRQHandler(void)
 {
 
 	EXTI->PR = EXTI_PR_PR2;			//clear interrupt
-	timer1_start_800ms();           //the first thing to do is to start gps acquire timer
 
 	uart3_dma_stop();				//drop the previous data; there will be new after this PPS
 	clear_uart_buffer();
 	uart3_dma_restart();
 
+	pps_continuous_counter++;
 	pps_absolute_counter++;
 
-	main_flags.pps_synced = 1;
+	if (pps_continuous_counter > 3)		//drop all possible "glitch" pps, or 3 first pps to get it stabilized
+	{
+		timer1_start_800ms();           //the first thing to do is to start gps acquire timer
+		main_flags.pps_synced = 1;
+	}
 
 }
 
