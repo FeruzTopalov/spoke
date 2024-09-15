@@ -148,12 +148,7 @@ int main(void)
 					if (p_gps_num->status == GPS_DATA_VALID)
 					{
 						main_flags.start_radio = 1;
-
-						if (main_flags.started == 0)
-						{
-							main_flags.started = 1; //set once when started; used to mute all beeps after power up and before the actual operation start
-							make_a_beep(); //notify we have started
-						}
+						main_flags.started = 1; //set once when started; used to mute all beeps after power up and before the actual operation start
 					}
 				}
 				else
@@ -265,15 +260,6 @@ void DMA1_Channel3_IRQHandler(void)
     uart3_dma_stop();
     backup_and_clear_uart_buffer();
     uart3_dma_restart();
-
-    if (main_flags.pps_synced == 1) 	//if last pps status was "sync" then make a beep because we lost PPS
-    {
-		if (main_flags.started)
-		{
-			make_a_long_beep();			//todo: might be annoying when the PPS is lost further after power up
-		}
-    }
-
 
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;
