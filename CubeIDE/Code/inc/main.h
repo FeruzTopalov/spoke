@@ -15,7 +15,7 @@
 
 
 
-uint32_t get_abs_pps_cntr(void);
+uint32_t get_cont_pps_cntr(void);
 
 
 

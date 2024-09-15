@@ -349,6 +349,16 @@ uint8_t check_any_alarm_fence_timeout(void)
 
 
 
+void clear_beep_for_active_dev(uint8_t active_device)
+{
+    //clear beep for a device shown on the screen
+    devices[active_device].alarm_flag_for_beep = 0;
+    devices[active_device].fence_flag_for_beep = 0;
+    devices[active_device].timeout_flag_for_beep = 0;
+}
+
+
+
 void toggle_my_alarm(void)
 {
 	if (devices[this_device].alarm_flag == 0)

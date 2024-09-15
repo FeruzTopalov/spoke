@@ -523,9 +523,9 @@ void ADC1_2_IRQHandler(void)
 
 
 
-uint32_t get_abs_pps_cntr(void)
+uint32_t get_cont_pps_cntr(void)
 {
-	return pps_absolute_counter;
+	return pps_continuous_counter;
 }
 
 

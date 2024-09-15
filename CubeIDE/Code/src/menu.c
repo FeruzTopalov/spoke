@@ -1063,12 +1063,13 @@ void draw_navigation(void)
     }
 
     draw_bat_level();
-	lcd_update();
 
-    //clear beep for a device shown on the screen
-    pp_devices[navigate_to_device]->alarm_flag_for_beep = 0;
-    pp_devices[navigate_to_device]->fence_flag_for_beep = 0;
-    pp_devices[navigate_to_device]->timeout_flag_for_beep = 0;
+    //debug
+    uint32_t cntr = get_cont_pps_cntr();
+    itoa32(cntr, &tmp_buf[0]);
+    lcd_print(0, 0, &tmp_buf[0]);
+
+	lcd_update();
 
 }
 
@@ -1554,6 +1555,8 @@ void navigation_and_coordinates_up(void)
 {
 	scroll_devices_up();
 
+	clear_beep_for_active_dev(navigate_to_device);
+
     //draw_current_menu();
 }
 
@@ -1573,6 +1576,8 @@ void navigation_and_coordinates_down(void)
         }
     }
     while (pp_devices[navigate_to_device]->exist_flag == 0);
+
+    clear_beep_for_active_dev(navigate_to_device);
 
     //draw_current_menu();
 }
