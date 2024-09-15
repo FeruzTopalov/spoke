@@ -26,9 +26,9 @@ const char hex_chars[] = "0123456789ABCDEF";
 //Simple delay in cycles
 void delay_cyc(uint32_t cycles)
 {
-    while (cycles)
+    while (cycles--)
     {
-        cycles--;
+    	__NOP();
     }
 }
 
@@ -49,7 +49,11 @@ void manage_power(void)
     release_power();					//initially set switch off position
     if (!(RCC->CSR & RCC_CSR_SFTRSTF))		//if the reset is not caused by software (save & restart after settings changed)
     {
+    	led_red_on();
+    	led_green_on();
     	delay_cyc(600000); //startup delay ~2sec
+    	led_red_off();
+    	led_green_off();
     }
 	hold_power();
 }
