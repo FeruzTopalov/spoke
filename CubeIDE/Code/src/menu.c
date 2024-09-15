@@ -1155,7 +1155,7 @@ void draw_device_submenu(void)
 
 	lcd_clear();
 
-	lcd_print(0, DEVICE_SUBMENU_COL, "DEVICE #");
+	lcd_print(0, DEVICE_SUBMENU_COL, "DEV/POI #");
     itoa32(navigate_to_device, &tmp_buf[0]);
     lcd_print_next(&tmp_buf[0]);
 
@@ -1553,12 +1553,12 @@ void scroll_devices_up(void)
 
 void navigation_and_coordinates_up(void)
 {
-	scroll_devices_up();
-
 	if (current_menu == M_NAVIGATION)
 	{
 		clear_beep_for_active_dev(navigate_to_device);
 	}
+
+	scroll_devices_up();
 
     //draw_current_menu();
 }
@@ -1567,6 +1567,11 @@ void navigation_and_coordinates_up(void)
 
 void navigation_and_coordinates_down(void)
 {
+	if (current_menu == M_NAVIGATION)
+	{
+		clear_beep_for_active_dev(navigate_to_device);
+	}
+
     do
     {
         if (navigate_to_device == NAV_OBJECT_FIRST)
@@ -1579,11 +1584,6 @@ void navigation_and_coordinates_down(void)
         }
     }
     while (pp_devices[navigate_to_device]->exist_flag == 0);
-
-	if (current_menu == M_NAVIGATION)
-	{
-		clear_beep_for_active_dev(navigate_to_device);
-	}
 
     //draw_current_menu();
 }
@@ -1758,6 +1758,8 @@ void delete_device_ok(void)
 		{
 			store_memory_points();
 		}
+
+		clear_beep_for_active_dev(navigate_to_device); //clear all beeps if they were not cleared before deletion
 	}
 
 	scroll_devices_up();
