@@ -98,10 +98,6 @@ void init_lrns(void)
 
 
 
-
-
-
-
 void fill_air_packet(uint32_t current_uptime)
 {
 	p_air_packet_tx[INPACKET_HEADER_POS] = 			(this_device << INBYTE_HEADER_NUM_POS) | ((devices[this_device].device_id - 'A') << INBYTE_HEADER_ID_POS);	   //transmit dev id as A-Z, but with 0x41 ('A') shift resulting in 0-25 dec
@@ -127,13 +123,28 @@ void fill_air_packet(uint32_t current_uptime)
 
 uint8_t parse_air_packet(uint32_t current_uptime)
 {
+	uint8_t temp_alarm_flag = 0;
 	uint8_t rx_device = (p_air_packet_rx[INPACKET_HEADER_POS] & INBYTE_HEADER_NUM_MASK) >> INBYTE_HEADER_NUM_POS; //extract device number from received packet
 
 	devices[rx_device].exist_flag 				=	1;
 	devices[rx_device].device_id				=	((p_air_packet_rx[INPACKET_HEADER_POS] & INBYTE_HEADER_ID_MASK) + 'A') >> INBYTE_HEADER_ID_POS;	//restore 0x41 shift
 	devices[rx_device].timestamp				=	current_uptime;
 
-	devices[rx_device].alarm_flag				=	(p_air_packet_rx[INPACKET_FLAGS_POS] & INBYTE_FLAGS_ALARM_MASK) >> INBYTE_FLAGS_ALARM_POS;
+	temp_alarm_flag 							=	(p_air_packet_rx[INPACKET_FLAGS_POS] & INBYTE_FLAGS_ALARM_MASK) >> INBYTE_FLAGS_ALARM_POS;
+
+	if (temp_alarm_flag == 1)
+	{
+		if (devices[rx_device].alarm_flag == 0)
+		{
+			devices[rx_device].alarm_flag_for_beep = 1;
+		}
+	}
+	else
+	{
+		devices[rx_device].alarm_flag_for_beep = 0;
+	}
+
+	devices[rx_device].alarm_flag 				=	temp_alarm_flag;
 	devices[rx_device].lowbat_flag				=	(p_air_packet_rx[INPACKET_FLAGS_POS] & INBYTE_FLAGS_LOWBAT_MASK) >> INBYTE_FLAGS_LOWBAT_POS;
 
 	devices[rx_device].latitude.as_array[0]	=		p_air_packet_rx[INPACKET_LATITUDE_POS];
@@ -270,25 +281,16 @@ void calc_timeout(uint32_t current_uptime)
         	{
 				if (devices[dev].timeout > p_settings->timeout_threshold)
 				{
-					if (dev == this_device)
-					{
-						if (get_abs_pps_cntr() <= PPS_SKIP)	//if this is a timeout right after power up, ignore timeout alarm, do not set the flag
-						{									//feature, not a bug: once first PPS appeared, a short beep occurs (do "<= PPS_SKIP" to disable this, #TBD)
-							devices[dev].timeout_flag = 0;
-						}
-						else
-						{
-							devices[dev].timeout_flag = 1;
-						}
-					}
-					else
+					if (devices[dev].timeout_flag == 0)
 					{
 						devices[dev].timeout_flag = 1; //set flag for alarm
+						devices[dev].timeout_flag_for_beep = 1;
 					}
 				}
 				else
 				{
 					devices[dev].timeout_flag = 0;
+					devices[dev].timeout_flag_for_beep = 0;
 				}
         	}
         }
@@ -307,11 +309,16 @@ void calc_fence(void)		//all devices should be processed before calling this fun
 			{
 				if (devices[dev].distance > p_settings->fence_threshold)
 				{
-					devices[dev].fence_flag = 1;
+					if (devices[dev].fence_flag == 0)
+					{
+						devices[dev].fence_flag = 1;
+						devices[dev].fence_flag_for_beep = 1;
+					}
 				}
 				else
 				{
 					devices[dev].fence_flag = 0;
+					devices[dev].fence_flag_for_beep = 0;
 				}
 			}
 		}
@@ -326,7 +333,7 @@ uint8_t check_any_alarm_fence_timeout(void)
 	{
 		if (devices[dev].exist_flag)
 		{
-			if ((devices[dev].alarm_flag) || (devices[dev].fence_flag) || (devices[dev].timeout_flag))
+			if ((devices[dev].alarm_flag_for_beep) || (devices[dev].fence_flag_for_beep) || (devices[dev].timeout_flag_for_beep))
 			{
 				return 1;
 			}
@@ -338,15 +345,27 @@ uint8_t check_any_alarm_fence_timeout(void)
 
 
 
+void clear_beep_for_active_dev(uint8_t active_device)
+{
+    //clear beep for a device shown on the screen
+    devices[active_device].alarm_flag_for_beep = 0;
+    devices[active_device].fence_flag_for_beep = 0;
+    devices[active_device].timeout_flag_for_beep = 0;
+}
+
+
+
 void toggle_my_alarm(void)
 {
 	if (devices[this_device].alarm_flag == 0)
 	{
 		devices[this_device].alarm_flag = 1;
+		devices[this_device].alarm_flag_for_beep = 1;
 	}
 	else
 	{
 		devices[this_device].alarm_flag = 0;
+		devices[this_device].alarm_flag_for_beep = 0;
 	}
 }
 

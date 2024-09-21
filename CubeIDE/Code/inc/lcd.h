@@ -37,6 +37,8 @@
 #define SYMB8_ALARM       	('\x86')
 #define SYMB8_LINK_OK    	('\x87')	//check mark
 #define SYMB8_LINK_LOST    	('\x88')	//question mark
+#define SYMB8_MAG_NORTH    	('\x89')
+#define SYMB8_TRUE_NORTH  	('\x8A')
 
 
 
@@ -59,8 +61,10 @@ void lcd_set_pixel(uint8_t x, uint8_t y);
 void lcd_set_pixel_plot(uint8_t x, uint8_t y);
 void lcd_pos(uint8_t row, uint8_t col);
 void lcd_char(char chr);
+void lcd_char_overlay(char chr);
 void lcd_char16(char chr);
 void lcd_char_pos(uint8_t row, uint8_t col, char chr);
+void lcd_char_overlay_pos(uint8_t row, uint8_t col, char chr);
 void lcd_char16_pos(uint8_t row, uint8_t col, char chr);
 void lcd_print(uint8_t row, uint8_t col, char *p_str);
 void lcd_print_only(uint8_t row, uint8_t col, char *p_str);

@@ -898,7 +898,11 @@ void draw_navigation(void)
 	{
 		if (is_gps_course()) //if course is from GPS data, show a bigger center dot to distinguish from magnetic course
 		{
-			lcd_draw_dot(4, 59);
+			lcd_char_overlay_pos(3, 0, SYMB8_TRUE_NORTH); //true north, from GPS
+		}
+		else
+		{
+			lcd_char_overlay_pos(3, 0, SYMB8_MAG_NORTH); //magnetic north, from acc/mag sensor
 		}
 
 		float x1, y1;
@@ -1060,6 +1064,11 @@ void draw_navigation(void)
 
     draw_bat_level();
 
+    //debug
+    uint32_t cntr = get_cont_pps_cntr();
+    itoa32(cntr, &tmp_buf[0]);
+    lcd_print(0, 0, &tmp_buf[0]);
+
 	lcd_update();
 
 }
@@ -1146,7 +1155,7 @@ void draw_device_submenu(void)
 
 	lcd_clear();
 
-	lcd_print(0, DEVICE_SUBMENU_COL, "DEVICE #");
+	lcd_print(0, DEVICE_SUBMENU_COL, "DEV/POI #");
     itoa32(navigate_to_device, &tmp_buf[0]);
     lcd_print_next(&tmp_buf[0]);
 
@@ -1544,6 +1553,11 @@ void scroll_devices_up(void)
 
 void navigation_and_coordinates_up(void)
 {
+	if (current_menu == M_NAVIGATION)
+	{
+		clear_beep_for_active_dev(navigate_to_device);
+	}
+
 	scroll_devices_up();
 
     //draw_current_menu();
@@ -1553,6 +1567,11 @@ void navigation_and_coordinates_up(void)
 
 void navigation_and_coordinates_down(void)
 {
+	if (current_menu == M_NAVIGATION)
+	{
+		clear_beep_for_active_dev(navigate_to_device);
+	}
+
     do
     {
         if (navigate_to_device == NAV_OBJECT_FIRST)
@@ -1739,6 +1758,8 @@ void delete_device_ok(void)
 		{
 			store_memory_points();
 		}
+
+		clear_beep_for_active_dev(navigate_to_device); //clear all beeps if they were not cleared before deletion
 	}
 
 	scroll_devices_up();

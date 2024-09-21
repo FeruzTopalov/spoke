@@ -45,6 +45,7 @@ uint8_t processing_button = 0;
 //TIMERS
 uint32_t uptime = 0;
 uint32_t pps_absolute_counter = 0;
+uint32_t pps_continuous_counter = 0;
 
 uint8_t second_modulo = 0;
 uint8_t device_tx_second = 0;
@@ -148,12 +149,6 @@ int main(void)
 					if (p_gps_num->status == GPS_DATA_VALID)
 					{
 						main_flags.start_radio = 1;
-
-						if (main_flags.started == 0)
-						{
-							main_flags.started = 1; //set once when started; used to mute all beeps after power up and before the actual operation start
-							make_a_beep(); //notify we have started
-						}
 					}
 				}
 				else
@@ -176,7 +171,7 @@ int main(void)
             	release_power();	//todo: just turn off for now; then add a banner before turn off
             }
 
-            if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
+            if (main_flags.pps_synced == 0) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
             {
             	calc_timeout(uptime);
             	main_flags.do_beep += check_any_alarm_fence_timeout();
@@ -238,11 +233,7 @@ int main(void)
     	if (main_flags.do_beep != 0)
 		{
     		main_flags.do_beep = 0;
-
-    		if (main_flags.started)
-    		{
-    			make_a_beep();
-    		}
+    		make_a_beep();
 		}
 
 
@@ -266,15 +257,7 @@ void DMA1_Channel3_IRQHandler(void)
     backup_and_clear_uart_buffer();
     uart3_dma_restart();
 
-    if (main_flags.pps_synced == 1) 	//if last pps status was "sync" then make a beep because we lost PPS
-    {
-		if (main_flags.started)
-		{
-			make_a_long_beep();			//todo: might be annoying when the PPS is lost further after power up
-		}
-    }
-
-
+    pps_continuous_counter = 0;
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;
 
@@ -287,15 +270,19 @@ void EXTI2_IRQHandler(void)
 {
 
 	EXTI->PR = EXTI_PR_PR2;			//clear interrupt
-	timer1_start_800ms();           //the first thing to do is to start gps acquire timer
 
 	uart3_dma_stop();				//drop the previous data; there will be new after this PPS
 	clear_uart_buffer();
 	uart3_dma_restart();
 
+	pps_continuous_counter++;
 	pps_absolute_counter++;
 
-	main_flags.pps_synced = 1;
+	if (pps_continuous_counter > MIN_CONT_PPS)		//drop all possible "glitch" pps, or several first pps to get it stabilized
+	{
+		timer1_start_800ms();           //start gps acquire timer
+		main_flags.pps_synced = 1;
+	}
 
 }
 
@@ -536,9 +523,9 @@ void ADC1_2_IRQHandler(void)
 
 
 
-uint32_t get_abs_pps_cntr(void)
+uint32_t get_cont_pps_cntr(void)
 {
-	return pps_absolute_counter;
+	return pps_continuous_counter;
 }
 
 
