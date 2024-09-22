@@ -93,8 +93,16 @@ void call_bootloader(void)
     GPIOB->CRL |= GPIO_CRL_CNF3_1;
     GPIOB->ODR |= GPIO_ODR_ODR3;        //pull-up on
 
-    if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4))
+    //PB8 - Red LED
+    GPIOB->CRH &= ~GPIO_CRH_MODE8_0;    //output 2 MHz
+    GPIOB->CRH |= GPIO_CRH_MODE8_1;
+    GPIOB->CRH &= ~GPIO_CRH_CNF8;       //output push-pull
+
+    if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4)) //OK pressed, btn ESC released
     {
+    	delay_cyc(2000000); //startup delay ~2sec
+    	led_red_on();
+
 		__set_MSP(*(uint32_t *)BootAddrF10xx);
 		SysMemBootJump();
     }
