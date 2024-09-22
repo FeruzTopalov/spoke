@@ -98,6 +98,16 @@ void call_bootloader(void)
     GPIOB->CRH |= GPIO_CRH_MODE8_1;
     GPIOB->CRH &= ~GPIO_CRH_CNF8;       //output push-pull
 
+    //Port A
+    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
+
+    //PA15 - Power Switch Hold
+    GPIOA->CRH &= ~GPIO_CRH_MODE15_0;   //output 2 MHz
+    GPIOA->CRH |= GPIO_CRH_MODE15_1;
+    GPIOA->CRH &= ~GPIO_CRH_CNF15;      //output push-pull
+
+    release_power();	//fixes "power on lock" side effect
+
     if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4)) //OK pressed, btn ESC released
     {
     	delay_cyc(2000000); //startup delay ~2sec
