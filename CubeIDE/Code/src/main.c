@@ -397,7 +397,7 @@ void TIM1_UP_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
 	TIM3->SR &= ~TIM_SR_UIF;        //clear gating timer int
-
+led_green_on();
 	if (main_flags.buttons_scanned == 0)	//if not scanned yet
 	{
 		button_code = scan_button(processing_button);
@@ -406,6 +406,7 @@ void TIM3_IRQHandler(void)
 			main_flags.buttons_scanned = 1;
 		}
 	}
+led_green_off();
 }
 
 

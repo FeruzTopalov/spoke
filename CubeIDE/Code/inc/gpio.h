@@ -15,6 +15,7 @@ void gpio_init(void);
 void ext_int_init(void);
 void enable_buttons_interrupts(void);
 void disable_buttons_interrupts(void);
+void clear_buttons_interrupts(void);
 
 void x4_high(void);
 void x4_low(void);

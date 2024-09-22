@@ -69,6 +69,7 @@ void draw_set_timeout(void);
 void draw_set_fence(void);
 void draw_set_timezone(void);
 void draw_confirm_settings_save(void);
+void draw_calibrate_compass(void);
 
 
 
@@ -153,7 +154,8 @@ enum
 	M_SET_TIMEOUT,
 	M_SET_FENCE,
 	M_SET_TIMEZONE,
-	M_CONFIRM_SETTINGS_SAVE
+	M_CONFIRM_SETTINGS_SAVE,
+	M_CALIBRATE_COMPASS
 };
 
 
@@ -363,6 +365,7 @@ const struct
     {M_EDIT_DEVICE,             M_SETTINGS},
 	{M_EDIT_RADIO,	            M_SETTINGS},
 	{M_EDIT_OTHER,              M_SETTINGS},
+	{M_MAIN,					M_CALIBRATE_COMPASS},
     {0, 0}      //end marker
 };
 
@@ -422,6 +425,7 @@ const struct
 	{M_SET_FENCE,				draw_set_fence},
 	{M_SET_TIMEZONE,			draw_set_timezone},
 	{M_CONFIRM_SETTINGS_SAVE,	draw_confirm_settings_save},
+	{M_CALIBRATE_COMPASS,		draw_calibrate_compass},
     {0, 0}      //end marker
 };
 
@@ -1515,6 +1519,33 @@ void draw_confirm_settings_save(void)
         current_menu = M_MAIN;
         draw_current_menu();
     }
+}
+
+
+
+void draw_calibrate_compass(void)
+{
+	static uint8_t compass_calibr_called = 0;			//lock from entering compass calibration multiple times
+
+	if (compass_calibr_called == 1)		//exit if already in this function
+	{
+		return;
+	}
+	else
+	{
+		compass_calibr_called = 1;	//lock on
+
+		disable_buttons_interrupts();	//we do not use regular button processing
+		timer3_stop();
+		calibrate_compass();
+		clear_buttons_interrupts();
+		enable_buttons_interrupts();
+
+		current_menu = M_MAIN;		//exit
+		draw_current_menu();
+
+		compass_calibr_called = 0;	//lock off
+	}
 }
 
 

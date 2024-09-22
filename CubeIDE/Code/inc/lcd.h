@@ -45,6 +45,8 @@
 #define LCD_SIZE_BYTES    	(1024)
 #define LCD_SIZE_X        	(128)
 #define LCD_SIZE_Y        	(64)
+#define LCD_CENTR_X 		(64)
+#define LCD_CENTR_Y 		(32)
 
 
 
