@@ -46,16 +46,24 @@ void print_debug(char *string)
 
 void manage_power(void)
 {
-    release_power();					//initially set switch off position
-    if (!(RCC->CSR & RCC_CSR_SFTRSTF))		//if the reset is not caused by software (save & restart after settings changed)
+    if (RCC->CSR & RCC_CSR_SFTRSTF)		//if the reset is caused by software (save & restart after settings changed)
     {
+    	hold_power();
+    }
+    else
+    {
+    	release_power();					//initially set switch off position; hold off power when powering on
+
     	led_red_on();
     	led_green_on();
+
     	delay_cyc(600000); //startup delay ~2sec
+
     	led_red_off();
     	led_green_off();
+
+    	hold_power();
     }
-	hold_power();
 }
 
 
