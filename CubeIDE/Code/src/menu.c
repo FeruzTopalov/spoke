@@ -1548,8 +1548,18 @@ void draw_calibrate_compass(void)
 
 void draw_calibrating_compass(void)
 {
+	//call calibration
+	calibrate_compass_new();
+
 	lcd_clear();
-	lcd_print(0, 1, "CALIBRATING");
+
+	//plot a dot in lcd center
+	lcd_set_pixel(LCD_CENTR_X, LCD_CENTR_Y);
+
+	//print counter
+	itoa32(get_cal_buf_len(), &tmp_buf[0]);
+	lcd_print(0, 0, &tmp_buf[0]);
+
 	lcd_update();
 }
 
@@ -2332,6 +2342,7 @@ void confirm_settings_save_esc(void)
 
 void calibrate_compass_ok(void)
 {
+	init_compass_calibration();
 	timer4_start();	//stop compass activity
 	current_menu = M_CALIBRATING_COMPASS;
 }

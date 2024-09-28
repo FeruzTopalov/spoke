@@ -22,9 +22,9 @@
 
 
 
-#define GPS_SPEED_THRS		(2)	//threshold value for GPS speed in km/h to show course
-#define CCAL_BUF_LEN 		(180)
-#define CCAL_STOP_TOL 		(30)	//tolerance on auto-stop condition
+#define GPS_SPEED_THRS				(2)	//threshold value for GPS speed in km/h to show true course
+#define COMP_CAL_BUF_MAX_LEN 		(180)
+#define COMP_CAL_STOP_TOL 			(30)	//tolerance on auto-stop condition
 
 
 
@@ -37,6 +37,12 @@ float north; //calculated north, +-pi
 uint8_t gps_course = 0; //gps course is used instead of magnet course
 uint8_t north_ready = 0; //flag is north value ready to readout
 uint8_t last_is_horizontal = 0;
+
+
+
+int16_t cal_buf_x[COMP_CAL_BUF_MAX_LEN];
+int16_t cal_buf_y[COMP_CAL_BUF_MAX_LEN];
+uint16_t cal_buf_len;
 
 
 
@@ -53,11 +59,37 @@ void init_compass(void)
 
 
 
+void init_compass_calibration(void)
+{
+	memset(cal_buf_x, 0, 2 * COMP_CAL_BUF_MAX_LEN);
+	memset(cal_buf_y, 0, 2 * COMP_CAL_BUF_MAX_LEN);
+	cal_buf_len = 0;
+}
+
+
+
+void calibrate_compass_new(void)
+{
+	if ((gps_course == 0) && (north_ready == 1))	//only if magn was read in read_compass()
+	{
+		cal_buf_x[cal_buf_len] = p_magnetic_field->mag_x.as_integer;
+		cal_buf_y[cal_buf_len] = p_magnetic_field->mag_y.as_integer;
+		cal_buf_len++;
+
+		if (cal_buf_len == COMP_CAL_BUF_MAX_LEN)
+		{
+			init_compass_calibration();
+		}
+	}
+}
+
+
+
 void calibrate_compass(void)
 {
 	uint16_t len_tot;
-	int16_t buf_x[CCAL_BUF_LEN];
-	int16_t buf_y[CCAL_BUF_LEN];
+	int16_t buf_x[COMP_CAL_BUF_MAX_LEN];
+	int16_t buf_y[COMP_CAL_BUF_MAX_LEN];
 
 	int16_t x_start;
 	int16_t y_start;
@@ -86,8 +118,8 @@ restart_cal:
 	neg_max = 0;
 	abs_max = 0;
 	plot_scale = 0;
-	memset(buf_x, 0, 2 * CCAL_BUF_LEN);
-	memset(buf_y, 0, 2 * CCAL_BUF_LEN);
+	memset(buf_x, 0, 2 * COMP_CAL_BUF_MAX_LEN);
+	memset(buf_y, 0, 2 * COMP_CAL_BUF_MAX_LEN);
 
 	//print instruction
 	lcd_clear();
@@ -138,7 +170,7 @@ restart_cal:
 	y_start = y_max = y_min = p_magnetic_field->mag_y.as_integer;
 
 	//acquire and plot magnetometer values during turnaround
-	for (uint16_t pt = 0; pt < CCAL_BUF_LEN; pt++)
+	for (uint16_t pt = 0; pt < COMP_CAL_BUF_MAX_LEN; pt++)
 	{
 		lcd_clear();
 		lcd_pixel(LCD_CENTR_X, LCD_CENTR_Y, 1);	//plot a dot in lcd center
@@ -167,7 +199,7 @@ restart_cal:
 		plot_scale = (float)32/abs_max;
 
 		//draw
-		for (uint16_t i = 0; i < CCAL_BUF_LEN; i++)
+		for (uint16_t i = 0; i < COMP_CAL_BUF_MAX_LEN; i++)
 		{
 			uint8_t x_dot, y_dot;
 			x_dot = (uint8_t)((float)buf_x[i] * plot_scale + LCD_CENTR_X);
@@ -180,13 +212,13 @@ restart_cal:
 		delay_cyc(5000);
 
 		//auto-stop if we reached initial values (i.e. completed turnaround)
-		if (pt > (CCAL_BUF_LEN / 2)) //only if we already acquired more than a half of buffer
+		if (pt > (COMP_CAL_BUF_MAX_LEN / 2)) //only if we already acquired more than a half of buffer
 		{
 			int16_t diff_x, diff_y;
 			diff_x = absv(buf_x[pt] - x_start);
 			diff_y = absv(buf_y[pt] - y_start);
 
-			if ((diff_x < CCAL_STOP_TOL) && (diff_y < CCAL_STOP_TOL))
+			if ((diff_x < COMP_CAL_STOP_TOL) && (diff_y < COMP_CAL_STOP_TOL))
 			{
 				len_tot = pt + 1;	//save number of points
 				break; //exit for loop
@@ -196,7 +228,7 @@ restart_cal:
 
 	if (len_tot == 0)	//if no auto-stop
 	{
-		len_tot = CCAL_BUF_LEN;	//if stopped after for loop save max val as BUF_LEN
+		len_tot = COMP_CAL_BUF_MAX_LEN;	//if stopped after for loop save max val as BUF_LEN
 	}
 
 	//calc offset for hard iron
@@ -378,6 +410,13 @@ uint8_t is_gps_course(void)
 float get_north(void)
 {
 	return north;
+}
+
+
+
+int16_t get_cal_buf_len(void)
+{
+	return cal_buf_len;
 }
 
 
