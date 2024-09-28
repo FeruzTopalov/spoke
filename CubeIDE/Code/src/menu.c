@@ -70,6 +70,7 @@ void draw_set_fence(void);
 void draw_set_timezone(void);
 void draw_confirm_settings_save(void);
 void draw_calibrate_compass(void);
+void draw_calibrating_compass(void);
 
 
 
@@ -125,6 +126,7 @@ void time_zone_inc(void);
 void time_zone_dec(void);
 void confirm_settings_save_ok(void);
 void confirm_settings_save_esc(void);
+void calibrate_compass_ok(void);
 
 
 
@@ -316,6 +318,7 @@ const struct
 	{M_SET_TIMEZONE,			BTN_ESC,				set_timezone_esc},
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_OK,					confirm_settings_save_ok},
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_ESC,				confirm_settings_save_esc},
+	{M_CALIBRATE_COMPASS,		BTN_OK,					calibrate_compass_ok},
     {0, 0, 0}   //end marker
 };
 
@@ -429,6 +432,7 @@ const struct
 	{M_SET_TIMEZONE,			draw_set_timezone},
 	{M_CONFIRM_SETTINGS_SAVE,	draw_confirm_settings_save},
 	{M_CALIBRATE_COMPASS,		draw_calibrate_compass},
+	{M_CALIBRATING_COMPASS,		draw_calibrating_compass},
     {0, 0}      //end marker
 };
 
@@ -518,7 +522,11 @@ void change_menu(uint8_t button_code)
 				break;
 
 			case BTN_PWR:
-				lcd_display_off_request();
+				if (current_menu != M_CALIBRATING_COMPASS)
+				{
+					lcd_display_off_request();
+				}
+
 				if (current_menu == M_NAVIGATION)
 				{
 					timer4_stop(); //stop compass
@@ -1538,6 +1546,15 @@ void draw_calibrate_compass(void)
 
 
 
+void draw_calibrating_compass(void)
+{
+	lcd_clear();
+	lcd_print(0, 1, "CALIBRATING");
+	lcd_update();
+}
+
+
+
 //--------------------------------------------------------------
 //--------------------------- SET ------------------------------
 //--------------------------------------------------------------
@@ -2309,6 +2326,14 @@ void confirm_settings_save_esc(void)
     flag_settings_changed = 0;  //clear flag
     current_menu = M_MAIN;
     //draw_current_menu();
+}
+
+
+
+void calibrate_compass_ok(void)
+{
+	timer4_start();	//stop compass activity
+	current_menu = M_CALIBRATING_COMPASS;
 }
 
 

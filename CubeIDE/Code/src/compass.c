@@ -310,7 +310,7 @@ restart_cal:
 
 
 
-uint8_t read_north(void)
+uint8_t read_compass(void)
 {
 	float comp_x, comp_y;
 	uint8_t current_is_horizontal;
@@ -348,7 +348,7 @@ uint8_t read_north(void)
 		if (last_is_horizontal == 1)
 		{
 			last_is_horizontal = current_is_horizontal;
-			return 2; //in order to update the LCD last time and, potentially, hide the compass arrow; i.e. fix the arrow freeze after going from horizontal
+			return 1; //in order to update the LCD last time and, potentially, hide the compass arrow; i.e. fix the arrow freeze after going from horizontal
 		}
 		else
 		{

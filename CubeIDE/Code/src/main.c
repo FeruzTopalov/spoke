@@ -209,7 +209,7 @@ int main(void)
 		{
     		main_flags.process_compass = 0;
 
-    		if (read_north())
+    		if (read_compass())
     		{
     			main_flags.update_screen = 1;
     		}
@@ -397,7 +397,7 @@ void TIM1_UP_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
 	TIM3->SR &= ~TIM_SR_UIF;        //clear gating timer int
-led_green_on();
+
 	if (main_flags.buttons_scanned == 0)	//if not scanned yet
 	{
 		button_code = scan_button(processing_button);
@@ -406,7 +406,7 @@ led_green_on();
 			main_flags.buttons_scanned = 1;
 		}
 	}
-led_green_off();
+
 }
 
 
@@ -485,7 +485,10 @@ void SysTick_Handler(void)
 void TIM4_IRQHandler(void)
 {
 	TIM4->SR &= ~TIM_SR_UIF;        //clear gating timer int
+
+	led_green_on();
 	main_flags.process_compass = 1;
+	led_green_off();
 }
 
 
