@@ -455,8 +455,10 @@ struct gps_num_struct *p_gps_num;
 uint8_t this_device;								//device number of this device, see init_menu()
 uint8_t navigate_to_device;							//a device number that we are navigating to right now
 
-
 struct devices_struct **pp_devices;
+
+int16_t *p_comp_cal_buf_x;
+int16_t *p_comp_cal_buf_y;
 
 
 
@@ -477,6 +479,10 @@ void init_menu(void)
 	p_update_interval_values = get_update_interval_values();
 	p_gps_raw = get_gps_raw();
 	p_gps_num = get_gps_num();
+
+	//Load compass related
+	p_comp_cal_buf_x = get_cal_buf_x();
+	p_comp_cal_buf_y = get_cal_buf_y();
 
 	//Init start menu
     current_menu = M_MAIN;
@@ -1548,17 +1554,34 @@ void draw_calibrate_compass(void)
 
 void draw_calibrating_compass(void)
 {
-	//call calibration
+	uint16_t cal_buf_len;
+	float plot_scale;
+
+	//call calibration first
 	calibrate_compass_new();
 
+	//get new values
+	cal_buf_len = get_cal_buf_len();
+	plot_scale = get_cal_plot_scale();
+
+	//prepare lcd
 	lcd_clear();
 
 	//plot a dot in lcd center
 	lcd_set_pixel(LCD_CENTR_X, LCD_CENTR_Y);
 
 	//print counter
-	itoa32(get_cal_buf_len(), &tmp_buf[0]);
+	itoa32(cal_buf_len, &tmp_buf[0]);
 	lcd_print(0, 0, &tmp_buf[0]);
+
+	//plot magnetometer values during turnaround
+	for (uint16_t pt = 0; pt < cal_buf_len; pt++)
+	{
+		uint8_t x_dot, y_dot;
+		x_dot = (uint8_t)((float)p_comp_cal_buf_x[pt] * plot_scale + LCD_CENTR_X);
+		y_dot = (uint8_t)((float)p_comp_cal_buf_y[pt] * plot_scale + LCD_CENTR_Y);
+		lcd_set_pixel_plot(x_dot, y_dot);
+	}
 
 	lcd_update();
 }

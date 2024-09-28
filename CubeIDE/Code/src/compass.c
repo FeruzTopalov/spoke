@@ -44,6 +44,19 @@ int16_t cal_buf_x[COMP_CAL_BUF_MAX_LEN];
 int16_t cal_buf_y[COMP_CAL_BUF_MAX_LEN];
 uint16_t cal_buf_len;
 
+int16_t cal_x_start;
+int16_t cal_y_start;
+int16_t cal_x_max;
+int16_t cal_x_min;
+int16_t cal_y_max;
+int16_t cal_y_min;
+
+int16_t cal_pos_max;
+int16_t cal_neg_max;
+int16_t cal_abs_max;
+
+float cal_plot_scale;
+
 
 
 void init_compass(void)
@@ -64,6 +77,16 @@ void init_compass_calibration(void)
 	memset(cal_buf_x, 0, 2 * COMP_CAL_BUF_MAX_LEN);
 	memset(cal_buf_y, 0, 2 * COMP_CAL_BUF_MAX_LEN);
 	cal_buf_len = 0;
+	cal_x_start = 0;
+	cal_y_start = 0;
+	cal_x_max = 0;
+	cal_x_min = 0;
+	cal_y_max = 0;
+	cal_y_min = 0;
+	cal_pos_max = 0;
+	cal_neg_max = 0;
+	cal_abs_max = 0;
+	cal_plot_scale = 0;
 }
 
 
@@ -72,8 +95,27 @@ void calibrate_compass_new(void)
 {
 	if ((gps_course == 0) && (north_ready == 1))	//only if magn was read in read_compass()
 	{
-		cal_buf_x[cal_buf_len] = p_magnetic_field->mag_x.as_integer;
-		cal_buf_y[cal_buf_len] = p_magnetic_field->mag_y.as_integer;
+		cal_buf_x[cal_buf_len] = limit_to(p_magnetic_field->mag_x.as_integer, 2047, -2048);
+		cal_buf_y[cal_buf_len] = limit_to(p_magnetic_field->mag_y.as_integer, 2047, -2048);
+
+		if (cal_buf_len == 0)		//only for the first time
+		{
+			cal_x_start = cal_x_max = cal_x_min = cal_buf_x[0];
+			cal_y_start = cal_y_max = cal_y_min = cal_buf_y[0];
+		}
+
+		//find max/min
+		cal_x_max = maxv(cal_buf_x[cal_buf_len], cal_x_max);
+		cal_x_min = minv(cal_buf_x[cal_buf_len], cal_x_min);
+		cal_y_max = maxv(cal_buf_y[cal_buf_len], cal_y_max);
+		cal_y_min = minv(cal_buf_y[cal_buf_len], cal_y_min);
+
+		//find abs max
+		cal_pos_max = maxv(absv(cal_x_max), absv(cal_y_max));
+		cal_neg_max = maxv(absv(cal_x_min), absv(cal_y_min));
+		cal_abs_max = maxv(cal_pos_max, cal_neg_max);
+		cal_plot_scale = (float)32/cal_abs_max;			//todo: replace 32 by LCD SIZE Y / 2
+
 		cal_buf_len++;
 
 		if (cal_buf_len == COMP_CAL_BUF_MAX_LEN)
@@ -414,9 +456,30 @@ float get_north(void)
 
 
 
-int16_t get_cal_buf_len(void)
+uint16_t get_cal_buf_len(void)
 {
 	return cal_buf_len;
+}
+
+
+
+int16_t *get_cal_buf_x(void)
+{
+	return &cal_buf_x[0];
+}
+
+
+
+int16_t *get_cal_buf_y(void)
+{
+	return &cal_buf_y[0];
+}
+
+
+
+float get_cal_plot_scale(void)
+{
+	return cal_plot_scale;
 }
 
 
