@@ -155,7 +155,9 @@ enum
 	M_SET_FENCE,
 	M_SET_TIMEZONE,
 	M_CONFIRM_SETTINGS_SAVE,
-	M_CALIBRATE_COMPASS
+	M_CALIBRATE_COMPASS,
+	M_CALIBRATING_COMPASS,
+	M_CALIBRATED_COMPASS
 };
 
 
@@ -366,6 +368,7 @@ const struct
 	{M_EDIT_RADIO,	            M_SETTINGS},
 	{M_EDIT_OTHER,              M_SETTINGS},
 	{M_MAIN,					M_CALIBRATE_COMPASS},
+	{M_CALIBRATE_COMPASS,		M_MAIN},
     {0, 0}      //end marker
 };
 
@@ -1525,27 +1528,12 @@ void draw_confirm_settings_save(void)
 
 void draw_calibrate_compass(void)
 {
-	static uint8_t compass_calibr_called = 0;			//lock from entering compass calibration multiple times
-
-	if (compass_calibr_called == 1)		//exit if already in this function
-	{
-		return;
-	}
-	else
-	{
-		compass_calibr_called = 1;	//lock on
-
-		disable_buttons_interrupts();	//we do not use regular button processing
-		timer3_stop();
-		calibrate_compass();
-		clear_buttons_interrupts();
-		enable_buttons_interrupts();
-
-		current_menu = M_MAIN;		//exit
-		draw_current_menu();
-
-		compass_calibr_called = 0;	//lock off
-	}
+	lcd_clear();
+	lcd_print(0, 1, "COMPASS CALIBR");
+	lcd_print(1, 0, "-Hold horizontal");
+	lcd_print(2, 0, "-Click OK");
+	lcd_print(3, 0, "-Turn around 360");
+	lcd_update();
 }
 
 
