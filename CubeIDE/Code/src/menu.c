@@ -127,7 +127,9 @@ void time_zone_inc(void);
 void time_zone_dec(void);
 void confirm_settings_save_ok(void);
 void confirm_settings_save_esc(void);
-void calibrate_compass_ok(void);
+void calibrate_compass_up(void);
+void calibrated_compass_ok(void);
+void calibrated_compass_esc(void);
 
 
 
@@ -319,7 +321,9 @@ const struct
 	{M_SET_TIMEZONE,			BTN_ESC,				set_timezone_esc},
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_OK,					confirm_settings_save_ok},
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_ESC,				confirm_settings_save_esc},
-	{M_CALIBRATE_COMPASS,		BTN_OK,					calibrate_compass_ok},
+	{M_CALIBRATE_COMPASS,		BTN_UP,					calibrate_compass_up},
+	{M_CALIBRATED_COMPASS,		BTN_OK,					calibrated_compass_ok},
+	{M_CALIBRATED_COMPASS,		BTN_ESC,				calibrated_compass_esc},
     {0, 0, 0}   //end marker
 };
 
@@ -1547,7 +1551,7 @@ void draw_calibrate_compass(void)
 	lcd_clear();
 	lcd_print(0, 1, "COMPASS CALIBR");
 	lcd_print(1, 0, "-Hold horizontal");
-	lcd_print(2, 0, "-Click OK");
+	lcd_print(2, 0, "-Click UP");
 	lcd_print(3, 0, "-Turn around 360");
 	lcd_update();
 }
@@ -1610,18 +1614,19 @@ void draw_calibrated_compass(void)
 	lcd_clear();
 
 	//plot a dot in lcd center
-	lcd_set_pixel(LCD_CENTR_X, LCD_CENTR_Y);
+	lcd_set_pixel(LCD_CENTR_X / 2, LCD_CENTR_Y); //to the leftmost half of the LCD
 
 	//plot compensated values
 	for (uint16_t pt = 0; pt < cal_buf_len; pt++)
 	{
 		uint8_t x_dot, y_dot;
-		x_dot = (uint8_t)((float)p_comp_cal_buf_x[pt] * plot_scale + LCD_CENTR_X);
+		x_dot = (uint8_t)((float)p_comp_cal_buf_x[pt] * plot_scale + LCD_CENTR_X / 2); //to the leftmost half of the LCD
 		y_dot = (uint8_t)((float)p_comp_cal_buf_y[pt] * plot_scale + LCD_CENTR_Y);
 		lcd_set_pixel_plot(x_dot, y_dot);
 	}
 
-	lcd_print(0, 0, "OK");
+	lcd_print_viceversa(0, 15, "OK Save");
+	lcd_print_viceversa(3, 15, "ESC Anew");
 
 	lcd_update();
 }
@@ -2403,11 +2408,25 @@ void confirm_settings_save_esc(void)
 
 
 
-void calibrate_compass_ok(void)
+void calibrate_compass_up(void)
 {
 	init_compass_calibration();
 	timer4_start();	//stop compass activity
 	current_menu = M_CALIBRATING_COMPASS;
+}
+
+
+
+void calibrated_compass_ok(void)
+{
+
+}
+
+
+
+void calibrated_compass_esc(void)
+{
+	current_menu = M_CALIBRATE_COMPASS;	//restart calibration same way we enter calibration from main menu
 }
 
 
