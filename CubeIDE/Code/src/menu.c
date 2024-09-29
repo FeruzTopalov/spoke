@@ -2419,7 +2419,8 @@ void calibrate_compass_up(void)
 
 void calibrated_compass_ok(void)
 {
-
+	compass_calibration_save();	//save new values
+	current_menu = M_MAIN;
 }
 
 

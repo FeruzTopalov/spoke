@@ -57,6 +57,11 @@ int16_t cal_abs_max;
 
 float cal_plot_scale;
 
+int16_t cal_offset_x;
+int16_t cal_offset_y;
+float cal_scale_x;
+float cal_scale_y;
+
 
 
 void init_compass(void)
@@ -87,6 +92,10 @@ void init_compass_calibration(void)
 	cal_neg_max = 0;
 	cal_abs_max = 0;
 	cal_plot_scale = 0;
+	cal_offset_x = 0;
+	cal_offset_y = 0;
+	cal_scale_x = 0;
+	cal_scale_y = 0;
 }
 
 
@@ -144,20 +153,19 @@ uint8_t calibrate_compass_new(void)
 
 void compass_hard_soft_compensation(void)
 {
+	int16_t cal_avg_delta_x;
+	int16_t cal_avg_delta_y;
+	int16_t cal_avg_delta;
+
 	//calc offset for hard iron
-	int16_t cal_offset_x, cal_offset_y;
 	cal_offset_x = (cal_x_max + cal_x_min) / 2;
 	cal_offset_y = (cal_y_max + cal_y_min) / 2;
 
 	//calc soft iron compensation (simple)
-	int16_t cal_avg_delta_x, cal_avg_delta_y;
 	cal_avg_delta_x = (cal_x_max - cal_x_min) / 2;
 	cal_avg_delta_y = (cal_y_max - cal_y_min) / 2;
-
-	int16_t cal_avg_delta;
 	cal_avg_delta = (cal_avg_delta_x + cal_avg_delta_y) / 2;
 
-	float cal_scale_x, cal_scale_y;
 	cal_scale_x = (float)cal_avg_delta / cal_avg_delta_x;
 	cal_scale_y = (float)cal_avg_delta / cal_avg_delta_y;
 
@@ -186,259 +194,15 @@ void compass_hard_soft_compensation(void)
 
 
 
-void calibrate_compass(void)
+void compass_calibration_save()
 {
-	uint16_t len_tot;
-	int16_t buf_x[COMP_CAL_BUF_MAX_LEN];
-	int16_t buf_y[COMP_CAL_BUF_MAX_LEN];
-
-	int16_t x_start;
-	int16_t y_start;
-	int16_t x_max;
-	int16_t x_min;
-	int16_t y_max;
-	int16_t y_min;
-
-	int16_t pos_max;
-	int16_t neg_max;
-	int16_t abs_max;
-
-	float plot_scale;
-	char buf[15];	//for lcd prints
-
-restart_cal:
-	//init vars
-	len_tot = 0;
-	x_start = 0;
-	y_start = 0;
-	x_max = 0;
-	x_min = 0;
-	y_max = 0;
-	y_min = 0;
-	pos_max = 0;
-	neg_max = 0;
-	abs_max = 0;
-	plot_scale = 0;
-	memset(buf_x, 0, 2 * COMP_CAL_BUF_MAX_LEN);
-	memset(buf_y, 0, 2 * COMP_CAL_BUF_MAX_LEN);
-
-	//print instruction
-	lcd_clear();
-	lcd_print(0, 1, "COMPASS CALIBR");
-	lcd_print(1, 0, "-Hold horizontal");
-	lcd_print(2, 0, "-Click OK");
-	lcd_print(3, 0, "-Turn around 360");
-	lcd_update();
-
-	while (!((GPIOB->IDR) & GPIO_IDR_IDR3)){}		//wait for user to release ESC after entering compass calibration routine
-	delay_cyc(100000);
-
-    while (1)	//wait for user's decision
-    {
-    	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for exit
-    	{
-    		lcd_clear();
-    		lcd_print(0, 1, "COMPASS CALIBR");
-    		lcd_print(2, 3, "Exiting...");
-    		lcd_update();
-
-    		delay_cyc(300000);
-
-    		return;
-    	}
-
-    	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for start
-    	{
-    		break;
-    	}
-    }
-
-    for (uint8_t cntdwn = 3; cntdwn > 0; cntdwn--)	//countdown
-    {
-    	itoa32(cntdwn, &buf[0]);
-
-    	lcd_clear();
-    	lcd_print(0, 1, "COMPASS CALIBR");
-    	lcd_print(2, 7, &buf[0]);
-    	lcd_update();
-
-    	delay_cyc(300000);
-    }
-
-	//init start value and min/max values
-	read_magn();
-	x_start = x_max = x_min = p_magnetic_field->mag_x.as_integer;
-	y_start = y_max = y_min = p_magnetic_field->mag_y.as_integer;
-
-	//acquire and plot magnetometer values during turnaround
-	for (uint16_t pt = 0; pt < COMP_CAL_BUF_MAX_LEN; pt++)
-	{
-		lcd_clear();
-		lcd_pixel(LCD_CENTR_X, LCD_CENTR_Y, 1);	//plot a dot in lcd center
-
-		//print pointer
-		itoa32(pt, buf);
-		lcd_print(0, 0, buf);
-
-		//read magnetometr
-		read_magn();
-
-		//limit and store values
-		buf_x[pt] = limit_to(p_magnetic_field->mag_x.as_integer, 2047, -2048);
-		buf_y[pt] = limit_to(p_magnetic_field->mag_y.as_integer, 2047, -2048);
-
-		//find max/min
-		x_max = maxv(p_magnetic_field->mag_x.as_integer, x_max);
-		x_min = minv(p_magnetic_field->mag_x.as_integer, x_min);
-		y_max = maxv(p_magnetic_field->mag_y.as_integer, y_max);
-		y_min = minv(p_magnetic_field->mag_y.as_integer, y_min);
-
-		//find abs max
-		pos_max = maxv(absv(x_max), absv(y_max));
-		neg_max = maxv(absv(x_min), absv(y_min));
-		abs_max = maxv(pos_max, neg_max);
-		plot_scale = (float)32/abs_max;
-
-		//draw
-		for (uint16_t i = 0; i < COMP_CAL_BUF_MAX_LEN; i++)
-		{
-			uint8_t x_dot, y_dot;
-			x_dot = (uint8_t)((float)buf_x[i] * plot_scale + LCD_CENTR_X);
-			y_dot = (uint8_t)((float)buf_y[i] * plot_scale + LCD_CENTR_Y);
-			lcd_set_pixel_plot(x_dot, y_dot);
-		}
-
-		//view
-		lcd_update();
-		delay_cyc(5000);
-
-		//auto-stop if we reached initial values (i.e. completed turnaround)
-		if (pt > (COMP_CAL_BUF_MAX_LEN / 2)) //only if we already acquired more than a half of buffer
-		{
-			int16_t diff_x, diff_y;
-			diff_x = absv(buf_x[pt] - x_start);
-			diff_y = absv(buf_y[pt] - y_start);
-
-			if ((diff_x < COMP_CAL_STOP_TOL) && (diff_y < COMP_CAL_STOP_TOL))
-			{
-				len_tot = pt + 1;	//save number of points
-				break; //exit for loop
-			}
-		}
-	}
-
-	if (len_tot == 0)	//if no auto-stop
-	{
-		len_tot = COMP_CAL_BUF_MAX_LEN;	//if stopped after for loop save max val as BUF_LEN
-	}
-
-	//calc offset for hard iron
-	int16_t offset_x;
-	int16_t offset_y;
-	offset_x = (x_max + x_min) / 2;
-	offset_y = (y_max + y_min) / 2;
-
-	//calc soft iron compensation (simple)
-	int16_t avg_delta_x, avg_delta_y;
-	avg_delta_x = (x_max - x_min) / 2;
-	avg_delta_y = (y_max - y_min) / 2;
-
-	int16_t avg_delta;
-	avg_delta = (avg_delta_x + avg_delta_y) / 2;
-
-	float scale_x, scale_y;
-	scale_x = (float)avg_delta / avg_delta_x;
-	scale_y = (float)avg_delta / avg_delta_y;
-
-	//hard and soft compensation itself
-	x_max = x_min = 0;
-	y_max = y_min = 0;
-	for (uint16_t pt = 0; pt < len_tot; pt++)
-	{
-		buf_x[pt] = (buf_x[pt] - offset_x) * scale_x;
-		buf_y[pt] = (buf_y[pt] - offset_y) * scale_y;
-
-		//find max/min
-		x_max = maxv(buf_x[pt], x_max);
-		x_min = minv(buf_x[pt], x_min);
-		y_max = maxv(buf_y[pt], y_max);
-		y_min = minv(buf_y[pt], y_min);
-	}
-
-	//prepare for compensated print
-	pos_max = maxv(absv(x_max), absv(y_max));
-	neg_max = maxv(absv(x_min), absv(y_min));
-	abs_max = maxv(pos_max, neg_max);
-	plot_scale = (float)(LCD_SIZE_Y / 2) / abs_max;
-
-	//draw result after calibration
-	lcd_clear();
-	lcd_pixel(LCD_CENTR_X, LCD_CENTR_Y, 1);	//plot a dot at lcd center
-	for (uint16_t i = 0; i < len_tot; i++)
-	{
-		uint8_t x_dot, y_dot;
-		x_dot = (uint8_t)((float)buf_x[i] * plot_scale + LCD_CENTR_X);
-		y_dot = (uint8_t)((float)buf_y[i] * plot_scale + LCD_CENTR_Y);
-		lcd_set_pixel_plot(x_dot, y_dot);
-	}
-	lcd_print(3, 14, "OK");
-	lcd_update();
-
-	while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click to continue
-
-	lcd_clear();
-	lcd_print(0, 1, "COMPASS CALIBR");
-	lcd_print(1, 5, "Done!");
-	lcd_print(2, 2, "OK to save");
-	lcd_print(3, 1, "ESC to restart");
-	lcd_update();
-
-    delay_cyc(300000);		//mandatory delay to prevent misclick
-
-    while (1)	//wait for user's decision
-    {
-    	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for restart
-    	{
-    		goto restart_cal;
-    	}
-
-    	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for save
-    	{
-    		lcd_clear();
-    		lcd_print(0, 1, "COMPASS CALIBR");
-    		lcd_print(2, 4, "Saving...");
-    		lcd_update();
-
-    	    //save calibration in settings
-    	    settings_copy.magn_offset_x = offset_x;
-    	    settings_copy.magn_offset_y = offset_y;
-    	    settings_copy.magn_scale_x.as_float = scale_x;
-    	    settings_copy.magn_scale_y.as_float = scale_y;
-    	    settings_save(&settings_copy);
-    	    settings_load();
-
-    	    delay_cyc(300000);
-
-    		break;
-    	}
-    }
-
-//DEBUG OUT
-//	lcd_clear();
-//	itoa32(offset_x, buf);
-//    lcd_print(0, 0, buf, 0);
-//	itoa32(offset_y, buf);
-//    lcd_print(1, 0, buf, 0);
-//	ftoa32(scale_x, 5, buf);
-//    lcd_print(2, 0, buf, 0);
-//    ftoa32(scale_y, 5, buf);
-//    lcd_print(3, 0, buf, 0);
-//    lcd_update();
-//
-//    delay_cyc(300000);
-//    while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click
-
-
+    //save calibration in settings
+    settings_copy.magn_offset_x = cal_offset_x;
+    settings_copy.magn_offset_y = cal_offset_y;
+    settings_copy.magn_scale_x.as_float = cal_scale_x;
+    settings_copy.magn_scale_y.as_float = cal_scale_y;
+    settings_save(&settings_copy);
+    settings_load();
 }
 
 
