@@ -71,6 +71,7 @@ void draw_set_timezone(void);
 void draw_confirm_settings_save(void);
 void draw_calibrate_compass(void);
 void draw_calibrating_compass(void);
+void draw_calibrated_compass(void);
 
 
 
@@ -433,6 +434,7 @@ const struct
 	{M_CONFIRM_SETTINGS_SAVE,	draw_confirm_settings_save},
 	{M_CALIBRATE_COMPASS,		draw_calibrate_compass},
 	{M_CALIBRATING_COMPASS,		draw_calibrating_compass},
+	{M_CALIBRATED_COMPASS,		draw_calibrated_compass},
     {0, 0}      //end marker
 };
 
@@ -1558,23 +1560,59 @@ void draw_calibrating_compass(void)
 	float plot_scale;
 
 	//call calibration first
-	calibrate_compass_new();
+	if (calibrate_compass_new() == 1)		//if calibration is ongoing
+	{
+		//get new values
+		cal_buf_len = get_cal_buf_len();
+		plot_scale = get_cal_plot_scale();
 
-	//get new values
+		//prepare lcd
+		lcd_clear();
+
+		//plot a dot in lcd center
+		lcd_set_pixel(LCD_CENTR_X, LCD_CENTR_Y);
+
+		//print counter
+		itoa32(cal_buf_len, &tmp_buf[0]);
+		lcd_print(0, 0, &tmp_buf[0]);
+
+		//plot magnetometer values during turnaround
+		for (uint16_t pt = 0; pt < cal_buf_len; pt++)
+		{
+			uint8_t x_dot, y_dot;
+			x_dot = (uint8_t)((float)p_comp_cal_buf_x[pt] * plot_scale + LCD_CENTR_X);
+			y_dot = (uint8_t)((float)p_comp_cal_buf_y[pt] * plot_scale + LCD_CENTR_Y);
+			lcd_set_pixel_plot(x_dot, y_dot);
+		}
+
+		lcd_update();
+	}
+	else	//if calibration has ended
+	{
+		timer4_stop(); //stop compass activity
+		compass_hard_soft_compensation();
+		current_menu = M_CALIBRATED_COMPASS;
+		draw_current_menu();
+	}
+}
+
+
+
+void draw_calibrated_compass(void)
+{
+	uint16_t cal_buf_len;
+	float plot_scale;
+
+	//get new values that were updated after compass_hard_soft_compensation()
 	cal_buf_len = get_cal_buf_len();
 	plot_scale = get_cal_plot_scale();
 
-	//prepare lcd
 	lcd_clear();
 
 	//plot a dot in lcd center
 	lcd_set_pixel(LCD_CENTR_X, LCD_CENTR_Y);
 
-	//print counter
-	itoa32(cal_buf_len, &tmp_buf[0]);
-	lcd_print(0, 0, &tmp_buf[0]);
-
-	//plot magnetometer values during turnaround
+	//plot compensated values
 	for (uint16_t pt = 0; pt < cal_buf_len; pt++)
 	{
 		uint8_t x_dot, y_dot;
@@ -1582,6 +1620,8 @@ void draw_calibrating_compass(void)
 		y_dot = (uint8_t)((float)p_comp_cal_buf_y[pt] * plot_scale + LCD_CENTR_Y);
 		lcd_set_pixel_plot(x_dot, y_dot);
 	}
+
+	lcd_print(0, 0, "OK");
 
 	lcd_update();
 }

@@ -11,7 +11,8 @@
 
 void init_compass(void);
 void init_compass_calibration(void);
-void calibrate_compass_new(void);
+uint8_t calibrate_compass_new(void);
+void compass_hard_soft_compensation(void);
 void calibrate_compass(void);
 uint8_t read_compass(void);
 uint8_t is_north_ready(void);

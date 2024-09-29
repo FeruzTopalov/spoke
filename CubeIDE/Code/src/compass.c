@@ -23,8 +23,8 @@
 
 
 #define GPS_SPEED_THRS				(2)	//threshold value for GPS speed in km/h to show true course
-#define COMP_CAL_BUF_MAX_LEN 		(180)
-#define COMP_CAL_STOP_TOL 			(30)	//tolerance on auto-stop condition
+#define COMP_CAL_BUF_MAX_LEN 		(100)
+#define COMP_CAL_STOP_TOL 			(50)	//tolerance on auto-stop condition
 
 
 
@@ -91,7 +91,7 @@ void init_compass_calibration(void)
 
 
 
-void calibrate_compass_new(void)
+uint8_t calibrate_compass_new(void)
 {
 	if ((gps_course == 0) && (north_ready == 1))	//only if magn was read in read_compass()
 	{
@@ -114,15 +114,74 @@ void calibrate_compass_new(void)
 		cal_pos_max = maxv(absv(cal_x_max), absv(cal_y_max));
 		cal_neg_max = maxv(absv(cal_x_min), absv(cal_y_min));
 		cal_abs_max = maxv(cal_pos_max, cal_neg_max);
-		cal_plot_scale = (float)32/cal_abs_max;			//todo: replace 32 by LCD SIZE Y / 2
+		cal_plot_scale = (float)(LCD_SIZE_Y / 2)/cal_abs_max;
 
-		cal_buf_len++;
-
-		if (cal_buf_len == COMP_CAL_BUF_MAX_LEN)
+		//auto-stop if we reached initial values (i.e. completed turnaround)
+		if (cal_buf_len > (COMP_CAL_BUF_MAX_LEN / 2)) //only if we already acquired more than a half of buffer
 		{
-			init_compass_calibration();
+			int16_t cal_diff_x, cal_diff_y;
+			cal_diff_x = absv(cal_buf_x[cal_buf_len] - cal_x_start);
+			cal_diff_y = absv(cal_buf_y[cal_buf_len] - cal_y_start);
+
+			if ((cal_diff_x < COMP_CAL_STOP_TOL) && (cal_diff_y < COMP_CAL_STOP_TOL))
+			{
+				return 0; //return 0 if end of calibration
+			}
 		}
+
+		if (cal_buf_len == (COMP_CAL_BUF_MAX_LEN - 1)) //last point in the buffer
+		{
+			return 0; //return 0 if end of calibration when buffer ended
+		}
+
+		cal_buf_len++;	//increment before exit
 	}
+
+	return 1;	//return 1 if the calibration is ongoing
+}
+
+
+
+void compass_hard_soft_compensation(void)
+{
+	//calc offset for hard iron
+	int16_t cal_offset_x, cal_offset_y;
+	cal_offset_x = (cal_x_max + cal_x_min) / 2;
+	cal_offset_y = (cal_y_max + cal_y_min) / 2;
+
+	//calc soft iron compensation (simple)
+	int16_t cal_avg_delta_x, cal_avg_delta_y;
+	cal_avg_delta_x = (cal_x_max - cal_x_min) / 2;
+	cal_avg_delta_y = (cal_y_max - cal_y_min) / 2;
+
+	int16_t cal_avg_delta;
+	cal_avg_delta = (cal_avg_delta_x + cal_avg_delta_y) / 2;
+
+	float cal_scale_x, cal_scale_y;
+	cal_scale_x = (float)cal_avg_delta / cal_avg_delta_x;
+	cal_scale_y = (float)cal_avg_delta / cal_avg_delta_y;
+
+	//hard and soft compensation itself
+	cal_x_max = cal_x_min = 0;
+	cal_y_max = cal_y_min = 0;
+	for (uint16_t pt = 0; pt < (cal_buf_len + 1); pt++)
+	{
+		cal_buf_x[pt] = (cal_buf_x[pt] - cal_offset_x) * cal_scale_x;
+		cal_buf_y[pt] = (cal_buf_y[pt] - cal_offset_y) * cal_scale_y;
+
+		//find max/min
+		cal_x_max = maxv(cal_buf_x[pt], cal_x_max);
+		cal_x_min = minv(cal_buf_x[pt], cal_x_min);
+		cal_y_max = maxv(cal_buf_y[pt], cal_y_max);
+		cal_y_min = minv(cal_buf_y[pt], cal_y_min);
+	}
+
+	//prepare for compensated print
+	//find abs max
+	cal_pos_max = maxv(absv(cal_x_max), absv(cal_y_max));
+	cal_neg_max = maxv(absv(cal_x_min), absv(cal_y_min));
+	cal_abs_max = maxv(cal_pos_max, cal_neg_max);
+	cal_plot_scale = (float)(LCD_SIZE_Y / 2)/cal_abs_max;
 }
 
 
