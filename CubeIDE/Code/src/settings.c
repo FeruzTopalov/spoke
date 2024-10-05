@@ -177,8 +177,8 @@ void settings_interactive_save_default(void)
     	{
     		lcd_clear();
     		lcd_print(0, 0, "DEFAULT SETTINGS");
-    		lcd_print(1, 1, "Resetting...");
-    		lcd_print(2, 1, "GPS & settings");
+    		lcd_print(2, 1, "Resetting...");
+    		lcd_print(3, 1, "GPS & settings");
     		lcd_update();
 
     		settings_save_default();
