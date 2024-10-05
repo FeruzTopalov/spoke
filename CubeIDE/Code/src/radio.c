@@ -217,7 +217,7 @@ uint8_t rf_start_rx(void)
 	//start rx
 	cs_rf_active();
 	spi1_trx(SX126X_SET_RX);			//command
-	spi1_trx(RX_TIMEOUT_1500MS_2);		//1500 ms rx timeout for full packet (no header used) + additional SetLoRaSymbNumTimeout enabled todo: test all timeout features
+	spi1_trx(RX_TIMEOUT_1500MS_2);		//1500 ms rx timeout for full packet (no header used) + additional SetLoRaSymbNumTimeout enabled
 	spi1_trx(RX_TIMEOUT_1500MS_1);
 	spi1_trx(RX_TIMEOUT_1500MS_0);
 	cs_rf_inactive();
