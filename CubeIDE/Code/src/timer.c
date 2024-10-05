@@ -23,7 +23,7 @@ void timer4_init(void);
 
 
 
-uint8_t sound_enabled = 0; //status of the beep sound notification todo: enable before release
+uint8_t sound_enabled = 1; //status of the beep sound notification
 uint8_t timer1_interval_type = 0; // 1 - long; 2 - short
 
 
