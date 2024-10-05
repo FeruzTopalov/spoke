@@ -122,7 +122,7 @@ void settings_load(void)
     {
         settings_save_default();
     }
-    else if (!((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4))	//if both DOWN button and OK button are pressed upon power up
+    else if (!((GPIOB->IDR) & GPIO_IDR_IDR3) && ((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK released, ESC pressed
     {
     	settings_interactive_save_default();
     }
