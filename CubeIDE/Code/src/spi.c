@@ -59,7 +59,7 @@ uint8_t spi1_trx(uint8_t send_data)
 
     while(!(SPI1->SR & SPI_SR_RXNE)){}      //while RXNE = 0
 
-    //todo: add busy wait like in spi2?
+    while(SPI1->SR & SPI_SR_BSY){}      //while busy
 
     return SPI1->DR;
 }
