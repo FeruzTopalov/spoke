@@ -156,11 +156,11 @@ void settings_interactive_save_default(void)
 {
 	//print instruction
 	lcd_clear();
-	lcd_print(0, 3, "Defaults");
+	lcd_print(0, 0, "DEFAULT SETTINGS");
 
-	lcd_print(1, 0, "-Click OK");
-	lcd_print(2, 0, " to reset to");
-	lcd_print(3, 0, " defaults");
+	lcd_print(1, 1, "Click OK");
+	lcd_print(2, 0, "to reset, or ESC");
+	lcd_print(3, 0, "to cancel");
 	lcd_update();
 
 	while (!((GPIOB->IDR) & GPIO_IDR_IDR3) || !((GPIOB->IDR) & GPIO_IDR_IDR4)){}		//wait for user to release OK or ESC after entering settings reset routine
@@ -176,8 +176,9 @@ void settings_interactive_save_default(void)
     	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for reset settings to default
     	{
     		lcd_clear();
-    		lcd_print(0, 0, "Resetting...");
-    		lcd_print(1, 0, "GPS & settings");
+    		lcd_print(0, 0, "DEFAULT SETTINGS");
+    		lcd_print(1, 1, "Resetting...");
+    		lcd_print(2, 1, "GPS & settings");
     		lcd_update();
 
     		settings_save_default();
