@@ -209,7 +209,7 @@ int main(void)
 		{
     		main_flags.process_compass = 0;
 
-    		if (read_north())
+    		if (read_compass())
     		{
     			main_flags.update_screen = 1;
     		}
@@ -406,6 +406,7 @@ void TIM3_IRQHandler(void)
 			main_flags.buttons_scanned = 1;
 		}
 	}
+
 }
 
 
@@ -484,7 +485,10 @@ void SysTick_Handler(void)
 void TIM4_IRQHandler(void)
 {
 	TIM4->SR &= ~TIM_SR_UIF;        //clear gating timer int
+
+	led_green_on();
 	main_flags.process_compass = 1;
+	led_green_off();
 }
 
 

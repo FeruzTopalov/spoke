@@ -69,6 +69,9 @@ void draw_set_timeout(void);
 void draw_set_fence(void);
 void draw_set_timezone(void);
 void draw_confirm_settings_save(void);
+void draw_calibrate_compass(void);
+void draw_calibrating_compass(void);
+void draw_calibrated_compass(void);
 
 
 
@@ -124,6 +127,9 @@ void time_zone_inc(void);
 void time_zone_dec(void);
 void confirm_settings_save_ok(void);
 void confirm_settings_save_esc(void);
+void calibrate_compass_up(void);
+void calibrated_compass_ok(void);
+void calibrated_compass_esc(void);
 
 
 
@@ -153,7 +159,10 @@ enum
 	M_SET_TIMEOUT,
 	M_SET_FENCE,
 	M_SET_TIMEZONE,
-	M_CONFIRM_SETTINGS_SAVE
+	M_CONFIRM_SETTINGS_SAVE,
+	M_CALIBRATE_COMPASS,
+	M_CALIBRATING_COMPASS,
+	M_CALIBRATED_COMPASS
 };
 
 
@@ -312,6 +321,9 @@ const struct
 	{M_SET_TIMEZONE,			BTN_ESC,				set_timezone_esc},
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_OK,					confirm_settings_save_ok},
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_ESC,				confirm_settings_save_esc},
+	{M_CALIBRATE_COMPASS,		BTN_UP,					calibrate_compass_up},
+	{M_CALIBRATED_COMPASS,		BTN_OK,					calibrated_compass_ok},
+	{M_CALIBRATED_COMPASS,		BTN_ESC,				calibrated_compass_esc},
     {0, 0, 0}   //end marker
 };
 
@@ -363,6 +375,8 @@ const struct
     {M_EDIT_DEVICE,             M_SETTINGS},
 	{M_EDIT_RADIO,	            M_SETTINGS},
 	{M_EDIT_OTHER,              M_SETTINGS},
+	{M_MAIN,					M_CALIBRATE_COMPASS},
+	{M_CALIBRATE_COMPASS,		M_MAIN},
     {0, 0}      //end marker
 };
 
@@ -422,6 +436,9 @@ const struct
 	{M_SET_FENCE,				draw_set_fence},
 	{M_SET_TIMEZONE,			draw_set_timezone},
 	{M_CONFIRM_SETTINGS_SAVE,	draw_confirm_settings_save},
+	{M_CALIBRATE_COMPASS,		draw_calibrate_compass},
+	{M_CALIBRATING_COMPASS,		draw_calibrating_compass},
+	{M_CALIBRATED_COMPASS,		draw_calibrated_compass},
     {0, 0}      //end marker
 };
 
@@ -444,8 +461,10 @@ struct gps_num_struct *p_gps_num;
 uint8_t this_device;								//device number of this device, see init_menu()
 uint8_t navigate_to_device;							//a device number that we are navigating to right now
 
-
 struct devices_struct **pp_devices;
+
+int16_t *p_comp_cal_buf_x;
+int16_t *p_comp_cal_buf_y;
 
 
 
@@ -466,6 +485,10 @@ void init_menu(void)
 	p_update_interval_values = get_update_interval_values();
 	p_gps_raw = get_gps_raw();
 	p_gps_num = get_gps_num();
+
+	//Load compass related
+	p_comp_cal_buf_x = get_cal_buf_x();
+	p_comp_cal_buf_y = get_cal_buf_y();
 
 	//Init start menu
     current_menu = M_MAIN;
@@ -511,7 +534,11 @@ void change_menu(uint8_t button_code)
 				break;
 
 			case BTN_PWR:
-				lcd_display_off_request();
+				if (current_menu != M_CALIBRATING_COMPASS)
+				{
+					lcd_display_off_request();
+				}
+
 				if (current_menu == M_NAVIGATION)
 				{
 					timer4_stop(); //stop compass
@@ -1519,6 +1546,93 @@ void draw_confirm_settings_save(void)
 
 
 
+void draw_calibrate_compass(void)
+{
+	lcd_clear();
+	lcd_print(0, 1, "COMPASS CALIBR");
+	lcd_print(1, 0, "-Hold horizontal");
+	lcd_print(2, 0, "-Click UP");
+	lcd_print(3, 0, "-Turn around 360");
+	lcd_update();
+}
+
+
+
+void draw_calibrating_compass(void)
+{
+	uint16_t cal_buf_len;
+	float plot_scale;
+
+	//call calibration first
+	if (calibrate_compass_new() == 1)		//if calibration is ongoing
+	{
+		//get new values
+		cal_buf_len = get_cal_buf_len();
+		plot_scale = get_cal_plot_scale();
+
+		//prepare lcd
+		lcd_clear();
+
+		//plot a dot in lcd center
+		lcd_set_pixel(LCD_CENTR_X, LCD_CENTR_Y);
+
+		//print counter
+		itoa32(cal_buf_len, &tmp_buf[0]);
+		lcd_print(0, 0, &tmp_buf[0]);
+
+		//plot magnetometer values during turnaround
+		for (uint16_t pt = 0; pt < cal_buf_len; pt++)
+		{
+			uint8_t x_dot, y_dot;
+			x_dot = (uint8_t)((float)p_comp_cal_buf_x[pt] * plot_scale + LCD_CENTR_X);
+			y_dot = (uint8_t)((float)p_comp_cal_buf_y[pt] * plot_scale + LCD_CENTR_Y);
+			lcd_set_pixel_plot(x_dot, y_dot);
+		}
+
+		lcd_update();
+	}
+	else	//if calibration has ended
+	{
+		timer4_stop(); //stop compass activity
+		compass_hard_soft_compensation();
+		current_menu = M_CALIBRATED_COMPASS;
+		draw_current_menu();
+	}
+}
+
+
+
+void draw_calibrated_compass(void)
+{
+	uint16_t cal_buf_len;
+	float plot_scale;
+
+	//get new values that were updated after compass_hard_soft_compensation()
+	cal_buf_len = get_cal_buf_len();
+	plot_scale = get_cal_plot_scale();
+
+	lcd_clear();
+
+	//plot a dot in lcd center
+	lcd_set_pixel(LCD_CENTR_X / 2, LCD_CENTR_Y); //to the leftmost half of the LCD
+
+	//plot compensated values
+	for (uint16_t pt = 0; pt < cal_buf_len; pt++)
+	{
+		uint8_t x_dot, y_dot;
+		x_dot = (uint8_t)((float)p_comp_cal_buf_x[pt] * plot_scale + LCD_CENTR_X / 2); //to the leftmost half of the LCD
+		y_dot = (uint8_t)((float)p_comp_cal_buf_y[pt] * plot_scale + LCD_CENTR_Y);
+		lcd_set_pixel_plot(x_dot, y_dot);
+	}
+
+	lcd_print_viceversa(0, 15, "OK Save");
+	lcd_print_viceversa(3, 15, "ESC Anew");
+
+	lcd_update();
+}
+
+
+
 //--------------------------------------------------------------
 //--------------------------- SET ------------------------------
 //--------------------------------------------------------------
@@ -2290,6 +2404,30 @@ void confirm_settings_save_esc(void)
     flag_settings_changed = 0;  //clear flag
     current_menu = M_MAIN;
     //draw_current_menu();
+}
+
+
+
+void calibrate_compass_up(void)
+{
+	init_compass_calibration();
+	timer4_start();	//stop compass activity
+	current_menu = M_CALIBRATING_COMPASS;
+}
+
+
+
+void calibrated_compass_ok(void)
+{
+	compass_calibration_save();	//save new values
+	current_menu = M_MAIN;
+}
+
+
+
+void calibrated_compass_esc(void)
+{
+	current_menu = M_CALIBRATE_COMPASS;	//restart calibration same way we enter calibration from main menu
 }
 
 
