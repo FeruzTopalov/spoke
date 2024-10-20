@@ -82,6 +82,13 @@ void init_watchdog(void)
 
 
 
+void reload_watchdog(void)
+{
+	IWDG->KR |= 0xAAAA;			//Reload IWDG
+}
+
+
+
 void rtc_init(void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_PWREN;				//Enable power interface

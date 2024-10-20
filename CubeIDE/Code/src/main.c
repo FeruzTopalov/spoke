@@ -242,6 +242,8 @@ int main(void)
 		}
 
 
+    	//Reload watchdog
+    	reload_watchdog();
 
         //Wait for interrupt
         __WFI();
