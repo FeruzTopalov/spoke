@@ -46,7 +46,7 @@ void print_debug(char *string)
 
 void manage_power(void)
 {
-    if (RCC->CSR & RCC_CSR_SFTRSTF)		//if the reset is caused by software (save & restart after settings changed)
+    if ((RCC->CSR & RCC_CSR_SFTRSTF) || (RCC->CSR & RCC_CSR_IWDGRSTF))		//if the reset is caused by software (save & restart after settings changed) or by IWDG watchdog
     {
     	hold_power();
     }
