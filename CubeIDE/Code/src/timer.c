@@ -69,6 +69,19 @@ void make_a_long_beep(void)
 
 
 
+void init_watchdog(void)
+{
+	RCC->CSR |= RCC_CSR_LSION;  					//Enable LSI 40 kHz
+	while ((RCC->CSR & RCC_CSR_LSIRDY) == 0){}		//Wait for stabilize
+
+	IWDG->KR |= 0x5555;			//Unlock IWDG configuration
+	IWDG->PR |= IWDG_PR_PR_2;	//Value 100: divider /64; max timeout 6553.6 ms
+	IWDG->KR |= 0xAAAA;			//Reload IWDG
+	IWDG->KR |= 0xCCCC;			//Start IWDG
+}
+
+
+
 void rtc_init(void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_PWREN;				//Enable power interface
