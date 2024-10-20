@@ -1091,11 +1091,6 @@ void draw_navigation(void)
 
     draw_bat_level();
 
-    //debug
-    uint32_t cntr = get_cont_pps_cntr();
-    itoa32(cntr, &tmp_buf[0]);
-    lcd_print(0, 0, &tmp_buf[0]);
-
 	lcd_update();
 
 }
