@@ -132,7 +132,7 @@ void console_prepare_data(void)
 	uint8_t i = 1;	//data starts from index 1
 	uint8_t all_flags = 0;
 
-	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)	//todo: only devices for now; add mem points then and increase the buffer size
+	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)
 	{
 		if (pp_devices[dev]->exist_flag == 1)	//only existing devices
 		{

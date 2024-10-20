@@ -32,6 +32,10 @@
 
 
 
+void setup_interrupt_priorities(void);
+
+
+
 struct main_flags_struct main_flags = {0};
 struct gps_num_struct *p_gps_num;
 struct settings_struct *p_settings;
@@ -62,6 +66,7 @@ int main(void)
     gpio_init();
     manage_power();
     spi_init();
+    setup_interrupt_priorities();
     __enable_irq();	//for LCD DMA operation
     lcd_init();
 
@@ -168,7 +173,7 @@ int main(void)
 
             if (is_battery_critical())
             {
-            	release_power();	//todo: just turn off for now; then add a banner before turn off
+            	release_power();	//turn off immediately
             }
 
             if (main_flags.pps_synced == 0) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
@@ -237,6 +242,8 @@ int main(void)
 		}
 
 
+    	//Reload watchdog
+    	reload_watchdog();
 
         //Wait for interrupt
         __WFI();
@@ -533,7 +540,37 @@ uint32_t get_cont_pps_cntr(void)
 }
 
 
-//todo: setupt ints priorities
+
+void setup_interrupt_priorities(void)
+{
+	#define GROUPS_8_SUBGROUPS_2	(4)
+
+	NVIC_SetPriorityGrouping(GROUPS_8_SUBGROUPS_2);
+
+	NVIC_SetPriority(EXTI2_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 0, 0));		//GPS PPS Interrupt
+	NVIC_SetPriority(TIM1_UP_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 0, 1));		//Timer1 GPS Acquire + Radio Run
+
+	NVIC_SetPriority(EXTI0_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 1, 0));		//Radio Interrupt
+	NVIC_SetPriority(DMA1_Channel3_IRQn, 	NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 1, 1));		//DMA GPS UART RX overflow
+
+	NVIC_SetPriority(DMA1_Channel5_IRQn, 	NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 2, 0));		//DMA SPI2 TX LCD
+	NVIC_SetPriority(TIM3_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 2, 1));		//Scan buttons interval
+
+	NVIC_SetPriority(EXTI3_IRQn,			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 3, 0));		//DOWN/ESC button interrupt
+	NVIC_SetPriority(EXTI4_IRQn,			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 3, 1));		//UP/OK button interrupt
+
+	NVIC_SetPriority(EXTI9_5_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 4, 0));		//PWR button interrupt
+	NVIC_SetPriority(TIM4_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 4, 1));		//Compass update interval
+
+	NVIC_SetPriority(RTC_IRQn, 				NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 5, 0));		//Uptime counter (every 1 second)
+	NVIC_SetPriority(USART1_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 5, 1));		//Console RX symbol
+
+	NVIC_SetPriority(DMA1_Channel4_IRQn, 	NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 6, 0));		//Console UART TX DMA completed
+	NVIC_SetPriority(ADC1_2_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 6, 1));		//End of ADC conversion (battery voltage)
+
+	NVIC_SetPriority(SysTick_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 7, 0));		//End of beep
+	//NVIC_SetPriority(, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 7, 1));		//Empty
+}
 
 
 

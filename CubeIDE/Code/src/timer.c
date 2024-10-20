@@ -23,7 +23,7 @@ void timer4_init(void);
 
 
 
-uint8_t sound_enabled = 0; //status of the beep sound notification todo: enable before release
+uint8_t sound_enabled = 1; //status of the beep sound notification
 uint8_t timer1_interval_type = 0; // 1 - long; 2 - short
 
 
@@ -65,6 +65,26 @@ void make_a_long_beep(void)
 	systick_set_1000ms();
 	systick_start();	//gating
 	led_red_on();
+}
+
+
+
+void init_watchdog(void)
+{
+	RCC->CSR |= RCC_CSR_LSION;  					//Enable LSI 40 kHz
+	while ((RCC->CSR & RCC_CSR_LSIRDY) == 0){}		//Wait for stabilize
+
+	IWDG->KR |= 0x5555;			//Unlock IWDG configuration
+	IWDG->PR |= IWDG_PR_PR_2;	//Value 100: divider /64; max timeout 6553.6 ms
+	IWDG->KR |= 0xAAAA;			//Reload IWDG
+	IWDG->KR |= 0xCCCC;			//Start IWDG
+}
+
+
+
+void reload_watchdog(void)
+{
+	IWDG->KR |= 0xAAAA;			//Reload IWDG
 }
 
 

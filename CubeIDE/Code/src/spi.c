@@ -23,7 +23,7 @@ void spi_init(void)
 void spi1_init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;             //enable clock spi1
-// already enabled    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;             //enable alternate function clock
+    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;             //enable alternate function clock
     SPI1->CR1 &= ~SPI_CR1_BR;                       //clock/2
     SPI1->CR1 |= SPI_CR1_SSM;
     SPI1->CR1 |= SPI_CR1_SSI;
@@ -59,7 +59,7 @@ uint8_t spi1_trx(uint8_t send_data)
 
     while(!(SPI1->SR & SPI_SR_RXNE)){}      //while RXNE = 0
 
-    //todo: add busy wait like in spi2?
+    while(SPI1->SR & SPI_SR_BSY){}      //while busy
 
     return SPI1->DR;
 }

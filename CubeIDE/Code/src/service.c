@@ -46,7 +46,7 @@ void print_debug(char *string)
 
 void manage_power(void)
 {
-    if (RCC->CSR & RCC_CSR_SFTRSTF)		//if the reset is caused by software (save & restart after settings changed)
+    if ((RCC->CSR & RCC_CSR_SFTRSTF) || (RCC->CSR & RCC_CSR_IWDGRSTF))		//if the reset is caused by software (save & restart after settings changed) or by IWDG watchdog
     {
     	hold_power();
     }
@@ -106,7 +106,7 @@ void call_bootloader(void)
     GPIOA->CRH |= GPIO_CRH_MODE15_1;
     GPIOA->CRH &= ~GPIO_CRH_CNF15;      //output push-pull
 
-    release_power();	//fixes "power on lock" side effect
+    release_power();	//fixes "power-on lock" side effect
 
     if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4)) //OK pressed, btn ESC released
     {
