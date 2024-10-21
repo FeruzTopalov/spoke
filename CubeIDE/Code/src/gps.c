@@ -323,7 +323,7 @@ void convert_time(void)
 				hour -= 24;
 				day += 1;
 
-				if (day > get_days_in_month(month - 1, year))
+				if (day > get_days_in_month(month, year))
 				{
 					day = 1;
 					month += 1;
@@ -363,7 +363,7 @@ void convert_time(void)
 						year -= 1;
 					}
 
-					day = get_days_in_month(month - 1, year);
+					day = get_days_in_month(month, year);
 				}
 			}
 		}
