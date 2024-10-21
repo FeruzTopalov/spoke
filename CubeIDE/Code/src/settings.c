@@ -13,6 +13,7 @@
 #include "service.h"
 #include "lcd.h"
 #include "gps.h"
+#include "timer.h"
 
 
 
@@ -154,13 +155,14 @@ void settings_load(void)
 
 void settings_interactive_save_default(void)
 {
+	reload_watchdog();	//to prevent reset
+
 	//print instruction
 	lcd_clear();
 	lcd_print(0, 0, "DEFAULT SETTINGS");
 
-	lcd_print(1, 1, "Click OK");
-	lcd_print(2, 0, "to reset, or ESC");
-	lcd_print(3, 0, "to cancel");
+	lcd_print(2, 4, "OK - Reset");
+	lcd_print(3, 3, "ESC - Cancel");
 	lcd_update();
 
 	while (!((GPIOB->IDR) & GPIO_IDR_IDR3) || !((GPIOB->IDR) & GPIO_IDR_IDR4)){}		//wait for user to release OK or ESC after entering settings reset routine
@@ -168,6 +170,8 @@ void settings_interactive_save_default(void)
 
     while (1)	//wait for user's decision
     {
+    	reload_watchdog();	//to prevent reset
+
     	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for exit
     	{
     		NVIC_SystemReset();
