@@ -20,6 +20,9 @@ char rumbs[9][3] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
 uint32_t dec_pow_table[] = {1, 10, 100, 1000, 10000, 100000, 1000000};	//max precision 6 digits after point
 
 
+uint8_t days_in_month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; 	//in non-leap year
+
+
 const char hex_chars[] = "0123456789ABCDEF";
 
 
@@ -573,4 +576,19 @@ void time_date_add_leading_zero(char *buf)
     	buf[0] = '0';
     	buf[2] = 0;
     }
+}
+
+
+
+uint8_t get_days_in_month(uint8_t month, uint8_t year)	//month 1-12; year - last 2 digits
+{
+	if (month == 2) //FEB
+	{
+		if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
+		{
+			return 29; //FEB, leap year
+		}
+	}
+
+	return days_in_month[month - 1];
 }

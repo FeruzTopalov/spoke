@@ -15,7 +15,6 @@
 #include "settings.h"
 #include "points.h"
 #include "lrns.h"
-#include "calendar.h"
 #include "ubx.h"
 
 
@@ -324,7 +323,7 @@ void convert_time(void)
 				hour -= 24;
 				day += 1;
 
-				if (day > calendar[year - CALENDAR_START_YEAR][month - 1])
+				if (day > get_days_in_month(month - 1, year))
 				{
 					day = 1;
 					month += 1;
@@ -364,7 +363,7 @@ void convert_time(void)
 						year -= 1;
 					}
 
-					day = calendar[year - CALENDAR_START_YEAR][month - 1];
+					day = get_days_in_month(month - 1, year);
 				}
 			}
 		}

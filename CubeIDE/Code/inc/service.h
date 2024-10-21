@@ -30,6 +30,7 @@ int32_t atoi32(char *input);
 void itoa32(int32_t value, char *buffer);
 void byte2hex(uint8_t byte, char *array);
 void time_date_add_leading_zero(char *buf);
+uint8_t get_days_in_month(uint8_t month, uint8_t year);
 
 
 
