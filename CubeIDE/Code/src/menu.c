@@ -71,7 +71,8 @@ void draw_set_timezone(void);
 void draw_confirm_settings_save(void);
 void draw_calibrate_compass(void);
 void draw_calibrating_compass(void);
-void draw_calibrated_compass(void);
+void draw_compass_calibrated(void);
+void draw_calibration_saved_popup(void);
 
 
 
@@ -162,7 +163,8 @@ enum
 	M_CONFIRM_SETTINGS_SAVE,
 	M_CALIBRATE_COMPASS,
 	M_CALIBRATING_COMPASS,
-	M_CALIBRATED_COMPASS
+	M_COMPASS_CALIBRATED,
+	M_CALIBRATION_SAVED_POPUP
 };
 
 
@@ -322,8 +324,8 @@ const struct
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_OK,					confirm_settings_save_ok},
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_ESC,				confirm_settings_save_esc},
 	{M_CALIBRATE_COMPASS,		BTN_UP,					calibrate_compass_up},
-	{M_CALIBRATED_COMPASS,		BTN_OK,					calibrated_compass_ok},
-	{M_CALIBRATED_COMPASS,		BTN_ESC,				calibrated_compass_esc},
+	{M_COMPASS_CALIBRATED,		BTN_OK,					calibrated_compass_ok},
+	{M_COMPASS_CALIBRATED,		BTN_ESC,				calibrated_compass_esc},
     {0, 0, 0}   //end marker
 };
 
@@ -377,6 +379,7 @@ const struct
 	{M_EDIT_OTHER,              M_SETTINGS},
 	{M_MAIN,					M_CALIBRATE_COMPASS},
 	{M_CALIBRATE_COMPASS,		M_MAIN},
+	{M_CALIBRATION_SAVED_POPUP,	M_MAIN},
     {0, 0}      //end marker
 };
 
@@ -438,7 +441,8 @@ const struct
 	{M_CONFIRM_SETTINGS_SAVE,	draw_confirm_settings_save},
 	{M_CALIBRATE_COMPASS,		draw_calibrate_compass},
 	{M_CALIBRATING_COMPASS,		draw_calibrating_compass},
-	{M_CALIBRATED_COMPASS,		draw_calibrated_compass},
+	{M_COMPASS_CALIBRATED,		draw_compass_calibrated},
+	{M_CALIBRATION_SAVED_POPUP,	draw_calibration_saved_popup},
     {0, 0}      //end marker
 };
 
@@ -1590,14 +1594,14 @@ void draw_calibrating_compass(void)
 	{
 		timer4_stop(); //stop compass activity
 		compass_hard_soft_compensation();
-		current_menu = M_CALIBRATED_COMPASS;
+		current_menu = M_COMPASS_CALIBRATED;
 		draw_current_menu();
 	}
 }
 
 
 
-void draw_calibrated_compass(void)
+void draw_compass_calibrated(void)
 {
 	uint16_t cal_buf_len;
 	float plot_scale;
@@ -1623,6 +1627,16 @@ void draw_calibrated_compass(void)
 	lcd_print_viceversa(0, 15, "OK Save");
 	lcd_print_viceversa(3, 15, "ESC Anew");
 
+	lcd_update();
+}
+
+
+
+void draw_calibration_saved_popup(void)
+{
+	lcd_clear();
+	lcd_print(0, 4, "Saved!");
+    lcd_print(2, 3, "ESC close");
 	lcd_update();
 }
 
@@ -2415,7 +2429,7 @@ void calibrate_compass_up(void)
 void calibrated_compass_ok(void)
 {
 	compass_calibration_save();	//save new values
-	current_menu = M_MAIN;
+	current_menu = M_CALIBRATION_SAVED_POPUP;
 }
 
 
