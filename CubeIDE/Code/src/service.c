@@ -582,9 +582,11 @@ void time_date_add_leading_zero(char *buf)
 
 uint8_t get_days_in_month(uint8_t month, uint8_t year)	//month 1-12; year - last 2 digits
 {
+	uint16_t year_expanded = 2000 + year;		//in a hope that the first two year's digits are always "20"
+
 	if (month == 2) //FEB
 	{
-		if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
+		if ((year_expanded % 4 == 0 && year_expanded % 100 != 0) || (year_expanded % 400 == 0))
 		{
 			return 29; //FEB, leap year
 		}

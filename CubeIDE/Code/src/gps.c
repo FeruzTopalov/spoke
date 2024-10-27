@@ -27,7 +27,7 @@ void convert_time(void);
 
 
 
-const float knots_to_kph = 1.852;                   //knots to kilometers per hour multiplyer
+const float knots_to_kph = 1.852;                   //knots to kilometers per hour multiplier
 
 
 
