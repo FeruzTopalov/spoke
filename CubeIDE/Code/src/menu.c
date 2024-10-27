@@ -458,7 +458,7 @@ struct settings_struct *p_settings;
 struct settings_struct settings_copy;
 
 uint8_t *p_update_interval_values;
-uint8_t *p_tx_power_values;
+int8_t *p_tx_power_values;
 struct gps_raw_struct *p_gps_raw;
 struct gps_num_struct *p_gps_num;
 
@@ -1321,7 +1321,7 @@ void draw_edit_radio(void)
     lcd_print(EDIT_RADIO_ROW + 2, EDIT_RADIO_COL, "TX Power");
     itoa32(p_tx_power_values[settings_copy.tx_power_opt], &tmp_buf[0]);
     lcd_print(EDIT_RADIO_ROW + 2, EDIT_RADIO_COL + 10, &tmp_buf[0]);
-    lcd_print_next("mW");
+    lcd_print_next("dBm");
 
     lcd_print(EDIT_RADIO_ROW + get_current_item(), EDIT_RADIO_COL - 1, ">");
     lcd_update();
@@ -1437,7 +1437,7 @@ void draw_set_tx_power(void)
 
     itoa32(p_tx_power_values[settings_copy.tx_power_opt], &tmp_buf[0]);
     lcd_print(TX_POWER_ROW, TX_POWER_COL, &tmp_buf[0]);
-    lcd_print_next("mW");
+    lcd_print_next("dBm");
 
 	lcd_update();
 }

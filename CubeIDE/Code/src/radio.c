@@ -122,19 +122,19 @@ void rf_init(void)
     int8_t power_reg_dbm;
 	switch (p_settings->tx_power_opt)
 	{
-		case TX_POWER_0MILLIW_SETTING:
+		case TX_POWER_NEG9DBM_SETTING:
 			power_reg_dbm = -9;
 			break;
 
-		case TX_POWER_1MILLIW_SETTING:
+		case TX_POWER_POS0DBM_SETTING:
 			power_reg_dbm = 0;
 			break;
 
-		case TX_POWER_10MILLIW_SETTING:
+		case TX_POWER_POS10DBM_SETTING:
 			power_reg_dbm = 10;
 			break;
 
-		case TX_POWER_100MILLIW_SETTING:
+		case TX_POWER_POS22DBM_SETTING:
 			power_reg_dbm = 20;
 			break;
 

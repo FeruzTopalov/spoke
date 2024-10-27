@@ -31,15 +31,15 @@ void settings_interactive_save_default(void);
 
 
 
-#define TX_POWER_0MILLIW_VALUE   	(0)
-#define TX_POWER_1MILLIW_VALUE   	(1)
-#define TX_POWER_10MILLIW_VALUE   	(10)
-#define TX_POWER_100MILLIW_VALUE  	(100)
+#define TX_POWER_NEG9DBM_VALUE   	(-9)
+#define TX_POWER_POS0DBM_VALUE   	(0)
+#define TX_POWER_POS10DBM_VALUE   	(10)
+#define TX_POWER_POS22DBM_VALUE  	(22)
 
-#define TX_POWER_VALUES_ARRAY 		{ 	TX_POWER_0MILLIW_VALUE, 	\
-										TX_POWER_1MILLIW_VALUE, 	\
-										TX_POWER_10MILLIW_VALUE, 	\
-										TX_POWER_100MILLIW_VALUE	}
+#define TX_POWER_VALUES_ARRAY 		{ 	TX_POWER_NEG9DBM_VALUE, 	\
+										TX_POWER_POS0DBM_VALUE, 	\
+										TX_POWER_POS10DBM_VALUE, 	\
+										TX_POWER_POS22DBM_VALUE	}
 
 
 
@@ -68,7 +68,7 @@ void settings_interactive_save_default(void);
 #define SETTINGS_DEVICE_ID_DEFAULT 			(DEVICE_ID_FIRST_SYMBOL)
 #define SETTINGS_UPDATE_INTERVAL_DEFAULT    (UPDATE_INTERVAL_10S_SETTING)
 #define SETTINGS_FREQ_CHANNEL_DEFAULT   	(FREQ_CHANNEL_FIRST)             //base freq is 433.050 and freq step is 25kHz, so CH0 - 433.050 (not valid, not used); CH1 - 433.075 (first LPD channel)
-#define SETTINGS_TX_POWER_DEFAULT       	(TX_POWER_10MILLIW_SETTING)
+#define SETTINGS_TX_POWER_DEFAULT       	(TX_POWER_POS10DBM_SETTING)
 #define SETTINGS_TIMEOUT_THRESHOLD_DEFAULT  (60)
 #define SETTINGS_FENCE_THRESHOLD_DEFAULT  	(100)
 #define SETTINGS_TIME_ZONE_DIR_DEFAULT		(1)
@@ -90,7 +90,7 @@ uint16_t settings_array[SETTINGS_SIZE];
 struct settings_struct settings;
 
 uint8_t update_interval_values[] = UPDATE_INTERVAL_VALUES_ARRAY;
-uint8_t tx_power_values[] = TX_POWER_VALUES_ARRAY;
+int8_t tx_power_values[] = TX_POWER_VALUES_ARRAY;
 
 
 
@@ -101,7 +101,7 @@ uint8_t *get_update_interval_values(void)
 
 
 
-uint8_t *get_tx_power_values(void)
+int8_t *get_tx_power_values(void)
 {
 	return &tx_power_values[0];
 }

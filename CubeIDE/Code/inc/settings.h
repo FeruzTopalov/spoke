@@ -26,13 +26,13 @@
 
 
 //POWER SETTINGS
-#define TX_POWER_0MILLIW_SETTING   	(0)
-#define TX_POWER_1MILLIW_SETTING    (1)
-#define TX_POWER_10MILLIW_SETTING   (2)
-#define TX_POWER_100MILLIW_SETTING  (3)
+#define TX_POWER_NEG9DBM_SETTING   	(0)
+#define TX_POWER_POS0DBM_SETTING    (1)
+#define TX_POWER_POS10DBM_SETTING   (2)
+#define TX_POWER_POS22DBM_SETTING  (3)
 
-#define TX_POWER_FIRST_OPTION 		(TX_POWER_0MILLIW_SETTING)
-#define TX_POWER_LAST_OPTION 		(TX_POWER_100MILLIW_SETTING)
+#define TX_POWER_FIRST_OPTION 		(TX_POWER_NEG9DBM_SETTING)
+#define TX_POWER_LAST_OPTION 		(TX_POWER_POS22DBM_SETTING)
 
 
 
@@ -108,7 +108,7 @@ struct settings_struct
 
 struct settings_struct *get_settings(void);
 uint8_t *get_update_interval_values(void);
-uint8_t *get_tx_power_values(void);
+int8_t *get_tx_power_values(void);
 void settings_save_default(void);
 void settings_load(void);
 void settings_save(struct settings_struct *settings);
