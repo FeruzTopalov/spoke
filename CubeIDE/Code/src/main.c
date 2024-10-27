@@ -121,7 +121,7 @@ int main(void)
     p_update_interval_values = get_update_interval_values();
     pp_devices = get_devices();
 
-    device_tx_second = (2 * (p_settings->device_number - 1));
+    device_tx_second = (2 * (p_settings->device_number - 1));		//time slots each even second
     max_rx_second = (2 * (p_settings->devices_on_air - 1));
 
 
