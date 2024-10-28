@@ -109,10 +109,10 @@ void call_bootloader(void)
     GPIOA->CRH |= GPIO_CRH_MODE15_1;
     GPIOA->CRH &= ~GPIO_CRH_CNF15;      //output push-pull
 
-    release_power();	//fixes "power-on lock" side effect
-
     if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4)) //OK pressed, btn ESC released
     {
+    	release_power();	//fixes "power-on lock" side effect
+
     	delay_cyc(2000000); //startup delay ~2sec
     	led_red_on();
 
