@@ -93,8 +93,8 @@ void lcd_init(void)
 
     //spi2_clock_disable();
 
-    lcd_clear();
-    lcd_update();
+    //lcd_clear();
+    //lcd_update();
 
 }
 
