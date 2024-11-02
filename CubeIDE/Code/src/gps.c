@@ -89,7 +89,9 @@ void gps_init(void)
 	p_settings = get_settings();
 	this_device = p_settings->device_number;
 
+	/* UNCOMMENT if needed
 	configure_gps_receiver();
+	*/
 }
 
 
