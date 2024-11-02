@@ -391,6 +391,7 @@ void lcd_print(uint8_t row, uint8_t col, char *p_str)
 //Clear, print, update
 void lcd_print_only(uint8_t row, uint8_t col, char *p_str)
 {
+	while (lcd_busy);		//wait until free
 	lcd_clear();
 	lcd_print(row, col, p_str);
 	lcd_update();
