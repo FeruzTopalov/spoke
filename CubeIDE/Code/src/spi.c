@@ -8,6 +8,7 @@
 #include "spi.h"
 #include "bit_band.h"
 #include "lcd.h"
+#include "service.h"
 
 
 
@@ -32,7 +33,7 @@ void spi1_init(void)
     SPI1->CR1 &= ~SPI_CR1_CPHA;                     //first rising edge capture
     SPI1->CR1 |= SPI_CR1_SPE;                       //enable spi
 
-    spi1_clock_enable();
+    spi1_clock_disable();
 }
 
 
@@ -47,6 +48,7 @@ void spi1_clock_disable(void)
 void spi1_clock_enable(void)
 {
 	BIT_BAND_PERI(RCC->APB2ENR, RCC_APB2ENR_SPI1EN) = 1;
+	delay_cyc(10);
 }
 
 

@@ -88,12 +88,11 @@ void rf_init(void)
     res_rf_inactive();
     rf_wait_busy();
 
-
-
     uint8_t rf_init_arr[] = SX126X_CONFIG_ARRAY;    	//array with init data
     uint8_t i = 0;
     uint8_t len = 0;
     
+    spi1_clock_enable();
     while (rf_init_arr[i] != 0x00)
     {
         len = rf_init_arr[i++];
@@ -107,6 +106,7 @@ void rf_init(void)
         }
         cs_rf_inactive();
     }
+    spi1_clock_disable();
 
     //required workarounds
     rf_workaround_15_2();
@@ -143,7 +143,6 @@ void rf_init(void)
 			break;
 	}
 	rf_config_tx_power(power_reg_dbm);
-
 }
 
 
@@ -154,6 +153,8 @@ void rf_config_frequency(uint8_t channel_num)
 	freq_reg_value = ((float)BASE_CHANNEL_FREQUENCY + channel_num * CHANNEL_FREQUENCY_STEP) / ((float)RADIO_CRYSTAL / POWER_2_TO_25);
 	freq_reg.as_uint32 = freq_reg_value;
 
+	spi1_clock_enable();
+
 	cs_rf_active();
 	spi1_trx(SX126X_SET_RF_FREQUENCY);			//command
 	spi1_trx(freq_reg.as_array[3]);
@@ -161,17 +162,23 @@ void rf_config_frequency(uint8_t channel_num)
 	spi1_trx(freq_reg.as_array[1]);
 	spi1_trx(freq_reg.as_array[0]);
 	cs_rf_inactive();
+
+	spi1_clock_disable();
 }
 
 
 
 void rf_config_tx_power(int8_t power_dbm)
 {
+	spi1_clock_enable();
+
 	cs_rf_active();
 	spi1_trx(SX126X_SET_TX_PARAMS);			//command
 	spi1_trx(power_dbm);
 	spi1_trx(TX_RAMP_TIME_800U);
 	cs_rf_inactive();
+
+	spi1_clock_disable();
 }
 
 
@@ -180,6 +187,8 @@ void rf_config_tx_power(int8_t power_dbm)
 uint8_t rf_tx_packet(void)
 {
 	rf_workaround_15_1();
+
+	spi1_clock_enable();
 
 	//fill tx buffer
 	cs_rf_active();
@@ -203,6 +212,8 @@ uint8_t rf_tx_packet(void)
 	spi1_trx(TX_TIMEOUT_DISABLED_0);
 	cs_rf_inactive();
 
+	spi1_clock_disable();
+
 	return 1;
 }
 
@@ -211,6 +222,8 @@ uint8_t rf_tx_packet(void)
 //sx126x start packet RX
 uint8_t rf_start_rx(void)
 {
+	spi1_clock_enable();
+
 	//enable RX path
 	rf_rx_mode();
 
@@ -222,6 +235,8 @@ uint8_t rf_start_rx(void)
 	spi1_trx(RX_TIMEOUT_1500MS_0);
 	cs_rf_inactive();
 
+	spi1_clock_disable();
+
 	return 1;
 }
 
@@ -230,6 +245,8 @@ uint8_t rf_start_rx(void)
 //sx126x get received packet
 void rf_get_rx_packet(void)
 {
+	spi1_clock_enable();
+
 	//get data
 	cs_rf_active();
 	spi1_trx(SX126X_READ_BUFFER);	//command
@@ -240,16 +257,22 @@ void rf_get_rx_packet(void)
 		air_packet_rx[i] = spi1_trx(SX126X_NOP);
 	}
 	cs_rf_inactive();
+
+	spi1_clock_disable();
 }
 
 
 
 void rf_set_standby_xosc(void)
 {
+	spi1_clock_enable();
+
 	cs_rf_active();
 	spi1_trx(SX126X_SIZE_SET_STANDBY);			//command
 	spi1_trx(STDBY_XOSC);
 	cs_rf_inactive();
+
+	spi1_clock_disable();
 }
 
 
@@ -257,11 +280,15 @@ void rf_set_standby_xosc(void)
 //sx126x get status
 uint8_t rf_get_status(void)
 {
+	spi1_clock_enable();
+
     uint8_t status;
     cs_rf_active();
     spi1_trx(SX126X_GET_STATUS);		//send command byte
     status = spi1_trx(SX126X_NOP);		//send nop, get response
     cs_rf_inactive();
+
+    spi1_clock_disable();
 
     return status;
 }
@@ -271,6 +298,8 @@ uint8_t rf_get_status(void)
 //sx126x get interrupt status
 uint16_t rf_get_irq_status(void)
 {
+	spi1_clock_enable();
+
     uint16_t status_msb, status_lsb;
     cs_rf_active();
     spi1_trx(SX126X_GET_IRQ_STATUS);	//send command byte
@@ -278,6 +307,8 @@ uint16_t rf_get_irq_status(void)
     status_msb = spi1_trx(SX126X_NOP);		//get MSB
     status_lsb = spi1_trx(SX126X_NOP);		//get LSB
     cs_rf_inactive();
+
+    spi1_clock_disable();
 
     return ((status_msb << 8) | status_lsb);
 }
@@ -287,11 +318,15 @@ uint16_t rf_get_irq_status(void)
 //sx126x clear interrupts
 void rf_clear_irq(void)
 {
+	spi1_clock_enable();
+
     cs_rf_active();
     spi1_trx(SX126X_CLR_IRQ_STATUS);	//send command byte
     spi1_trx(IRQ_MASK_ALL);				//clear all interrupts
     spi1_trx(IRQ_MASK_ALL);
     cs_rf_inactive();
+
+    spi1_clock_disable();
 }
 
 
@@ -316,6 +351,8 @@ void rf_workaround_15_1(void)
 	//run before each packet TX
     uint8_t spec_reg = 0;
 
+    spi1_clock_enable();
+
     cs_rf_active();
     spi1_trx(SX126X_READ_REGISTER);
     spi1_trx(0x08); //Specific reg 0x0889
@@ -332,6 +369,8 @@ void rf_workaround_15_1(void)
     spi1_trx(0x89);
     spi1_trx(spec_reg);
     cs_rf_inactive();
+
+    spi1_clock_disable();
 }
 
 
@@ -341,6 +380,8 @@ void rf_workaround_15_2(void)
     //workaround 15.2 Better Resistance of the SX1268 Tx to Antenna Mismatch
 	//run one after power up
     uint8_t tx_clamp_reg = 0;
+
+    spi1_clock_enable();
 
     cs_rf_active();
     spi1_trx(SX126X_READ_REGISTER);
@@ -358,6 +399,8 @@ void rf_workaround_15_2(void)
     spi1_trx(0xD8);
     spi1_trx(tx_clamp_reg);
     cs_rf_inactive();
+
+    spi1_clock_disable();
 }
 
 
@@ -367,6 +410,8 @@ void rf_workaround_15_3(void)
     //workaround 15.3 Implicit Header Mode Timeout Behavior
 	//run after every RxDone if RX timeout was active
     uint8_t tmp_reg = 0;
+
+    spi1_clock_enable();
 
     //stop broken counter
     cs_rf_active();
@@ -393,6 +438,8 @@ void rf_workaround_15_3(void)
     spi1_trx(0x44);
     spi1_trx(tmp_reg);
     cs_rf_inactive();
+
+    spi1_clock_disable();
 }
 
 
@@ -402,6 +449,8 @@ void rf_workaround_15_4(void)
     //workaround 15.4 Optimizing the Inverted IQ Operation
 	//run once upon configuration
     uint8_t iq_reg = 0;
+
+    spi1_clock_enable();
 
     cs_rf_active();
     spi1_trx(SX126X_READ_REGISTER);
@@ -419,6 +468,8 @@ void rf_workaround_15_4(void)
     spi1_trx(0x36);
     spi1_trx(iq_reg);
     cs_rf_inactive();
+
+    spi1_clock_disable();
 }
 
 
@@ -426,6 +477,8 @@ void rf_workaround_15_4(void)
 int8_t rf_get_last_rssi(void)
 {
 	int8_t last_rssi = 0;
+
+	spi1_clock_enable();
 
     cs_rf_active();
     spi1_trx(SX126X_GET_PKT_STATUS);
@@ -435,6 +488,8 @@ int8_t rf_get_last_rssi(void)
     last_rssi = spi1_trx(0);	//SignalRssiPkt
     cs_rf_inactive();
 
+    spi1_clock_disable();
+
     return last_rssi / 2;
 }
 
@@ -442,9 +497,13 @@ int8_t rf_get_last_rssi(void)
 
 void rf_set_cw_tx(void)
 {
+	spi1_clock_enable();
+
 	cs_rf_active();
 	spi1_trx(SX126X_SET_TX_CONTINUOUS_WAVE);			//command
 	cs_rf_inactive();
+
+	spi1_clock_disable();
 }
 
 
