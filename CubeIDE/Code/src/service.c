@@ -109,6 +109,8 @@ void call_bootloader(void)
     GPIOA->CRH |= GPIO_CRH_MODE15_1;
     GPIOA->CRH &= ~GPIO_CRH_CNF15;      //output push-pull
 
+    hold_power();	//hold power to prevent power off after software reset if bootloader will not be started; next time power controll see in manage_power()
+
     if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4)) //OK pressed, btn ESC released
     {
     	release_power();	//fixes "power-on lock" side effect
