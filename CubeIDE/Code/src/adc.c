@@ -89,6 +89,7 @@ void adc_clock_disable(void)
 void adc_clock_enable(void)
 {
 	BIT_BAND_PERI(RCC->APB2ENR, RCC_APB2ENR_ADC1EN) = 1;
+	delay_cyc(10);
 }
 
 

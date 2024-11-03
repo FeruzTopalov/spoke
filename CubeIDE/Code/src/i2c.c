@@ -26,6 +26,8 @@ void i2c_init(void)
     I2C1->TRISE |= (uint16_t)4;             //TRISE = (Tr max/TPCLK1)+1; Tr max = 1000nS for standard mode
     
     I2C1->CR1 |= I2C_CR1_PE;                //enable i2c1
+
+    i2c_clock_disable();
 }
 
 
@@ -40,6 +42,7 @@ void i2c_clock_disable(void)
 void i2c_clock_enable(void)
 {
 	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_I2C1EN) = 1;
+	delay_cyc(10);
 }
 
 
@@ -49,6 +52,8 @@ uint8_t i2c_poll(uint8_t i2c_addr)
     uint16_t SR1_tmp;
     uint16_t SR2_tmp;
     uint8_t attempts = 10;
+
+    i2c_clock_enable();
 
     while (attempts)
     {
@@ -87,6 +92,8 @@ uint8_t i2c_poll(uint8_t i2c_addr)
             I2C1->CR1 |= I2C_CR1_STOP;
             while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
 
+            i2c_clock_disable();
+
             return 1;   //slave is ready
         }
         else
@@ -101,6 +108,8 @@ uint8_t i2c_poll(uint8_t i2c_addr)
     I2C1->CR1 |= I2C_CR1_STOP;
     while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
 
+    i2c_clock_disable();
+
     return 0;       //end of attmepts, slave is busy or absent
 }
 
@@ -109,6 +118,8 @@ uint8_t i2c_poll(uint8_t i2c_addr)
 void i2c_write(uint8_t i2c_addr, uint8_t reg_addr, uint8_t data)
 {
 	uint8_t SR_tmp;
+
+	i2c_clock_enable();
 
 	//Start
 	I2C1->CR1 |= I2C_CR1_START;
@@ -148,6 +159,8 @@ void i2c_write(uint8_t i2c_addr, uint8_t reg_addr, uint8_t data)
 	//Stop
 	I2C1->CR1 |= I2C_CR1_STOP;
 	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
+
+	i2c_clock_disable();
 }
 
 
@@ -156,6 +169,8 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 {
     uint8_t result = 0;
 	uint16_t SR_tmp;
+
+	i2c_clock_enable();
 
 	//Start
 	I2C1->CR1 |= I2C_CR1_START;
@@ -222,6 +237,8 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 
 	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
 
+	i2c_clock_disable();
+
     return result;
 }
 
@@ -231,6 +248,8 @@ void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t
 {
 //	uint8_t remaining = size; //only for size > 2
 	uint8_t SR_tmp;
+
+	i2c_clock_enable();
 
 	//Start
 	I2C1->CR1 |= I2C_CR1_START;
@@ -358,4 +377,6 @@ void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t
 
 
 	SR_tmp = SR_tmp + 1;
+
+	i2c_clock_disable();
 }
