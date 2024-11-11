@@ -328,7 +328,6 @@ void EXTI0_IRQHandler(void)
 	{
 		main_flags.rx_state = 0;
 		led_green_off();
-		rf_set_standby_xosc();	//after RX TO it goes to Standby RC mode only (https://forum.lora-developers.semtech.com/t/sx1268-is-it-possible-to-configure-transition-to-stdby-xosc-after-cad-done-rx-timeout/1282)
 	}
 }
 
