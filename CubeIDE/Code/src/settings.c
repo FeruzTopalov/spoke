@@ -187,7 +187,9 @@ void settings_interactive_save_default(void)
 
     		settings_save_default();
 
+    		/* UNCOMMENT if needed
     		reset_to_defaults_gps_receiver();
+    		*/
 
     		NVIC_SystemReset();
     	}
