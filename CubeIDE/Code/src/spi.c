@@ -94,13 +94,15 @@ void spi2_dma_init(uint8_t buffer[], uint32_t buffer_len)
     NVIC_EnableIRQ(DMA1_Channel5_IRQn);     //enable interrupts
     DMA1->IFCR = DMA_IFCR_CGIF5;            //clear all interrupt flags for DMA channel 5
 
-    //spi2_clock_disable();
+    spi2_clock_disable();
 }
 
 
 
 void spi2_dma_start(uint8_t buffer[], uint32_t buffer_len)
 {
+	spi2_clock_enable();
+
 	DMA1_Channel5->CMAR = (uint32_t)(&buffer[0]);    //transfer source
 	DMA1_Channel5->CNDTR = buffer_len;                //bytes amount to transmit
     DMA1_Channel5->CCR |= DMA_CCR5_EN;      //enable channel
@@ -111,6 +113,8 @@ void spi2_dma_start(uint8_t buffer[], uint32_t buffer_len)
 void spi2_dma_stop(void)
 {
 	DMA1_Channel5->CCR &= ~DMA_CCR5_EN;      //disable channel
+
+	spi2_clock_disable();
 }
 
 
@@ -125,6 +129,7 @@ void spi2_clock_disable(void)
 void spi2_clock_enable(void)
 {
 	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_SPI2EN) = 1;
+	delay_cyc(10);
 }
 
 
