@@ -18,6 +18,8 @@
 
 
 void adc_init(void);
+void adc_clock_disable(void);
+void adc_clock_enable(void);
 void adc_check_bat_voltage(void);
 void adc_start_bat_voltage_reading(void);
 void adc_read_bat_voltage_result(void);
