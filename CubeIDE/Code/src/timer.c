@@ -26,6 +26,8 @@ void timer3_init(void);
 void timer3_clock_disable(void);
 void timer3_clock_enable(void);
 void timer4_init(void);
+void timer4_clock_disable(void);
+void timer4_clock_enable(void);
 
 
 
@@ -352,12 +354,29 @@ void timer4_init(void)
 	TIM4->DIER |= TIM_DIER_UIE;         //update interrupt enable
 
 	NVIC_EnableIRQ(TIM4_IRQn);
+	timer4_clock_disable();
+}
+
+
+
+void timer4_clock_disable(void)
+{
+	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM4EN) = 0;
+}
+
+
+
+void timer4_clock_enable(void)
+{
+	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM4EN) = 1;
 }
 
 
 
 void timer4_start(void)
 {
+	timer4_clock_enable();
+
 	BIT_BAND_PERI(TIM4->CR1, TIM_CR1_CEN) = 1;	//start timer
 }
 
@@ -368,6 +387,8 @@ void timer4_stop(void)
 	BIT_BAND_PERI(TIM4->CR1, TIM_CR1_CEN) = 0;	//stop  timer
 	TIM4->CNT = 0;					//reset counter
 	TIM4->SR &= ~TIM_SR_UIF;        //clear int
+
+	timer4_clock_disable();
 }
 
 
