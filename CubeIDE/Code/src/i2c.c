@@ -375,6 +375,7 @@ void i2c_read_multiple(uint8_t i2c_addr, uint8_t reg_addr, uint8_t size, uint8_t
 	//Read byte 6
 	buffer[5] = I2C1->DR;
 
+	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
 
 	SR_tmp = SR_tmp + 1;
 
