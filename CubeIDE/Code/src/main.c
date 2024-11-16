@@ -173,6 +173,8 @@ int main(void)
 
             if (is_battery_critical())
             {
+            	lcd_print_only(2, 2, "BATTERY LOW!");
+            	delay_cyc(600000);
             	release_power();	//turn off immediately
             }
 
