@@ -15,6 +15,8 @@ uint8_t calibrate_compass_new(void);
 void compass_hard_soft_compensation(void);
 void compass_calibration_save();
 void calibrate_compass(void);
+void start_compass(void);
+void stop_compass(void);
 uint8_t read_compass(void);
 uint8_t is_north_ready(void);
 uint8_t is_gps_course(void);

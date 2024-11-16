@@ -19,6 +19,7 @@
 #include "gps.h"
 #include "lrns.h"
 #include "menu.h"
+#include "timer.h"
 
 
 
@@ -203,6 +204,24 @@ void compass_calibration_save()
     settings_copy.magn_scale_y.as_float = cal_scale_y;
     settings_save(&settings_copy);
     settings_load();
+}
+
+
+
+void start_compass(void)
+{
+	start_accelerometer();
+	start_magnetometer();
+	timer4_start();
+}
+
+
+
+void stop_compass(void)
+{
+	timer4_stop();
+	stop_accelerometer();
+	stop_magnetometer();
 }
 
 

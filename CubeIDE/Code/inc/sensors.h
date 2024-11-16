@@ -13,6 +13,10 @@
 
 uint8_t init_accelerometer(void);
 uint8_t init_magnetometer(void);
+void start_accelerometer(void);
+void stop_accelerometer(void);
+void start_magnetometer(void);
+void stop_magnetometer(void);
 void read_accel(void);
 void read_magn(void);
 uint8_t is_horizontal(void);
@@ -103,7 +107,8 @@ struct mag_data
 #define		LSM303_REG_ACC_TIME_WINDOW_A       (0x3D)
 
 //acc reg val
-#define		LSM303_ACC_CTRL_REG1_A__100ODR_NORM_XYZ         (0x57)
+#define		LSM303_ACC_CTRL_REG1_A__100ODR_NORM_XYZ		(0x57)
+#define		LSM303_ACC_CTRL_REG1_A__SLEEP_NORM_XYZ		(0x07)
 
 
 
@@ -128,5 +133,7 @@ struct mag_data
 #define		LSM303_MAG_CRA_REG_M__75HZ        (0x18)
 #define		LSM303_MAG_CRB_REG_M__1_3GS       (0x20)
 #define		LSM303_MAG_MR_REG_M__CONT         (0x00)
+#define		LSM303_MAG_MR_REG_M__SLEEP        (0x03)
+
 
 #endif /*SENSORS_HEADER*/

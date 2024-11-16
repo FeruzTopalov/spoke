@@ -545,7 +545,7 @@ void change_menu(uint8_t button_code)
 
 				if (current_menu == M_NAVIGATION)
 				{
-					timer4_stop(); //stop compass
+					stop_compass(); //stop compass
 				}
 				break;
 
@@ -557,7 +557,7 @@ void change_menu(uint8_t button_code)
 	{
 		if (current_menu == M_NAVIGATION)
 		{
-			timer4_start(); //start compass
+			start_compass(); //start compass
 		}
 		lcd_display_on();
 	}
@@ -1592,7 +1592,7 @@ void draw_calibrating_compass(void)
 	}
 	else	//if calibration has ended
 	{
-		timer4_stop(); //stop compass activity
+		stop_compass(); //stop compass activity
 		compass_hard_soft_compensation();
 		current_menu = M_COMPASS_CALIBRATED;
 		draw_current_menu();
@@ -1650,7 +1650,7 @@ void navigation_ok(void)
 {
 	current_menu = M_COORDINATES;
 	//draw_current_menu();
-	timer4_stop(); //stop compass activity
+	stop_compass(); //stop compass activity
 }
 
 
@@ -1715,7 +1715,7 @@ void navigation_and_coordinates_down(void)
 
 void navigation_esc(void)
 {
-	timer4_stop();	//stop compass activity
+	stop_compass();	//stop compass activity
 	current_menu = M_MAIN;
 }
 
@@ -1723,7 +1723,7 @@ void navigation_esc(void)
 
 void coordinates_esc(void)
 {
-	timer4_start();	//stop compass activity //todo: ????
+	start_compass();	//stop compass activity //todo: ????
 	current_menu = M_NAVIGATION;
 }
 
@@ -1734,7 +1734,7 @@ void main_ok(void)
 	switch (get_current_item())
 	{
 		case M_MAIN_I_NAVIGATION:
-			timer4_start();					//start compass activity
+			start_compass();					//start compass activity
 			current_menu = M_NAVIGATION;
 			break;
 		case M_MAIN_I_DEVICES:
@@ -1752,7 +1752,7 @@ void main_navigation_coordinates_devices_pwr_long(void)
 {
 	if (current_menu == M_NAVIGATION)
 	{
-		timer4_stop(); //stop compass activity
+		stop_compass(); //stop compass activity
 	}
 	return_from_power_menu = current_menu;
 	current_menu = M_POWER;
@@ -1790,7 +1790,7 @@ void power_esc(void)
 {
 	if (return_from_power_menu == M_NAVIGATION)
 	{
-		timer4_start(); //start compass activity
+		start_compass(); //start compass activity
 	}
 	reset_current_item_in_menu(M_POWER);
 	current_menu = return_from_power_menu;
@@ -2420,7 +2420,7 @@ void confirm_settings_save_esc(void)
 void calibrate_compass_up(void)
 {
 	init_compass_calibration();
-	timer4_start();	//stop compass activity  //todo: ???
+	start_compass();	//stop compass activity  //todo: ???
 	current_menu = M_CALIBRATING_COMPASS;
 }
 
