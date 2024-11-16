@@ -302,6 +302,7 @@ void timer3_init(void)
 	TIM3->PSC = (uint16_t)299;         	// 3MHz/(299+1)=10kHz
 	TIM3->ARR = (uint16_t)99;           // 10kHz/(99+1)=100Hz(10ms)
 	TIM3->EGR = TIM_EGR_UG;             //software update generation
+	TIM3->SR &= ~TIM_SR_UIF;        	//clear gating timer int
 	TIM3->DIER |= TIM_DIER_UIE;         //update interrupt enable
 
 	NVIC_EnableIRQ(TIM3_IRQn);
@@ -351,6 +352,7 @@ void timer4_init(void)
 	TIM4->PSC = (uint16_t)299;         	// 3MHz/(299+1)=10kHz
 	TIM4->ARR = (uint16_t)999;          // 10kHz/(999+1)=10Hz(100ms)
 	TIM4->EGR = TIM_EGR_UG;             //software update generation
+	TIM4->SR &= ~TIM_SR_UIF;        	//clear gating timer int
 	TIM4->DIER |= TIM_DIER_UIE;         //update interrupt enable
 
 	NVIC_EnableIRQ(TIM4_IRQn);
