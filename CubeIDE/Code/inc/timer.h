@@ -10,6 +10,12 @@
 #define TIMER_HEADER
 
 
+
+#define TIMER1_INTERVAL_TYPE_LONG		(1)
+#define TIMER1_INTERVAL_TYPE_SHORT		(2)
+
+
+
 void timers_init(void);
 void make_a_beep(void);
 void make_a_long_beep(void);

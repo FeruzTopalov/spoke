@@ -339,7 +339,7 @@ void TIM1_UP_IRQHandler(void)
     TIM1->SR &= ~TIM_SR_UIF;                    //clear interrupt
     timer1_stop_reload();						//stop this timer
 
-    if (timer1_get_intrvl_type() == 1) //long interval 800 ms ended
+    if (timer1_get_intrvl_type() == TIMER1_INTERVAL_TYPE_LONG) //long interval 800 ms ended
     {
 
     	//parse NMEA, run short timer
@@ -353,7 +353,7 @@ void TIM1_UP_IRQHandler(void)
     	main_flags.parse_nmea = 1;			//ask to parse
 
     }
-    else if (timer1_get_intrvl_type() == 2) //short interval 100 ms ended, resulting 800 ms + 100 ms=900 ms after last pps
+    else if (timer1_get_intrvl_type() == TIMER1_INTERVAL_TYPE_SHORT) //short interval 100 ms ended, resulting 800 ms + 100 ms=900 ms after last pps
     {
 
     	//important: NMEA must be parsed before execution of this code

@@ -1723,7 +1723,7 @@ void navigation_esc(void)
 
 void coordinates_esc(void)
 {
-	start_compass();	//stop compass activity //todo: ????
+	start_compass();	//stop compass activity
 	current_menu = M_NAVIGATION;
 }
 
@@ -2420,7 +2420,7 @@ void confirm_settings_save_esc(void)
 void calibrate_compass_up(void)
 {
 	init_compass_calibration();
-	start_compass();	//stop compass activity  //todo: ???
+	start_compass();	//stop compass activity
 	current_menu = M_CALIBRATING_COMPASS;
 }
 

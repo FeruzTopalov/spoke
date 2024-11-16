@@ -32,7 +32,7 @@ void timer4_clock_enable(void);
 
 
 uint8_t sound_enabled = 1; //status of the beep sound notification
-uint8_t timer1_interval_type = 0; // 1 - long; 2 - short //todo: replace by defines
+uint8_t timer1_interval_type = 0;
 
 
 
@@ -205,7 +205,7 @@ void timer1_start_800ms(void)
 	timer1_clock_enable();
 	TIM1->ARR = (uint16_t)799;              // 1kHz/(799+1)=1.25Hz (800ms)
     TIM1->CR1 |= TIM_CR1_CEN;               //enable counter
-    timer1_interval_type = 1; //long
+    timer1_interval_type = TIMER1_INTERVAL_TYPE_LONG;
 }
 
 
@@ -216,7 +216,7 @@ void timer1_start_100ms(void)
 	timer1_clock_enable();
 	TIM1->ARR = (uint16_t)99;              // 1kHz/(99+1)=10Hz (100ms)
     TIM1->CR1 |= TIM_CR1_CEN;               //enable counter
-    timer1_interval_type = 2; //short
+    timer1_interval_type = TIMER1_INTERVAL_TYPE_SHORT;
 }
 
 
