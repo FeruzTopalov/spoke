@@ -158,14 +158,14 @@ void settings_interactive_save_default(void)
 	reload_watchdog();	//to prevent reset
 
 	//print instruction
+	while (get_lcd_busy()) {}
 	lcd_clear();
 	lcd_print(0, 0, "DEFAULT SETTINGS");
-
-	lcd_print(2, 4, "OK - Reset");
-	lcd_print(3, 3, "ESC - Cancel");
+	lcd_print(2, 3, "OK - Reset");
+	lcd_print(3, 2, "ESC - Cancel");
 	lcd_update();
 
-	while (!((GPIOB->IDR) & GPIO_IDR_IDR3) || !((GPIOB->IDR) & GPIO_IDR_IDR4)){}		//wait for user to release OK or ESC after entering settings reset routine
+	while (!((GPIOB->IDR) & GPIO_IDR_IDR3) || !((GPIOB->IDR) & GPIO_IDR_IDR4)) {}		//wait for user to release OK or ESC after entering settings reset routine
 	delay_cyc(100000);
 
     while (1)	//wait for user's decision
@@ -179,10 +179,15 @@ void settings_interactive_save_default(void)
 
     	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for reset settings to default
     	{
+    		reload_watchdog();	//to prevent reset
+
+    		while (!((GPIOB->IDR) & GPIO_IDR_IDR4)) {}		//wait for user to release OK
+    		delay_cyc(100000);
+
+    		while (get_lcd_busy()) {}
     		lcd_clear();
     		lcd_print(0, 0, "DEFAULT SETTINGS");
-    		lcd_print(2, 1, "Resetting...");
-    		lcd_print(3, 1, "GPS & settings");
+    		lcd_print(2, 2, "Resetting...");
     		lcd_update();
 
     		settings_save_default();
@@ -190,6 +195,8 @@ void settings_interactive_save_default(void)
     		/* UNCOMMENT if needed
     		reset_to_defaults_gps_receiver();
     		*/
+
+    		delay_cyc(300000);
 
     		NVIC_SystemReset();
     	}
