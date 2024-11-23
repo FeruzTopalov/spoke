@@ -101,25 +101,24 @@ void rtc_init(void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_PWREN;				//Enable power interface
 	RCC->APB1ENR |= RCC_APB1ENR_BKPEN;				//Enable backup interface
-	PWR->CR |= PWR_CR_DBP;							//Disable backup domain write protection
+	PWR->CR |= PWR_CR_DBP;							//Disable backup domain write protection. Backup domain write protection should be disabled if HSE/128 is used as RTC clock source
     RCC->BDCR |=  RCC_BDCR_BDRST;					//Reset entire backup domain (reset RTC)
     RCC->BDCR &= ~RCC_BDCR_BDRST;
 
-	RCC->CSR |= RCC_CSR_LSION;  					//Enable LSI 40 kHz
-	while ((RCC->CSR & RCC_CSR_LSIRDY) == 0){}		//Wait for stabilize
-	RCC->BDCR |= RCC_BDCR_RTCSEL_1;					//LSI is RTC clock source
-	RCC->BDCR &= ~RCC_BDCR_RTCSEL_0;
+    RCC->CR |= RCC_CR_HSEON;						//Enable HSE
+    while (!(RCC->CR & RCC_CR_HSERDY)){};			//Wait for HSE to stabilize
+    RCC->BDCR |= RCC_BDCR_RTCSEL_HSE;				//HSE/128 is RTC clock source (8 MHz / 128 = 62.5 kHz)
 	RCC->BDCR |= RCC_BDCR_RTCEN;					//Enable RTC
 
+    RTC->CRL &= ~RTC_CRL_RSF;                 		//Clear the RSF flag
+    while (!(RTC->CRL & RTC_CRL_RSF)){};       		//Wait until RSF is set
 	while ((RTC->CRL & RTC_CRL_RTOFF) == 0){}		//Wait RTC ready to acquire new command
 	RTC->CRL |= RTC_CRL_CNF;						//Enter config mode
 	RTC->PRLH = 0;
-	RTC->PRLL = 39999;								//(40000Hz-1)
+	RTC->PRLL = 62499;								//(62500Hz-1)
 	RTC->CRH |= RTC_CRH_SECIE;						//Enable Interrupt
 	RTC->CRL &= ~RTC_CRL_CNF;						//Exit config mode
 	while ((RTC->CRL & RTC_CRL_RTOFF) == 0){}
-
-	PWR->CR &= ~PWR_CR_DBP;							//Enable backup domain write protection
 
 	NVIC_EnableIRQ(RTC_IRQn);
 }
