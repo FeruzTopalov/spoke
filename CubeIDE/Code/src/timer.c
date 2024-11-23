@@ -105,8 +105,6 @@ void rtc_init(void)
     RCC->BDCR |=  RCC_BDCR_BDRST;					//Reset entire backup domain (reset RTC)
     RCC->BDCR &= ~RCC_BDCR_BDRST;
 
-    RCC->CR |= RCC_CR_HSEON;						//Enable HSE
-    while (!(RCC->CR & RCC_CR_HSERDY)){};			//Wait for HSE to stabilize
     RCC->BDCR |= RCC_BDCR_RTCSEL_HSE;				//HSE/128 is RTC clock source (8 MHz / 128 = 62.5 kHz)
 	RCC->BDCR |= RCC_BDCR_RTCEN;					//Enable RTC
 
