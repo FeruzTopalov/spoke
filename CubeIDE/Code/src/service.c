@@ -26,6 +26,10 @@ uint8_t days_in_month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; 	//i
 const char hex_chars[] = "0123456789ABCDEF";
 
 
+// Base64 character map
+static const char base64_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+
 //Simple delay in cycles
 void delay_cyc(uint32_t cycles)
 {
@@ -364,6 +368,44 @@ char *convert_heading(uint16_t heading)
 
 	rumb = (heading + 22.5) / 45;
 	return &rumbs[(uint8_t)rumb][0];
+}
+
+
+
+uint8_t base64_encode(uint8_t *input, uint8_t *output, uint8_t length)
+{
+    //calculate Base64 output length
+    uint8_t encoded_length = ((length + 2) / 3) * 4;
+
+    //encode input data
+    uint8_t in_idx = 0, out_idx = 0;
+    while (in_idx + 3 <= length)
+    {
+    	output[out_idx++] = base64_chars[input[in_idx] >> 2];
+    	output[out_idx++] = base64_chars[((input[in_idx] & 0x03) << 4) | (input[in_idx + 1] >> 4)];
+    	output[out_idx++] = base64_chars[((input[in_idx + 1] & 0x0F) << 2) | (input[in_idx + 2] >> 6)];
+    	output[out_idx++] = base64_chars[input[in_idx + 2] & 0x3F];
+        in_idx += 3;
+    }
+
+    //handle remaining bytes (padding)
+    if (in_idx < length)
+    {
+    	output[out_idx++] = base64_chars[input[in_idx] >> 2];
+        if (in_idx + 1 < length)
+        {
+        	output[out_idx++] = base64_chars[((input[in_idx] & 0x03) << 4) | (input[in_idx + 1] >> 4)];
+        	output[out_idx++] = base64_chars[(input[in_idx + 1] & 0x0F) << 2];
+        }
+        else
+        {
+        	output[out_idx++] = base64_chars[(input[in_idx] & 0x03) << 4];
+        	output[out_idx++] = '=';
+        }
+        output[out_idx++] = '=';
+    }
+
+    return encoded_length;
 }
 
 

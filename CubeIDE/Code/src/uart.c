@@ -17,14 +17,16 @@
 
 
 void console_prepare_data(void);
-void console_data_conv_to_hex(void);
+void console_data_conv_to_base64(void);
 
 
 
 char uart_buffer[UART_BUF_LEN];		//raw UART data for GPS
 char *backup_buf;					//backup for raw UART data
-uint8_t console_buffer[100];		//for console, raw data
-char console_buffer_hex[200];		//for console, hex-converted data
+uint8_t console_buffer[256];		//for console, raw data
+uint8_t console_buffer_base64[256];	//for console, base64 data
+uint8_t base64_in[256];				//for console operations
+uint8_t base64_out[256];			//for console operations
 uint8_t console_report_enabled = 0;	//enable send logs via console
 struct devices_struct **pp_devices;
 struct settings_struct *p_settings;
@@ -74,8 +76,8 @@ void uart1_dma_init(void)
 
 void uart1_dma_start(void)
 {
-	DMA1_Channel4->CMAR = (uint32_t)(&console_buffer_hex[1]);	//data starts from index 1
-	DMA1_Channel4->CNDTR = console_buffer_hex[0];	//data size in index 0
+	DMA1_Channel4->CMAR = (uint32_t)(&console_buffer_base64[1]);	//data starts from index 1
+	DMA1_Channel4->CNDTR = console_buffer_base64[0];	//data size in index 0
 	DMA1_Channel4->CCR |= DMA_CCR4_EN;      //enable channel
 }
 
@@ -119,7 +121,7 @@ void report_to_console(void)
 	if (console_report_enabled == 1)
 	{
 		console_prepare_data();			//fill buffer with data
-		console_data_conv_to_hex();		//convert to readable HEX
+		console_data_conv_to_base64();	//convert to base64
 		uart1_dma_start();				//send using DMA
 	}
 }
@@ -132,7 +134,7 @@ void console_prepare_data(void)
 	uint8_t i = 1;	//data starts from index 1
 	uint8_t all_flags = 0;
 
-	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)
+	for (uint8_t dev = NAV_OBJECT_FIRST; dev < NAV_OBJECT_LAST + 1; dev++)
 	{
 		if (pp_devices[dev]->exist_flag == 1)	//only existing devices
 		{
@@ -175,24 +177,32 @@ void console_prepare_data(void)
 
 	}
 
-	console_buffer[0] = --i;	//zero byte is the data length
+	console_buffer[0] = --i;	//zero's byte is the data length
 }
 
 
 
-void console_data_conv_to_hex()
+void console_data_conv_to_base64(void)
 {
-	uint8_t i;
+	//get original length from the first byte
+    uint8_t original_length = console_buffer[0];
+    uint8_t encoded_length;
 
-	for (i = 1; i < (console_buffer[0] + 1); i++)
-	{
-		byte2hex(console_buffer[i], &console_buffer_hex[2 * i - 1]);
-	}
+    //copy data only to tmp buffer
+    memcpy(base64_in, console_buffer + 1, original_length);
 
-	console_buffer_hex[2 * i - 1] = 0x0D;	// +2 symbols of CR+LF
-	console_buffer_hex[2 * i] = 0x0A;
+    //encode
+    encoded_length = base64_encode(base64_in, base64_out, original_length);
 
-	console_buffer_hex[0] = 2 * console_buffer[0] + 2;
+    //copy back from tmp buffer to output buffer starting from pos 1
+    memcpy(console_buffer_base64 + 1, base64_out, encoded_length);
+
+    //add cr+lf
+    console_buffer_base64[encoded_length + 1] = 0x0D;	// +2 symbols of CR+LF
+    console_buffer_base64[encoded_length + 2] = 0x0A;
+
+    //update the input buffer with encoded data length
+    console_buffer_base64[0] = encoded_length + 2;
 }
 
 
