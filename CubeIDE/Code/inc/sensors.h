@@ -130,10 +130,11 @@ struct mag_data
 #define		LSM303_REG_MAG_TEMP_OUT_L_M         (0x32)
 
 //mag reg val
-#define		LSM303_MAG_CRA_REG_M__75HZ        (0x18)
-#define		LSM303_MAG_CRB_REG_M__1_3GS       (0x20)
-#define		LSM303_MAG_MR_REG_M__CONT         (0x00)
-#define		LSM303_MAG_MR_REG_M__SLEEP        (0x03)
+#define		LSM303_MAG_CRA_REG_M__75HZ        	(0x18)
+#define		LSM303_MAG_CRB_REG_M__13GS			(0x20)
+#define		LSM303_MAG_CRB_REG_M__40GS       	(0x80)
+#define		LSM303_MAG_MR_REG_M__CONT         	(0x00)
+#define		LSM303_MAG_MR_REG_M__SLEEP        	(0x03)
 
 
 #endif /*SENSORS_HEADER*/
