@@ -490,7 +490,7 @@ int8_t rf_get_last_rssi(void)
 
     spi1_clock_disable();
 
-    return last_rssi / 2;
+    return (-last_rssi / 2);
 }
 
 
