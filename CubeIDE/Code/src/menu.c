@@ -927,7 +927,7 @@ void draw_navigation(void)
 
 	if (is_north_ready())	//only when north value is available
 	{
-		if (is_gps_course()) //if course is from GPS data, show a bigger center dot to distinguish from magnetic course
+		if (is_gps_course()) //if course is from GPS data
 		{
 			lcd_char_overlay_pos(3, 0, SYMB8_TRUE_NORTH); //true north, from GPS
 		}
@@ -1549,9 +1549,19 @@ void draw_calibrate_compass(void)
 {
 	lcd_clear();
 	lcd_print(0, 1, "COMPASS CALIBR");
-	lcd_print(1, 0, "-Hold horizontal");
-	lcd_print(2, 0, "-Click UP");
-	lcd_print(3, 0, "-Turn around 360");
+
+	if (get_compass_availability() == COMPASS_IS_AVAILABLE)
+	{
+		lcd_print(1, 0, "-Hold horizontal");
+		lcd_print(2, 0, "-Click UP");
+		lcd_print(3, 0, "-Turn around 360");
+	}
+	else
+	{
+		lcd_print(2, 0, "-Compass is not");
+		lcd_print(3, 1, "available");
+	}
+
 	lcd_update();
 }
 
@@ -2430,9 +2440,12 @@ void confirm_settings_save_esc(void)
 
 void calibrate_compass_up(void)
 {
-	init_compass_calibration();
-	start_compass();	//stop compass activity
-	current_menu = M_CALIBRATING_COMPASS;
+	if (get_compass_availability() == COMPASS_IS_AVAILABLE)
+	{
+		init_compass_calibration();
+		start_compass();	//start compass activity
+		current_menu = M_CALIBRATING_COMPASS;
+	}
 }
 
 

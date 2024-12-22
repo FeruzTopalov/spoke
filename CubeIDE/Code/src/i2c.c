@@ -13,6 +13,10 @@
 
 
 
+#define I2C_TIMEOUT 		(10000)
+
+
+
 void i2c_init(void)
 {
     //I2C config
@@ -52,19 +56,29 @@ uint8_t i2c_poll(uint8_t i2c_addr)
     uint16_t SR1_tmp;
     uint16_t SR2_tmp;
     uint8_t attempts = 10;
+    uint32_t timeout;
 
     i2c_clock_enable();
 
     while (attempts)
     {
+    	timeout = I2C_TIMEOUT;
+
         //Start
         I2C1->CR1 |= I2C_CR1_START;
         //Wait for start generated
-        while (!(I2C1->SR1 & I2C_SR1_SB))
+        while (!(I2C1->SR1 & I2C_SR1_SB) && --timeout) {}
+
+        if (timeout == 0)
         {
+        	i2c_clock_disable();
+        	return 0;
         }
+
         //Clear
         SR1_tmp = I2C1->SR1;
+
+        timeout = I2C_TIMEOUT;
 
         //Device address
         I2C1->DR = i2c_addr;
@@ -73,7 +87,14 @@ uint8_t i2c_poll(uint8_t i2c_addr)
         {
             SR1_tmp = I2C1->SR1;
         }
-        while (!(SR1_tmp & I2C_SR1_ADDR) && !(SR1_tmp & I2C_SR1_AF));    //"ADDR is not set after a NACK reception"
+        while (!(SR1_tmp & I2C_SR1_ADDR) && !(SR1_tmp & I2C_SR1_AF) && --timeout);    //"ADDR is not set after a NACK reception"
+
+        if (timeout == 0)
+        {
+        	i2c_clock_disable();
+        	return 0;
+        }
+
         //Clear
         SR1_tmp = I2C1->SR1;
         SR2_tmp = I2C1->SR2;
@@ -86,11 +107,19 @@ uint8_t i2c_poll(uint8_t i2c_addr)
 
             attempts--;   //slave is not ready, decrement attmepts counter
         }
-        else if (SR1_tmp & I2C_SR1_ADDR)
+        else if (SR1_tmp & I2C_SR1_ADDR) 		//address sent
         {
+        	timeout = I2C_TIMEOUT;
+
             //Stop
             I2C1->CR1 |= I2C_CR1_STOP;
-            while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
+            while ((I2C1->CR1 & I2C_CR1_STOP) && --timeout) {} 		//wait for stop cleared by hardware
+
+            if (timeout == 0)
+            {
+            	i2c_clock_disable();
+            	return 0;
+            }
 
             i2c_clock_disable();
 
@@ -104,9 +133,11 @@ uint8_t i2c_poll(uint8_t i2c_addr)
 
     SR2_tmp = SR2_tmp + 1;
 
+    timeout = I2C_TIMEOUT;
+
     //Stop before end
     I2C1->CR1 |= I2C_CR1_STOP;
-    while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
+    while ((I2C1->CR1 & I2C_CR1_STOP) && --timeout) {} 		//wait for stop cleared by hardware
 
     i2c_clock_disable();
 
