@@ -247,16 +247,6 @@ void lcd_set_pixel(uint8_t x, uint8_t y)
 //(0, 0) is bottom left corner
 void lcd_set_pixel_plot(uint8_t x, uint8_t y)
 {
-	if (x > 127)
-	{
-		x = 127;
-	}
-
-	if (y > 63)
-	{
-		y = 63;
-	}
-
     //set pixel
 	y = 63 - y;
     screen_buf[x + (y / 8) * LCD_SIZE_X] |= 1 << (y % 8);

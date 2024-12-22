@@ -1585,6 +1585,17 @@ void draw_calibrating_compass(void)
 			uint8_t x_dot, y_dot;
 			x_dot = (uint8_t)((float)p_comp_cal_buf_x[pt] * plot_scale + LCD_CENTR_X);
 			y_dot = (uint8_t)((float)p_comp_cal_buf_y[pt] * plot_scale + LCD_CENTR_Y);
+
+			if (x_dot > 127)
+			{
+				x_dot = 127;
+			}
+
+			if (y_dot > 63)
+			{
+				y_dot = 63;
+			}
+
 			lcd_set_pixel_plot(x_dot, y_dot);
 		}
 
