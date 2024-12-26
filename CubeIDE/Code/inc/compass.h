@@ -10,7 +10,7 @@
 #define COMPASS_HEADER
 
 #define COMPASS_IS_NOT_AVAILABLE	(0)
-#define COMPASS_IS_AVAILABLE		(2)
+#define COMPASS_IS_AVAILABLE		(1)
 
 void init_compass(void);
 void init_compass_calibration(void);

@@ -68,8 +68,16 @@ float cal_scale_y;
 
 void init_compass(void)
 {
-	compass_availability += init_accelerometer();	//+1
-	compass_availability += init_magnetometer();	//+1
+	compass_availability = COMPASS_IS_NOT_AVAILABLE;
+
+	if (init_accelerometer())
+	{
+		if (init_magnetometer())
+		{
+			compass_availability = COMPASS_IS_AVAILABLE;
+		}
+	}
+
 	p_acceleration = get_acceleration();
 	p_magnetic_field = get_magnetic_field();
 	p_gps_num = get_gps_num();

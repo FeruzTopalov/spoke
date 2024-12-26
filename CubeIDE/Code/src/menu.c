@@ -925,6 +925,11 @@ void draw_navigation(void)
 	#define SCREEN_CENTER_Y	(31)
 	#define ARROW_LEN		(15)
 
+	if (get_compass_availability() == COMPASS_IS_NOT_AVAILABLE)
+	{
+		read_compass();		//read compass manually to get gps course
+	}
+
 	if (is_north_ready())	//only when north value is available
 	{
 		if (is_gps_course()) //if course is from GPS data
