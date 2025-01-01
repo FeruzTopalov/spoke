@@ -476,7 +476,7 @@ void rf_workaround_15_4(void)
 
 int8_t rf_get_last_rssi(void)
 {
-	int8_t last_rssi = 0;
+	uint8_t last_rssi = 0;
 
 	spi1_clock_enable();
 
@@ -490,7 +490,7 @@ int8_t rf_get_last_rssi(void)
 
     spi1_clock_disable();
 
-    return (-last_rssi / 2);
+    return -(last_rssi / 2);
 }
 
 
