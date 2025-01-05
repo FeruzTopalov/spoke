@@ -194,13 +194,13 @@ int main(void)
         	main_flags.process_all = 0;
         	process_all_devices();
 
-        	report_to_console(); //send fresh devices data to console
-
         	calc_fence();
         	calc_timeout(uptime);
         	main_flags.do_beep += check_any_alarm_fence_timeout();
         	main_flags.do_beep += is_battery_low();
         	main_flags.update_screen = 1;
+
+        	report_to_console(); //send fresh devices data to console
         }
 
 
