@@ -241,6 +241,8 @@ void stop_compass(void)
 		timer4_stop();
 		stop_accelerometer();
 		stop_magnetometer();
+		gps_course = 0;
+		north_ready = 0;
 	}
 }
 
