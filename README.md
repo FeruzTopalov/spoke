@@ -137,3 +137,8 @@ In order to calculate relative positions of other devices, Spoke uses two formul
 </p>
 
 ---
+
+## Support project
+
+* Best support for the project is an active participation in the development & tests. Join our community, build the device, test it, commit improvements or open an issue if you have troubles to solve.
+* Alternatively, you could support me on [Boosty](https://boosty.to/feruztopalov/donate) by a single donation or a subscription with different bonuses for you!
