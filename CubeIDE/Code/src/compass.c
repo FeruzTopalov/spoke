@@ -25,7 +25,7 @@
 
 #define GPS_SPEED_THRS				(2)	//threshold value for GPS speed in km/h to show true course
 #define COMP_CAL_BUF_MAX_LEN 		(100)
-#define COMP_CAL_STOP_TOL 			(50)	//tolerance on auto-stop condition
+#define COMP_CAL_STOP_TOL 			(15)	//tolerance on auto-stop condition
 
 
 
