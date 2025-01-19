@@ -73,7 +73,7 @@ int main(void)
     //start screen
     lcd_bitmap(&startup_screen[0]);
     lcd_update();
-    delay_cyc(400000);
+    delay_cyc(800000);
 
     lcd_print_only(0, 0, "uart..");
     uart_init();

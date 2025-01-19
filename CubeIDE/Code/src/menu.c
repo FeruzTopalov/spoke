@@ -27,7 +27,7 @@
 
 
 
-char *HW_FW_VERSION = "H1F3";	//revision HW.FW
+char *HW_FW_VERSION = "H1F4";	//revision HW.FW
 
 
 
