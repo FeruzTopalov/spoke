@@ -219,7 +219,32 @@ void uart3_dma_init(void)
     GPIOB->CRH &= ~GPIO_CRH_CNF10_0;     //alternate output push-pull
     GPIOB->CRH |= GPIO_CRH_CNF10_1;
 
-    USART3->BRR = 0x0138;                   //9600 bod; mantissa 19, frac 8
+	//Set GPS Baud
+    uint16_t brr_gps_baud;
+	switch (p_settings->gps_baud_opt)
+	{
+		case GPS_BAUD_4800_SETTING:		//4800 bod; mantissa 39, frac 1
+			brr_gps_baud = 0x0271;
+			break;
+
+		case GPS_BAUD_9600_SETTING:		//9600 bod; mantissa 19, frac 8
+			brr_gps_baud = 0x0138;
+			break;
+
+		case GPS_BAUD_38400_SETTING:	//34800 bod; mantissa 4, frac 14
+			brr_gps_baud = 0x004E;
+			break;
+
+		case GPS_BAUD_115200_SETTING:	//115200 bod; mantissa 1, frac 10
+			brr_gps_baud = 0x001A;
+			break;
+
+		default:						//9600 bod; mantissa 19, frac 8
+			brr_gps_baud = 0x0138;
+			break;
+	}
+
+    USART3->BRR = brr_gps_baud;             //per settings
     USART3->CR1 |= USART_CR1_TE;            //enable tx
     USART3->CR1 |= USART_CR1_RE;            //enable rx
     USART3->CR1 |= USART_CR1_UE;            //uart enable

@@ -604,6 +604,20 @@ void itoa32(int32_t value, char *buffer)
 
 
 
+uint8_t string_length(char *str)
+{
+	uint8_t length = 0;
+
+    while (str[length] != '\0')
+    {
+        length++;
+    }
+
+    return length;
+}
+
+
+
 void byte2hex(uint8_t byte, char *array)
 {
     array[0] = hex_chars[(byte >> 4) & 0x0F];

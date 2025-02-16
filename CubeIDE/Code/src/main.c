@@ -75,11 +75,11 @@ int main(void)
     lcd_update();
     delay_cyc(800000);
 
+     lcd_print_only(0, 0, "settings..");
+    settings_load();
+
     lcd_print_only(0, 0, "uart..");
     uart_init();
-
-    lcd_print_only(0, 0, "settings..");
-    settings_load();
 
     lcd_print_only(0, 0, "timers..");
     timers_init();

@@ -68,6 +68,7 @@ void draw_set_update_interval(void);
 void draw_set_timeout(void);
 void draw_set_fence(void);
 void draw_set_timezone(void);
+void draw_set_gps_baud(void);
 void draw_confirm_settings_save(void);
 void draw_calibrate_compass(void);
 void draw_calibrating_compass(void);
@@ -126,6 +127,10 @@ void set_timezone_ok(void);
 void set_timezone_esc(void);
 void time_zone_inc(void);
 void time_zone_dec(void);
+void set_gps_baud_up(void);
+void set_gps_baud_down(void);
+void set_gps_baud_ok(void);
+void set_gps_baud_esc(void);
 void confirm_settings_save_ok(void);
 void confirm_settings_save_esc(void);
 void calibrate_compass_up(void);
@@ -160,6 +165,7 @@ enum
 	M_SET_TIMEOUT,
 	M_SET_FENCE,
 	M_SET_TIMEZONE,
+	M_SET_GPS_BAUD,
 	M_CONFIRM_SETTINGS_SAVE,
 	M_CALIBRATE_COMPASS,
 	M_CALIBRATING_COMPASS,
@@ -253,9 +259,10 @@ enum
 enum
 {
 	M_EDIT_OTHER_I_TIMEOUT = 0,
-	M_EDIT_OTHER_I_FENCE,								//last item
+	M_EDIT_OTHER_I_FENCE,
 	M_EDIT_OTHER_I_TIMEZONE,
-	M_EDIT_OTHER_I_LAST = M_EDIT_OTHER_I_TIMEZONE		//copy last item here
+	M_EDIT_OTHER_I_GPS_BAUD,							//last item
+	M_EDIT_OTHER_I_LAST = M_EDIT_OTHER_I_GPS_BAUD		//copy last item here
 };
 
 
@@ -321,6 +328,10 @@ const struct
 	{M_SET_TIMEZONE,			BTN_DOWN,				set_timezone_down},
 	{M_SET_TIMEZONE,			BTN_OK,					set_timezone_ok},
 	{M_SET_TIMEZONE,			BTN_ESC,				set_timezone_esc},
+	{M_SET_GPS_BAUD,			BTN_UP,                 set_gps_baud_up},
+	{M_SET_GPS_BAUD,			BTN_DOWN,               set_gps_baud_down},
+	{M_SET_GPS_BAUD,			BTN_OK,                 set_gps_baud_ok},
+	{M_SET_GPS_BAUD,			BTN_ESC,            	set_gps_baud_esc},
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_OK,					confirm_settings_save_ok},
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_ESC,				confirm_settings_save_esc},
 	{M_CALIBRATE_COMPASS,		BTN_UP,					calibrate_compass_up},
@@ -353,6 +364,7 @@ const struct
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_TIMEOUT,				M_SET_TIMEOUT},
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_FENCE,				M_SET_FENCE},
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_TIMEZONE,			M_SET_TIMEZONE},
+	{M_EDIT_OTHER,				M_EDIT_OTHER_I_GPS_BAUD,			M_SET_GPS_BAUD},
     {0, 0, 0}   //end marker
 };
 
@@ -438,6 +450,7 @@ const struct
 	{M_SET_TIMEOUT,				draw_set_timeout},
 	{M_SET_FENCE,				draw_set_fence},
 	{M_SET_TIMEZONE,			draw_set_timezone},
+	{M_SET_GPS_BAUD,			draw_set_gps_baud},
 	{M_CONFIRM_SETTINGS_SAVE,	draw_confirm_settings_save},
 	{M_CALIBRATE_COMPASS,		draw_calibrate_compass},
 	{M_CALIBRATING_COMPASS,		draw_calibrating_compass},
@@ -459,6 +472,7 @@ struct settings_struct settings_copy;
 
 uint8_t *p_update_interval_values;
 int8_t *p_tx_power_values;
+uint32_t *p_gps_baud_values;
 struct gps_raw_struct *p_gps_raw;
 struct gps_num_struct *p_gps_num;
 
@@ -487,6 +501,7 @@ void init_menu(void)
 	//Load other
 	p_tx_power_values = get_tx_power_values();
 	p_update_interval_values = get_update_interval_values();
+	p_gps_baud_values = get_gps_baud_values();
 	p_gps_raw = get_gps_raw();
 	p_gps_num = get_gps_num();
 
@@ -580,7 +595,7 @@ void scroll_up(void)
         set_current_item(current - 1);
     }
     
-    //draw_current_menu();
+
 }
 
 
@@ -600,7 +615,7 @@ void scroll_down(void)
         set_current_item(current + 1);
     }
     
-    //draw_current_menu();
+
 }
 
 
@@ -617,7 +632,7 @@ void switch_forward(void)
             break;
         }
     }
-    //draw_current_menu();
+
 }
 
 
@@ -634,7 +649,7 @@ void switch_backward(void)
             break;
         }
     }
-    //draw_current_menu();
+
 }
 
 
@@ -1281,11 +1296,10 @@ void draw_settings(void)
 //EDIT DEVICE SETTINGS
 void draw_edit_device(void)
 {
-	#define EDIT_DEVICE_ROW               (1)
+	#define EDIT_DEVICE_ROW               (0)
 	#define EDIT_DEVICE_COL               (1)
 
     lcd_clear();
-    lcd_print(0, EDIT_DEVICE_COL, "EDIT DEVICE");
 
     lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL, "Number");
     itoa32(settings_copy.device_number, &tmp_buf[0]);
@@ -1308,11 +1322,10 @@ void draw_edit_device(void)
 //EDIT RADIO SETTINGS
 void draw_edit_radio(void)
 {
-	#define EDIT_RADIO_ROW               (1)
+	#define EDIT_RADIO_ROW               (0)
 	#define EDIT_RADIO_COL               (1)
 
     lcd_clear();
-    lcd_print(0, EDIT_RADIO_COL, "EDIT RADIO");
 
     lcd_print(EDIT_RADIO_ROW, EDIT_RADIO_COL, "Update");
     itoa32(p_update_interval_values[settings_copy.update_interval_opt], &tmp_buf[0]);
@@ -1337,11 +1350,10 @@ void draw_edit_radio(void)
 //EDIT OTHER SETTINGS
 void draw_edit_other(void)
 {
-	#define EDIT_OTHER_ROW               (1)
+	#define EDIT_OTHER_ROW               (0)
 	#define EDIT_OTHER_COL               (1)
 
     lcd_clear();
-    lcd_print(0, EDIT_OTHER_COL, "EDIT OTHER");
 
     lcd_print(EDIT_OTHER_ROW, EDIT_OTHER_COL, "Timeout");
     itoa32(settings_copy.timeout_threshold, &tmp_buf[0]);
@@ -1371,6 +1383,18 @@ void draw_edit_other(void)
 	itoa32(settings_copy.time_zone_minute, &tmp_buf[0]);
 	time_date_add_leading_zero(&tmp_buf[0]);
 	lcd_print_next(&tmp_buf[0]);
+
+	lcd_print(EDIT_OTHER_ROW + 3, EDIT_OTHER_COL, "GPS Baud");
+    itoa32(p_gps_baud_values[settings_copy.gps_baud_opt], &tmp_buf[0]);
+
+    if (string_length(&tmp_buf[0]) > 4)
+    {
+    	lcd_print_viceversa(EDIT_OTHER_ROW + 3, 15, &tmp_buf[0]);
+    }
+    else
+    {
+    	lcd_print(EDIT_OTHER_ROW + 3, 11, &tmp_buf[0]);
+    }
 
     lcd_print(EDIT_OTHER_ROW + get_current_item(), EDIT_OTHER_COL - 1, ">");
     lcd_update();
@@ -1531,6 +1555,22 @@ void draw_set_timezone(void)
 
 
 
+void draw_set_gps_baud(void)
+{
+	#define GPS_BAUD_ROW               (2)
+	#define GPS_BAUD_COL               (9)
+
+	lcd_clear();
+	lcd_print(0, 4, "GPS BAUD");
+
+    itoa32(p_gps_baud_values[settings_copy.gps_baud_opt], &tmp_buf[0]);
+    lcd_print_viceversa(GPS_BAUD_ROW, GPS_BAUD_COL, &tmp_buf[0]);
+
+	lcd_update();
+}
+
+
+
 void draw_confirm_settings_save(void)
 {
     if (flag_settings_changed)
@@ -1675,7 +1715,7 @@ void draw_calibration_saved_popup(void)
 void navigation_ok(void)
 {
 	current_menu = M_COORDINATES;
-	//draw_current_menu();
+
 	stop_compass(); //stop compass activity
 }
 
@@ -1709,7 +1749,7 @@ void navigation_and_coordinates_up(void)
 
 	scroll_devices_up();
 
-    //draw_current_menu();
+
 }
 
 
@@ -1734,7 +1774,7 @@ void navigation_and_coordinates_down(void)
     }
     while (pp_devices[navigate_to_device]->exist_flag == 0);
 
-    //draw_current_menu();
+
 }
 
 
@@ -1782,7 +1822,7 @@ void main_navigation_coordinates_devices_pwr_long(void)
 	}
 	return_from_power_menu = current_menu;
 	current_menu = M_POWER;
-	//draw_current_menu();
+
 }
 
 
@@ -1807,7 +1847,7 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 			break;
 	}
 
-	//draw_current_menu();
+
 }
 
 
@@ -1820,7 +1860,7 @@ void power_esc(void)
 	}
 	reset_current_item_in_menu(M_POWER);
 	current_menu = return_from_power_menu;
-	//draw_current_menu();
+
 }
 
 
@@ -1828,7 +1868,7 @@ void power_esc(void)
 void coordinates_ok(void)
 {
 	current_menu = M_DEVICE_SUBMENU;
-	//draw_current_menu();
+
 }
 
 
@@ -1844,7 +1884,7 @@ void save_device_up(void)
 		current_mem_point_to_save++;
 	}
 
-	//draw_current_menu();
+
 }
 
 
@@ -1860,7 +1900,7 @@ void save_device_down(void)
 		current_mem_point_to_save--;
 	}
 
-	//draw_current_menu();
+
 }
 
 
@@ -1882,7 +1922,7 @@ void save_device_ok(void)
 	reset_current_item_in_menu(M_DEVICE_SUBMENU);
 	current_mem_point_to_save = MEMORY_POINT_FIRST;		//reset current point name to save
 	current_menu = M_SAVED_POPUP;
-	//draw_current_menu();
+
 }
 
 
@@ -1891,7 +1931,7 @@ void save_device_esc(void)
 {
 	current_mem_point_to_save = MEMORY_POINT_FIRST;		//reset current point name to save
 	current_menu = M_DEVICE_SUBMENU;
-	//draw_current_menu();
+
 }
 
 
@@ -1915,7 +1955,7 @@ void delete_device_ok(void)
 
 	reset_current_item_in_menu(M_DEVICE_SUBMENU);
 	current_menu = M_DELETED_POPUP;
-	//draw_current_menu();
+
 }
 
 
@@ -1940,7 +1980,7 @@ void set_device_number_up(void)
 		settings_copy.device_number++;
 	}
 
-    //draw_current_menu();
+
 }
 
 
@@ -1965,7 +2005,7 @@ void set_device_number_down(void)
 		settings_copy.device_number--;
 	}
 
-    //draw_current_menu();
+
 }
 
 
@@ -1978,7 +2018,7 @@ void set_device_number_ok(void)
     }
 
     current_menu = M_EDIT_DEVICE;
-    //draw_current_menu();
+
 }
 
 
@@ -1988,7 +2028,7 @@ void set_device_number_esc(void)
     settings_copy.device_number = p_settings->device_number;   //exit no save, reset values
     settings_copy.devices_on_air = p_settings->devices_on_air;
     current_menu = M_EDIT_DEVICE;
-    //draw_current_menu();
+
 }
 
 
@@ -2004,7 +2044,7 @@ void set_device_id_up(void)
         settings_copy.device_id++;
     }
 
-    //draw_current_menu();
+
 }
 
 
@@ -2020,7 +2060,7 @@ void set_device_id_down(void)
         settings_copy.device_id--;
     }
 
-    //draw_current_menu();
+
 }
 
 
@@ -2033,7 +2073,7 @@ void set_device_id_ok(void)
 	}
 
     current_menu = M_EDIT_DEVICE;
-    //draw_current_menu();
+
 }
 
 
@@ -2042,7 +2082,7 @@ void set_device_id_esc(void)
 {
 	settings_copy.device_id = p_settings->device_id;   //exit no save, reset value
     current_menu = M_EDIT_DEVICE;
-    //draw_current_menu();
+
 }
 
 
@@ -2058,7 +2098,7 @@ void set_freq_channel_up(void)
         settings_copy.freq_channel++;
     }
 
-    //draw_current_menu();
+
 }
 
 
@@ -2074,7 +2114,7 @@ void set_freq_channel_down(void)
         settings_copy.freq_channel--;
     }
 
-    //draw_current_menu();
+
 }
 
 
@@ -2087,7 +2127,7 @@ void set_freq_channel_ok(void)
     }
 
     current_menu = M_EDIT_RADIO;
-    //draw_current_menu();
+
 }
 
 
@@ -2096,7 +2136,7 @@ void set_freq_channel_esc(void)
 {
     settings_copy.freq_channel = p_settings->freq_channel;   //exit no save, reset value
     current_menu = M_EDIT_RADIO;
-    //draw_current_menu();
+
 }
 
 
@@ -2112,7 +2152,7 @@ void set_tx_power_up(void)
         settings_copy.tx_power_opt++;
     }
 
-    //draw_current_menu();
+
 }
 
 
@@ -2128,7 +2168,7 @@ void set_tx_power_down(void)
         settings_copy.tx_power_opt--;
     }
 
-    //draw_current_menu();
+
 }
 
 
@@ -2141,7 +2181,7 @@ void set_tx_power_ok(void)
     }
 
     current_menu = M_EDIT_RADIO;
-    //draw_current_menu();
+
 }
 
 
@@ -2150,7 +2190,7 @@ void set_tx_power_esc(void)
 {
     settings_copy.tx_power_opt = p_settings->tx_power_opt;   //exit no save, reset value
     current_menu = M_EDIT_RADIO;
-    //draw_current_menu();
+
 }
 
 
@@ -2166,7 +2206,7 @@ void set_update_interval_up(void)
     	settings_copy.update_interval_opt++;
     }
 
-    //draw_current_menu();
+
 }
 
 
@@ -2182,7 +2222,7 @@ void set_update_interval_down(void)
     	settings_copy.update_interval_opt--;
     }
 
-    //draw_current_menu();
+
 }
 
 
@@ -2195,7 +2235,7 @@ void set_update_interval_ok(void)
     }
 
     current_menu = M_EDIT_RADIO;
-    //draw_current_menu();
+
 }
 
 
@@ -2204,7 +2244,7 @@ void set_update_interval_esc(void)
 {
 	settings_copy.update_interval_opt = p_settings->update_interval_opt;   //exit no save, reset value
     current_menu = M_EDIT_RADIO;
-    //draw_current_menu();
+
 }
 
 
@@ -2220,7 +2260,7 @@ void set_timeout_up(void)
 		settings_copy.timeout_threshold += TIMEOUT_THRESHOLD_STEP;
 	}
 
-	//draw_current_menu();
+
 }
 
 
@@ -2236,7 +2276,7 @@ void set_timeout_down(void)
 		settings_copy.timeout_threshold -= TIMEOUT_THRESHOLD_STEP;
 	}
 
-	//draw_current_menu();
+
 }
 
 
@@ -2249,7 +2289,7 @@ void set_timeout_ok(void)
     }
 
     current_menu = M_EDIT_OTHER;
-    //draw_current_menu();
+
 }
 
 
@@ -2258,7 +2298,7 @@ void set_timeout_esc(void)
 {
 	settings_copy.timeout_threshold = p_settings->timeout_threshold;   //exit no save, reset value
     current_menu = M_EDIT_OTHER;
-    //draw_current_menu();
+
 }
 
 
@@ -2274,7 +2314,7 @@ void set_fence_up(void)
 		settings_copy.fence_threshold += FENCE_THRESHOLD_STEP;
 	}
 
-	//draw_current_menu();
+
 }
 
 
@@ -2290,7 +2330,7 @@ void set_fence_down(void)
 		settings_copy.fence_threshold -= FENCE_THRESHOLD_STEP;
 	}
 
-	//draw_current_menu();
+
 }
 
 
@@ -2303,7 +2343,7 @@ void set_fence_ok(void)
     }
 
     current_menu = M_EDIT_OTHER;
-    //draw_current_menu();
+
 }
 
 
@@ -2312,7 +2352,7 @@ void set_fence_esc(void)
 {
 	settings_copy.fence_threshold = p_settings->fence_threshold;   //exit no save, reset value
     current_menu = M_EDIT_OTHER;
-    //draw_current_menu();
+
 }
 
 
@@ -2421,6 +2461,54 @@ void set_timezone_esc(void)
 
 
 
+void set_gps_baud_up(void)
+{
+    if (settings_copy.gps_baud_opt == GPS_BAUD_LAST_OPTION)
+    {
+        settings_copy.gps_baud_opt = GPS_BAUD_FIRST_OPTION;
+    }
+    else
+    {
+        settings_copy.gps_baud_opt++;
+    }
+}
+
+
+
+void set_gps_baud_down(void)
+{
+    if (settings_copy.gps_baud_opt == GPS_BAUD_FIRST_OPTION)
+    {
+        settings_copy.gps_baud_opt = GPS_BAUD_LAST_OPTION;
+    }
+    else
+    {
+        settings_copy.gps_baud_opt--;
+    }
+}
+
+
+
+void set_gps_baud_ok(void)
+{
+    if (settings_copy.gps_baud_opt != p_settings->gps_baud_opt)
+    {
+        flag_settings_changed = 1;
+    }
+
+    current_menu = M_EDIT_OTHER;
+}
+
+
+
+void set_gps_baud_esc(void)
+{
+    settings_copy.gps_baud_opt = p_settings->gps_baud_opt;   //exit no save, reset value
+    current_menu = M_EDIT_OTHER;
+}
+
+
+
 void confirm_settings_save_ok(void)
 {
     lcd_clear();
@@ -2438,7 +2526,6 @@ void confirm_settings_save_esc(void)
     settings_copy = *p_settings;   //reset to no changes state
     flag_settings_changed = 0;  //clear flag
     current_menu = M_MAIN;
-    //draw_current_menu();
 }
 
 
