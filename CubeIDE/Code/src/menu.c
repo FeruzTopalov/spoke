@@ -2433,6 +2433,11 @@ void time_zone_dec(void)
 		settings_copy.time_zone_minute = 45;
 		settings_copy.time_zone_hour -= 1;
 	}
+
+	if ((settings_copy.time_zone_hour == 0) && (settings_copy.time_zone_minute == 0))		//fix negative zero issue
+	{
+		settings_copy.time_zone_dir = 1;
+	}
 }
 
 
