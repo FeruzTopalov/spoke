@@ -30,6 +30,8 @@ void ftoa32(float value, uint8_t precision, char *buffer);
 int32_t atoi32(char *input);
 void itoa32(int32_t value, char *buffer);
 uint8_t string_length(char *str);
+void string_copy(char *destination, char *source);
+void string_cat(char *destination, char *source);
 void byte2hex(uint8_t byte, char *array);
 void time_date_add_leading_zero(char *buf);
 uint8_t get_days_in_month(uint8_t month, uint8_t year);

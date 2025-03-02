@@ -618,6 +618,31 @@ uint8_t string_length(char *str)
 
 
 
+void string_copy(char *destination, char *source)
+{
+	while ((*destination++ = *source++))
+	{
+		;
+	}
+}
+
+
+
+void string_cat(char *destination, char *source)
+{
+    while (*destination)
+    {
+    	destination++;
+    }
+
+	while ((*destination++ = *source++))
+	{
+		;
+	}
+}
+
+
+
 void byte2hex(uint8_t byte, char *array)
 {
     array[0] = hex_chars[(byte >> 4) & 0x0F];

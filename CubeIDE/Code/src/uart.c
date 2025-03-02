@@ -16,20 +16,37 @@
 
 
 
-void console_prepare_data(void);
-void console_data_conv_to_base64(void);
+void console_prepare_timestamp(void);
+void console_prepare_nav_data(void);
+void console_conv_nav_data_to_base64(void);
+void console_combine_timestamp_nav_data(void);
 
 
 
-char uart_buffer[UART_BUF_LEN];		//raw UART data for GPS
-char *backup_buf;					//backup for raw UART data
-uint8_t console_buffer[256];		//for console, raw data
-uint8_t console_buffer_base64[256];	//for console, base64 data
-uint8_t base64_in[256];				//for console operations
-uint8_t base64_out[256];			//for console operations
-uint8_t console_report_enabled = 0;	//enable send logs via console
+#define TIMESTAMP_SZ	(27)
+#define CONS_DATA_SZ	(256)
+
+
+
+char uart_buffer[UART_BUF_LEN];				//raw UART data for GPS
+char *backup_buf;							//backup for raw UART data
+
+uint8_t console_timestamp[TIMESTAMP_SZ];	//for console, timestamp data
+
+uint8_t console_nav_data[CONS_DATA_SZ];		//for console, raw nav data
+uint8_t nav_data_len = 0;					//nav data length
+
+uint8_t console_nav_data_base64[CONS_DATA_SZ];//for console, base64 nav data
+uint8_t nav_data_base64_len = 0;			//base64 nav data length
+
+uint8_t console_data[CONS_DATA_SZ];			//resulting console data
+uint8_t console_data_len = 0;				//console data length
+
+uint8_t console_report_enabled = 1;			//enable send logs via console
+
 struct devices_struct **pp_devices;
 struct settings_struct *p_settings;
+struct gps_num_struct *p_gps_num;
 
 
 
@@ -38,6 +55,7 @@ void uart_init(void)
 {
 	pp_devices = get_devices();
 	p_settings = get_settings();
+	p_gps_num = get_gps_num();
 	uart1_dma_init();
 	uart3_dma_init();
 }
@@ -58,9 +76,9 @@ void uart1_dma_init(void)
     USART1->CR3 |= USART_CR3_DMAT;          //enable DMA mode USART TX
     RCC->AHBENR |= RCC_AHBENR_DMA1EN;       //enable dma1 clock
 
-    DMA1_Channel4->CPAR = (uint32_t)(&(USART1->DR));    	//transfer destination
-    DMA1_Channel4->CMAR = (uint32_t)(&console_buffer[0]);  	//transfer source
-    DMA1_Channel4->CNDTR = 1;                				//bytes amount to transmit
+    DMA1_Channel4->CPAR = (uint32_t)(&(USART1->DR));    		//transfer destination
+    DMA1_Channel4->CMAR = (uint32_t)(&console_data[0]);  		//transfer source
+    DMA1_Channel4->CNDTR = 1;                					//bytes amount to transmit
 
     DMA1_Channel4->CCR |= DMA_CCR4_DIR;		//direction mem -> periph
     DMA1_Channel4->CCR |= DMA_CCR4_MINC;    //enable memory increment
@@ -76,9 +94,9 @@ void uart1_dma_init(void)
 
 void uart1_dma_start(void)
 {
-	DMA1_Channel4->CMAR = (uint32_t)(&console_buffer_base64[1]);	//data starts from index 1
-	DMA1_Channel4->CNDTR = console_buffer_base64[0];	//data size in index 0
-	DMA1_Channel4->CCR |= DMA_CCR4_EN;      //enable channel
+	DMA1_Channel4->CMAR = (uint32_t)(console_data);		//data starts from index 1
+	DMA1_Channel4->CNDTR = console_data_len;			//data size in index 0
+	DMA1_Channel4->CCR |= DMA_CCR4_EN;      			//enable channel
 }
 
 
@@ -120,26 +138,108 @@ void report_to_console(void)
 {
 	if (console_report_enabled == 1)
 	{
-		console_prepare_data();			//fill buffer with data
-		console_data_conv_to_base64();	//convert to base64
-		uart1_dma_start();				//send using DMA
+		console_prepare_timestamp();			//timestamp in ISO 8601
+		console_prepare_nav_data();				//fill buffer with data
+		console_conv_nav_data_to_base64();		//convert to base64
+		console_combine_timestamp_nav_data();	//combine all together
+		uart1_dma_start();						//send using DMA
 	}
 }
 
 
 
-//What we transmit to console
-void console_prepare_data(void)
+void console_prepare_timestamp(void)
 {
-	uint8_t i = 1;	//data starts from index 1
-	uint8_t all_flags = 0;
+	char tmp_buf[10];
 
-	for (uint8_t dev = NAV_OBJECT_FIRST; dev < NAV_OBJECT_LAST + 1; dev++)
+	//FORMAT: "2025-03-02T10:45:00+03:00 "
+	//FORMAT: "YYYY-MM-DDTHH:MM:SS+hh:mm "
+
+	//clear
+	memset(console_timestamp, 0, TIMESTAMP_SZ);
+
+	//YYYY-
+	if ((p_gps_num->year_tz == 0) && (p_gps_num->month_tz == 0) && (p_gps_num->day_tz == 0))
+	{
+		strcpy(console_timestamp, "0000");		//no date received form GPS, use 0000 as year
+	}
+	else
+	{
+		itoa32((p_gps_num->year_tz + 2000), &tmp_buf[0]);		//+2000 to year
+		strcpy(console_timestamp, tmp_buf);
+	}
+	strcat(console_timestamp, "-");
+
+	//MM-
+	itoa32(p_gps_num->month_tz, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, "-");
+
+	//DDT
+	itoa32(p_gps_num->day_tz, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, "T");
+
+	//HH:
+	itoa32(p_gps_num->hour_tz, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, ":");
+
+	//MM:
+	itoa32(p_gps_num->minute_tz, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, ":");
+
+	//SS
+	itoa32(p_gps_num->second, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+
+	//+
+	if (p_settings->time_zone_dir > 0)
+	{
+		strcat(console_timestamp, "+");
+	}
+	else
+	{
+		strcat(console_timestamp, "-");
+	}
+
+	//hh:
+	itoa32(p_settings->time_zone_hour, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, ":");
+
+	//mm
+	itoa32(p_settings->time_zone_minute, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, " ");
+}
+
+
+
+//What we transmit to console
+void console_prepare_nav_data(void)
+{
+	//init
+	uint8_t all_flags = 0;
+	nav_data_len = 0;
+
+	//clear
+	memset(console_nav_data, 0, CONS_DATA_SZ);
+
+	for (uint8_t dev = NAV_OBJECT_FIRST; dev < NAV_OBJECT_LAST + 1; dev++)		//max: 9 objects x 18 bytes = 162 bytes
 	{
 		if (pp_devices[dev]->exist_flag == 1)	//only existing devices
 		{
-			console_buffer[i++] = dev;
-			console_buffer[i++] = pp_devices[dev]->device_id;
+			console_nav_data[nav_data_len++] = dev;
+			console_nav_data[nav_data_len++] = pp_devices[dev]->device_id;
 
 			all_flags = 0;
 
@@ -159,50 +259,60 @@ void console_prepare_data(void)
 							((pp_devices[dev]->lowbat_flag) << 5) 				|\
 							((pp_devices[dev]->link_status_flag) << 6) 			);
 
-			console_buffer[i++] = all_flags;
-			console_buffer[i++] = pp_devices[dev]->lora_rssi;
+			console_nav_data[nav_data_len++] = all_flags;
+			console_nav_data[nav_data_len++] = pp_devices[dev]->lora_rssi;
 
-			memcpy(&console_buffer[i], &(pp_devices[dev]->timeout), 4);
-			i += 4;
+			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->timeout), 4);
+			nav_data_len += 4;
 
-			memcpy(&console_buffer[i], &(pp_devices[dev]->latitude.as_float), 4);
-			i += 4;
+			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->latitude.as_float), 4);
+			nav_data_len += 4;
 
-			memcpy(&console_buffer[i], &(pp_devices[dev]->longitude.as_float), 4);
-			i += 4;
+			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->longitude.as_float), 4);
+			nav_data_len += 4;
 
-			memcpy(&console_buffer[i], &(pp_devices[dev]->altitude), 2);
-			i += 2;
+			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->altitude), 2);
+			nav_data_len += 2;
 		}
 
 	}
-
-	console_buffer[0] = --i;	//zero's byte is the data length
 }
 
 
 
-void console_data_conv_to_base64(void)
+void console_conv_nav_data_to_base64(void)
 {
-	//get original length from the first byte
-    uint8_t original_length = console_buffer[0];
-    uint8_t encoded_length;
+	//init
+    nav_data_base64_len = 0;
 
-    //copy data only to tmp buffer
-    memcpy(base64_in, console_buffer + 1, original_length);
+	//clear
+	memset(console_nav_data_base64, 0, CONS_DATA_SZ);
 
     //encode
-    encoded_length = base64_encode(base64_in, base64_out, original_length);
+    nav_data_base64_len = base64_encode(console_nav_data, console_nav_data_base64, nav_data_len);
+}
 
-    //copy back from tmp buffer to output buffer starting from pos 1
-    memcpy(console_buffer_base64 + 1, base64_out, encoded_length);
 
-    //add cr+lf
-    console_buffer_base64[encoded_length + 1] = 0x0D;	// +2 symbols of CR+LF
-    console_buffer_base64[encoded_length + 2] = 0x0A;
 
-    //update the input buffer with encoded data length
-    console_buffer_base64[0] = encoded_length + 2;
+void console_combine_timestamp_nav_data(void)
+{
+	//init
+	console_data_len = 0;
+
+	//clear
+	memset(console_data, 0, CONS_DATA_SZ);
+
+	//copy timestamp
+	strcpy(console_data, console_timestamp);
+
+	//copy nav data base64
+	strcat(console_data, console_nav_data_base64);
+
+	//add cr+lf
+	strcat(console_data, "\r\n");
+
+	//calc len
+	console_data_len = string_length(console_data);
 }
 
 

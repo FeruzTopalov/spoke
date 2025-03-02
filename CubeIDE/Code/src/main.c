@@ -208,6 +208,8 @@ int main(void)
         {
         	main_flags.nmea_parsed_only = 0;
         	main_flags.update_screen = 1;
+
+        	report_to_console(); //send fresh devices data to console
         }
 
 
