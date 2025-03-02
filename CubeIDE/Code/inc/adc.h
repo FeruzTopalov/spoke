@@ -11,8 +11,8 @@
 
 
 
-#define V_BATTERY_CRIT      (2.8)
-#define V_BATTERY_MIN       (3.0)
+#define V_BATTERY_CRIT      (3.0)
+#define V_BATTERY_MIN       (3.4)
 #define V_BATTERY_MAX     	(4.2)
 
 

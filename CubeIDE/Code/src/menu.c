@@ -766,7 +766,7 @@ void draw_bat_level(void)
 	lcd_char_pos(0, 14, SYMB8_BAT_MID);
 	lcd_char_pos(0, 15, SYMB8_BAT_HEAD);
 
-	for (uint8_t px = 0; px < (get_battery_level() + 1); px++)
+	for (uint8_t px = 0; px < get_battery_level(); px++)
 	{
 		lcd_byte2buf(108 + px, 0xF8);	//1st line, 108 is a start pixel position
 		lcd_byte2buf((128 + 108) + px, 0x0F);	//2nd line
