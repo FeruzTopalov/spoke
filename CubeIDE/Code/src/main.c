@@ -169,8 +169,8 @@ int main(void)
         if (main_flags.tick_1s == 1)
         {
         	main_flags.tick_1s = 0;
-            adc_check_bat_voltage();
 
+            adc_check_bat_voltage();
             if (is_battery_critical())
             {
             	lcd_print_only(2, 2, "BATTERY LOW!");
@@ -178,9 +178,9 @@ int main(void)
             	release_power();	//turn off immediately
             }
 
+			calc_timeout(uptime);
             if (main_flags.pps_synced == 0) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
             {
-            	calc_timeout(uptime);
             	main_flags.do_beep += check_any_alarm_fence_timeout();
             	main_flags.do_beep += is_battery_low();
             }

@@ -43,14 +43,14 @@ void settings_interactive_save_default(void);
 
 
 
-#define GPS_BAUD_4800_VALUE			(4800)
 #define GPS_BAUD_9600_VALUE			(9600)
 #define GPS_BAUD_38400_VALUE		(38400)
+#define GPS_BAUD_57600_VALUE		(57600)
 #define GPS_BAUD_115200_VALUE		(115200)
 
-#define GPS_BAUD_VALUES_ARRAY		{	GPS_BAUD_4800_VALUE,	\
-										GPS_BAUD_9600_VALUE,	\
+#define GPS_BAUD_VALUES_ARRAY		{	GPS_BAUD_9600_VALUE,	\
 										GPS_BAUD_38400_VALUE,	\
+										GPS_BAUD_57600_VALUE,	\
 										GPS_BAUD_115200_VALUE 	}
 
 

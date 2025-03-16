@@ -28,8 +28,11 @@ void console_combine_timestamp_nav_data(void);
 
 
 
-char uart_buffer[UART_BUF_LEN];				//raw UART data for GPS
+char gps_uart_buffer[MAX_UART_BUF_LEN];		//raw UART data for GPS
 char *backup_buf;							//backup for raw UART data
+
+uint16_t gps_uart_buf_len; 					//dynamically allocated part of the uart_buffer[MAX_UART_BUF_LEN]
+uint16_t brr_gps_baud;						//BRR reg value depending on 'GPS baud' setting
 
 uint8_t console_timestamp[TIMESTAMP_SZ];	//for console, timestamp data
 
@@ -56,6 +59,35 @@ void uart_init(void)
 	pp_devices = get_devices();
 	p_settings = get_settings();
 	p_gps_num = get_gps_num();
+
+	switch (p_settings->gps_baud_opt)
+	{
+		case GPS_BAUD_9600_SETTING:		//9600 bod; mantissa 19, frac 8
+			brr_gps_baud = 0x0138;
+			gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
+			break;
+
+		case GPS_BAUD_38400_SETTING:	//34800 bod; mantissa 4, frac 14
+			brr_gps_baud = 0x004E;
+			gps_uart_buf_len = 3500;		//3480 bytes/s max, fits buffer
+			break;
+
+		case GPS_BAUD_57600_SETTING:	//57600 bod; mantissa 3, frac 4
+			brr_gps_baud = 0x0034;
+			gps_uart_buf_len = 5790;		//5760 bytes/s max, fits buffer
+			break;
+
+		case GPS_BAUD_115200_SETTING:	//115200 bod; mantissa 1, frac 10
+			brr_gps_baud = 0x001A;
+			gps_uart_buf_len = 5790;		//11520 bytes/s max, does not fit buffer, pray for fit in actual use (otherwise no RF TX/RX will happen because uart overflow will be hitting earlier than pps interrupt)
+			break;
+
+		default:						//9600 bod; mantissa 19, frac 8
+			brr_gps_baud = 0x0138;
+			gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
+			break;
+	}
+
 	uart1_dma_init();
 	uart3_dma_init();
 }
@@ -329,31 +361,6 @@ void uart3_dma_init(void)
     GPIOB->CRH &= ~GPIO_CRH_CNF10_0;     //alternate output push-pull
     GPIOB->CRH |= GPIO_CRH_CNF10_1;
 
-	//Set GPS Baud
-    uint16_t brr_gps_baud;
-	switch (p_settings->gps_baud_opt)
-	{
-		case GPS_BAUD_4800_SETTING:		//4800 bod; mantissa 39, frac 1
-			brr_gps_baud = 0x0271;
-			break;
-
-		case GPS_BAUD_9600_SETTING:		//9600 bod; mantissa 19, frac 8
-			brr_gps_baud = 0x0138;
-			break;
-
-		case GPS_BAUD_38400_SETTING:	//34800 bod; mantissa 4, frac 14
-			brr_gps_baud = 0x004E;
-			break;
-
-		case GPS_BAUD_115200_SETTING:	//115200 bod; mantissa 1, frac 10
-			brr_gps_baud = 0x001A;
-			break;
-
-		default:						//9600 bod; mantissa 19, frac 8
-			brr_gps_baud = 0x0138;
-			break;
-	}
-
     USART3->BRR = brr_gps_baud;             //per settings
     USART3->CR1 |= USART_CR1_TE;            //enable tx
     USART3->CR1 |= USART_CR1_RE;            //enable rx
@@ -363,8 +370,8 @@ void uart3_dma_init(void)
     RCC->AHBENR |= RCC_AHBENR_DMA1EN;       //enable dma1 clock
     
     DMA1_Channel3->CPAR = (uint32_t)(&(USART3->DR));    //transfer source
-    DMA1_Channel3->CMAR = (uint32_t)(&uart_buffer[0]);  //transfer destination
-    DMA1_Channel3->CNDTR = UART_BUF_LEN;                //bytes amount to receive
+    DMA1_Channel3->CMAR = (uint32_t)(&gps_uart_buffer[0]);  //transfer destination
+    DMA1_Channel3->CNDTR = gps_uart_buf_len;                //bytes amount to receive
     
     DMA1_Channel3->CCR |= DMA_CCR3_MINC;    //enable memory increment
     DMA1_Channel3->CCR |= DMA_CCR3_TCIE;    //enable transfer complete interrupt
@@ -389,7 +396,7 @@ void uart3_dma_stop(void)
 //Restart UART DMA
 void uart3_dma_restart(void)
 {
-    DMA1_Channel3->CNDTR = UART_BUF_LEN;    //reload bytes amount to receive
+    DMA1_Channel3->CNDTR = gps_uart_buf_len;    //reload bytes amount to receive
     (void)USART3->SR;						//clear ORE bit due to UART overrun occured between DMA operations
     (void)USART3->DR;
     DMA1_Channel3->CCR |= DMA_CCR3_EN;      //enable channel
@@ -400,15 +407,15 @@ void uart3_dma_restart(void)
 //Backup uart buffer and then clear it
 void backup_and_clear_uart_buffer(void)
 {
-	memcpy(backup_buf, uart_buffer, UART_BUF_LEN);
-	memset(uart_buffer, 0, UART_BUF_LEN);
+	memcpy(backup_buf, gps_uart_buffer, gps_uart_buf_len);
+	memset(gps_uart_buffer, 0, gps_uart_buf_len);
 }
 
 
 
 void clear_uart_buffer(void)
 {
-	memset(uart_buffer, 0, UART_BUF_LEN);
+	memset(gps_uart_buffer, 0, gps_uart_buf_len);
 }
 
 
@@ -419,4 +426,11 @@ void uart3_tx_byte(uint8_t tx_data)
     {
     }
     USART3->DR = tx_data;                      //transmit
+}
+
+
+
+uint16_t get_gps_uart_buf_len(void)
+{
+	return gps_uart_buf_len;
 }

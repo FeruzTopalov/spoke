@@ -1558,7 +1558,7 @@ void draw_set_timezone(void)
 void draw_set_gps_baud(void)
 {
 	#define GPS_BAUD_ROW               (2)
-	#define GPS_BAUD_COL               (9)
+	#define GPS_BAUD_COL               (10)
 
 	lcd_clear();
 	lcd_print(0, 4, "GPS BAUD");

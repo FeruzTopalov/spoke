@@ -283,7 +283,7 @@ void calc_timeout(uint32_t current_uptime)
 			//assign timeout flag
         	if (p_settings->timeout_threshold != TIMEOUT_ALARM_DISABLED) //if enabled
         	{
-				if (devices[dev].timeout > p_settings->timeout_threshold)
+				if (devices[dev].timeout > (p_settings->timeout_threshold + 1))		//safety +1 for boundary condition alarm prevention
 				{
 					if (devices[dev].timeout_flag == 0)
 					{
