@@ -1,0 +1,137 @@
+(footprint "B2B-PH-2.0"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0 -4.25 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "a605315f-f1a1-4c79-b98d-83d19e983301")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "B2B-PH-2.0"
+		(at 0 4 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "7cee398b-ae11-48a5-ad38-727c2257e738")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "5447d9b3-7ad2-4aee-a3a9-554d53d6dfbd")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "b17eeeba-2f23-4eb7-94d2-207796dcbf76")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -2.95 -2.8)
+		(end 2.95 -2.8)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "dc9c6a86-1731-4b85-9962-1bc2fcff5876")
+	)
+	(fp_line
+		(start -2.95 1.7)
+		(end -2.95 -2.8)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "ede8f72c-e34e-4591-88da-3a8053d30d1f")
+	)
+	(fp_line
+		(start 2.95 -2.8)
+		(end 2.95 1.7)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "001bf6a2-95a2-42ff-92ec-dac71eaed26e")
+	)
+	(fp_line
+		(start 2.95 1.7)
+		(end -2.95 1.7)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "ea6d2b33-13aa-4959-adaa-b0cd89dc8878")
+	)
+	(fp_circle
+		(center 1 2.4)
+		(end 1.2 2.4)
+		(stroke
+			(width 0.4)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "40ab2cfa-3f4e-4956-b3b2-38c8bed8fcc5")
+	)
+	(pad "1" thru_hole roundrect
+		(at 1 0)
+		(size 1.7 1.7)
+		(drill 0.8)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.25)
+		(uuid "b1c6aef2-fbaa-42af-acb0-8173507ab1c2")
+	)
+	(pad "2" thru_hole circle
+		(at -1 0)
+		(size 1.7 1.7)
+		(drill 0.8)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "a3c0eb53-97c5-4466-ab9c-c63a0da20621")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/packages3d/B2B-PH.step"
+		(offset
+			(xyz 0 0.55 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
+)

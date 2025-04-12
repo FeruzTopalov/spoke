@@ -11,6 +11,106 @@
 		(company "https://github.com/FeruzTopalov")
 	)
 	(lib_symbols
+		(symbol "B2B-PH-2.0_1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 4.826 3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "B2B-PH-2.0"
+				(at 5.334 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "B2B-PH-2.0_1_0_1"
+				(rectangle
+					(start 2.54 2.54)
+					(end 7.62 -5.08)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "B2B-PH-2.0_1_1_1"
+				(pin unspecified line
+					(at 0 0 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 0 -2.54 0)
+					(length 2.54)
+					(name "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "GND_1"
 			(power)
 			(pin_numbers
@@ -6215,22 +6315,22 @@
 	)
 	(text "-"
 		(exclude_from_sim no)
-		(at 30.48 54.61 0)
+		(at 37.338 64.008 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 2 2)
 				(bold yes)
 			)
 			(justify left bottom)
 		)
 		(uuid "0df7dd7b-2874-41f5-a590-4a7734d83d37")
 	)
-	(text "Single LiIon/LiPol cell"
+	(text "Single Li-Ion cell\nCHECK PINOUT!"
 		(exclude_from_sim no)
-		(at 25.4 38.1 0)
+		(at 19.304 34.036 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 2 2)
 				(thickness 0.254)
 				(bold yes)
 			)
@@ -6240,10 +6340,10 @@
 	)
 	(text "+"
 		(exclude_from_sim no)
-		(at 30.48 44.45 0)
+		(at 37.592 40.386 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 2 2)
 				(thickness 0.254)
 				(bold yes)
 			)
@@ -6414,6 +6514,12 @@
 		(uuid "94ddd157-394e-4c71-9c66-c894f7e8f258")
 	)
 	(junction
+		(at 43.18 57.15)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "953da004-cc9c-4049-b3c5-8835b5eed07f")
+	)
+	(junction
 		(at 64.77 149.86)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6550,6 +6656,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "de371460-fdc6-4b93-ba68-8b356398f6fa")
+	)
+	(junction
+		(at 43.18 44.45)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "df47f976-8f9f-4b89-91e6-326da555a2be")
 	)
 	(junction
 		(at 228.6 212.09)
@@ -7039,7 +7151,7 @@
 	)
 	(wire
 		(pts
-			(xy 43.18 54.61) (xy 48.26 54.61)
+			(xy 43.18 57.15) (xy 53.34 57.15)
 		)
 		(stroke
 			(width 0)
@@ -7359,6 +7471,16 @@
 	)
 	(wire
 		(pts
+			(xy 35.56 52.07) (xy 43.18 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "33f7da39-4976-4968-88f0-54e967f478d6")
+	)
+	(wire
+		(pts
 			(xy 382.27 203.2) (xy 382.27 208.28)
 		)
 		(stroke
@@ -7456,6 +7578,16 @@
 			(type default)
 		)
 		(uuid "3af1f159-ac7b-4908-b6ff-a3d3946c28ea")
+	)
+	(wire
+		(pts
+			(xy 43.18 52.07) (xy 43.18 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3be5d980-48b4-45ca-a606-d1d7d7d0dbd5")
 	)
 	(wire
 		(pts
@@ -8879,6 +9011,16 @@
 	)
 	(wire
 		(pts
+			(xy 35.56 49.53) (xy 43.18 49.53)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c11d3c82-ccfe-448a-8d29-24ff1ac463a9")
+	)
+	(wire
+		(pts
 			(xy 245.11 69.85) (xy 248.92 69.85)
 		)
 		(stroke
@@ -9359,7 +9501,7 @@
 	)
 	(wire
 		(pts
-			(xy 48.26 54.61) (xy 48.26 59.69)
+			(xy 53.34 57.15) (xy 53.34 62.23)
 		)
 		(stroke
 			(width 0)
@@ -9516,6 +9658,16 @@
 			(type default)
 		)
 		(uuid "efc20257-1fd0-4af7-80fa-1f8fd3d5c298")
+	)
+	(wire
+		(pts
+			(xy 43.18 49.53) (xy 43.18 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f12294b8-9b83-4887-a868-475f1dcf4fd7")
 	)
 	(wire
 		(pts
@@ -12385,7 +12537,7 @@
 	)
 	(symbol
 		(lib_id "Spoke:Pad_oval")
-		(at 43.18 54.61 180)
+		(at 43.18 57.15 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12394,15 +12546,16 @@
 		(fields_autoplaced yes)
 		(uuid "257bac10-8282-433b-91fb-17b16f314db8")
 		(property "Reference" "X2"
-			(at 37.7825 52.1485 0)
+			(at 45.72 62.5474 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "Pad_oval"
-			(at 38.1 52.07 0)
+			(at 40.64 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12411,7 +12564,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:Pad_oval"
-			(at 43.18 54.61 0)
+			(at 43.18 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12420,7 +12573,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 43.18 54.61 0)
+			(at 43.18 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12429,7 +12582,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 43.18 54.61 0)
+			(at 43.18 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12979,6 +13132,75 @@
 			(project ""
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "#PWR012")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_name "B2B-PH-2.0_1")
+		(lib_id "Spoke:B2B-PH-2.0")
+		(at 35.56 52.07 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2fb481bc-5423-4737-9b7f-c07f0cc7e8f1")
+		(property "Reference" "J2"
+			(at 30.48 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "B2B-PH-2.0"
+			(at 30.48 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 35.56 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 35.56 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 35.56 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1f0d578e-0d00-4cce-86e2-0944181d25b8")
+		)
+		(pin "2"
+			(uuid "26a2b462-a239-43b6-927f-152b02407399")
+		)
+		(instances
+			(project ""
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "J2")
 					(unit 1)
 				)
 			)
@@ -16943,7 +17165,7 @@
 	)
 	(symbol
 		(lib_id "Spoke:Pad_oval")
-		(at 43.18 44.45 180)
+		(at 43.18 44.45 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -16952,15 +17174,16 @@
 		(fields_autoplaced yes)
 		(uuid "a4359599-db43-47f2-be17-48996e596f07")
 		(property "Reference" "X1"
-			(at 37.7825 41.9885 0)
+			(at 45.72 39.0524 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Value" "Pad_oval"
-			(at 38.1 41.91 0)
+			(at 45.72 39.37 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18079,7 +18302,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 48.26 59.69 0)
+		(at 53.34 62.23 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -18088,7 +18311,7 @@
 		(fields_autoplaced yes)
 		(uuid "ca4d8cac-23bc-497f-82ef-de694c39b330")
 		(property "Reference" "#PWR010"
-			(at 48.26 66.04 0)
+			(at 53.34 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18097,7 +18320,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 48.26 64.2525 0)
+			(at 53.34 66.7925 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18105,7 +18328,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 48.26 59.69 0)
+			(at 53.34 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18114,7 +18337,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 48.26 59.69 0)
+			(at 53.34 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18123,7 +18346,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 48.26 59.69 0)
+			(at 53.34 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
