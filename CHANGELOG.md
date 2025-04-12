@@ -1,3 +1,27 @@
+# Release FW Rev.4 (for HW Rev.1.x) 12-Apr-2025 
+Switch to LoRa modulation, new TDMA approach, minor fixes
+
+
+Implemented:
+- Dozens of bug fixes
+- Revised interface, icons
+- Added beep mute feature while scrolling devices
+- Added GPS baud setting
+- Implemented interactive compass calibration from menu
+- Magnetic and True north icons
+- Implemented navigational data output in Base64 through console
+- Enabled watchdog
+- Implemented periph. clock gating
+- Improved uptime counter accuracy
+- Changed battery level thresholds
+- Added jump to bootloader at power up
+- Changed optimization level to reduce flash usage
+
+
+Known issues:
+- GPS NMEA parsing at 115200 baud may fail due to insufficient buffer size
+
+
 # Release HW Rev.1.1 28-Jan-2024 
 Fix of the HW release 1
 
