@@ -1,5 +1,5 @@
 # Release FW Rev.4 (for HW Rev.1.x) 12-Apr-2025 
-Switch to LoRa modulation, new TDMA approach, minor fixes
+New look, compass with calibration, more settings & stabilization
 
 
 Implemented:
