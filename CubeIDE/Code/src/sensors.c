@@ -25,7 +25,7 @@ uint8_t init_accelerometer(void)
 {
 	if (i2c_poll(LSM303_ADDR_ACC))
 	{
-		i2c_write(LSM303_ADDR_ACC, LSM303_REG_ACC_CTRL_REG1_A, LSM303_ACC_CTRL_REG1_A__100ODR_NORM_XYZ);
+		i2c_write(LSM303_ADDR_ACC, LSM303_REG_ACC_CTRL_REG1_A, LSM303_ACC_CTRL_REG1_A__SLEEP_NORM_XYZ);
 		return 1;
 	}
 	else
@@ -41,14 +41,42 @@ uint8_t init_magnetometer(void)
 	if (i2c_poll(LSM303_ADDR_MAG))
 	{
 		i2c_write(LSM303_ADDR_MAG, LSM303_REG_MAG_CRA_REG_M, LSM303_MAG_CRA_REG_M__75HZ);
-		i2c_write(LSM303_ADDR_MAG, LSM303_REG_MAG_CRB_REG_M, LSM303_MAG_CRB_REG_M__1_3GS);
-		i2c_write(LSM303_ADDR_MAG, LSM303_REG_MAG_MR_REG_M, LSM303_MAG_MR_REG_M__CONT);
+		i2c_write(LSM303_ADDR_MAG, LSM303_REG_MAG_CRB_REG_M, LSM303_MAG_CRB_REG_M__40GS);
+		i2c_write(LSM303_ADDR_MAG, LSM303_REG_MAG_MR_REG_M, LSM303_MAG_MR_REG_M__SLEEP);
 		return 1;
 	}
 	else
 	{
 		return 0;
 	}
+}
+
+
+
+void start_accelerometer(void)
+{
+	i2c_write(LSM303_ADDR_ACC, LSM303_REG_ACC_CTRL_REG1_A, LSM303_ACC_CTRL_REG1_A__100ODR_NORM_XYZ);
+}
+
+
+
+void stop_accelerometer(void)
+{
+	i2c_write(LSM303_ADDR_ACC, LSM303_REG_ACC_CTRL_REG1_A, LSM303_ACC_CTRL_REG1_A__SLEEP_NORM_XYZ);
+}
+
+
+
+void start_magnetometer(void)
+{
+	i2c_write(LSM303_ADDR_MAG, LSM303_REG_MAG_MR_REG_M, LSM303_MAG_MR_REG_M__CONT);
+}
+
+
+
+void stop_magnetometer(void)
+{
+	i2c_write(LSM303_ADDR_MAG, LSM303_REG_MAG_MR_REG_M, LSM303_MAG_MR_REG_M__SLEEP);
 }
 
 

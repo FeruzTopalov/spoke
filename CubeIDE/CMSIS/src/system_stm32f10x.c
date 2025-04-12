@@ -64,6 +64,7 @@
 
 #include "stm32f10x.h"
 #include "service.h"
+#include "timer.h"
 
 /**
   * @}
@@ -212,7 +213,10 @@ static void SetSysClock(void);
   */
 void SystemInit (void)
 {
-  //Call for bootloader and check for start condition
+  //CUSTOM: Init IWDG watchdog
+  init_watchdog();
+
+  //CUSTOM: Call for bootloader and check for start condition
   call_bootloader();
 
   /* Reset the RCC clock configuration to the default reset state(for debug purpose) */

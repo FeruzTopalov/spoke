@@ -16,15 +16,23 @@ void systick_start(void);
 void systick_set_100ms(void);
 void systick_set_1000ms(void);
 void timer1_init(void);
+void timer1_clock_disable(void);
+void timer1_clock_enable(void);
 void timer2_init(void);
+void timer2_clock_disable(void);
+void timer2_clock_enable(void);
 void timer2_start(void);
 void timer3_init(void);
+void timer3_clock_disable(void);
+void timer3_clock_enable(void);
 void timer4_init(void);
+void timer4_clock_disable(void);
+void timer4_clock_enable(void);
 
 
 
 uint8_t sound_enabled = 1; //status of the beep sound notification
-uint8_t timer1_interval_type = 0; // 1 - long; 2 - short
+uint8_t timer1_interval_type = 0;
 
 
 
@@ -69,29 +77,46 @@ void make_a_long_beep(void)
 
 
 
+void init_watchdog(void)
+{
+	RCC->CSR |= RCC_CSR_LSION;  					//Enable LSI 40 kHz
+	while ((RCC->CSR & RCC_CSR_LSIRDY) == 0){}		//Wait for stabilize
+
+	IWDG->KR |= 0x5555;			//Unlock IWDG configuration
+	IWDG->PR |= IWDG_PR_PR_2;	//Value 100: divider /64; max timeout 6553.6 ms
+	IWDG->KR |= 0xAAAA;			//Reload IWDG
+	IWDG->KR |= 0xCCCC;			//Start IWDG
+}
+
+
+
+void reload_watchdog(void)
+{
+	IWDG->KR |= 0xAAAA;			//Reload IWDG
+}
+
+
+
 void rtc_init(void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_PWREN;				//Enable power interface
 	RCC->APB1ENR |= RCC_APB1ENR_BKPEN;				//Enable backup interface
-	PWR->CR |= PWR_CR_DBP;							//Disable backup domain write protection
+	PWR->CR |= PWR_CR_DBP;							//Disable backup domain write protection. Backup domain write protection should be disabled if HSE/128 is used as RTC clock source
     RCC->BDCR |=  RCC_BDCR_BDRST;					//Reset entire backup domain (reset RTC)
     RCC->BDCR &= ~RCC_BDCR_BDRST;
 
-	RCC->CSR |= RCC_CSR_LSION;  					//Enable LSI 40 kHz
-	while ((RCC->CSR & RCC_CSR_LSIRDY) == 0){}		//Wait for stabilize
-	RCC->BDCR |= RCC_BDCR_RTCSEL_1;					//LSI is RTC clock source
-	RCC->BDCR &= ~RCC_BDCR_RTCSEL_0;
+    RCC->BDCR |= RCC_BDCR_RTCSEL_HSE;				//HSE/128 is RTC clock source (8 MHz / 128 = 62.5 kHz)
 	RCC->BDCR |= RCC_BDCR_RTCEN;					//Enable RTC
 
+    RTC->CRL &= ~RTC_CRL_RSF;                 		//Clear the RSF flag
+    while (!(RTC->CRL & RTC_CRL_RSF)){};       		//Wait until RSF is set
 	while ((RTC->CRL & RTC_CRL_RTOFF) == 0){}		//Wait RTC ready to acquire new command
 	RTC->CRL |= RTC_CRL_CNF;						//Enter config mode
 	RTC->PRLH = 0;
-	RTC->PRLL = 39999;								//(40000Hz-1)
+	RTC->PRLL = 62499;								//(62500Hz-1)
 	RTC->CRH |= RTC_CRH_SECIE;						//Enable Interrupt
 	RTC->CRL &= ~RTC_CRL_CNF;						//Exit config mode
 	while ((RTC->CRL & RTC_CRL_RTOFF) == 0){}
-
-	PWR->CR &= ~PWR_CR_DBP;							//Enable backup domain write protection
 
 	NVIC_EnableIRQ(RTC_IRQn);
 }
@@ -146,13 +171,27 @@ void timer1_init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;     //enable timer 1 clock
     TIM1->PSC = (uint16_t)2999;            	// 3MHz/(2999+1)=1kHz
-//    TIM1->ARR = (uint16_t)499;              // 1kHz/(499+1)=2Hz (500ms)
     TIM1->CR1 |= TIM_CR1_URS;               //only overflow generates interrupt
     TIM1->EGR = TIM_EGR_UG;                 //software update generation
     TIM1->SR &= ~TIM_SR_UIF;                //clear update interrupt
     TIM1->DIER |= TIM_DIER_UIE;             //update interrupt enable
 
     NVIC_EnableIRQ(TIM1_UP_IRQn);           //enable interrupt
+    timer1_clock_disable();
+}
+
+
+
+void timer1_clock_disable(void)
+{
+	BIT_BAND_PERI(RCC->APB2ENR, RCC_APB2ENR_TIM1EN) = 0;
+}
+
+
+
+void timer1_clock_enable(void)
+{
+	BIT_BAND_PERI(RCC->APB2ENR, RCC_APB2ENR_TIM1EN) = 1;
 }
 
 
@@ -160,9 +199,10 @@ void timer1_init(void)
 //Timer1 start 800 ms
 void timer1_start_800ms(void)
 {
+	timer1_clock_enable();
 	TIM1->ARR = (uint16_t)799;              // 1kHz/(799+1)=1.25Hz (800ms)
     TIM1->CR1 |= TIM_CR1_CEN;               //enable counter
-    timer1_interval_type = 1; //long
+    timer1_interval_type = TIMER1_INTERVAL_TYPE_LONG;
 }
 
 
@@ -170,9 +210,10 @@ void timer1_start_800ms(void)
 //Timer1 start 100 ms
 void timer1_start_100ms(void)
 {
+	timer1_clock_enable();
 	TIM1->ARR = (uint16_t)99;              // 1kHz/(99+1)=10Hz (100ms)
     TIM1->CR1 |= TIM_CR1_CEN;               //enable counter
-    timer1_interval_type = 2; //short
+    timer1_interval_type = TIMER1_INTERVAL_TYPE_SHORT;
 }
 
 
@@ -189,6 +230,7 @@ void timer1_stop_reload(void)
 {
     TIM1->CR1 &= ~TIM_CR1_CEN;              //disable counter
     TIM1->EGR = TIM_EGR_UG;                 //software update generation
+    timer1_clock_disable();
 }
 
 
@@ -207,12 +249,30 @@ void timer2_init(void)
 	TIM2->CCMR1 |= TIM_CCMR1_OC2M_2;    //PWM mode 2 for CH2
 	TIM2->CCMR1 |= TIM_CCMR1_OC2M_1;
 	TIM2->CCMR1 |= TIM_CCMR1_OC2M_0;
+
+	timer2_clock_disable();
+}
+
+
+
+void timer2_clock_disable(void)
+{
+	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM2EN) = 0;
+}
+
+
+
+void timer2_clock_enable(void)
+{
+	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM2EN) = 1;
 }
 
 
 
 void timer2_start(void)
 {
+	timer2_clock_enable();
+
 	TIM2->CCER |= TIM_CCER_CC1E;   	//CH1 output enable
 	TIM2->CCER |= TIM_CCER_CC2E;    //CH2 output enable
 	TIM2->CR1 |= TIM_CR1_CEN;   	//enable PWM timer
@@ -226,6 +286,8 @@ void timer2_stop(void)
 	TIM2->CNT = 0;                  //force output low
 	TIM2->CCER &= ~TIM_CCER_CC1E;   //CH1 output disable
 	TIM2->CCER &= ~TIM_CCER_CC2E;   //CH2 output disable
+
+	timer2_clock_disable();
 }
 
 
@@ -237,15 +299,33 @@ void timer3_init(void)
 	TIM3->PSC = (uint16_t)299;         	// 3MHz/(299+1)=10kHz
 	TIM3->ARR = (uint16_t)99;           // 10kHz/(99+1)=100Hz(10ms)
 	TIM3->EGR = TIM_EGR_UG;             //software update generation
+	TIM3->SR &= ~TIM_SR_UIF;        	//clear gating timer int
 	TIM3->DIER |= TIM_DIER_UIE;         //update interrupt enable
 
 	NVIC_EnableIRQ(TIM3_IRQn);
+	timer3_clock_disable();
+}
+
+
+
+void timer3_clock_disable(void)
+{
+	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM3EN) = 0;
+}
+
+
+
+void timer3_clock_enable(void)
+{
+	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM3EN) = 1;
 }
 
 
 
 void timer3_start(void)
 {
+	timer3_clock_enable();
+
 	BIT_BAND_PERI(TIM3->CR1, TIM_CR1_CEN) = 1;	//start timer
 }
 
@@ -256,6 +336,8 @@ void timer3_stop(void)
 	BIT_BAND_PERI(TIM3->CR1, TIM_CR1_CEN) = 0;	//stop  timer
 	TIM3->CNT = 0;					//reset counter
 	TIM3->SR &= ~TIM_SR_UIF;        //clear int
+
+	timer3_clock_disable();
 }
 
 
@@ -267,15 +349,33 @@ void timer4_init(void)
 	TIM4->PSC = (uint16_t)299;         	// 3MHz/(299+1)=10kHz
 	TIM4->ARR = (uint16_t)999;          // 10kHz/(999+1)=10Hz(100ms)
 	TIM4->EGR = TIM_EGR_UG;             //software update generation
+	TIM4->SR &= ~TIM_SR_UIF;        	//clear gating timer int
 	TIM4->DIER |= TIM_DIER_UIE;         //update interrupt enable
 
 	NVIC_EnableIRQ(TIM4_IRQn);
+	timer4_clock_disable();
+}
+
+
+
+void timer4_clock_disable(void)
+{
+	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM4EN) = 0;
+}
+
+
+
+void timer4_clock_enable(void)
+{
+	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM4EN) = 1;
 }
 
 
 
 void timer4_start(void)
 {
+	timer4_clock_enable();
+
 	BIT_BAND_PERI(TIM4->CR1, TIM_CR1_CEN) = 1;	//start timer
 }
 
@@ -286,6 +386,8 @@ void timer4_stop(void)
 	BIT_BAND_PERI(TIM4->CR1, TIM_CR1_CEN) = 0;	//stop  timer
 	TIM4->CNT = 0;					//reset counter
 	TIM4->SR &= ~TIM_SR_UIF;        //clear int
+
+	timer4_clock_disable();
 }
 
 

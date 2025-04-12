@@ -265,6 +265,15 @@ void disable_buttons_interrupts(void)
 
 
 
+void clear_buttons_interrupts(void)
+{
+	EXTI->PR = EXTI_PR_PR3;		//clear interrupt
+	EXTI->PR = EXTI_PR_PR4;		//clear interrupt
+	EXTI->PR = EXTI_PR_PR3;		//clear interrupt
+}
+
+
+
 //X4 high
 void x4_high(void)
 {

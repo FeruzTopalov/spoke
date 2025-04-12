@@ -18,283 +18,251 @@
 #include "gpio.h"
 #include "gps.h"
 #include "lrns.h"
+#include "menu.h"
+#include "timer.h"
 
 
 
-#define GPS_SPEED_THRS	(2)	//threshold value for GPS speed in km/h to show course
+#define GPS_SPEED_THRS				(2)	//threshold value for GPS speed in km/h to show true course
+#define COMP_CAL_BUF_MAX_LEN 		(100)
+#define COMP_CAL_STOP_TOL 			(15)	//tolerance on auto-stop condition
 
 
 
+uint8_t compass_availability = COMPASS_IS_NOT_AVAILABLE;
 struct acc_data *p_acceleration;
 struct mag_data *p_magnetic_field;
 struct settings_struct *p_settings;
 struct settings_struct settings_copy;
 struct gps_num_struct *p_gps_num;
 float north; //calculated north, +-pi
+uint8_t gps_course = 0; //gps course is used instead of magnet course
 uint8_t north_ready = 0; //flag is north value ready to readout
+uint8_t last_is_horizontal = 0;
+
+
+
+int16_t cal_buf_x[COMP_CAL_BUF_MAX_LEN];
+int16_t cal_buf_y[COMP_CAL_BUF_MAX_LEN];
+uint16_t cal_buf_len;
+
+int16_t cal_x_start;
+int16_t cal_y_start;
+int16_t cal_x_max;
+int16_t cal_x_min;
+int16_t cal_y_max;
+int16_t cal_y_min;
+
+int16_t cal_pos_max;
+int16_t cal_neg_max;
+int16_t cal_abs_max;
+
+float cal_plot_scale;
+
+int16_t cal_offset_x;
+int16_t cal_offset_y;
+float cal_scale_x;
+float cal_scale_y;
 
 
 
 void init_compass(void)
 {
-	init_accelerometer();
-	init_magnetometer();
+	compass_availability = COMPASS_IS_NOT_AVAILABLE;
+
+	if (init_accelerometer())
+	{
+		if (init_magnetometer())
+		{
+			compass_availability = COMPASS_IS_AVAILABLE;
+		}
+	}
+
 	p_acceleration = get_acceleration();
 	p_magnetic_field = get_magnetic_field();
 	p_gps_num = get_gps_num();
 	p_settings = get_settings();
 	settings_copy = *p_settings;
-
-	//start calibration if requested
-	if (!((GPIOB->IDR) & GPIO_IDR_IDR3) && ((GPIOB->IDR) & GPIO_IDR_IDR4))	//if DOWN button is pressed and  OK button is released upon power up
-	{
-		calibrate_compass();
-	}
 }
 
 
 
-void calibrate_compass(void)
+void init_compass_calibration(void)
 {
-	#define LCD_CNTR_X (64)
-	#define LCD_CNTR_Y (32)
+	memset(cal_buf_x, 0, 2 * COMP_CAL_BUF_MAX_LEN);
+	memset(cal_buf_y, 0, 2 * COMP_CAL_BUF_MAX_LEN);
+	cal_buf_len = 0;
+	cal_x_start = 0;
+	cal_y_start = 0;
+	cal_x_max = 0;
+	cal_x_min = 0;
+	cal_y_max = 0;
+	cal_y_min = 0;
+	cal_pos_max = 0;
+	cal_neg_max = 0;
+	cal_abs_max = 0;
+	cal_plot_scale = 0;
+	cal_offset_x = 0;
+	cal_offset_y = 0;
+	cal_scale_x = 0;
+	cal_scale_y = 0;
+}
 
-	#define BUF_LEN (180)
-	uint16_t len_tot;
-	int16_t buf_x[BUF_LEN];
-	int16_t buf_y[BUF_LEN];
 
-	#define STOP_TOL (30)	//tolerance on auto-stop condition
-	int16_t x_start;
-	int16_t y_start;
-	int16_t x_max;
-	int16_t x_min;
-	int16_t y_max;
-	int16_t y_min;
 
-	int16_t pos_max;
-	int16_t neg_max;
-	int16_t abs_max;
-
-	float plot_scale;
-	char buf[15];	//for lcd prints
-
-restart_cal:
-	//init vars
-	len_tot = 0;
-	x_start = 0;
-	y_start = 0;
-	x_max = 0;
-	x_min = 0;
-	y_max = 0;
-	y_min = 0;
-	pos_max = 0;
-	neg_max = 0;
-	abs_max = 0;
-	plot_scale = 0;
-	memset(buf_x, 0, 2 * BUF_LEN);
-	memset(buf_y, 0, 2 * BUF_LEN);
-
-	//print instruction
-	lcd_clear();
-	lcd_print(0, 3, "Compass cal");
-	lcd_print(1, 0, "-Hold horizont.");
-	lcd_print(2, 0, "-Click OK");
-	lcd_print(3, 0, "-Turnaround 360");
-	lcd_update();
-
-	while (!((GPIOB->IDR) & GPIO_IDR_IDR3)){}		//wait for user to release ESC after entering compass calibration routine
-	delay_cyc(100000);
-
-    while (1)	//wait for user's decision
-    {
-    	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for exit
-    	{
-    		NVIC_SystemReset();
-    	}
-
-    	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for start cal
-    	{
-    		break;
-    	}
-    }
-
-	//init start value and min/max values
-	read_magn();
-	x_start = x_max = x_min = p_magnetic_field->mag_x.as_integer;
-	y_start = y_max = y_min = p_magnetic_field->mag_y.as_integer;
-
-	//acquire and plot magnetometer values during turnaround
-	for (uint16_t pt = 0; pt < BUF_LEN; pt++)
+uint8_t calibrate_compass_new(void)
+{
+	if (compass_availability == COMPASS_IS_NOT_AVAILABLE)
 	{
-		lcd_clear();
-		lcd_pixel(LCD_CNTR_X, LCD_CNTR_Y, 1);	//plot a dot in lcd center
+		return 0;	//exit if no compass is available
+	}
 
-		//print pointer
-		itoa32(pt, buf);
-		lcd_print(0, 0, buf);
+	if ((gps_course == 0) && (north_ready == 1))	//only if magn was read in read_compass()
+	{
+		cal_buf_x[cal_buf_len] = limit_to(p_magnetic_field->mag_x.as_integer, 2047, -2048);
+		cal_buf_y[cal_buf_len] = limit_to(p_magnetic_field->mag_y.as_integer, 2047, -2048);
 
-		//read magnetometr
-		read_magn();
-
-		//limit and store values
-		buf_x[pt] = limit_to(p_magnetic_field->mag_x.as_integer, 2047, -2048);
-		buf_y[pt] = limit_to(p_magnetic_field->mag_y.as_integer, 2047, -2048);
+		if (cal_buf_len == 0)		//only for the first time
+		{
+			cal_x_start = cal_x_max = cal_x_min = cal_buf_x[0];
+			cal_y_start = cal_y_max = cal_y_min = cal_buf_y[0];
+		}
 
 		//find max/min
-		x_max = maxv(p_magnetic_field->mag_x.as_integer, x_max);
-		x_min = minv(p_magnetic_field->mag_x.as_integer, x_min);
-		y_max = maxv(p_magnetic_field->mag_y.as_integer, y_max);
-		y_min = minv(p_magnetic_field->mag_y.as_integer, y_min);
+		cal_x_max = maxv(cal_buf_x[cal_buf_len], cal_x_max);
+		cal_x_min = minv(cal_buf_x[cal_buf_len], cal_x_min);
+		cal_y_max = maxv(cal_buf_y[cal_buf_len], cal_y_max);
+		cal_y_min = minv(cal_buf_y[cal_buf_len], cal_y_min);
 
 		//find abs max
-		pos_max = maxv(absv(x_max), absv(y_max));
-		neg_max = maxv(absv(x_min), absv(y_min));
-		abs_max = maxv(pos_max, neg_max);
-		plot_scale = (float)32/abs_max;
-
-		//draw
-		for (uint16_t i = 0; i < BUF_LEN; i++)
-		{
-			uint8_t x_dot, y_dot;
-			x_dot = (uint8_t)((float)buf_x[i] * plot_scale + LCD_CNTR_X);
-			y_dot = (uint8_t)((float)buf_y[i] * plot_scale + LCD_CNTR_Y);
-			lcd_set_pixel_plot(x_dot, y_dot);
-		}
-
-		//view
-		lcd_update();
-		delay_cyc(5000);
+		cal_pos_max = maxv(absv(cal_x_max), absv(cal_y_max));
+		cal_neg_max = maxv(absv(cal_x_min), absv(cal_y_min));
+		cal_abs_max = maxv(cal_pos_max, cal_neg_max);
+		cal_plot_scale = (float)(LCD_SIZE_Y / 2)/cal_abs_max;
 
 		//auto-stop if we reached initial values (i.e. completed turnaround)
-		if (pt > (BUF_LEN / 2)) //only if we already acquired more than a half of buffer
+		if (cal_buf_len > (COMP_CAL_BUF_MAX_LEN / 2)) //only if we already acquired more than a half of buffer
 		{
-			int16_t diff_x, diff_y;
-			diff_x = absv(buf_x[pt] - x_start);
-			diff_y = absv(buf_y[pt] - y_start);
+			int16_t cal_diff_x, cal_diff_y;
+			cal_diff_x = absv(cal_buf_x[cal_buf_len] - cal_x_start);
+			cal_diff_y = absv(cal_buf_y[cal_buf_len] - cal_y_start);
 
-			if ((diff_x < STOP_TOL) && (diff_y < STOP_TOL))
+			if ((cal_diff_x < COMP_CAL_STOP_TOL) && (cal_diff_y < COMP_CAL_STOP_TOL))
 			{
-				len_tot = pt + 1;	//save number of points
-				break; //exit for loop
+				return 0; //return 0 if end of calibration
 			}
 		}
+
+		if (cal_buf_len == (COMP_CAL_BUF_MAX_LEN - 1)) //last point in the buffer
+		{
+			return 0; //return 0 if end of calibration when buffer ended
+		}
+
+		cal_buf_len++;	//increment before exit
 	}
 
-	if (len_tot == 0)	//if no auto-stop
-	{
-		len_tot = BUF_LEN;	//if stopped after for loop save max val as BUF_LEN
-	}
+	return 1;	//return 1 if the calibration is ongoing
+}
+
+
+
+void compass_hard_soft_compensation(void)
+{
+	int16_t cal_avg_delta_x;
+	int16_t cal_avg_delta_y;
+	int16_t cal_avg_delta;
 
 	//calc offset for hard iron
-	int16_t offset_x;
-	int16_t offset_y;
-	offset_x = (x_max + x_min) / 2;
-	offset_y = (y_max + y_min) / 2;
+	cal_offset_x = (cal_x_max + cal_x_min) / 2;
+	cal_offset_y = (cal_y_max + cal_y_min) / 2;
 
 	//calc soft iron compensation (simple)
-	int16_t avg_delta_x, avg_delta_y;
-	avg_delta_x = (x_max - x_min) / 2;
-	avg_delta_y = (y_max - y_min) / 2;
+	cal_avg_delta_x = (cal_x_max - cal_x_min) / 2;
+	cal_avg_delta_y = (cal_y_max - cal_y_min) / 2;
+	cal_avg_delta = (cal_avg_delta_x + cal_avg_delta_y) / 2;
 
-	int16_t avg_delta;
-	avg_delta = (avg_delta_x + avg_delta_y) / 2;
-
-	float scale_x, scale_y;
-	scale_x = (float)avg_delta / avg_delta_x;
-	scale_y = (float)avg_delta / avg_delta_y;
+	cal_scale_x = (float)cal_avg_delta / cal_avg_delta_x;
+	cal_scale_y = (float)cal_avg_delta / cal_avg_delta_y;
 
 	//hard and soft compensation itself
-	x_max = x_min = 0;
-	y_max = y_min = 0;
-	for (uint16_t pt = 0; pt < len_tot; pt++)
+	cal_x_max = cal_x_min = 0;
+	cal_y_max = cal_y_min = 0;
+	for (uint16_t pt = 0; pt < (cal_buf_len + 1); pt++)
 	{
-		buf_x[pt] = (buf_x[pt] - offset_x) * scale_x;
-		buf_y[pt] = (buf_y[pt] - offset_y) * scale_y;
+		cal_buf_x[pt] = (cal_buf_x[pt] - cal_offset_x) * cal_scale_x;
+		cal_buf_y[pt] = (cal_buf_y[pt] - cal_offset_y) * cal_scale_y;
 
 		//find max/min
-		x_max = maxv(buf_x[pt], x_max);
-		x_min = minv(buf_x[pt], x_min);
-		y_max = maxv(buf_y[pt], y_max);
-		y_min = minv(buf_y[pt], y_min);
+		cal_x_max = maxv(cal_buf_x[pt], cal_x_max);
+		cal_x_min = minv(cal_buf_x[pt], cal_x_min);
+		cal_y_max = maxv(cal_buf_y[pt], cal_y_max);
+		cal_y_min = minv(cal_buf_y[pt], cal_y_min);
 	}
 
 	//prepare for compensated print
-	pos_max = maxv(absv(x_max), absv(y_max));
-	neg_max = maxv(absv(x_min), absv(y_min));
-	abs_max = maxv(pos_max, neg_max);
-	plot_scale = (float)32/abs_max;
-
-	//draw result after calibration
-	lcd_clear();
-	lcd_pixel(LCD_CNTR_X, LCD_CNTR_Y, 1);	//plot a dot in lcd center
-	for (uint16_t i = 0; i < len_tot; i++)
-	{
-		uint8_t x_dot, y_dot;
-		x_dot = (uint8_t)((float)buf_x[i] * plot_scale + LCD_CNTR_X);
-		y_dot = (uint8_t)((float)buf_y[i] * plot_scale + LCD_CNTR_Y);
-		lcd_set_pixel_plot(x_dot, y_dot);
-	}
-	lcd_print(0, 0, "Done");
-	lcd_print(0, 14, "OK");
-	lcd_update();
-
-	while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click to continue
-
-	lcd_clear();
-    lcd_print(0, 3, "Calibrated!");
-    lcd_print(2, 0, "OK save & reboot");
-    lcd_print(3, 3, "ESC restart");
-    lcd_update();
-    delay_cyc(300000);
-
-    while (1)	//wait for user's decision
-    {
-    	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for restart
-    	{
-    		goto restart_cal;
-    	}
-
-    	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for save
-    	{
-    		break;
-    	}
-    }
-
-//DEBUG OUT
-//	lcd_clear();
-//	itoa32(offset_x, buf);
-//    lcd_print(0, 0, buf, 0);
-//	itoa32(offset_y, buf);
-//    lcd_print(1, 0, buf, 0);
-//	ftoa32(scale_x, 5, buf);
-//    lcd_print(2, 0, buf, 0);
-//    ftoa32(scale_y, 5, buf);
-//    lcd_print(3, 0, buf, 0);
-//    lcd_update();
-//
-//    delay_cyc(300000);
-//    while ((GPIOB->IDR) & GPIO_IDR_IDR4){}		//wait for OK click
-
-    //save calibration in settings
-    settings_copy.magn_offset_x = offset_x;
-    settings_copy.magn_offset_y = offset_y;
-    settings_copy.magn_scale_x.as_float = scale_x;
-    settings_copy.magn_scale_y.as_float = scale_y;
-    settings_save(&settings_copy);
-
-    //reset MCU
-    delay_cyc(200000);
-    NVIC_SystemReset();
+	//find abs max
+	cal_pos_max = maxv(absv(cal_x_max), absv(cal_y_max));
+	cal_neg_max = maxv(absv(cal_x_min), absv(cal_y_min));
+	cal_abs_max = maxv(cal_pos_max, cal_neg_max);
+	cal_plot_scale = (float)(LCD_SIZE_Y / 2)/cal_abs_max;
 }
 
 
 
-uint8_t read_north(void)
+void compass_calibration_save()
+{
+    //save calibration in settings
+    settings_copy.magn_offset_x = cal_offset_x;
+    settings_copy.magn_offset_y = cal_offset_y;
+    settings_copy.magn_scale_x.as_float = cal_scale_x;
+    settings_copy.magn_scale_y.as_float = cal_scale_y;
+    settings_save(&settings_copy);
+    settings_load();
+}
+
+
+
+void start_compass(void)
+{
+	if (compass_availability == COMPASS_IS_AVAILABLE)
+	{
+		start_accelerometer();
+		start_magnetometer();
+		timer4_start();
+	}
+}
+
+
+
+void stop_compass(void)
+{
+	if (compass_availability == COMPASS_IS_AVAILABLE)
+	{
+		timer4_stop();
+		stop_accelerometer();
+		stop_magnetometer();
+		gps_course = 0;
+		north_ready = 0;
+	}
+}
+
+
+
+uint8_t read_compass(void)
 {
 	float comp_x, comp_y;
+	uint8_t current_is_horizontal;
 
-	if (is_horizontal())	//if the device is oriented horizontally
+	if (compass_availability == COMPASS_IS_AVAILABLE)
+	{
+		current_is_horizontal = is_horizontal();
+	}
+	else
+	{
+		current_is_horizontal = 0;		//use GPS course if compass is not available
+	}
+
+	if (current_is_horizontal)	//if the device is oriented horizontally
 	{
 		read_magn();
 
@@ -303,8 +271,10 @@ uint8_t read_north(void)
 
 		north = atan2(-comp_x, comp_y);		//from atan2(y, x) to atan2(-x, y) to rotate result pi/2 CCW
 
+		gps_course = 0;
 		north_ready = 1;
 
+		last_is_horizontal = current_is_horizontal;
 		return 1; //return 1 if horizontal
 	}
 	else	//otherwise use GPS course
@@ -312,6 +282,7 @@ uint8_t read_north(void)
 		if (p_gps_num->speed > GPS_SPEED_THRS)	//only when moving
 		{
 			north = p_gps_num->course * deg_to_rad;
+			gps_course = 1;
 			north_ready = 1;
 		}
 		else
@@ -319,7 +290,17 @@ uint8_t read_north(void)
 			north_ready = 0;
 		}
 
-		return 0; //return 0 if not horizontal
+		if (last_is_horizontal == 1)
+		{
+			last_is_horizontal = current_is_horizontal;
+			return 1; //in order to update the LCD last time and, potentially, hide the compass arrow; i.e. fix the arrow freeze after going from horizontal
+		}
+		else
+		{
+			last_is_horizontal = current_is_horizontal;
+			return 0; //return 0 if not horizontal
+		}
+
 	}
 }
 
@@ -332,9 +313,52 @@ uint8_t is_north_ready(void)
 
 
 
+uint8_t is_gps_course(void)
+{
+	return gps_course;
+}
+
+
+
 float get_north(void)
 {
-	//north_ready = 0; //commented out because it causes compass arrow blink
 	return north;
 }
+
+
+
+uint16_t get_cal_buf_len(void)
+{
+	return cal_buf_len;
+}
+
+
+
+int16_t *get_cal_buf_x(void)
+{
+	return &cal_buf_x[0];
+}
+
+
+
+int16_t *get_cal_buf_y(void)
+{
+	return &cal_buf_y[0];
+}
+
+
+
+float get_cal_plot_scale(void)
+{
+	return cal_plot_scale;
+}
+
+
+
+uint8_t get_compass_availability(void)
+{
+	return compass_availability;
+}
+
+
 

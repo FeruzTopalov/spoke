@@ -32,9 +32,15 @@
 
 
 
+void setup_interrupt_priorities(void);
+
+
+
 struct main_flags_struct main_flags = {0};
 struct gps_num_struct *p_gps_num;
 struct settings_struct *p_settings;
+struct devices_struct **pp_devices;
+
 
 
 uint8_t button_code = 0;
@@ -43,6 +49,7 @@ uint8_t processing_button = 0;
 //TIMERS
 uint32_t uptime = 0;
 uint32_t pps_absolute_counter = 0;
+uint32_t pps_continuous_counter = 0;
 
 uint8_t second_modulo = 0;
 uint8_t device_tx_second = 0;
@@ -59,19 +66,20 @@ int main(void)
     gpio_init();
     manage_power();
     spi_init();
+    setup_interrupt_priorities();
     __enable_irq();	//for LCD DMA operation
     lcd_init();
 
     //start screen
     lcd_bitmap(&startup_screen[0]);
     lcd_update();
-    delay_cyc(400000);
+    delay_cyc(800000);
+
+     lcd_print_only(0, 0, "settings..");
+    settings_load();
 
     lcd_print_only(0, 0, "uart..");
     uart_init();
-
-    lcd_print_only(0, 0, "settings..");
-    settings_load();
 
     lcd_print_only(0, 0, "timers..");
     timers_init();
@@ -111,8 +119,9 @@ int main(void)
     p_settings = get_settings();
     p_gps_num = get_gps_num();
     p_update_interval_values = get_update_interval_values();
+    pp_devices = get_devices();
 
-    device_tx_second = (2 * (p_settings->device_number - 1));
+    device_tx_second = (2 * (p_settings->device_number - 1));		//time slots each even second
     max_rx_second = (2 * (p_settings->devices_on_air - 1));
 
 
@@ -160,16 +169,18 @@ int main(void)
         if (main_flags.tick_1s == 1)
         {
         	main_flags.tick_1s = 0;
-            adc_check_bat_voltage();
 
+            adc_check_bat_voltage();
             if (is_battery_critical())
             {
-            	release_power();	//todo: just turn off for now
+            	lcd_print_only(2, 2, "BATTERY LOW!");
+            	delay_cyc(600000);
+            	release_power();	//turn off immediately
             }
 
-            if (!(main_flags.pps_synced)) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
+			calc_timeout(uptime);
+            if (main_flags.pps_synced == 0) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
             {
-            	calc_timeout(uptime);
             	main_flags.do_beep += check_any_alarm_fence_timeout();
             	main_flags.do_beep += is_battery_low();
             }
@@ -182,11 +193,14 @@ int main(void)
         {
         	main_flags.process_all = 0;
         	process_all_devices();
+
         	calc_fence();
         	calc_timeout(uptime);
         	main_flags.do_beep += check_any_alarm_fence_timeout();
         	main_flags.do_beep += is_battery_low();
         	main_flags.update_screen = 1;
+
+        	report_to_console(); //send fresh devices data to console
         }
 
 
@@ -194,6 +208,8 @@ int main(void)
         {
         	main_flags.nmea_parsed_only = 0;
         	main_flags.update_screen = 1;
+
+        	report_to_console(); //send fresh devices data to console
         }
 
 
@@ -201,7 +217,8 @@ int main(void)
     	if (main_flags.process_compass == 1)
 		{
     		main_flags.process_compass = 0;
-    		if (read_north())		//todo: decide on applicability of this condition
+
+    		if (read_compass())
     		{
     			main_flags.update_screen = 1;
     		}
@@ -229,6 +246,8 @@ int main(void)
 		}
 
 
+    	//Reload watchdog
+    	reload_watchdog();
 
         //Wait for interrupt
         __WFI();
@@ -243,18 +262,13 @@ int main(void)
 //DMA UART RX overflow
 void DMA1_Channel3_IRQHandler(void)
 {
-
 	DMA1->IFCR = DMA_IFCR_CGIF3;     //clear all interrupt flags for DMA channel 3
 
     uart3_dma_stop();
     backup_and_clear_uart_buffer();
     uart3_dma_restart();
 
-    if (main_flags.pps_synced == 1) 	//if last pps status was "sync" then make a beep because we lost PPS
-    {
-    	make_a_long_beep();
-    }
-
+    pps_continuous_counter = 0;
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;
 
@@ -267,15 +281,19 @@ void EXTI2_IRQHandler(void)
 {
 
 	EXTI->PR = EXTI_PR_PR2;			//clear interrupt
-	timer1_start_800ms();           //the first thing to do is to start gps acquire timer
 
 	uart3_dma_stop();				//drop the previous data; there will be new after this PPS
 	clear_uart_buffer();
 	uart3_dma_restart();
 
+	pps_continuous_counter++;
 	pps_absolute_counter++;
 
-	main_flags.pps_synced = 1;
+	if (pps_continuous_counter > MIN_CONT_PPS)		//drop all possible "glitch" pps, or several first pps to get it stabilized
+	{
+		timer1_start_800ms();           //start gps acquire timer
+		main_flags.pps_synced = 1;
+	}
 
 }
 
@@ -298,8 +316,11 @@ void EXTI0_IRQHandler(void)
 
 		if (!(current_radio_status & IRQ_CRC_ERROR))	// if no CRC error
 		{
+			uint8_t rx_dev = 0;
+
 			rf_get_rx_packet();
-			parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
+			rx_dev = parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
+			pp_devices[rx_dev]->lora_rssi = rf_get_last_rssi();	//read and save RSSI
 		}
 	}
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
@@ -311,7 +332,6 @@ void EXTI0_IRQHandler(void)
 	{
 		main_flags.rx_state = 0;
 		led_green_off();
-		rf_set_standby_xosc();	//after RX TO it goes to Standby RC mode only (https://forum.lora-developers.semtech.com/t/sx1268-is-it-possible-to-configure-transition-to-stdby-xosc-after-cad-done-rx-timeout/1282)
 	}
 }
 
@@ -323,7 +343,7 @@ void TIM1_UP_IRQHandler(void)
     TIM1->SR &= ~TIM_SR_UIF;                    //clear interrupt
     timer1_stop_reload();						//stop this timer
 
-    if (timer1_get_intrvl_type() == 1) //long interval 800 ms ended
+    if (timer1_get_intrvl_type() == TIMER1_INTERVAL_TYPE_LONG) //long interval 800 ms ended
     {
 
     	//parse NMEA, run short timer
@@ -337,7 +357,7 @@ void TIM1_UP_IRQHandler(void)
     	main_flags.parse_nmea = 1;			//ask to parse
 
     }
-    else if (timer1_get_intrvl_type() == 2) //short interval 100 ms ended, resulting 800 ms + 100 ms=900 ms after last pps
+    else if (timer1_get_intrvl_type() == TIMER1_INTERVAL_TYPE_SHORT) //short interval 100 ms ended, resulting 800 ms + 100 ms=900 ms after last pps
     {
 
     	//important: NMEA must be parsed before execution of this code
@@ -396,6 +416,7 @@ void TIM3_IRQHandler(void)
 			main_flags.buttons_scanned = 1;
 		}
 	}
+
 }
 
 
@@ -438,7 +459,24 @@ void USART1_IRQHandler(void)
 {
     uint8_t rx_data;
     rx_data = USART1->DR;
-    uart1_tx_byte(++rx_data);	//simple incremental echo test
+
+    if (rx_data == '1')
+    {
+    	toggle_console_reports(1);
+    }
+    else if (rx_data == '0')
+    {
+    	toggle_console_reports(0);
+    }
+}
+
+
+
+//Console UART TX DMA completed
+void DMA1_Channel4_IRQHandler(void)
+{
+	DMA1->IFCR = DMA_IFCR_CGIF4;     //clear all interrupt flags for DMA channel 4
+	uart1_dma_stop();
 }
 
 
@@ -457,6 +495,7 @@ void SysTick_Handler(void)
 void TIM4_IRQHandler(void)
 {
 	TIM4->SR &= ~TIM_SR_UIF;        //clear gating timer int
+
 	main_flags.process_compass = 1;
 }
 
@@ -496,13 +535,43 @@ void ADC1_2_IRQHandler(void)
 
 
 
-uint32_t get_abs_pps_cntr(void)
+uint32_t get_cont_pps_cntr(void)
 {
-	return pps_absolute_counter;
+	return pps_continuous_counter;
 }
 
 
-//todo: setupt ints priorities
+
+void setup_interrupt_priorities(void)
+{
+	#define GROUPS_8_SUBGROUPS_2	(4)
+
+	NVIC_SetPriorityGrouping(GROUPS_8_SUBGROUPS_2);
+
+	NVIC_SetPriority(EXTI2_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 0, 0));		//GPS PPS Interrupt
+	NVIC_SetPriority(TIM1_UP_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 0, 1));		//Timer1 GPS Acquire + Radio Run
+
+	NVIC_SetPriority(EXTI0_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 1, 0));		//Radio Interrupt
+	NVIC_SetPriority(DMA1_Channel3_IRQn, 	NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 1, 1));		//DMA GPS UART RX overflow
+
+	NVIC_SetPriority(DMA1_Channel5_IRQn, 	NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 2, 0));		//DMA SPI2 TX LCD
+	NVIC_SetPriority(TIM3_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 2, 1));		//Scan buttons interval
+
+	NVIC_SetPriority(EXTI3_IRQn,			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 3, 0));		//DOWN/ESC button interrupt
+	NVIC_SetPriority(EXTI4_IRQn,			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 3, 1));		//UP/OK button interrupt
+
+	NVIC_SetPriority(EXTI9_5_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 4, 0));		//PWR button interrupt
+	NVIC_SetPriority(TIM4_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 4, 1));		//Compass update interval
+
+	NVIC_SetPriority(RTC_IRQn, 				NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 5, 0));		//Uptime counter (every 1 second)
+	NVIC_SetPriority(USART1_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 5, 1));		//Console RX symbol
+
+	NVIC_SetPriority(DMA1_Channel4_IRQn, 	NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 6, 0));		//Console UART TX DMA completed
+	NVIC_SetPriority(ADC1_2_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 6, 1));		//End of ADC conversion (battery voltage)
+
+	NVIC_SetPriority(SysTick_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 7, 0));		//End of beep
+	//NVIC_SetPriority(, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 7, 1));		//Empty
+}
 
 
 

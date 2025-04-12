@@ -11,11 +11,11 @@
 
 
 
-#define PPS_SKIP	(2)		//how many first PPS pulses are skipped before switching to active mode
+#define MIN_CONT_PPS	(2)
 
 
 
-uint32_t get_abs_pps_cntr(void);
+uint32_t get_cont_pps_cntr(void);
 
 
 

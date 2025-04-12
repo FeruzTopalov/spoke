@@ -21,10 +21,6 @@
 
 
 
-void update_reception_icon(uint8_t rx_device);
-
-
-
 const double rad_to_deg = 57.29577951308232;        //rad to deg multiplyer
 const double deg_to_rad = 0.0174532925199433;       //deg to rad multiplyer
 const double twice_mean_earth_radius = 12742016.0;  // 2 * 6371008 meters
@@ -71,6 +67,8 @@ uint8_t this_device;
 struct devices_struct devices[NAV_OBJECTS_MAX + 1];        //structures array for devices from 1 to DEVICES_IN_GROUP. Index 0 is invalid and always empty.
 struct devices_struct *p_devices[NAV_OBJECTS_MAX + 1];		//structure pointers array
 
+uint8_t *p_update_interval_values;
+
 
 
 void init_lrns(void)
@@ -79,7 +77,6 @@ void init_lrns(void)
     for (uint8_t dev = 1; dev <= NAV_OBJECTS_MAX; dev++)
     {
         memset(&devices[dev], 0, sizeof(devices[dev]));
-        devices[dev].rx_icon = SYMB8_RX12;
     }
 
 	//Get external things
@@ -94,11 +91,10 @@ void init_lrns(void)
     //Activate this device
 	devices[this_device].exist_flag = 1;
 	devices[this_device].device_id = p_settings->device_id;
+
+	//Get update interval
+	p_update_interval_values = get_update_interval_values();
 }
-
-
-
-
 
 
 
@@ -125,15 +121,30 @@ void fill_air_packet(uint32_t current_uptime)
 
 
 
-void parse_air_packet(uint32_t current_uptime)
+uint8_t parse_air_packet(uint32_t current_uptime)
 {
+	uint8_t temp_alarm_flag = 0;
 	uint8_t rx_device = (p_air_packet_rx[INPACKET_HEADER_POS] & INBYTE_HEADER_NUM_MASK) >> INBYTE_HEADER_NUM_POS; //extract device number from received packet
 
 	devices[rx_device].exist_flag 				=	1;
 	devices[rx_device].device_id				=	((p_air_packet_rx[INPACKET_HEADER_POS] & INBYTE_HEADER_ID_MASK) + 'A') >> INBYTE_HEADER_ID_POS;	//restore 0x41 shift
 	devices[rx_device].timestamp				=	current_uptime;
 
-	devices[rx_device].alarm_flag				=	(p_air_packet_rx[INPACKET_FLAGS_POS] & INBYTE_FLAGS_ALARM_MASK) >> INBYTE_FLAGS_ALARM_POS;
+	temp_alarm_flag 							=	(p_air_packet_rx[INPACKET_FLAGS_POS] & INBYTE_FLAGS_ALARM_MASK) >> INBYTE_FLAGS_ALARM_POS;
+
+	if (temp_alarm_flag == 1)
+	{
+		if (devices[rx_device].alarm_flag == 0)
+		{
+			devices[rx_device].alarm_flag_for_beep = 1;
+		}
+	}
+	else
+	{
+		devices[rx_device].alarm_flag_for_beep = 0;
+	}
+
+	devices[rx_device].alarm_flag 				=	temp_alarm_flag;
 	devices[rx_device].lowbat_flag				=	(p_air_packet_rx[INPACKET_FLAGS_POS] & INBYTE_FLAGS_LOWBAT_MASK) >> INBYTE_FLAGS_LOWBAT_POS;
 
 	devices[rx_device].latitude.as_array[0]	=		p_air_packet_rx[INPACKET_LATITUDE_POS];
@@ -149,22 +160,7 @@ void parse_air_packet(uint32_t current_uptime)
 	devices[rx_device].altitude.as_array[0] =		p_air_packet_rx[INPACKET_ALTITUDE_POS];
 	devices[rx_device].altitude.as_array[1] = 		p_air_packet_rx[INPACKET_ALTITUDE_POS + 1];
 
-
-	update_reception_icon(rx_device);
-}
-
-
-
-void update_reception_icon(uint8_t rx_device)
-{
-	if (devices[rx_device].rx_icon == SYMB8_RX22)
-	{
-		devices[rx_device].rx_icon = SYMB8_RX12;
-	}
-	else
-	{
-		devices[rx_device].rx_icon++;
-	}
+	return rx_device;
 }
 
 
@@ -264,39 +260,51 @@ void calc_relative_position(uint8_t another_device)
 
 void calc_timeout(uint32_t current_uptime)
 {
+	uint8_t existing_devs = 0;		//to count active devs
+
 	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)	//calculated even for this device and used to alarm about own timeout upon lost of PPS signal
 	{
 		if (devices[dev].exist_flag == 1)
 		{
+			existing_devs++;
+
 			devices[dev].timeout = current_uptime - devices[dev].timestamp; //calc timeout for each active device
 
+			//check link status
+			if (devices[dev].timeout > p_update_interval_values[p_settings->update_interval_opt])
+			{
+				devices[dev].link_status_flag = 0; //when rx from device did not happen but timeout has not triggered yet we show questionmark
+			}
+			else
+			{
+				devices[dev].link_status_flag = 1; //show checkmark if the device is "online"
+			}
+
+			//assign timeout flag
         	if (p_settings->timeout_threshold != TIMEOUT_ALARM_DISABLED) //if enabled
         	{
-				if (devices[dev].timeout > p_settings->timeout_threshold)
+				if (devices[dev].timeout > (p_settings->timeout_threshold + 1))		//safety +1 for boundary condition alarm prevention
 				{
-					if (dev == this_device)
-					{
-						if (get_abs_pps_cntr() <= PPS_SKIP)	//if this is a timeout right after power up, ignore timeout alarm, do not set the flag
-						{									//feature, not a bug: once first PPS appeared, a short beep occurs (do "<= PPS_SKIP" to disable this, #TBD)
-							devices[dev].timeout_flag = 0;
-						}
-						else
-						{
-							devices[dev].timeout_flag = 1;
-						}
-					}
-					else
+					if (devices[dev].timeout_flag == 0)
 					{
 						devices[dev].timeout_flag = 1; //set flag for alarm
+						devices[dev].timeout_flag_for_beep = 1;
 					}
 				}
 				else
 				{
 					devices[dev].timeout_flag = 0;
+					devices[dev].timeout_flag_for_beep = 0;
 				}
         	}
         }
     }
+
+	if (existing_devs == 1)	//if only our dev exists
+	{
+		devices[this_device].timeout_flag = 0;				//clear our timeout flags to not to beep for timeout when there are no one who would be informed about our desappear
+		devices[this_device].timeout_flag_for_beep = 0;
+	}
 }
 
 
@@ -311,11 +319,16 @@ void calc_fence(void)		//all devices should be processed before calling this fun
 			{
 				if (devices[dev].distance > p_settings->fence_threshold)
 				{
-					devices[dev].fence_flag = 1;
+					if (devices[dev].fence_flag == 0)
+					{
+						devices[dev].fence_flag = 1;
+						devices[dev].fence_flag_for_beep = 1;
+					}
 				}
 				else
 				{
 					devices[dev].fence_flag = 0;
+					devices[dev].fence_flag_for_beep = 0;
 				}
 			}
 		}
@@ -330,7 +343,7 @@ uint8_t check_any_alarm_fence_timeout(void)
 	{
 		if (devices[dev].exist_flag)
 		{
-			if ((devices[dev].alarm_flag) || (devices[dev].fence_flag) || (devices[dev].timeout_flag))
+			if ((devices[dev].alarm_flag_for_beep) || (devices[dev].fence_flag_for_beep) || (devices[dev].timeout_flag_for_beep))
 			{
 				return 1;
 			}
@@ -342,15 +355,27 @@ uint8_t check_any_alarm_fence_timeout(void)
 
 
 
+void clear_beep_for_active_dev(uint8_t active_device)
+{
+    //clear beep for a device shown on the screen
+    devices[active_device].alarm_flag_for_beep = 0;
+    devices[active_device].fence_flag_for_beep = 0;
+    devices[active_device].timeout_flag_for_beep = 0;
+}
+
+
+
 void toggle_my_alarm(void)
 {
 	if (devices[this_device].alarm_flag == 0)
 	{
 		devices[this_device].alarm_flag = 1;
+		devices[this_device].alarm_flag_for_beep = 1;
 	}
 	else
 	{
 		devices[this_device].alarm_flag = 0;
+		devices[this_device].alarm_flag_for_beep = 0;
 	}
 }
 

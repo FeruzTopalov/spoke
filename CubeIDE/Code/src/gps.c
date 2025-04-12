@@ -15,7 +15,6 @@
 #include "settings.h"
 #include "points.h"
 #include "lrns.h"
-#include "calendar.h"
 #include "ubx.h"
 
 
@@ -28,7 +27,7 @@ void convert_time(void);
 
 
 
-const float knots_to_kph = 1.852;                   //knots to kilometers per hour multiplyer
+const float knots_to_kph = 1.852;                   //knots to kilometers per hour multiplier
 
 
 
@@ -40,7 +39,9 @@ uint8_t parse_GSV(void);
 
 
 
-char nmea_data[UART_BUF_LEN];
+char nmea_data[MAX_UART_BUF_LEN];
+uint16_t gps_uart_buf_len;
+
 struct gps_raw_struct gps_raw;
 struct gps_num_struct gps_num;
 struct settings_struct *p_settings;
@@ -84,13 +85,18 @@ uint8_t cfg_gnss_gps_glonass[] = {0x00, 0x00, 0x20, 0x07, 0x00, 0x08, 0x10, 0x00
 
 void gps_init(void)
 {
+	//Get actual buffer size
+	gps_uart_buf_len = get_gps_uart_buf_len();
+
 	//Load all devices
 	pp_devices = get_devices();
 
 	p_settings = get_settings();
 	this_device = p_settings->device_number;
 
+	/* UNCOMMENT if needed
 	configure_gps_receiver();
+	*/
 }
 
 
@@ -324,7 +330,7 @@ void convert_time(void)
 				hour -= 24;
 				day += 1;
 
-				if (day > calendar[year - CALENDAR_START_YEAR][month - 1])
+				if (day > get_days_in_month(month, year))
 				{
 					day = 1;
 					month += 1;
@@ -364,7 +370,7 @@ void convert_time(void)
 						year -= 1;
 					}
 
-					day = calendar[year - CALENDAR_START_YEAR][month - 1];
+					day = get_days_in_month(month, year);
 				}
 			}
 		}
@@ -407,7 +413,7 @@ uint8_t parse_RMC(void)
     while (!((nmea_data[pos] == '$') &&
             (nmea_data[pos + 3] == 'R') &&
             (nmea_data[pos + 4] == 'M') &&
-            (nmea_data[pos + 5] == 'C')) && pos < UART_BUF_LEN)      //search for start pos
+            (nmea_data[pos + 5] == 'C')) && pos < gps_uart_buf_len)      //search for start pos
     {
     pos++;
     }
@@ -417,7 +423,7 @@ uint8_t parse_RMC(void)
         return 0;           //checksum error
     }
     
-    for (uint16_t i = pos + 6; i < UART_BUF_LEN ; i++)          //i starts from the symbol right after "$GPRMC" string
+    for (uint16_t i = pos + 6; i < gps_uart_buf_len ; i++)          //i starts from the symbol right after "$GPRMC" string
     {
         if (nmea_data[i] == '*') return 1;       //end of the sentence
         
@@ -477,7 +483,7 @@ uint8_t parse_GGA(void)
     while (!((nmea_data[pos] == '$') &&
             (nmea_data[pos + 3] == 'G') &&
             (nmea_data[pos + 4] == 'G') &&
-            (nmea_data[pos + 5] == 'A')) && pos < UART_BUF_LEN)      //search for start pos
+            (nmea_data[pos + 5] == 'A')) && pos < gps_uart_buf_len)      //search for start pos
     {
     pos++;
     }
@@ -487,7 +493,7 @@ uint8_t parse_GGA(void)
         return 0;           //checksum error
     }
     
-    for (uint16_t i = pos + 6; i < UART_BUF_LEN ; i++)          //i starts from the symbol right after "$GPRMC" string
+    for (uint16_t i = pos + 6; i < gps_uart_buf_len ; i++)          //i starts from the symbol right after "$GPRMC" string
     {
         if (nmea_data[i] == '*') return 1;       //end of the sentence
         
@@ -526,7 +532,7 @@ uint8_t parse_GSA(void)
     while (!((nmea_data[pos] == '$') &&
             (nmea_data[pos + 3] == 'G') &&
             (nmea_data[pos + 4] == 'S') &&
-            (nmea_data[pos + 5] == 'A')) && pos < UART_BUF_LEN)      //search for start pos
+            (nmea_data[pos + 5] == 'A')) && pos < gps_uart_buf_len)      //search for start pos
     {
     pos++;
     }
@@ -536,7 +542,7 @@ uint8_t parse_GSA(void)
         return 0;           //checksum error
     }
     
-    for (uint16_t i = pos + 6; i < UART_BUF_LEN ; i++)          //i starts from the symbol right after "$GPRMC" string
+    for (uint16_t i = pos + 6; i < gps_uart_buf_len ; i++)          //i starts from the symbol right after "$GPRMC" string
     {
         if (nmea_data[i] == '*') return 1;       //end of the sentence
         
@@ -575,7 +581,7 @@ uint8_t parse_GSV(void)
     while (!((nmea_data[pos] == '$') &&
             (nmea_data[pos + 3] == 'G') &&
             (nmea_data[pos + 4] == 'S') &&
-            (nmea_data[pos + 5] == 'V')) && pos < UART_BUF_LEN)      //search for start pos
+            (nmea_data[pos + 5] == 'V')) && pos < gps_uart_buf_len)      //search for start pos
     {
     pos++;
     }
@@ -585,7 +591,7 @@ uint8_t parse_GSV(void)
         return 0;           //checksum error
     }
     
-    for (uint16_t i = pos + 6; i < UART_BUF_LEN ; i++)          //i starts from the symbol right after "$GPRMC" string
+    for (uint16_t i = pos + 6; i < gps_uart_buf_len ; i++)          //i starts from the symbol right after "$GPRMC" string
     {
         if (nmea_data[i] == '*') return 1;       //end of the sentence
         
@@ -621,7 +627,7 @@ uint8_t nmea_checksum(uint16_t pos)
     while (nmea_data[pos] != '*')
     {
         CheckSum ^= nmea_data[pos];
-        if (++pos >= UART_BUF_LEN) return 0;    //check sum not found
+        if (++pos >= gps_uart_buf_len) return 0;    //check sum not found
     }
     
     if (nmea_data[++pos] > 0x40)

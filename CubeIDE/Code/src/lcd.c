@@ -91,23 +91,19 @@ void lcd_init(void)
         cs_lcd_inactive();
     }
 
-    //spi2_clock_disable();
-
-    lcd_clear();
-    lcd_update();
-
+    spi2_clock_disable();
 }
 
 
 
 void lcd_send_command(uint8_t command)
 {
-	//spi2_clock_enable();
+	spi2_clock_enable();
 	lcd_command_mode();
 	cs_lcd_active();
 	spi2_tx(command);
 	cs_lcd_inactive();
-	//spi2_clock_disable();
+	spi2_clock_disable();
 }
 
 
@@ -156,9 +152,6 @@ void lcd_update(void)
 	{
 		if (display_status == LCD_DISPLAY_ON) //update display content only if the display is on
 		{
-			//spi2_clock_enable();
-
-
 			lcd_busy = 1;
 			current_page = 0;
 			lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
@@ -167,8 +160,6 @@ void lcd_update(void)
 			lcd_data_mode();
 			cs_lcd_active();
 			spi2_dma_start(&screen_buf[0], LCD_SIZE_X);
-
-			//spi2_clock_disable();
 		}
 	}
 }
@@ -278,7 +269,6 @@ void lcd_char(char chr)
 	uint16_t font_char_pos, c;
 	uint8_t px;
 
-    //font_char_pos = ((uint8_t)chr - 32) * FONT_BYTES;
     font_char_pos = ((uint8_t)chr) * FONT_BYTES;
 
     for (px = 0, c = font_char_pos; px < FONT_BYTES_X; px++, c += 2)		//upper symbol row
@@ -290,6 +280,32 @@ void lcd_char(char chr)
     for (px = 0, c = font_char_pos + 1; px < FONT_BYTES_X; px++, c += 2)	//lower symbol row
     {
         screen_buf[buf_pos++] = font_8x16[c];
+    }
+
+    buf_pos = buf_pos_copy + FONT_BYTES_X;	//point to the next LCD char
+    //no new line/carriage return
+}
+
+
+
+//Put one char in buffer in position with content overlay, defined previously via ssd1306_pos()
+void lcd_char_overlay(char chr)
+{
+	uint16_t buf_pos_copy = buf_pos;
+	uint16_t font_char_pos, c;
+	uint8_t px;
+
+    font_char_pos = ((uint8_t)chr) * FONT_BYTES;
+
+    for (px = 0, c = font_char_pos; px < FONT_BYTES_X; px++, c += 2)		//upper symbol row
+    {
+        screen_buf[buf_pos++] |= font_8x16[c];
+    }
+
+    buf_pos = buf_pos_copy + LCD_SIZE_X; //point to the lower symbol's row
+    for (px = 0, c = font_char_pos + 1; px < FONT_BYTES_X; px++, c += 2)	//lower symbol row
+    {
+        screen_buf[buf_pos++] |= font_8x16[c];
     }
 
     buf_pos = buf_pos_copy + FONT_BYTES_X;	//point to the next LCD char
@@ -332,6 +348,15 @@ void lcd_char_pos(uint8_t row, uint8_t col, char chr)
 
 
 
+//Put one char in defined pos, with overlay
+void lcd_char_overlay_pos(uint8_t row, uint8_t col, char chr)
+{
+    lcd_pos(row, col);
+    lcd_char_overlay(chr);
+}
+
+
+
 //Put one char in defined pos
 void lcd_char16_pos(uint8_t row, uint8_t col, char chr)
 {
@@ -357,6 +382,7 @@ void lcd_print(uint8_t row, uint8_t col, char *p_str)
 //Clear, print, update
 void lcd_print_only(uint8_t row, uint8_t col, char *p_str)
 {
+	while (lcd_busy);		//wait until free
 	lcd_clear();
 	lcd_print(row, col, p_str);
 	lcd_update();
@@ -483,7 +509,7 @@ void lcd_byte2buf(uint16_t pos, uint8_t byte)
 
 
 
-void lcd_draw_line(int8_t x1, int8_t y1, int8_t x2, int8_t y2)	//todo: implement new line draw algorithm to speed up this
+void lcd_draw_line(int8_t x1, int8_t y1, int8_t x2, int8_t y2)
 {
 	int8_t signX;
 	int8_t signY;
@@ -566,6 +592,22 @@ void lcd_draw_dot(int8_t x0, int8_t y0)
 				continue;
 			}
 			else
+			{
+				lcd_set_pixel(x0 + px, y0 + py);
+			}
+		}
+	}
+}
+
+
+
+void lcd_draw_big_dot(int8_t x0, int8_t y0)
+{
+	for (int8_t px = -3; px <= 3; px++)
+	{
+		for (int8_t py = -3; py <= 3; py++)
+		{
+			if ((absv(px) + absv(py)) < 5)
 			{
 				lcd_set_pixel(x0 + px, y0 + py);
 			}
