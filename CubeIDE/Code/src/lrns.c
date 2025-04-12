@@ -260,13 +260,17 @@ void calc_relative_position(uint8_t another_device)
 
 void calc_timeout(uint32_t current_uptime)
 {
+	uint8_t existing_devs = 0;		//to count active devs
+
 	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)	//calculated even for this device and used to alarm about own timeout upon lost of PPS signal
 	{
 		if (devices[dev].exist_flag == 1)
 		{
+			existing_devs++;
+
 			devices[dev].timeout = current_uptime - devices[dev].timestamp; //calc timeout for each active device
 
-			//calc next update countdown
+			//check link status
 			if (devices[dev].timeout > p_update_interval_values[p_settings->update_interval_opt])
 			{
 				devices[dev].link_status_flag = 0; //when rx from device did not happen but timeout has not triggered yet we show questionmark
@@ -279,7 +283,7 @@ void calc_timeout(uint32_t current_uptime)
 			//assign timeout flag
         	if (p_settings->timeout_threshold != TIMEOUT_ALARM_DISABLED) //if enabled
         	{
-				if (devices[dev].timeout > p_settings->timeout_threshold)
+				if (devices[dev].timeout > (p_settings->timeout_threshold + 1))		//safety +1 for boundary condition alarm prevention
 				{
 					if (devices[dev].timeout_flag == 0)
 					{
@@ -295,6 +299,12 @@ void calc_timeout(uint32_t current_uptime)
         	}
         }
     }
+
+	if (existing_devs == 1)	//if only our dev exists
+	{
+		devices[this_device].timeout_flag = 0;				//clear our timeout flags to not to beep for timeout when there are no one who would be informed about our desappear
+		devices[this_device].timeout_flag_for_beep = 0;
+	}
 }
 
 

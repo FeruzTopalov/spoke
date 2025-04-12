@@ -13,6 +13,7 @@
 #include "service.h"
 #include "lcd.h"
 #include "gps.h"
+#include "timer.h"
 
 
 
@@ -30,16 +31,27 @@ void settings_interactive_save_default(void);
 
 
 
-#define TX_POWER_0MILLIW_VALUE   	(0)
-#define TX_POWER_1MILLIW_VALUE   	(1)
-#define TX_POWER_10MILLIW_VALUE   	(10)
-#define TX_POWER_100MILLIW_VALUE  	(100)
+#define TX_POWER_NEG9DBM_VALUE   	(-9)
+#define TX_POWER_POS0DBM_VALUE   	(0)
+#define TX_POWER_POS10DBM_VALUE   	(10)
+#define TX_POWER_POS22DBM_VALUE  	(22)
 
-#define TX_POWER_VALUES_ARRAY 		{ 	TX_POWER_0MILLIW_VALUE, 	\
-										TX_POWER_1MILLIW_VALUE, 	\
-										TX_POWER_10MILLIW_VALUE, 	\
-										TX_POWER_100MILLIW_VALUE	}
+#define TX_POWER_VALUES_ARRAY 		{ 	TX_POWER_NEG9DBM_VALUE, 	\
+										TX_POWER_POS0DBM_VALUE, 	\
+										TX_POWER_POS10DBM_VALUE, 	\
+										TX_POWER_POS22DBM_VALUE		}
 
+
+
+#define GPS_BAUD_9600_VALUE			(9600)
+#define GPS_BAUD_38400_VALUE		(38400)
+#define GPS_BAUD_57600_VALUE		(57600)
+#define GPS_BAUD_115200_VALUE		(115200)
+
+#define GPS_BAUD_VALUES_ARRAY		{	GPS_BAUD_9600_VALUE,	\
+										GPS_BAUD_38400_VALUE,	\
+										GPS_BAUD_57600_VALUE,	\
+										GPS_BAUD_115200_VALUE 	}
 
 
 //positions:
@@ -50,15 +62,16 @@ void settings_interactive_save_default(void);
 #define SETTINGS_UPDATE_INTERVAL_POS        (4)
 #define SETTINGS_FREQ_CHANNEL_POS       	(5)
 #define SETTINGS_TX_POWER_POS           	(6)
-#define SETTINGS_TIMEOUT_THRESHOLD_POS   	(7)
-#define SETTINGS_FENCE_THRESHOLD_POS   		(8)
-#define SETTINGS_TIME_ZONE_DIR_POS			(9)
-#define SETTINGS_TIME_ZONE_HOUR_POS			(10)
-#define SETTINGS_TIME_ZONE_MINUTE_POS		(11)
-#define SETTINGS_MAGN_OFFSET_X_POS			(12)
-#define SETTINGS_MAGN_OFFSET_Y_POS			(13)
-#define SETTINGS_MAGN_SCALE_X_POS			(14)
-#define SETTINGS_MAGN_SCALE_Y_POS			(16)
+#define SETTINGS_GPS_BAUD_POS           	(7)
+#define SETTINGS_TIMEOUT_THRESHOLD_POS   	(8)
+#define SETTINGS_FENCE_THRESHOLD_POS   		(9)
+#define SETTINGS_TIME_ZONE_DIR_POS			(10)
+#define SETTINGS_TIME_ZONE_HOUR_POS			(11)
+#define SETTINGS_TIME_ZONE_MINUTE_POS		(12)
+#define SETTINGS_MAGN_OFFSET_X_POS			(13)
+#define SETTINGS_MAGN_OFFSET_Y_POS			(14)
+#define SETTINGS_MAGN_SCALE_X_POS			(15)
+#define SETTINGS_MAGN_SCALE_Y_POS			(17)
 
 //default values:
 #define SETTINGS_INIT_FLAG_DEFAULT      	(0xAA)
@@ -66,8 +79,9 @@ void settings_interactive_save_default(void);
 #define SETTINGS_DEVICES_ON_AIR_DEFAULT		(DEVICE_NUMBER_LAST)
 #define SETTINGS_DEVICE_ID_DEFAULT 			(DEVICE_ID_FIRST_SYMBOL)
 #define SETTINGS_UPDATE_INTERVAL_DEFAULT    (UPDATE_INTERVAL_10S_SETTING)
-#define SETTINGS_FREQ_CHANNEL_DEFAULT   	(FREQ_CHANNEL_FIRST)             //base freq is 433.050 and freq step is 25kHz, so CH0 - 433.050 (not valid, not used); CH1 - 433.075 (first LPD channel)
-#define SETTINGS_TX_POWER_DEFAULT       	(TX_POWER_10MILLIW_SETTING)
+#define SETTINGS_FREQ_CHANNEL_DEFAULT   	(FREQ_CHANNEL_FIRST)
+#define SETTINGS_TX_POWER_DEFAULT       	(TX_POWER_POS10DBM_SETTING)
+#define SETTINGS_GPS_BAUD_DEFAULT          	(GPS_BAUD_9600_SETTING)
 #define SETTINGS_TIMEOUT_THRESHOLD_DEFAULT  (60)
 #define SETTINGS_FENCE_THRESHOLD_DEFAULT  	(100)
 #define SETTINGS_TIME_ZONE_DIR_DEFAULT		(1)
@@ -81,7 +95,7 @@ void settings_interactive_save_default(void);
 #define SETTINGS_MAGN_SCALE_YL_DEFAULT		(0x0000)
 
 //settings size
-#define SETTINGS_SIZE						(18) //half-words
+#define SETTINGS_SIZE						(19) //half-words
 
 
 
@@ -89,7 +103,8 @@ uint16_t settings_array[SETTINGS_SIZE];
 struct settings_struct settings;
 
 uint8_t update_interval_values[] = UPDATE_INTERVAL_VALUES_ARRAY;
-uint8_t tx_power_values[] = TX_POWER_VALUES_ARRAY;
+int8_t tx_power_values[] = TX_POWER_VALUES_ARRAY;
+uint32_t gps_baud_values[] = GPS_BAUD_VALUES_ARRAY;
 
 
 
@@ -100,9 +115,16 @@ uint8_t *get_update_interval_values(void)
 
 
 
-uint8_t *get_tx_power_values(void)
+int8_t *get_tx_power_values(void)
 {
 	return &tx_power_values[0];
+}
+
+
+
+uint32_t *get_gps_baud_values(void)
+{
+	return &gps_baud_values[0];
 }
 
 
@@ -137,6 +159,7 @@ void settings_load(void)
     settings.freq_channel = 					settings_array[SETTINGS_FREQ_CHANNEL_POS];
     settings.tx_power_opt = 					settings_array[SETTINGS_TX_POWER_POS];
     settings.update_interval_opt = 				settings_array[SETTINGS_UPDATE_INTERVAL_POS];
+    settings.gps_baud_opt =						settings_array[SETTINGS_GPS_BAUD_POS];
     settings.timeout_threshold = 				settings_array[SETTINGS_TIMEOUT_THRESHOLD_POS];
     settings.fence_threshold = 					settings_array[SETTINGS_FENCE_THRESHOLD_POS];
     settings.time_zone_dir = 					settings_array[SETTINGS_TIME_ZONE_DIR_POS];
@@ -154,20 +177,23 @@ void settings_load(void)
 
 void settings_interactive_save_default(void)
 {
+	reload_watchdog();	//to prevent reset
+
 	//print instruction
+	while (get_lcd_busy()) {}
 	lcd_clear();
 	lcd_print(0, 0, "DEFAULT SETTINGS");
-
-	lcd_print(1, 1, "Click OK");
-	lcd_print(2, 0, "to reset, or ESC");
-	lcd_print(3, 0, "to cancel");
+	lcd_print(2, 3, "OK - Reset");
+	lcd_print(3, 2, "ESC - Cancel");
 	lcd_update();
 
-	while (!((GPIOB->IDR) & GPIO_IDR_IDR3) || !((GPIOB->IDR) & GPIO_IDR_IDR4)){}		//wait for user to release OK or ESC after entering settings reset routine
+	while (!((GPIOB->IDR) & GPIO_IDR_IDR3) || !((GPIOB->IDR) & GPIO_IDR_IDR4)) {}		//wait for user to release OK or ESC after entering settings reset routine
 	delay_cyc(100000);
 
     while (1)	//wait for user's decision
     {
+    	reload_watchdog();	//to prevent reset
+
     	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for exit
     	{
     		NVIC_SystemReset();
@@ -175,15 +201,24 @@ void settings_interactive_save_default(void)
 
     	if (!((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK for reset settings to default
     	{
+    		reload_watchdog();	//to prevent reset
+
+    		while (!((GPIOB->IDR) & GPIO_IDR_IDR4)) {}		//wait for user to release OK
+    		delay_cyc(100000);
+
+    		while (get_lcd_busy()) {}
     		lcd_clear();
     		lcd_print(0, 0, "DEFAULT SETTINGS");
-    		lcd_print(2, 1, "Resetting...");
-    		lcd_print(3, 1, "GPS & settings");
+    		lcd_print(2, 2, "Resetting...");
     		lcd_update();
 
     		settings_save_default();
 
+    		/* UNCOMMENT if needed
     		reset_to_defaults_gps_receiver();
+    		*/
+
+    		delay_cyc(300000);
 
     		NVIC_SystemReset();
     	}
@@ -206,6 +241,7 @@ void settings_save_default(void)
     settings_array[SETTINGS_FREQ_CHANNEL_POS] = 		SETTINGS_FREQ_CHANNEL_DEFAULT;
     settings_array[SETTINGS_TX_POWER_POS] = 			SETTINGS_TX_POWER_DEFAULT;
     settings_array[SETTINGS_UPDATE_INTERVAL_POS] = 		SETTINGS_UPDATE_INTERVAL_DEFAULT;
+    settings_array[SETTINGS_GPS_BAUD_POS] = 			SETTINGS_GPS_BAUD_DEFAULT;
     settings_array[SETTINGS_TIMEOUT_THRESHOLD_POS] = 	SETTINGS_TIMEOUT_THRESHOLD_DEFAULT;
     settings_array[SETTINGS_FENCE_THRESHOLD_POS] = 		SETTINGS_FENCE_THRESHOLD_DEFAULT;
     settings_array[SETTINGS_TIME_ZONE_DIR_POS] = 		SETTINGS_TIME_ZONE_DIR_DEFAULT;
@@ -237,6 +273,7 @@ void settings_save(struct settings_struct *p_settings)
     settings_array[SETTINGS_FREQ_CHANNEL_POS] = 		p_settings->freq_channel;
     settings_array[SETTINGS_TX_POWER_POS] = 			p_settings->tx_power_opt;
     settings_array[SETTINGS_UPDATE_INTERVAL_POS] = 		p_settings->update_interval_opt;
+    settings_array[SETTINGS_GPS_BAUD_POS] =				p_settings->gps_baud_opt;
     settings_array[SETTINGS_TIMEOUT_THRESHOLD_POS] = 	p_settings->timeout_threshold;
     settings_array[SETTINGS_FENCE_THRESHOLD_POS] = 		p_settings->fence_threshold;
     settings_array[SETTINGS_TIME_ZONE_DIR_POS] = 		p_settings->time_zone_dir;

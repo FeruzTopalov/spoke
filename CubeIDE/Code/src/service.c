@@ -20,7 +20,14 @@ char rumbs[9][3] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
 uint32_t dec_pow_table[] = {1, 10, 100, 1000, 10000, 100000, 1000000};	//max precision 6 digits after point
 
 
+uint8_t days_in_month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; 	//in non-leap year
+
+
 const char hex_chars[] = "0123456789ABCDEF";
+
+
+// Base64 character map
+static const char base64_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 
 //Simple delay in cycles
@@ -106,10 +113,12 @@ void call_bootloader(void)
     GPIOA->CRH |= GPIO_CRH_MODE15_1;
     GPIOA->CRH &= ~GPIO_CRH_CNF15;      //output push-pull
 
-    release_power();	//fixes "power-on lock" side effect
+    hold_power();	//hold power to prevent power off after software reset if bootloader will not be started; next time power controll see in manage_power()
 
     if (((GPIOB->IDR) & GPIO_IDR_IDR3) && !((GPIOB->IDR) & GPIO_IDR_IDR4)) //OK pressed, btn ESC released
     {
+    	release_power();	//fixes "power-on lock" side effect
+
     	delay_cyc(2000000); //startup delay ~2sec
     	led_red_on();
 
@@ -363,6 +372,44 @@ char *convert_heading(uint16_t heading)
 
 
 
+uint8_t base64_encode(uint8_t *input, uint8_t *output, uint8_t length)
+{
+    //calculate Base64 output length
+    uint8_t encoded_length = ((length + 2) / 3) * 4;
+
+    //encode input data
+    uint8_t in_idx = 0, out_idx = 0;
+    while (in_idx + 3 <= length)
+    {
+    	output[out_idx++] = base64_chars[input[in_idx] >> 2];
+    	output[out_idx++] = base64_chars[((input[in_idx] & 0x03) << 4) | (input[in_idx + 1] >> 4)];
+    	output[out_idx++] = base64_chars[((input[in_idx + 1] & 0x0F) << 2) | (input[in_idx + 2] >> 6)];
+    	output[out_idx++] = base64_chars[input[in_idx + 2] & 0x3F];
+        in_idx += 3;
+    }
+
+    //handle remaining bytes (padding)
+    if (in_idx < length)
+    {
+    	output[out_idx++] = base64_chars[input[in_idx] >> 2];
+        if (in_idx + 1 < length)
+        {
+        	output[out_idx++] = base64_chars[((input[in_idx] & 0x03) << 4) | (input[in_idx + 1] >> 4)];
+        	output[out_idx++] = base64_chars[(input[in_idx + 1] & 0x0F) << 2];
+        }
+        else
+        {
+        	output[out_idx++] = base64_chars[(input[in_idx] & 0x03) << 4];
+        	output[out_idx++] = '=';
+        }
+        output[out_idx++] = '=';
+    }
+
+    return encoded_length;
+}
+
+
+
 //Converts string to float
 float atof32(char *input)
 {
@@ -557,6 +604,45 @@ void itoa32(int32_t value, char *buffer)
 
 
 
+uint8_t string_length(char *str)
+{
+	uint8_t length = 0;
+
+    while (str[length] != '\0')
+    {
+        length++;
+    }
+
+    return length;
+}
+
+
+
+void string_copy(char *destination, char *source)
+{
+	while ((*destination++ = *source++))
+	{
+		;
+	}
+}
+
+
+
+void string_cat(char *destination, char *source)
+{
+    while (*destination)
+    {
+    	destination++;
+    }
+
+	while ((*destination++ = *source++))
+	{
+		;
+	}
+}
+
+
+
 void byte2hex(uint8_t byte, char *array)
 {
     array[0] = hex_chars[(byte >> 4) & 0x0F];
@@ -573,4 +659,21 @@ void time_date_add_leading_zero(char *buf)
     	buf[0] = '0';
     	buf[2] = 0;
     }
+}
+
+
+
+uint8_t get_days_in_month(uint8_t month, uint8_t year)	//month 1-12; year - last 2 digits
+{
+	uint16_t year_expanded = 2000 + year;		//in a hope that the first two year's digits are always "20"
+
+	if (month == 2) //FEB
+	{
+		if ((year_expanded % 4 == 0 && year_expanded % 100 != 0) || (year_expanded % 400 == 0))
+		{
+			return 29; //FEB, leap year
+		}
+	}
+
+	return days_in_month[month - 1];
 }

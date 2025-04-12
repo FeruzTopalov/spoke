@@ -13,7 +13,6 @@
 
 extern const uint8_t startup_screen[1024];
 extern const uint8_t spoke_blank[1024];
-extern const uint8_t spoke_blank2[1024];
 
 
 

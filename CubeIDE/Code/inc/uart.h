@@ -11,7 +11,7 @@
 
 
 
-#define UART_BUF_LEN        (1024)
+#define MAX_UART_BUF_LEN        (5800)
 
 
 
@@ -30,6 +30,7 @@ void uart3_dma_restart(void);
 void uart3_tx_byte(uint8_t tx_data);
 void backup_and_clear_uart_buffer(void);
 void clear_uart_buffer(void);
+uint16_t get_gps_uart_buf_len(void);
 
 
 

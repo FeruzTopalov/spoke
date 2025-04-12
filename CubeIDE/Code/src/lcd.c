@@ -91,23 +91,19 @@ void lcd_init(void)
         cs_lcd_inactive();
     }
 
-    //spi2_clock_disable();
-
-    lcd_clear();
-    lcd_update();
-
+    spi2_clock_disable();
 }
 
 
 
 void lcd_send_command(uint8_t command)
 {
-	//spi2_clock_enable();
+	spi2_clock_enable();
 	lcd_command_mode();
 	cs_lcd_active();
 	spi2_tx(command);
 	cs_lcd_inactive();
-	//spi2_clock_disable();
+	spi2_clock_disable();
 }
 
 
@@ -156,9 +152,6 @@ void lcd_update(void)
 	{
 		if (display_status == LCD_DISPLAY_ON) //update display content only if the display is on
 		{
-			//spi2_clock_enable();
-
-
 			lcd_busy = 1;
 			current_page = 0;
 			lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
@@ -167,8 +160,6 @@ void lcd_update(void)
 			lcd_data_mode();
 			cs_lcd_active();
 			spi2_dma_start(&screen_buf[0], LCD_SIZE_X);
-
-			//spi2_clock_disable();
 		}
 	}
 }
@@ -391,6 +382,7 @@ void lcd_print(uint8_t row, uint8_t col, char *p_str)
 //Clear, print, update
 void lcd_print_only(uint8_t row, uint8_t col, char *p_str)
 {
+	while (lcd_busy);		//wait until free
 	lcd_clear();
 	lcd_print(row, col, p_str);
 	lcd_update();
@@ -517,7 +509,7 @@ void lcd_byte2buf(uint16_t pos, uint8_t byte)
 
 
 
-void lcd_draw_line(int8_t x1, int8_t y1, int8_t x2, int8_t y2)	//todo: implement new line draw algorithm to speed up this
+void lcd_draw_line(int8_t x1, int8_t y1, int8_t x2, int8_t y2)
 {
 	int8_t signX;
 	int8_t signY;

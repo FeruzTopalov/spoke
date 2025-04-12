@@ -16,18 +16,40 @@
 
 
 
-void console_prepare_data(void);
-void console_data_conv_to_hex(void);
+void console_prepare_timestamp(void);
+void console_prepare_nav_data(void);
+void console_conv_nav_data_to_base64(void);
+void console_combine_timestamp_nav_data(void);
 
 
 
-char uart_buffer[UART_BUF_LEN];		//raw UART data for GPS
-char *backup_buf;					//backup for raw UART data
-uint8_t console_buffer[100];		//for console, raw data
-char console_buffer_hex[200];		//for console, hex-converted data
-uint8_t console_report_enabled = 0;	//enable send logs via console
+#define TIMESTAMP_SZ	(27)
+#define CONS_DATA_SZ	(256)
+
+
+
+char gps_uart_buffer[MAX_UART_BUF_LEN];		//raw UART data for GPS
+char *backup_buf;							//backup for raw UART data
+
+uint16_t gps_uart_buf_len; 					//dynamically allocated part of the uart_buffer[MAX_UART_BUF_LEN]
+uint16_t brr_gps_baud;						//BRR reg value depending on 'GPS baud' setting
+
+uint8_t console_timestamp[TIMESTAMP_SZ];	//for console, timestamp data
+
+uint8_t console_nav_data[CONS_DATA_SZ];		//for console, raw nav data
+uint8_t nav_data_len = 0;					//nav data length
+
+uint8_t console_nav_data_base64[CONS_DATA_SZ];//for console, base64 nav data
+uint8_t nav_data_base64_len = 0;			//base64 nav data length
+
+uint8_t console_data[CONS_DATA_SZ];			//resulting console data
+uint8_t console_data_len = 0;				//console data length
+
+uint8_t console_report_enabled = 1;			//enable send logs via console
+
 struct devices_struct **pp_devices;
 struct settings_struct *p_settings;
+struct gps_num_struct *p_gps_num;
 
 
 
@@ -36,6 +58,36 @@ void uart_init(void)
 {
 	pp_devices = get_devices();
 	p_settings = get_settings();
+	p_gps_num = get_gps_num();
+
+	switch (p_settings->gps_baud_opt)
+	{
+		case GPS_BAUD_9600_SETTING:		//9600 bod; mantissa 19, frac 8
+			brr_gps_baud = 0x0138;
+			gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
+			break;
+
+		case GPS_BAUD_38400_SETTING:	//34800 bod; mantissa 4, frac 14
+			brr_gps_baud = 0x004E;
+			gps_uart_buf_len = 3500;		//3480 bytes/s max, fits buffer
+			break;
+
+		case GPS_BAUD_57600_SETTING:	//57600 bod; mantissa 3, frac 4
+			brr_gps_baud = 0x0034;
+			gps_uart_buf_len = 5790;		//5760 bytes/s max, fits buffer
+			break;
+
+		case GPS_BAUD_115200_SETTING:	//115200 bod; mantissa 1, frac 10
+			brr_gps_baud = 0x001A;
+			gps_uart_buf_len = 5790;		//11520 bytes/s max, does not fit buffer, pray for fit in actual use (otherwise no RF TX/RX will happen because uart overflow will be hitting earlier than pps interrupt)
+			break;
+
+		default:						//9600 bod; mantissa 19, frac 8
+			brr_gps_baud = 0x0138;
+			gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
+			break;
+	}
+
 	uart1_dma_init();
 	uart3_dma_init();
 }
@@ -56,9 +108,9 @@ void uart1_dma_init(void)
     USART1->CR3 |= USART_CR3_DMAT;          //enable DMA mode USART TX
     RCC->AHBENR |= RCC_AHBENR_DMA1EN;       //enable dma1 clock
 
-    DMA1_Channel4->CPAR = (uint32_t)(&(USART1->DR));    	//transfer destination
-    DMA1_Channel4->CMAR = (uint32_t)(&console_buffer[0]);  	//transfer source
-    DMA1_Channel4->CNDTR = 1;                				//bytes amount to transmit
+    DMA1_Channel4->CPAR = (uint32_t)(&(USART1->DR));    		//transfer destination
+    DMA1_Channel4->CMAR = (uint32_t)(&console_data[0]);  		//transfer source
+    DMA1_Channel4->CNDTR = 1;                					//bytes amount to transmit
 
     DMA1_Channel4->CCR |= DMA_CCR4_DIR;		//direction mem -> periph
     DMA1_Channel4->CCR |= DMA_CCR4_MINC;    //enable memory increment
@@ -74,9 +126,9 @@ void uart1_dma_init(void)
 
 void uart1_dma_start(void)
 {
-	DMA1_Channel4->CMAR = (uint32_t)(&console_buffer_hex[1]);	//data starts from index 1
-	DMA1_Channel4->CNDTR = console_buffer_hex[0];	//data size in index 0
-	DMA1_Channel4->CCR |= DMA_CCR4_EN;      //enable channel
+	DMA1_Channel4->CMAR = (uint32_t)(console_data);		//data starts from index 1
+	DMA1_Channel4->CNDTR = console_data_len;			//data size in index 0
+	DMA1_Channel4->CCR |= DMA_CCR4_EN;      			//enable channel
 }
 
 
@@ -118,26 +170,108 @@ void report_to_console(void)
 {
 	if (console_report_enabled == 1)
 	{
-		console_prepare_data();			//fill buffer with data
-		console_data_conv_to_hex();		//convert to readable HEX
-		uart1_dma_start();				//send using DMA
+		console_prepare_timestamp();			//timestamp in ISO 8601
+		console_prepare_nav_data();				//fill buffer with data
+		console_conv_nav_data_to_base64();		//convert to base64
+		console_combine_timestamp_nav_data();	//combine all together
+		uart1_dma_start();						//send using DMA
 	}
 }
 
 
 
-//What we transmit to console
-void console_prepare_data(void)
+void console_prepare_timestamp(void)
 {
-	uint8_t i = 1;	//data starts from index 1
-	uint8_t all_flags = 0;
+	char tmp_buf[10];
 
-	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)
+	//FORMAT: "2025-03-02T10:45:00+03:00 "
+	//FORMAT: "YYYY-MM-DDTHH:MM:SS+hh:mm "
+
+	//clear
+	memset(console_timestamp, 0, TIMESTAMP_SZ);
+
+	//YYYY-
+	if ((p_gps_num->year_tz == 0) && (p_gps_num->month_tz == 0) && (p_gps_num->day_tz == 0))
+	{
+		strcpy(console_timestamp, "0000");		//no date received form GPS, use 0000 as year
+	}
+	else
+	{
+		itoa32((p_gps_num->year_tz + 2000), &tmp_buf[0]);		//+2000 to year
+		strcpy(console_timestamp, tmp_buf);
+	}
+	strcat(console_timestamp, "-");
+
+	//MM-
+	itoa32(p_gps_num->month_tz, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, "-");
+
+	//DDT
+	itoa32(p_gps_num->day_tz, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, "T");
+
+	//HH:
+	itoa32(p_gps_num->hour_tz, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, ":");
+
+	//MM:
+	itoa32(p_gps_num->minute_tz, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, ":");
+
+	//SS
+	itoa32(p_gps_num->second, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+
+	//+
+	if (p_settings->time_zone_dir > 0)
+	{
+		strcat(console_timestamp, "+");
+	}
+	else
+	{
+		strcat(console_timestamp, "-");
+	}
+
+	//hh:
+	itoa32(p_settings->time_zone_hour, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, ":");
+
+	//mm
+	itoa32(p_settings->time_zone_minute, &tmp_buf[0]);
+	time_date_add_leading_zero(&tmp_buf[0]);
+	strcat(console_timestamp, tmp_buf);
+	strcat(console_timestamp, " ");
+}
+
+
+
+//What we transmit to console
+void console_prepare_nav_data(void)
+{
+	//init
+	uint8_t all_flags = 0;
+	nav_data_len = 0;
+
+	//clear
+	memset(console_nav_data, 0, CONS_DATA_SZ);
+
+	for (uint8_t dev = NAV_OBJECT_FIRST; dev < NAV_OBJECT_LAST + 1; dev++)		//max: 9 objects x 18 bytes = 162 bytes
 	{
 		if (pp_devices[dev]->exist_flag == 1)	//only existing devices
 		{
-			console_buffer[i++] = dev;
-			console_buffer[i++] = pp_devices[dev]->device_id;
+			console_nav_data[nav_data_len++] = dev;
+			console_nav_data[nav_data_len++] = pp_devices[dev]->device_id;
 
 			all_flags = 0;
 
@@ -157,42 +291,60 @@ void console_prepare_data(void)
 							((pp_devices[dev]->lowbat_flag) << 5) 				|\
 							((pp_devices[dev]->link_status_flag) << 6) 			);
 
-			console_buffer[i++] = all_flags;
-			console_buffer[i++] = pp_devices[dev]->lora_rssi;
+			console_nav_data[nav_data_len++] = all_flags;
+			console_nav_data[nav_data_len++] = pp_devices[dev]->lora_rssi;
 
-			memcpy(&console_buffer[i], &(pp_devices[dev]->timeout), 4);
-			i += 4;
+			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->timeout), 4);
+			nav_data_len += 4;
 
-			memcpy(&console_buffer[i], &(pp_devices[dev]->latitude.as_float), 4);
-			i += 4;
+			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->latitude.as_float), 4);
+			nav_data_len += 4;
 
-			memcpy(&console_buffer[i], &(pp_devices[dev]->longitude.as_float), 4);
-			i += 4;
+			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->longitude.as_float), 4);
+			nav_data_len += 4;
 
-			memcpy(&console_buffer[i], &(pp_devices[dev]->altitude), 2);
-			i += 2;
+			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->altitude), 2);
+			nav_data_len += 2;
 		}
 
 	}
-
-	console_buffer[0] = --i;	//zero byte is the data length
 }
 
 
 
-void console_data_conv_to_hex()
+void console_conv_nav_data_to_base64(void)
 {
-	uint8_t i;
+	//init
+    nav_data_base64_len = 0;
 
-	for (i = 1; i < (console_buffer[0] + 1); i++)
-	{
-		byte2hex(console_buffer[i], &console_buffer_hex[2 * i - 1]);
-	}
+	//clear
+	memset(console_nav_data_base64, 0, CONS_DATA_SZ);
 
-	console_buffer_hex[2 * i - 1] = 0x0D;	// +2 symbols of CR+LF
-	console_buffer_hex[2 * i] = 0x0A;
+    //encode
+    nav_data_base64_len = base64_encode(console_nav_data, console_nav_data_base64, nav_data_len);
+}
 
-	console_buffer_hex[0] = 2 * console_buffer[0] + 2;
+
+
+void console_combine_timestamp_nav_data(void)
+{
+	//init
+	console_data_len = 0;
+
+	//clear
+	memset(console_data, 0, CONS_DATA_SZ);
+
+	//copy timestamp
+	strcpy(console_data, console_timestamp);
+
+	//copy nav data base64
+	strcat(console_data, console_nav_data_base64);
+
+	//add cr+lf
+	strcat(console_data, "\r\n");
+
+	//calc len
+	console_data_len = string_length(console_data);
 }
 
 
@@ -209,7 +361,7 @@ void uart3_dma_init(void)
     GPIOB->CRH &= ~GPIO_CRH_CNF10_0;     //alternate output push-pull
     GPIOB->CRH |= GPIO_CRH_CNF10_1;
 
-    USART3->BRR = 0x0138;                   //9600 bod; mantissa 19, frac 8
+    USART3->BRR = brr_gps_baud;             //per settings
     USART3->CR1 |= USART_CR1_TE;            //enable tx
     USART3->CR1 |= USART_CR1_RE;            //enable rx
     USART3->CR1 |= USART_CR1_UE;            //uart enable
@@ -218,8 +370,8 @@ void uart3_dma_init(void)
     RCC->AHBENR |= RCC_AHBENR_DMA1EN;       //enable dma1 clock
     
     DMA1_Channel3->CPAR = (uint32_t)(&(USART3->DR));    //transfer source
-    DMA1_Channel3->CMAR = (uint32_t)(&uart_buffer[0]);  //transfer destination
-    DMA1_Channel3->CNDTR = UART_BUF_LEN;                //bytes amount to receive
+    DMA1_Channel3->CMAR = (uint32_t)(&gps_uart_buffer[0]);  //transfer destination
+    DMA1_Channel3->CNDTR = gps_uart_buf_len;                //bytes amount to receive
     
     DMA1_Channel3->CCR |= DMA_CCR3_MINC;    //enable memory increment
     DMA1_Channel3->CCR |= DMA_CCR3_TCIE;    //enable transfer complete interrupt
@@ -244,7 +396,7 @@ void uart3_dma_stop(void)
 //Restart UART DMA
 void uart3_dma_restart(void)
 {
-    DMA1_Channel3->CNDTR = UART_BUF_LEN;    //reload bytes amount to receive
+    DMA1_Channel3->CNDTR = gps_uart_buf_len;    //reload bytes amount to receive
     (void)USART3->SR;						//clear ORE bit due to UART overrun occured between DMA operations
     (void)USART3->DR;
     DMA1_Channel3->CCR |= DMA_CCR3_EN;      //enable channel
@@ -255,15 +407,15 @@ void uart3_dma_restart(void)
 //Backup uart buffer and then clear it
 void backup_and_clear_uart_buffer(void)
 {
-	memcpy(backup_buf, uart_buffer, UART_BUF_LEN);
-	memset(uart_buffer, 0, UART_BUF_LEN);
+	memcpy(backup_buf, gps_uart_buffer, gps_uart_buf_len);
+	memset(gps_uart_buffer, 0, gps_uart_buf_len);
 }
 
 
 
 void clear_uart_buffer(void)
 {
-	memset(uart_buffer, 0, UART_BUF_LEN);
+	memset(gps_uart_buffer, 0, gps_uart_buf_len);
 }
 
 
@@ -274,4 +426,11 @@ void uart3_tx_byte(uint8_t tx_data)
     {
     }
     USART3->DR = tx_data;                      //transmit
+}
+
+
+
+uint16_t get_gps_uart_buf_len(void)
+{
+	return gps_uart_buf_len;
 }

@@ -19,15 +19,17 @@
 #include "gps.h"
 #include "lrns.h"
 #include "menu.h"
+#include "timer.h"
 
 
 
 #define GPS_SPEED_THRS				(2)	//threshold value for GPS speed in km/h to show true course
 #define COMP_CAL_BUF_MAX_LEN 		(100)
-#define COMP_CAL_STOP_TOL 			(50)	//tolerance on auto-stop condition
+#define COMP_CAL_STOP_TOL 			(15)	//tolerance on auto-stop condition
 
 
 
+uint8_t compass_availability = COMPASS_IS_NOT_AVAILABLE;
 struct acc_data *p_acceleration;
 struct mag_data *p_magnetic_field;
 struct settings_struct *p_settings;
@@ -66,8 +68,16 @@ float cal_scale_y;
 
 void init_compass(void)
 {
-	init_accelerometer();
-	init_magnetometer();
+	compass_availability = COMPASS_IS_NOT_AVAILABLE;
+
+	if (init_accelerometer())
+	{
+		if (init_magnetometer())
+		{
+			compass_availability = COMPASS_IS_AVAILABLE;
+		}
+	}
+
 	p_acceleration = get_acceleration();
 	p_magnetic_field = get_magnetic_field();
 	p_gps_num = get_gps_num();
@@ -102,6 +112,11 @@ void init_compass_calibration(void)
 
 uint8_t calibrate_compass_new(void)
 {
+	if (compass_availability == COMPASS_IS_NOT_AVAILABLE)
+	{
+		return 0;	//exit if no compass is available
+	}
+
 	if ((gps_course == 0) && (north_ready == 1))	//only if magn was read in read_compass()
 	{
 		cal_buf_x[cal_buf_len] = limit_to(p_magnetic_field->mag_x.as_integer, 2047, -2048);
@@ -207,12 +222,45 @@ void compass_calibration_save()
 
 
 
+void start_compass(void)
+{
+	if (compass_availability == COMPASS_IS_AVAILABLE)
+	{
+		start_accelerometer();
+		start_magnetometer();
+		timer4_start();
+	}
+}
+
+
+
+void stop_compass(void)
+{
+	if (compass_availability == COMPASS_IS_AVAILABLE)
+	{
+		timer4_stop();
+		stop_accelerometer();
+		stop_magnetometer();
+		gps_course = 0;
+		north_ready = 0;
+	}
+}
+
+
+
 uint8_t read_compass(void)
 {
 	float comp_x, comp_y;
 	uint8_t current_is_horizontal;
 
-	current_is_horizontal = is_horizontal();
+	if (compass_availability == COMPASS_IS_AVAILABLE)
+	{
+		current_is_horizontal = is_horizontal();
+	}
+	else
+	{
+		current_is_horizontal = 0;		//use GPS course if compass is not available
+	}
 
 	if (current_is_horizontal)	//if the device is oriented horizontally
 	{
@@ -303,6 +351,13 @@ int16_t *get_cal_buf_y(void)
 float get_cal_plot_scale(void)
 {
 	return cal_plot_scale;
+}
+
+
+
+uint8_t get_compass_availability(void)
+{
+	return compass_availability;
 }
 
 

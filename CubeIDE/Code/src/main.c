@@ -73,13 +73,13 @@ int main(void)
     //start screen
     lcd_bitmap(&startup_screen[0]);
     lcd_update();
-    delay_cyc(400000);
+    delay_cyc(800000);
+
+     lcd_print_only(0, 0, "settings..");
+    settings_load();
 
     lcd_print_only(0, 0, "uart..");
     uart_init();
-
-    lcd_print_only(0, 0, "settings..");
-    settings_load();
 
     lcd_print_only(0, 0, "timers..");
     timers_init();
@@ -121,7 +121,7 @@ int main(void)
     p_update_interval_values = get_update_interval_values();
     pp_devices = get_devices();
 
-    device_tx_second = (2 * (p_settings->device_number - 1));
+    device_tx_second = (2 * (p_settings->device_number - 1));		//time slots each even second
     max_rx_second = (2 * (p_settings->devices_on_air - 1));
 
 
@@ -169,16 +169,18 @@ int main(void)
         if (main_flags.tick_1s == 1)
         {
         	main_flags.tick_1s = 0;
-            adc_check_bat_voltage();
 
+            adc_check_bat_voltage();
             if (is_battery_critical())
             {
+            	lcd_print_only(2, 2, "BATTERY LOW!");
+            	delay_cyc(600000);
             	release_power();	//turn off immediately
             }
 
+			calc_timeout(uptime);
             if (main_flags.pps_synced == 0) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
             {
-            	calc_timeout(uptime);
             	main_flags.do_beep += check_any_alarm_fence_timeout();
             	main_flags.do_beep += is_battery_low();
             }
@@ -192,13 +194,13 @@ int main(void)
         	main_flags.process_all = 0;
         	process_all_devices();
 
-        	report_to_console(); //send fresh devices data to console
-
         	calc_fence();
         	calc_timeout(uptime);
         	main_flags.do_beep += check_any_alarm_fence_timeout();
         	main_flags.do_beep += is_battery_low();
         	main_flags.update_screen = 1;
+
+        	report_to_console(); //send fresh devices data to console
         }
 
 
@@ -206,6 +208,8 @@ int main(void)
         {
         	main_flags.nmea_parsed_only = 0;
         	main_flags.update_screen = 1;
+
+        	report_to_console(); //send fresh devices data to console
         }
 
 
@@ -328,7 +332,6 @@ void EXTI0_IRQHandler(void)
 	{
 		main_flags.rx_state = 0;
 		led_green_off();
-		rf_set_standby_xosc();	//after RX TO it goes to Standby RC mode only (https://forum.lora-developers.semtech.com/t/sx1268-is-it-possible-to-configure-transition-to-stdby-xosc-after-cad-done-rx-timeout/1282)
 	}
 }
 
@@ -340,7 +343,7 @@ void TIM1_UP_IRQHandler(void)
     TIM1->SR &= ~TIM_SR_UIF;                    //clear interrupt
     timer1_stop_reload();						//stop this timer
 
-    if (timer1_get_intrvl_type() == 1) //long interval 800 ms ended
+    if (timer1_get_intrvl_type() == TIMER1_INTERVAL_TYPE_LONG) //long interval 800 ms ended
     {
 
     	//parse NMEA, run short timer
@@ -354,7 +357,7 @@ void TIM1_UP_IRQHandler(void)
     	main_flags.parse_nmea = 1;			//ask to parse
 
     }
-    else if (timer1_get_intrvl_type() == 2) //short interval 100 ms ended, resulting 800 ms + 100 ms=900 ms after last pps
+    else if (timer1_get_intrvl_type() == TIMER1_INTERVAL_TYPE_SHORT) //short interval 100 ms ended, resulting 800 ms + 100 ms=900 ms after last pps
     {
 
     	//important: NMEA must be parsed before execution of this code
@@ -493,9 +496,7 @@ void TIM4_IRQHandler(void)
 {
 	TIM4->SR &= ~TIM_SR_UIF;        //clear gating timer int
 
-	led_green_on();
 	main_flags.process_compass = 1;
-	led_green_off();
 }
 
 
