@@ -36,10 +36,6 @@ fp-info-cache
 *.dsn
 *.ses
 
-# Exported BOM files
-*.xml
-*.csv
-
 
 
 # https://github.com/github/gitignore/blob/master/C.gitignore
@@ -80,7 +76,6 @@ fp-info-cache
 *.app
 *.i*86
 *.x86_64
-# *.hex
 
 # Debug files
 *.dSYM/

@@ -8,7 +8,7 @@
   <i>*Like a spoke in a wheel</i>
 </p>
 
-Spoke is a GPS-based Local Relative Navigation System (LRNS) for group of up to 5 members. It allows you to share your positional data in **real-time** among other Spoke-devices and navigate to each of them in a relative manner by providing **Distance** and **Azimuth** information - like radar does. There are some helpful features like geo-fence, timeout and user alarm.  Also you can navigate to saved points!
+Spoke is a GPS-based Local Relative Navigation System (LRNS) for group of up to 5 members. It allows you to share your positional data in **real-time** among other Spoke-devices and navigate to each of them in a relative manner by providing **Distance** and **Azimuth** information - like radar does. There are some other helpful features that allows you to stay close, like geo-fence, timeout and user alarm. Also you can navigate to saved points!
 
 
 
@@ -32,7 +32,7 @@ Join our chat to see more: <[https://t.me/lrns_eleph](https://t.me/lrns_eleph)>
 
 ## Problem & Solution
 
-As long as you stay under cell-coverage a navigation, either absolute or relative, is not a problem at all. You just use your phone with maps and messengers to find or share locations. Things change when you go off-grid. Hiking, skiing, sailing or whatever outdoor activity are a potential place to lose sight of your teammates. How to navigate in the group? Hopefully, there are couple of solutions available on the market:
+As long as you stay under cell-coverage a navigation, either absolute or relative, is not a problem at all. You just use your smartphone with maps and messengers to find or share location. Things change when you go off-grid. Hiking, skiing, sailing or whatever outdoor activity are a potential place to lose sight of your teammates. How to navigate in the group? Hopefully, there are couple of solutions available on the market:
 
 * [LynQ](https://lynqme.com/pages/dev-consumer)
 * [XQUAD](https://www.indiegogo.com/projects/xquad-smart-location-tracking-without-phones#/)
@@ -45,12 +45,12 @@ unfortunately all of them are commercial. But not the **Spoke**!
 
 **Spoke** is _open-source/open-hardware_ device which contains all major features needed for group navigation, such as:
 
-* Detailed absolute positional information about each device in group
-* Radar-like interface with relative positional information about each device in group
+* Detailed, absolute positional information about each device in a group
+* Radar-like interface with relative positional information about each device in a group
 * eCompass for quick orientation
-* Memory points to save the position of any device and navigate it later
-* GeoFence feature
-* Timeout feature
+* Memory points to save a positional data and navigate it later
+* GeoFence alert feature
+* Timeout alert feature
 * Alarm button
 
 Due to open-source and simple & cheap hardware, Spoke is highly flexible solution that could be adapted to any use case you want:
@@ -58,7 +58,7 @@ Due to open-source and simple & cheap hardware, Spoke is highly flexible solutio
 * Hiking
 * Climbing
 * Sailing
-* Hunting with the dogs
+* Hunting with dogs
 * Assets tracking
 * and more...
 
@@ -70,7 +70,7 @@ Due to open-source and simple & cheap hardware, Spoke is highly flexible solutio
 
 ## Technology
 
-Spoke is written in pure C and runs on STM32F103C8T6 microcontroller. It has UBLOX M8 GPS module to receive positional data and synchronization signal, Semtech SX126x radio transceiver to exchange with radio packets between other devices, LSM303DLHC accelerometer/magnetometer for quick orientation, graphical 1.3" SH1106 OLED display to show information on it, tactile buttons to control the device, passive buzzer to notify about events and couple of LEDs.
+Spoke is written in pure C and runs on STM32F103C8T6 microcontroller (aka BluePill). It has UBLOX M8 GPS module to receive both positional data and time signal, Semtech SX126x radio transceiver to exchange with radio packets between devices, LSM303DLHC accelerometer/magnetometer for quick orientation, graphical 1.3" SH1106 OLED display to show information on it, tactile buttons to control the device, passive buzzer to notify about events and couple of LEDs.
 
 
 <p align="center">
@@ -90,7 +90,7 @@ GPS module also provides time synchronization signal - PPS. It is used as a time
 
 
 
-Spoke uses LoRa modulation and operates in LPD 433 MHz band (please make sure you are allowed to use those frequencies in your region, change otherwise). 
+Spoke uses LoRa modulation and operates in LPD 433 MHz band (please make sure you are allowed to use these frequencies in your region, otherwise you need to change operational frequency in the source code). 
 
 
 
@@ -107,7 +107,7 @@ Spoke uses LoRa modulation and operates in LPD 433 MHz band (please make sure yo
 
 
 
-LoRa parameters are SF12, BW125, CR 4/8, Header off, CRC. Packet structure is shown below. It consist of 12 bytes payload and in total takes ~1.25 s to be transmitted over-the-air.
+LoRa parameters are SF12, BW125, CR 4/8, Header off, CRC on. Packet structure is shown below. It consist of 12 bytes payload and in total takes ~1.25 s to be transmitted over-the-air.
 
 
 | 10 symb  |    12 bytes     | 2 bytes |
@@ -120,6 +120,14 @@ LoRa parameters are SF12, BW125, CR 4/8, Header off, CRC. Packet structure is sh
 | Device ID & Number | Flags  | Latitude | Longitude | Altitude |
 
 
+
+Additionally, complete navigational data of all active devices is outputted via physical UART console pins in readable HEX format at 115200 baud.
+
+
+
+## Calculation
+
+
 In order to calculate relative positions of other devices, Spoke uses two formulas. First one is [Haversine formula](https://en.wikipedia.org/wiki/Haversine_formula) which determines the distance between two points on a sphere. The second one is [Loxodrome formula](https://en.wikipedia.org/wiki/Rhumb_line) which determines bearing to a point on a sphere relative to true north. All calculations are performed with a highest possible, double precision, so the results are in a great agreement with my simulations on PC. Precision of the formulas is another matter. It is known that haversine formula is numerically better-conditioned for small distances, but on the other side it doesn't take into account ellipsoidness of the Earth and uses it's mean radius. Also it is known that loxodrome (or rhumb line) shows not-the-shortest way to reach point of interest (the shortest way is provided by orthodrome, or great circle route), but the constant bearing, which is more useful in practice. Anyway, my simulations using Google Earth Pro ruler leave me no concerns about accuracy of used formulas. According to them the error for both is less than 1% as long as the distance is smaller than 300 km (!).
 
 ![Mercator](Pictures/Mercator_projection.png)
@@ -129,3 +137,8 @@ In order to calculate relative positions of other devices, Spoke uses two formul
 </p>
 
 ---
+
+## Support project
+
+* Best support for the project is an active participation in the development & tests. Join our community, build the device, test it, commit improvements or open an issue if you have troubles to solve.
+* Alternatively, you could support me on [Boosty](https://boosty.to/feruztopalov/donate) by a single donation or a subscription with different bonuses for you!

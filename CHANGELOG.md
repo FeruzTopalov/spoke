@@ -22,6 +22,20 @@ Known issues:
 - GPS NMEA parsing at 115200 baud may fail due to insufficient buffer size
 
 
+# Release HW Rev.1.2 02-Jun-2024 
+Improvements
+
+
+Implemented:
+- Moved GPS module 2 mm down to align with buttons center
+- Added text captions for GPS lines
+- Updated stack-up to 1.6 mm overall thickness
+
+
+Known issues:
+- No known issues
+
+
 # Release HW Rev.1.1 28-Jan-2024 
 Fix of the HW release 1
 
@@ -34,7 +48,7 @@ Known issues:
 - No known issues
 
 
-# Release FW Rev.3 (for HW Rev.1) 28-Jan-2024 
+# Release FW Rev.3 (for HW Rev.1.0) 28-Jan-2024 
 Switch to LoRa modulation, new TDMA approach, minor fixes
 
 
@@ -48,7 +62,7 @@ Known issues:
 - Might be not stable, need to be tested for a long run
 
 
-# Release FW Rev.2 (for HW Rev.1) 21-Nov-2023 
+# Release FW Rev.2 (for HW Rev.1.0) 21-Nov-2023 
 Lots of fixes, power consumption improvements, changes in apperance
 
 
@@ -66,7 +80,7 @@ Known issues:
 - No known issues
 
 
-# Release FW Rev.1 (for HW Rev.1) 01-Nov-2023 
+# Release FW Rev.1 (for HW Rev.1.0) 01-Nov-2023 
 The very first release of the firmware. Lots of imperfections and weak spots in code, as well as some minor bugs, but correctly working HW and SW with no major issues. 
 
 
@@ -82,7 +96,7 @@ Known issues:
 - ADC battery readings are incorrect below 3.3 V battery voltage due to Vref = VCC
 
 
-# Release HW Rev.1 26-Mar-2023 
+# Release HW Rev.1.0 26-Mar-2023 
 The very first release of the hardware. 
 
 
