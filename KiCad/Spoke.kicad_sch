@@ -7371,6 +7371,246 @@
 		)
 		(uuid "71a2adc4-e774-482b-9812-52349d08561a")
 	)
+	(text_box "Remove EN pin from footprint"
+		(exclude_from_sim no)
+		(at 518.16 77.47 0)
+		(size 21.59 11.43)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "14a76649-54b5-42e5-95f3-bdbf2dc38464")
+	)
+	(text_box "Replace R_Iprog"
+		(exclude_from_sim no)
+		(at 74.93 370.84 0)
+		(size 21.59 11.43)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "24891b2f-95ff-4227-9cc4-07cdd6dd02bc")
+	)
+	(text_box "Came up with isolation solution that prevents phantom powering"
+		(exclude_from_sim no)
+		(at 227.33 292.1 0)
+		(size 21.59 11.43)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "26f5d091-f856-4e61-b92b-6c9d19b097f3")
+	)
+	(text_box "Free up 1 pin for LCD backlight"
+		(exclude_from_sim no)
+		(at 292.1 124.46 0)
+		(size 21.59 11.43)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "41faf79e-eb7c-417f-a842-dabf9bf3093a")
+	)
+	(text_box "Reduce in size the TP symbol"
+		(exclude_from_sim no)
+		(at 461.01 304.8 0)
+		(size 21.59 11.43)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "6759514d-0e29-49be-babf-c6b3c9bba1c6")
+	)
+	(text_box "Replace by end-launch SMA conn"
+		(exclude_from_sim no)
+		(at 537.21 130.81 0)
+		(size 21.59 11.43)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "710fe52f-ba02-46f9-a665-802e7eb7da2e")
+	)
+	(text_box "Use a smaller SMD package for crystal"
+		(exclude_from_sim no)
+		(at 199.39 119.38 0)
+		(size 21.59 11.43)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "8613cb8c-e73f-4d77-95e9-18388e4b6a9e")
+	)
+	(text_box "Add newer lsm303"
+		(exclude_from_sim no)
+		(at 516.89 355.6 0)
+		(size 21.59 11.43)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "986455f6-6ed5-4bf2-856e-5603b1a1943c")
+	)
+	(text_box "Replace buzzer to an active and get LCD backlight pin. Ruins back-compatibility"
+		(exclude_from_sim no)
+		(at 201.93 66.04 0)
+		(size 21.59 11.43)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "a3f64830-4fca-4832-a550-40e1da4df2b8")
+	)
+	(text_box "10 uF cap to a larger footprint"
+		(exclude_from_sim no)
+		(at 499.11 289.56 0)
+		(size 21.59 11.43)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "b5aede8d-37ae-4608-8deb-84cc85731938")
+	)
+	(text_box "Replace button footprint"
+		(exclude_from_sim no)
+		(at 78.74 124.46 0)
+		(size 21.59 7.62)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "b77cd96a-2606-470a-82d2-dad5a0ac57ea")
+	)
+	(text_box "Replace footprint; current has issue with pins pitch"
+		(exclude_from_sim no)
+		(at 322.58 240.03 0)
+		(size 21.59 11.43)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "f2eb3160-e88d-488e-8801-17571e5bd4f5")
+	)
 	(junction
 		(at 269.24 59.69)
 		(diameter 0)
@@ -8347,7 +8587,7 @@
 	)
 	(wire
 		(pts
-			(xy 318.77 134.62) (xy 322.58 134.62)
+			(xy 351.79 143.51) (xy 355.6 143.51)
 		)
 		(stroke
 			(width 0)
@@ -10347,7 +10587,7 @@
 	)
 	(wire
 		(pts
-			(xy 318.77 137.16) (xy 336.55 137.16)
+			(xy 351.79 146.05) (xy 369.57 146.05)
 		)
 		(stroke
 			(width 0)
@@ -10417,7 +10657,7 @@
 	)
 	(wire
 		(pts
-			(xy 331.47 139.7) (xy 336.55 139.7)
+			(xy 364.49 148.59) (xy 369.57 148.59)
 		)
 		(stroke
 			(width 0)
@@ -11857,7 +12097,7 @@
 	)
 	(wire
 		(pts
-			(xy 331.47 147.32) (xy 331.47 139.7)
+			(xy 364.49 156.21) (xy 364.49 148.59)
 		)
 		(stroke
 			(width 0)
@@ -11957,7 +12197,7 @@
 	)
 	(wire
 		(pts
-			(xy 332.74 134.62) (xy 336.55 134.62)
+			(xy 365.76 143.51) (xy 369.57 143.51)
 		)
 		(stroke
 			(width 0)
@@ -19096,7 +19336,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 331.47 147.32 0)
+		(at 364.49 156.21 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -19105,7 +19345,7 @@
 		(fields_autoplaced yes)
 		(uuid "73e13300-26ab-4d3c-836f-51fd33fae627")
 		(property "Reference" "#PWR016"
-			(at 331.47 153.67 0)
+			(at 364.49 162.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19114,7 +19354,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 331.47 151.8825 0)
+			(at 364.49 160.7725 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19122,7 +19362,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 331.47 147.32 0)
+			(at 364.49 156.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19131,7 +19371,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 331.47 147.32 0)
+			(at 364.49 156.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19140,7 +19380,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 331.47 147.32 0)
+			(at 364.49 156.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26212,7 +26452,7 @@
 	)
 	(symbol
 		(lib_id "Spoke:PLS-1x3")
-		(at 336.55 134.62 0)
+		(at 369.57 143.51 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -26220,7 +26460,7 @@
 		(dnp no)
 		(uuid "f79b4726-71e3-41dd-96b8-0609b918c0df")
 		(property "Reference" "X3"
-			(at 340.36 130.81 0)
+			(at 373.38 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26229,7 +26469,7 @@
 			)
 		)
 		(property "Value" "PLS-1x3"
-			(at 339.09 143.51 0)
+			(at 372.11 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26238,7 +26478,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:Header_1x3"
-			(at 336.55 134.62 0)
+			(at 369.57 143.51 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26247,7 +26487,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 336.55 134.62 0)
+			(at 369.57 143.51 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26256,7 +26496,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 336.55 134.62 0)
+			(at 369.57 143.51 0)
 			(effects
 				(font
 					(size 1.27 1.27)
