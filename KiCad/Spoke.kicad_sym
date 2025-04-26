@@ -2663,10 +2663,7 @@
 		)
 		(embedded_fonts no)
 	)
-	(symbol "Crystal_8MHz"
-		(pin_numbers
-			(hide yes)
-		)
+	(symbol "Crystal 4-pin"
 		(pin_names
 			(offset 1.016)
 			(hide yes)
@@ -2674,16 +2671,16 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "XTAL"
-			(at 5.08 5.08 0)
+		(property "Reference" "Y"
+			(at 8.636 9.906 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "Crystal_8MHz"
-			(at 7.62 -5.08 0)
+		(property "Value" "8MHz 3225"
+			(at 9.144 -3.048 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2717,10 +2714,10 @@
 				(hide yes)
 			)
 		)
-		(symbol "Crystal_8MHz_0_0"
+		(symbol "Crystal 4-pin_0_0"
 			(polyline
 				(pts
-					(xy 2.54 0) (xy 3.81 0)
+					(xy 5.08 3.81) (xy 6.35 3.81)
 				)
 				(stroke
 					(width 0)
@@ -2732,7 +2729,7 @@
 			)
 			(polyline
 				(pts
-					(xy 3.81 2.54) (xy 3.81 -2.54)
+					(xy 6.35 6.35) (xy 6.35 1.27)
 				)
 				(stroke
 					(width 0.254)
@@ -2744,7 +2741,7 @@
 			)
 			(polyline
 				(pts
-					(xy 5.08 2.54) (xy 5.08 -2.54) (xy 7.62 -2.54) (xy 7.62 2.54) (xy 5.08 2.54)
+					(xy 7.62 6.35) (xy 7.62 1.27) (xy 10.16 1.27) (xy 10.16 6.35) (xy 7.62 6.35)
 				)
 				(stroke
 					(width 0.254)
@@ -2756,7 +2753,7 @@
 			)
 			(polyline
 				(pts
-					(xy 8.89 2.54) (xy 8.89 -2.54)
+					(xy 11.43 6.35) (xy 11.43 1.27)
 				)
 				(stroke
 					(width 0.254)
@@ -2768,7 +2765,7 @@
 			)
 			(polyline
 				(pts
-					(xy 10.16 0) (xy 8.89 0)
+					(xy 12.7 3.81) (xy 11.43 3.81)
 				)
 				(stroke
 					(width 0)
@@ -2779,7 +2776,62 @@
 				)
 			)
 		)
-		(symbol "Crystal_8MHz_1_1"
+		(symbol "Crystal 4-pin_0_1"
+			(polyline
+				(pts
+					(xy 5.08 3.81) (xy 3.81 3.81) (xy 3.81 0) (xy 2.54 0)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 12.7 3.81) (xy 13.97 3.81) (xy 13.97 7.62) (xy 15.24 7.62)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "Crystal 4-pin_1_1"
+			(rectangle
+				(start 2.54 8.89)
+				(end 15.24 -1.27)
+				(stroke
+					(width 0)
+					(type solid)
+				)
+				(fill
+					(type background)
+				)
+			)
+			(pin unspecified line
+				(at 0 7.62 0)
+				(length 2.54)
+				(name "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
 			(pin unspecified line
 				(at 0 0 0)
 				(length 2.54)
@@ -2799,7 +2851,25 @@
 				)
 			)
 			(pin unspecified line
-				(at 12.7 0 180)
+				(at 17.78 7.62 180)
+				(length 2.54)
+				(name "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin unspecified line
+				(at 17.78 0 180)
 				(length 2.54)
 				(name "2"
 					(effects
