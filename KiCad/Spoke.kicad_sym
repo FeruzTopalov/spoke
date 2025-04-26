@@ -5166,7 +5166,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(property "Reference" "X"
-			(at 3.81 2.54 0)
+			(at 3.048 2.032 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5211,8 +5211,8 @@
 		)
 		(symbol "Pad_round_0_1"
 			(circle
-				(center 3.81 0)
-				(radius 1.27)
+				(center 3.175 0)
+				(radius 0.889)
 				(stroke
 					(width 0.254)
 					(type default)
