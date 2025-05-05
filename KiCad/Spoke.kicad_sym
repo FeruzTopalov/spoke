@@ -9,7 +9,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "U"
+		(property "Reference" "A"
 			(at 5.08 5.08 0)
 			(effects
 				(font
@@ -578,7 +578,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "X"
+		(property "Reference" "J"
 			(at 2.54 5.08 0)
 			(effects
 				(font
@@ -2869,7 +2869,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "Y"
+		(property "Reference" "X"
 			(at 8.636 9.906 0)
 			(effects
 				(font
@@ -3091,7 +3091,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "U"
+		(property "Reference" "A"
 			(at 1.524 1.778 0)
 			(effects
 				(font
@@ -3425,7 +3425,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "U"
+		(property "Reference" "A"
 			(at 3.81 3.81 0)
 			(effects
 				(font
@@ -3912,7 +3912,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "U"
+		(property "Reference" "A"
 			(at 4.064 4.064 0)
 			(effects
 				(font
@@ -4178,7 +4178,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "U"
+		(property "Reference" "A"
 			(at 5.08 5.08 0)
 			(effects
 				(font
@@ -5319,7 +5319,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "X"
+		(property "Reference" "J"
 			(at 5.08 5.08 0)
 			(effects
 				(font
@@ -5440,7 +5440,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "X"
+		(property "Reference" "J"
 			(at 5.08 5.08 0)
 			(effects
 				(font
@@ -5619,7 +5619,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "X"
+		(property "Reference" "J"
 			(at 5.08 2.54 0)
 			(effects
 				(font
@@ -5732,7 +5732,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "X"
+		(property "Reference" "TP"
 			(at 3.556 2.032 0)
 			(effects
 				(font
@@ -5925,7 +5925,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "X"
+		(property "Reference" "J"
 			(at 5.08 3.048 0)
 			(effects
 				(font
@@ -7041,7 +7041,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Li-lon Battery Charger"
+		(property "Description" ""
 			(at 0 2.54 0)
 			(effects
 				(font
@@ -7401,7 +7401,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "X"
+		(property "Reference" "J"
 			(at -18.034 6.35 0)
 			(effects
 				(font
@@ -7887,7 +7887,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "X"
+		(property "Reference" "J"
 			(at -12.7 5.08 0)
 			(effects
 				(font
