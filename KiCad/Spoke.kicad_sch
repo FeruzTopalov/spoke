@@ -16788,6 +16788,26 @@
 		)
 		(uuid "5f07d16d-a909-4b88-8872-83599d46e555")
 	)
+	(text_box "no ERC\n"
+		(exclude_from_sim no)
+		(at 238.76 368.3 0)
+		(size 21.59 7.62)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "54343bce-28d0-4710-94da-603093d7ab09")
+	)
 	(text_box "Add newer lsm303"
 		(exclude_from_sim no)
 		(at 519.43 334.01 0)
@@ -16847,6 +16867,26 @@
 			(justify left top)
 		)
 		(uuid "b5aede8d-37ae-4608-8deb-84cc85731938")
+	)
+	(text_box "pull up BLE_RXD"
+		(exclude_from_sim no)
+		(at 297.18 308.61 0)
+		(size 21.59 7.62)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "c60d2d57-7774-4afe-b90c-e5526b451297")
 	)
 	(junction
 		(at 339.09 60.96)
