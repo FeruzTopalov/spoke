@@ -254,4 +254,15 @@
 		(uuid "9925b7f0-1cd7-475b-8e88-138d3cadcdbf")
 	)
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/packages3d/USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )

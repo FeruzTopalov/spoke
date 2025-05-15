@@ -75,6 +75,36 @@
 		(uuid "ede8f72c-e34e-4591-88da-3a8053d30d1f")
 	)
 	(fp_line
+		(start -2.95 1.7)
+		(end -0.8 1.7)
+		(stroke
+			(width 0.2)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "1a6f8c1e-05e1-4e55-a619-98533d0ae029")
+	)
+	(fp_line
+		(start -0.8 1.7)
+		(end -0.8 2)
+		(stroke
+			(width 0.2)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "54391d2d-065f-4639-a413-b7d5481d56c1")
+	)
+	(fp_line
+		(start 0.8 1.7)
+		(end 0.8 2)
+		(stroke
+			(width 0.2)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "fa27c7ff-c4f4-4424-8a95-346501df59df")
+	)
+	(fp_line
 		(start 2.95 -2.8)
 		(end 2.95 1.7)
 		(stroke
@@ -86,17 +116,28 @@
 	)
 	(fp_line
 		(start 2.95 1.7)
-		(end -2.95 1.7)
+		(end 0.8 1.7)
 		(stroke
 			(width 0.2)
-			(type solid)
+			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "ea6d2b33-13aa-4959-adaa-b0cd89dc8878")
+		(uuid "34ef6779-fb7f-41a3-bfee-366c3e7bbce0")
+	)
+	(fp_rect
+		(start -3.25 -3.1)
+		(end 3.25 2)
+		(stroke
+			(width 0.2)
+			(type default)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "7f804166-4460-4a8e-a757-8024bdbec7c0")
 	)
 	(fp_circle
-		(center 1 2.4)
-		(end 1.2 2.4)
+		(center 1.1 2.65)
+		(end 1.3 2.65)
 		(stroke
 			(width 0.4)
 			(type solid)
@@ -134,15 +175,15 @@
 		(uuid "a3c0eb53-97c5-4466-ab9c-c63a0da20621")
 	)
 	(embedded_fonts no)
-	(model "${KIPRJMOD}/packages3d/B2B-PH.step"
+	(model "${KIPRJMOD}/packages3d/JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical.step"
 		(offset
-			(xyz 0 0.55 0)
+			(xyz 1 0 0)
 		)
 		(scale
 			(xyz 1 1 1)
 		)
 		(rotate
-			(xyz -90 -0 -0)
+			(xyz -0 -0 -180)
 		)
 	)
 )

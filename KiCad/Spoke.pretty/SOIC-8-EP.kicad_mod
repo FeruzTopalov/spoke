@@ -169,7 +169,7 @@
 		(uuid "11cfe17b-5d08-41bb-a069-160e7f431351")
 	)
 	(embedded_fonts no)
-	(model "${KICAD6_3DMODEL_DIR}/Package_SO.3dshapes/SOIC-8_3.9x4.9mm_P1.27mm.step"
+	(model "${KIPRJMOD}/packages3d/SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.35x2.35mm.step"
 		(offset
 			(xyz 0 0 0)
 		)

@@ -126,7 +126,7 @@
 		(uuid "0755aee5-bc01-4cb5-b830-583289df50a3")
 	)
 	(embedded_fonts no)
-	(model "${KICAD6_3DMODEL_DIR}/LED_SMD.3dshapes/LED_1206_3216Metric_Castellated.step"
+	(model "${KIPRJMOD}/packages3d/LED_1206_3216Metric_Castellated.step"
 		(offset
 			(xyz 0 0 0)
 		)

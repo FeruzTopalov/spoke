@@ -89,7 +89,7 @@
 		(uuid "a3bd349f-33eb-44d2-b54b-1c7e68a3d73e")
 	)
 	(embedded_fonts no)
-	(model "${KICAD6_3DMODEL_DIR}/Buzzer_Beeper.3dshapes/Buzzer_12x9.5RM7.6.step"
+	(model "${KIPRJMOD}/packages3d/Buzzer_12x9.5RM7.6.step"
 		(offset
 			(xyz -3.8 0 0)
 		)

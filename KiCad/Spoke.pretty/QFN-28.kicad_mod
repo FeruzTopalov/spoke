@@ -4,7 +4,7 @@
 	(generator_version "9.0")
 	(layer "F.Cu")
 	(property "Reference" "REF**"
-		(at 0 -17.75 0)
+		(at 0 -3.9 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "e7c4ec57-d49c-449b-b7b7-7edc3463d6a5")
@@ -16,7 +16,7 @@
 		)
 	)
 	(property "Value" "QFN-28"
-		(at -0.25 17.75 0)
+		(at 0 4.1 0)
 		(unlocked yes)
 		(layer "F.Fab")
 		(uuid "03a7f188-9b68-45d8-a174-c0e937f6c69c")
@@ -479,4 +479,15 @@
 		(uuid "b8c275fc-7abd-4fd6-91e3-631fca4cb855")
 	)
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/packages3d/QFN-28-1EP_5x5mm_P0.5mm_EP3.35x3.35mm.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )

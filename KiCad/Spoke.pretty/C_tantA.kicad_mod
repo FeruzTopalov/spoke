@@ -126,7 +126,7 @@
 		(uuid "065bbab7-8db3-4432-af94-d82301097bd8")
 	)
 	(embedded_fonts no)
-	(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
+	(model "${KIPRJMOD}/packages3d/CP_EIA-3216-18_Kemet-A.step"
 		(offset
 			(xyz 0 0 0)
 		)
