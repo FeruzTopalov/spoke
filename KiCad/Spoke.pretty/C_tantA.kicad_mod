@@ -1,29 +1,140 @@
-(footprint "C_tantA" (version 20211014) (generator pcbnew)
-  (layer "F.Cu")
-  (tedit 61D1AA8D)
-  (attr smd)
-  (fp_text reference "REF**" (at 0.475 -2.65) (layer "F.SilkS")
-    (effects (font (size 1.5 1.5) (thickness 0.2)))
-    (tstamp a8f15f81-c64f-4a6a-8184-eabd4f5daa6f)
-  )
-  (fp_text value "C_tantA" (at 0.025 2.75) (layer "F.Fab")
-    (effects (font (size 1.5 1.5) (thickness 0.2)))
-    (tstamp 4821a0f1-0757-49b5-bc91-a0ccf3e9f548)
-  )
-  (fp_line (start 2.675 1.2) (end -2.675 1.2) (layer "F.SilkS") (width 0.2) (tstamp 150efa79-228d-47e2-89bf-fd8363924d0f))
-  (fp_line (start 2.675 -1.2) (end 2.675 1.2) (layer "F.SilkS") (width 0.2) (tstamp 9b7be77a-2656-471e-885e-8c6c59fe59f7))
-  (fp_line (start -2.675 1.2) (end -2.675 -1.2) (layer "F.SilkS") (width 0.2) (tstamp d0583253-7f1c-498c-afba-93bf9b28c781))
-  (fp_line (start -2.675 -1.2) (end 2.675 -1.2) (layer "F.SilkS") (width 0.2) (tstamp f87c0f2d-c04c-46a9-b58e-d24759249a2d))
-  (fp_circle (center -3.525 0) (end -3.325 0) (layer "F.SilkS") (width 0.4) (fill none) (tstamp 1c10afe0-5886-4b8e-82fe-b4df69c407ee))
-  (fp_line (start 2.675 1.2) (end -2.675 1.2) (layer "F.CrtYd") (width 0.2) (tstamp 9e50feee-fd1e-48c9-aa44-dd6062da7f84))
-  (fp_line (start -2.675 1.2) (end -2.675 -1.2) (layer "F.CrtYd") (width 0.2) (tstamp bdd60e70-d069-432f-96bc-1e17050cb723))
-  (fp_line (start -2.675 -1.2) (end 2.675 -1.2) (layer "F.CrtYd") (width 0.2) (tstamp c36de2cd-62e2-4141-94ed-8598a4021bc0))
-  (fp_line (start 2.675 -1.2) (end 2.675 1.2) (layer "F.CrtYd") (width 0.2) (tstamp debb48c2-0606-4abf-b967-c5cd55bd0d6c))
-  (pad "1" smd rect (at -1.525 0) (size 1.7 1.8) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp d98d557d-4f4f-49b3-9745-359bb04d0ef7))
-  (pad "2" smd rect (at 1.525 0) (size 1.7 1.8) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 065bbab7-8db3-4432-af94-d82301097bd8))
-  (model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
-    (offset (xyz 0 0 0))
-    (scale (xyz 1 1 1))
-    (rotate (xyz 0 0 0))
-  )
+(footprint "C_tantA"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0.475 -2.65 0)
+		(layer "F.SilkS")
+		(uuid "a8f15f81-c64f-4a6a-8184-eabd4f5daa6f")
+		(effects
+			(font
+				(size 1.5 1.5)
+				(thickness 0.2)
+			)
+		)
+	)
+	(property "Value" "C_tantA"
+		(at 0.025 2.75 0)
+		(layer "F.Fab")
+		(uuid "4821a0f1-0757-49b5-bc91-a0ccf3e9f548")
+		(effects
+			(font
+				(size 1.5 1.5)
+				(thickness 0.2)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "95f94963-70cd-4846-ab9a-cdaccbf7bde6")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "cc1c2ef2-66b5-484e-bf56-48065db3e315")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -2.675 -1.2)
+		(end 2.675 -1.2)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "f87c0f2d-c04c-46a9-b58e-d24759249a2d")
+	)
+	(fp_line
+		(start -2.675 1.2)
+		(end -2.675 -1.2)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "d0583253-7f1c-498c-afba-93bf9b28c781")
+	)
+	(fp_line
+		(start 2.675 -1.2)
+		(end 2.675 1.2)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "9b7be77a-2656-471e-885e-8c6c59fe59f7")
+	)
+	(fp_line
+		(start 2.675 1.2)
+		(end -2.675 1.2)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "150efa79-228d-47e2-89bf-fd8363924d0f")
+	)
+	(fp_poly
+		(pts
+			(xy -3.17 0) (xy -3.5 0.24) (xy -3.5 -0.24)
+		)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "707647bd-03fc-4614-97c2-9572ade64996")
+	)
+	(fp_rect
+		(start -2.9 -1.4)
+		(end 2.9 1.4)
+		(stroke
+			(width 0.2)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "6bcd4ba0-5015-4cd8-ab33-66d292a887ce")
+	)
+	(pad "1" smd rect
+		(at -1.525 0)
+		(size 1.7 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "d98d557d-4f4f-49b3-9745-359bb04d0ef7")
+	)
+	(pad "2" smd rect
+		(at 1.525 0)
+		(size 1.7 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "065bbab7-8db3-4432-af94-d82301097bd8")
+	)
+	(embedded_fonts no)
+	(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )

@@ -136,7 +136,7 @@
 	)
 	(fp_poly
 		(pts
-			(xy -2.61 -2.61) (xy -2.85 -2.94) (xy -2.37 -2.94)
+			(xy -3.2 -1.5) (xy -3.53 -1.26) (xy -3.53 -1.74)
 		)
 		(stroke
 			(width 0.12)
@@ -156,18 +156,6 @@
 		(fill no)
 		(layer "F.CrtYd")
 		(uuid "5093b2f8-797d-4ca8-80a3-a2d45e08202c")
-	)
-	(fp_poly
-		(pts
-			(xy -2.5 -1.5) (xy -2.5 2.5) (xy 2.5 2.5) (xy 2.5 -2.5) (xy -1.5 -2.5)
-		)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(fill no)
-		(layer "F.Fab")
-		(uuid "b5e54999-599a-42f1-85fc-815d8101da86")
 	)
 	(pad "" smd roundrect
 		(at -0.81 -0.81)

@@ -106,8 +106,8 @@
 		(uuid "40ab2cfa-3f4e-4956-b3b2-38c8bed8fcc5")
 	)
 	(fp_rect
-		(start -3.1 -3)
-		(end 3.1 1.9)
+		(start -3.2 -3.1)
+		(end 3.2 2)
 		(stroke
 			(width 0.2)
 			(type solid)

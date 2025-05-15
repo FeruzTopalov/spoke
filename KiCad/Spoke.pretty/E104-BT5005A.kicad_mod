@@ -58,16 +58,28 @@
 		(start -4.5 -4.5)
 		(end 4.5 4.5)
 		(stroke
-			(width 0.12)
+			(width 0.2)
 			(type solid)
 		)
 		(fill no)
 		(layer "F.SilkS")
 		(uuid "c0f734d8-1067-4926-815e-0ea9bdd9fb4a")
 	)
+	(fp_poly
+		(pts
+			(xy -4.97 -1.14) (xy -5.3 -0.9) (xy -5.3 -1.38)
+		)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "686af597-6178-44ae-b990-1ba2a569c5bc")
+	)
 	(fp_rect
-		(start -4.6 -4.6)
-		(end 4.6 4.6)
+		(start -4.7 -4.7)
+		(end 4.7 4.7)
 		(stroke
 			(width 0.2)
 			(type solid)

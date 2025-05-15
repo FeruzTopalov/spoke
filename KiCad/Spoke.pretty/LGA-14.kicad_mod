@@ -4,7 +4,7 @@
 	(generator_version "9.0")
 	(layer "F.Cu")
 	(property "Reference" "REF**"
-		(at 0.2 -3.5 0)
+		(at 0 -3.9 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "7d78dd61-17b6-474a-adc0-1efaf8124db2")
@@ -15,7 +15,7 @@
 			)
 		)
 	)
-	(property "Value" "LGA_3x5x1_14L"
+	(property "Value" "LGA-14"
 		(at 0 3.6 0)
 		(unlocked yes)
 		(layer "F.Fab")
@@ -56,7 +56,7 @@
 		(start -0.56 2.61)
 		(end -1.61 2.61)
 		(stroke
-			(width 0.12)
+			(width 0.2)
 			(type solid)
 		)
 		(layer "F.SilkS")
@@ -66,7 +66,7 @@
 		(start 0.56 -2.61)
 		(end 1.61 -2.61)
 		(stroke
-			(width 0.12)
+			(width 0.2)
 			(type solid)
 		)
 		(layer "F.SilkS")
@@ -76,11 +76,23 @@
 		(start 0.56 2.61)
 		(end 1.61 2.61)
 		(stroke
-			(width 0.12)
+			(width 0.2)
 			(type solid)
 		)
 		(layer "F.SilkS")
 		(uuid "3c7412d4-b0f9-4acb-9d85-09ff6ac923dc")
+	)
+	(fp_poly
+		(pts
+			(xy -2 -2.04) (xy -2.33 -1.8) (xy -2.33 -2.28) (xy -2 -2.04)
+		)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "e77a57ea-924d-428d-827a-38b963be7769")
 	)
 	(fp_rect
 		(start -1.8 2.8)
@@ -92,67 +104,6 @@
 		(fill no)
 		(layer "F.CrtYd")
 		(uuid "8e652010-a9da-4bb9-bab5-69d54e7579d5")
-	)
-	(fp_line
-		(start -1.5 -1.75)
-		(end -0.75 -2.5)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-		(uuid "8e8a6318-f6a3-450a-882a-6f6848747cb2")
-	)
-	(fp_line
-		(start -1.5 2.5)
-		(end -1.5 -1.75)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-		(uuid "1c8a58f3-c2b8-4c56-86ad-6d380c67b1bd")
-	)
-	(fp_line
-		(start -0.75 -2.5)
-		(end 1.5 -2.5)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-		(uuid "432db9b1-6e00-47e5-97cd-eb6c90763f81")
-	)
-	(fp_line
-		(start 1.5 -2.5)
-		(end 1.5 2.5)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-		(uuid "4e755437-5a95-40b0-bb90-ae16b790da09")
-	)
-	(fp_line
-		(start 1.5 2.5)
-		(end -1.5 2.5)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-		(uuid "fdb4e8f9-c917-491e-8c46-37f28fad73f0")
-	)
-	(fp_text user "${REFERENCE}"
-		(at 0 0 0)
-		(layer "F.Fab")
-		(uuid "3dc035b9-ed34-420f-8027-ba5c6d13b263")
-		(effects
-			(font
-				(size 0.75 0.75)
-				(thickness 0.11)
-			)
-		)
 	)
 	(pad "1" smd roundrect
 		(at -1 -2)

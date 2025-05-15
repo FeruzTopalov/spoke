@@ -1,12 +1,10 @@
-(footprint "TSSOP-16_4.4x5mm_P0.65mm"
+(footprint "TSSOP-16"
 	(version 20241229)
 	(generator "pcbnew")
 	(generator_version "9.0")
 	(layer "F.Cu")
-	(descr "TSSOP, 16 Pin (https://www.jedec.org/document_search?search_api_views_fulltext=MO-153), generated with kicad-footprint-generator ipc_gullwing_generator.py")
-	(tags "TSSOP SO JEDEC-MO-153-AB TI-PW0016A Microchip-ST Toshiba-TSSOP16-P-0044-0.65A NXP-SOT403-1 Infineon-P-TSSOP-16-800")
 	(property "Reference" "REF**"
-		(at 0 -3.45 0)
+		(at 0 -3.7 0)
 		(layer "F.SilkS")
 		(uuid "a004f14c-1761-45db-b7b7-96f4934ec715")
 		(effects
@@ -16,8 +14,8 @@
 			)
 		)
 	)
-	(property "Value" "TSSOP-16_4.4x5mm_P0.65mm"
-		(at 0 3.45 0)
+	(property "Value" "TSSOP-16"
+		(at 0 3.8 0)
 		(layer "F.Fab")
 		(uuid "f2f5291c-e4d4-4229-8e18-fcb5c78f4656")
 		(effects
@@ -56,7 +54,7 @@
 		(start 0 -2.735)
 		(end -2.2 -2.735)
 		(stroke
-			(width 0.12)
+			(width 0.2)
 			(type solid)
 		)
 		(layer "F.SilkS")
@@ -66,7 +64,7 @@
 		(start 0 -2.735)
 		(end 2.2 -2.735)
 		(stroke
-			(width 0.12)
+			(width 0.2)
 			(type solid)
 		)
 		(layer "F.SilkS")
@@ -76,7 +74,7 @@
 		(start 0 2.735)
 		(end -2.2 2.735)
 		(stroke
-			(width 0.12)
+			(width 0.2)
 			(type solid)
 		)
 		(layer "F.SilkS")
@@ -86,7 +84,7 @@
 		(start 0 2.735)
 		(end 2.2 2.735)
 		(stroke
-			(width 0.12)
+			(width 0.2)
 			(type solid)
 		)
 		(layer "F.SilkS")
@@ -108,7 +106,7 @@
 		(start -3.85 -2.75)
 		(end 3.85 2.75)
 		(stroke
-			(width 0.05)
+			(width 0.2)
 			(type solid)
 		)
 		(fill no)

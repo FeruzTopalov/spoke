@@ -16,7 +16,7 @@
 		)
 	)
 	(property "Value" "GCT4105"
-		(at 0.1 5.2 0)
+		(at 0 4.6 0)
 		(unlocked yes)
 		(layer "F.Fab")
 		(uuid "8239bbc2-a797-46be-9e29-8439f640de40")
@@ -58,7 +58,7 @@
 		(start -4.67 -0.1)
 		(end -4.67 -1.8)
 		(stroke
-			(width 0.12)
+			(width 0.2)
 			(type solid)
 		)
 		(layer "F.SilkS")
@@ -68,7 +68,7 @@
 		(start 4.67 -0.1)
 		(end 4.67 -1.8)
 		(stroke
-			(width 0.12)
+			(width 0.2)
 			(type solid)
 		)
 		(layer "F.SilkS")
