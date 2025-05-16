@@ -27229,7 +27229,7 @@
 		(dnp no)
 		(uuid "257bac10-8282-433b-91fb-17b16f314db8")
 		(property "Reference" "J3"
-			(at 46.99 68.58 90)
+			(at 45.72 68.58 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27238,7 +27238,7 @@
 			)
 		)
 		(property "Value" "BAT-"
-			(at 49.53 71.12 90)
+			(at 48.26 71.12 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -28824,7 +28824,7 @@
 				)
 			)
 		)
-		(property "Value" "10kR"
+		(property "Value" "100kR"
 			(at 212.09 364.49 0)
 			(effects
 				(font
@@ -31558,7 +31558,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10kR"
+		(property "Value" "100kR"
 			(at 234.95 233.6799 90)
 			(effects
 				(font
@@ -37078,7 +37078,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10kR"
+		(property "Value" "100kR"
 			(at 205.74 326.3899 90)
 			(effects
 				(font
