@@ -303,7 +303,24 @@
     "equivalence_files": []
   },
   "erc": {
-    "erc_exclusions": [],
+    "erc_exclusions": [
+      [
+        "four_way_junction|2019300|1143000|69c8f894-0906-497d-8fb2-688ef5dbd534|655094c1-b8f3-4e8d-8f96-bb7d38776b2f|/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55||",
+        "Ok"
+      ],
+      [
+        "four_way_junction|2324100|2247900|75354880-8639-48ef-b57e-10084c5f5fdd|851f7f76-1382-4e01-8e4f-d7c5e224b70c|/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55||",
+        "Ok"
+      ],
+      [
+        "four_way_junction|393700|2679700|f81243ca-99e1-476d-8e4d-eb3efb4b9620|836955a3-1dcf-4d45-8c13-e0f0374345b5|/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55||",
+        "Ok"
+      ],
+      [
+        "four_way_junction|749300|3340100|936f8f1e-63ec-40cb-b839-eee8412bce31|19b5f21d-9b94-47f8-a4c8-1de856d1674d|/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55||",
+        "Ok"
+      ]
+    ],
     "meta": {
       "version": 0
     },
@@ -491,7 +508,7 @@
       "extra_units": "error",
       "footprint_filter": "ignore",
       "footprint_link_issues": "warning",
-      "four_way_junction": "ignore",
+      "four_way_junction": "warning",
       "global_label_dangling": "warning",
       "hier_label_mismatch": "error",
       "label_dangling": "error",
@@ -515,7 +532,7 @@
       "similar_labels": "warning",
       "similar_power": "warning",
       "simulation_model_issue": "ignore",
-      "single_global_label": "ignore",
+      "single_global_label": "warning",
       "unannotated": "error",
       "unconnected_wire_endpoint": "warning",
       "unit_value_mismatch": "error",
