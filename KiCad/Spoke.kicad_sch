@@ -16580,7 +16580,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 196.85 62.23 0)
 			(effects
 				(font
@@ -16711,7 +16711,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 78.74 45.72 0)
 			(effects
 				(font
@@ -16778,7 +16778,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:LED1206"
 			(at 346.71 203.2 0)
 			(effects
 				(font
@@ -17175,7 +17175,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 81.28 254 0)
 			(effects
 				(font
@@ -17243,7 +17243,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 571.5 309.88 0)
 			(effects
 				(font
@@ -17312,7 +17312,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 113.03 208.28 0)
 			(effects
 				(font
@@ -17380,7 +17380,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 236.22 269.24 0)
 			(effects
 				(font
@@ -17449,7 +17449,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 134.62 208.28 0)
 			(effects
 				(font
@@ -17518,7 +17518,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 386.08 224.79 0)
 			(effects
 				(font
@@ -17586,7 +17586,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 298.45 48.26 0)
 			(effects
 				(font
@@ -17784,7 +17784,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:SOT-23"
 			(at 106.68 55.88 0)
 			(effects
 				(font
@@ -17857,7 +17857,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 359.41 323.85 0)
 			(effects
 				(font
@@ -18057,7 +18057,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 323.85 48.26 0)
 			(effects
 				(font
@@ -18126,7 +18126,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R1206"
 			(at 419.1 43.18 0)
 			(effects
 				(font
@@ -18391,7 +18391,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 518.16 66.04 0)
 			(effects
 				(font
@@ -18654,7 +18654,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:TSSOP-16"
 			(at 220.98 341.63 0)
 			(effects
 				(font
@@ -18830,7 +18830,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 119.38 92.71 0)
 			(effects
 				(font
@@ -18898,7 +18898,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:SOT-23"
 			(at 421.64 58.42 0)
 			(effects
 				(font
@@ -19036,7 +19036,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 299.72 143.51 0)
 			(effects
 				(font
@@ -19170,7 +19170,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 200.66 158.75 0)
 			(effects
 				(font
@@ -19237,7 +19237,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 323.85 190.5 0)
 			(effects
 				(font
@@ -19306,7 +19306,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C1206"
 			(at 62.23 369.57 0)
 			(effects
 				(font
@@ -19440,7 +19440,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 372.11 231.14 0)
 			(effects
 				(font
@@ -19574,7 +19574,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 372.11 215.9 0)
 			(effects
 				(font
@@ -20032,7 +20032,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 209.55 355.6 0)
 			(effects
 				(font
@@ -20164,7 +20164,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:B2B-PH-2.0"
 			(at 40.64 53.34 0)
 			(effects
 				(font
@@ -20235,7 +20235,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 144.78 237.49 0)
 			(effects
 				(font
@@ -20433,7 +20433,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:SOT-23-5"
 			(at 171.45 44.45 0)
 			(effects
 				(font
@@ -20512,7 +20512,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:Buzzer"
 			(at 347.98 233.68 0)
 			(effects
 				(font
@@ -20710,7 +20710,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 120.65 241.3 0)
 			(effects
 				(font
@@ -20776,7 +20776,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 219.71 50.8 0)
 			(effects
 				(font
@@ -20845,7 +20845,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 359.41 359.41 0)
 			(effects
 				(font
@@ -20977,7 +20977,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:Xtal_3225"
 			(at 285.75 139.7 0)
 			(effects
 				(font
@@ -21052,7 +21052,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:GN-801"
 			(at 521.97 116.84 0)
 			(effects
 				(font
@@ -21269,7 +21269,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 464.82 219.71 0)
 			(effects
 				(font
@@ -21403,7 +21403,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 488.95 303.53 0)
 			(effects
 				(font
@@ -21606,7 +21606,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:LED1206"
 			(at 134.62 349.25 0)
 			(effects
 				(font
@@ -21878,7 +21878,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 330.2 223.52 0)
 			(effects
 				(font
@@ -21946,7 +21946,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:SOT-143"
 			(at 92.71 251.46 0)
 			(effects
 				(font
@@ -22022,7 +22022,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 72.39 367.03 0)
 			(effects
 				(font
@@ -22090,7 +22090,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 91.44 254 0)
 			(effects
 				(font
@@ -22157,7 +22157,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 251.46 341.63 0)
 			(effects
 				(font
@@ -22422,7 +22422,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 346.71 323.85 0)
 			(effects
 				(font
@@ -22686,7 +22686,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 549.91 283.21 0)
 			(effects
 				(font
@@ -22819,7 +22819,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 336.55 48.26 0)
 			(effects
 				(font
@@ -22953,7 +22953,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 245.11 229.87 0)
 			(effects
 				(font
@@ -23174,7 +23174,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 401.32 337.82 0)
 			(effects
 				(font
@@ -23501,7 +23501,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 203.2 153.67 0)
 			(effects
 				(font
@@ -23570,7 +23570,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 214.63 55.88 0)
 			(effects
 				(font
@@ -23639,7 +23639,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 236.22 321.31 0)
 			(effects
 				(font
@@ -23908,7 +23908,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 264.16 143.51 0)
 			(effects
 				(font
@@ -24040,7 +24040,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 251.46 351.79 0)
 			(effects
 				(font
@@ -24108,7 +24108,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 101.6 210.82 0)
 			(effects
 				(font
@@ -24304,7 +24304,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:E22"
 			(at 492.76 189.23 0)
 			(effects
 				(font
@@ -24627,7 +24627,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:Button_6x6"
 			(at 106.68 125.73 0)
 			(effects
 				(font
@@ -24768,7 +24768,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 340.36 356.87 0)
 			(effects
 				(font
@@ -25255,7 +25255,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:Button_6x6"
 			(at 59.69 125.73 0)
 			(effects
 				(font
@@ -25396,7 +25396,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C1206"
 			(at 509.27 290.83 0)
 			(effects
 				(font
@@ -25659,7 +25659,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 236.22 281.94 0)
 			(effects
 				(font
@@ -25859,7 +25859,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:SOT-23"
 			(at 101.6 73.66 0)
 			(effects
 				(font
@@ -26425,7 +26425,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 102.87 99.06 0)
 			(effects
 				(font
@@ -26494,7 +26494,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 101.6 198.12 0)
 			(effects
 				(font
@@ -26560,7 +26560,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 226.06 64.77 0)
 			(effects
 				(font
@@ -26627,7 +26627,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 374.65 269.24 0)
 			(effects
 				(font
@@ -26830,7 +26830,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:L1616"
 			(at 204.47 44.45 0)
 			(effects
 				(font
@@ -26962,7 +26962,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:Button_6x6"
 			(at 59.69 151.13 0)
 			(effects
 				(font
@@ -27444,7 +27444,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 311.15 48.26 0)
 			(effects
 				(font
@@ -28036,7 +28036,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:Button_6x6"
 			(at 106.68 151.13 0)
 			(effects
 				(font
@@ -28112,7 +28112,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 215.9 322.58 0)
 			(effects
 				(font
@@ -28637,7 +28637,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 478.79 303.53 0)
 			(effects
 				(font
@@ -28768,7 +28768,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:Button_6x6"
 			(at 215.9 207.01 0)
 			(effects
 				(font
@@ -28908,7 +28908,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:SOT-23"
 			(at 242.57 209.55 0)
 			(effects
 				(font
@@ -29051,7 +29051,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:SMA"
 			(at 542.29 191.77 0)
 			(effects
 				(font
@@ -29249,7 +29249,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 323.85 203.2 0)
 			(effects
 				(font
@@ -29381,7 +29381,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:LED1206"
 			(at 346.71 215.9 0)
 			(effects
 				(font
@@ -29513,7 +29513,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:E104-BT5005A"
 			(at 361.95 332.74 0)
 			(effects
 				(font
@@ -30080,7 +30080,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 209.55 328.93 0)
 			(effects
 				(font
@@ -30214,7 +30214,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 403.86 83.82 0)
 			(effects
 				(font
@@ -30348,7 +30348,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 494.03 130.81 0)
 			(effects
 				(font
@@ -31083,7 +31083,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:USB_C_16p_GCT4105"
 			(at 59.69 226.06 0)
 			(effects
 				(font
@@ -31183,7 +31183,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:Button_6x6"
 			(at 59.69 76.2 0)
 			(effects
 				(font
@@ -31389,7 +31389,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C0603"
 			(at 189.23 124.46 0)
 			(effects
 				(font
@@ -31524,7 +31524,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 137.16 344.17 0)
 			(effects
 				(font
@@ -31723,7 +31723,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 334.01 323.85 0)
 			(effects
 				(font
@@ -31855,7 +31855,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 374.65 281.94 0)
 			(effects
 				(font
@@ -31924,7 +31924,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 189.23 109.22 0)
 			(effects
 				(font
@@ -32055,7 +32055,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:R0805"
+		(property "Footprint" "Spoke:R0603"
 			(at 265.43 217.17 0)
 			(effects
 				(font
@@ -32124,7 +32124,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Spoke:C0805"
+		(property "Footprint" "Spoke:C1206"
 			(at 116.84 369.57 0)
 			(effects
 				(font
@@ -32193,7 +32193,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Spoke:QFN-28"
 			(at 124.46 228.6 0)
 			(effects
 				(font
