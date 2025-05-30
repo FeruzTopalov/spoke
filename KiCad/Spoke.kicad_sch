@@ -16687,7 +16687,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:LED1206"
+		(property "Footprint" "Spoke:LED_3mm"
 			(at 346.71 203.2 0)
 			(effects
 				(font
@@ -21448,7 +21448,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:LED1206"
+		(property "Footprint" "Spoke:LED_3mm"
 			(at 134.62 349.25 0)
 			(effects
 				(font
@@ -29277,7 +29277,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Spoke:LED1206"
+		(property "Footprint" "Spoke:LED_3mm"
 			(at 346.71 215.9 0)
 			(effects
 				(font
