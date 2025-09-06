@@ -14252,6 +14252,16 @@
 		)
 		(uuid "ff6273b2-ff17-4930-a661-ab366cc121f3")
 	)
+	(label "USB_DN"
+		(at 101.6 243.84 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "121bf816-01a9-4836-8ec7-3281d05b1b5c")
+	)
 	(label "ANT"
 		(at 534.67 191.77 0)
 		(effects
@@ -14261,6 +14271,16 @@
 			(justify left bottom)
 		)
 		(uuid "1e4f4757-d544-46d7-bc21-559ed4c35732")
+	)
+	(label "USB_DP"
+		(at 101.6 246.38 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f1206c9b-925f-4c3c-8887-358b29e6e638")
 	)
 	(global_label "CONSOLE_TXD"
 		(shape input)
