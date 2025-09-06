@@ -8723,6 +8723,12 @@
 		(uuid "6c516781-c320-4bbb-859b-7aed209dd0a8")
 	)
 	(junction
+		(at 203.2 334.01)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "6ebc6bf6-014e-4a5e-b622-64557dc693b6")
+	)
+	(junction
 		(at 91.44 58.42)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -8889,6 +8895,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "b4ec225e-0a51-4257-b9ab-9f50d30136c2")
+	)
+	(junction
+		(at 160.02 198.12)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "b5acff13-75a0-4423-afcc-6bc4058f497a")
 	)
 	(junction
 		(at 414.02 335.28)
@@ -11790,7 +11802,7 @@
 	)
 	(wire
 		(pts
-			(xy 203.2 330.2) (xy 203.2 349.25)
+			(xy 203.2 330.2) (xy 203.2 334.01)
 		)
 		(stroke
 			(width 0)
@@ -12960,6 +12972,16 @@
 	)
 	(wire
 		(pts
+			(xy 201.93 334.01) (xy 203.2 334.01)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bd0634ff-8a6b-4405-bb73-05609cecf1bf")
+	)
+	(wire
+		(pts
 			(xy 92.71 246.38) (xy 124.46 246.38)
 		)
 		(stroke
@@ -13807,6 +13829,16 @@
 			(type default)
 		)
 		(uuid "e2c78ec2-cedb-4bea-8b49-5fe4fb7994cd")
+	)
+	(wire
+		(pts
+			(xy 203.2 334.01) (xy 203.2 349.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e2eb0dbd-7099-42a2-b2ed-47c0d7b9158f")
 	)
 	(wire
 		(pts
@@ -17863,7 +17895,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "2048dfaa-2ae2-434c-8fea-d6d77baaa026")
-		(property "Reference" "TP3"
+		(property "Reference" "TP5"
 			(at 303.53 325.12 0)
 			(effects
 				(font
@@ -17913,7 +17945,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP3")
+					(reference "TP5")
 					(unit 1)
 				)
 			)
@@ -17929,7 +17961,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "20ba62f6-78a8-47ff-b298-2fb6deba4307")
-		(property "Reference" "TP1"
+		(property "Reference" "TP3"
 			(at 194.31 356.87 0)
 			(effects
 				(font
@@ -17979,7 +18011,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP1")
+					(reference "TP3")
 					(unit 1)
 				)
 			)
@@ -19645,7 +19677,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3da0bb97-df4f-49cb-b184-31cadb5a3241")
-		(property "Reference" "TP16"
+		(property "Reference" "TP18"
 			(at 483.87 193.04 0)
 			(effects
 				(font
@@ -19695,7 +19727,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP16")
+					(reference "TP18")
 					(unit 1)
 				)
 			)
@@ -20775,6 +20807,72 @@
 		)
 	)
 	(symbol
+		(lib_id "Spoke:Pad-Round")
+		(at 160.02 198.12 270)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4c24d414-dfa2-44b5-a146-ef98515eca02")
+		(property "Reference" "TP1"
+			(at 160.02 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Pad-Round"
+			(at 157.48 193.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Spoke:Pad_round"
+			(at 160.02 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 160.02 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 160.02 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "05a99914-180e-48cc-990a-c1c0a2df33ca")
+		)
+		(instances
+			(project "Spoke"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "TP1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 113.03 208.28 0)
 		(unit 1)
@@ -21207,7 +21305,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "544b8fe2-9dcc-489b-80e7-9a4ab4db47f9")
-		(property "Reference" "TP10"
+		(property "Reference" "TP12"
 			(at 406.4 355.6 0)
 			(effects
 				(font
@@ -21257,7 +21355,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP10")
+					(reference "TP12")
 					(unit 1)
 				)
 			)
@@ -22623,7 +22721,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "713d394c-11f5-47ae-a70f-6f8936a1e895")
-		(property "Reference" "TP11"
+		(property "Reference" "TP13"
 			(at 472.44 298.45 0)
 			(effects
 				(font
@@ -22673,7 +22771,7 @@
 		(instances
 			(project ""
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP11")
+					(reference "TP13")
 					(unit 1)
 				)
 			)
@@ -23371,7 +23469,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "77728665-f0cc-4b30-8790-e64ab639d626")
-		(property "Reference" "TP14"
+		(property "Reference" "TP16"
 			(at 480.06 193.04 0)
 			(effects
 				(font
@@ -23421,7 +23519,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP14")
+					(reference "TP16")
 					(unit 1)
 				)
 			)
@@ -23909,7 +24007,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "7ed482be-8c6c-465d-b052-3d87bc104874")
-		(property "Reference" "TP8"
+		(property "Reference" "TP10"
 			(at 406.4 347.98 0)
 			(effects
 				(font
@@ -23959,7 +24057,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP8")
+					(reference "TP10")
 					(unit 1)
 				)
 			)
@@ -24613,6 +24711,72 @@
 			(project ""
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "#PWR0103")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Spoke:Pad-Round")
+		(at 201.93 334.01 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8783e7bd-329c-427a-b70d-c90076b60bac")
+		(property "Reference" "TP2"
+			(at 194.31 334.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Pad-Round"
+			(at 196.85 336.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Spoke:Pad_round"
+			(at 201.93 334.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 201.93 334.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 201.93 334.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b88c55cd-47e4-471b-980e-45f509d3934c")
+		)
+		(instances
+			(project "Spoke"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "TP2")
 					(unit 1)
 				)
 			)
@@ -27701,7 +27865,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "be5ce2cc-49c5-4f7d-a81e-468f57b3ec8d")
-		(property "Reference" "TP2"
+		(property "Reference" "TP4"
 			(at 297.18 325.12 0)
 			(effects
 				(font
@@ -27751,7 +27915,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP2")
+					(reference "TP4")
 					(unit 1)
 				)
 			)
@@ -28097,7 +28261,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c8390c66-b0bf-4ded-8f16-f37525f3660f")
-		(property "Reference" "TP6"
+		(property "Reference" "TP8"
 			(at 317.5 347.98 0)
 			(effects
 				(font
@@ -28147,7 +28311,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP6")
+					(reference "TP8")
 					(unit 1)
 				)
 			)
@@ -29609,7 +29773,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "d958de3a-c329-4d41-b957-ac451e668d4f")
-		(property "Reference" "TP5"
+		(property "Reference" "TP7"
 			(at 317.5 345.44 0)
 			(effects
 				(font
@@ -29659,7 +29823,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP5")
+					(reference "TP7")
 					(unit 1)
 				)
 			)
@@ -30472,7 +30636,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e7430507-f9d0-40c4-86bd-324a2b5cfefb")
-		(property "Reference" "TP12"
+		(property "Reference" "TP14"
 			(at 476.25 193.04 0)
 			(effects
 				(font
@@ -30522,7 +30686,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP12")
+					(reference "TP14")
 					(unit 1)
 				)
 			)
@@ -31007,7 +31171,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ee05f37e-2c3e-4202-a1c3-cdc252073756")
-		(property "Reference" "TP9"
+		(property "Reference" "TP11"
 			(at 406.4 350.52 0)
 			(effects
 				(font
@@ -31057,7 +31221,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP9")
+					(reference "TP11")
 					(unit 1)
 				)
 			)
@@ -31073,7 +31237,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ee71afd3-ee3d-43b7-95d8-0e911ff57074")
-		(property "Reference" "TP7"
+		(property "Reference" "TP9"
 			(at 317.5 350.52 0)
 			(effects
 				(font
@@ -31123,7 +31287,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP7")
+					(reference "TP9")
 					(unit 1)
 				)
 			)
@@ -31312,7 +31476,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f1a94af4-23ae-4c75-b9c9-e15248638296")
-		(property "Reference" "TP15"
+		(property "Reference" "TP17"
 			(at 482.6 298.45 0)
 			(effects
 				(font
@@ -31362,7 +31526,7 @@
 		(instances
 			(project ""
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP15")
+					(reference "TP17")
 					(unit 1)
 				)
 			)
@@ -31377,7 +31541,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f24f75eb-3180-4b02-a5ee-b3f50f089eca")
-		(property "Reference" "TP13"
+		(property "Reference" "TP15"
 			(at 477.52 298.45 0)
 			(effects
 				(font
@@ -31427,7 +31591,7 @@
 		(instances
 			(project ""
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP13")
+					(reference "TP15")
 					(unit 1)
 				)
 			)
@@ -31512,7 +31676,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f34b7a2d-a869-4d24-868d-8f985514dd61")
-		(property "Reference" "TP4"
+		(property "Reference" "TP6"
 			(at 317.5 342.9 0)
 			(effects
 				(font
@@ -31562,7 +31726,7 @@
 		(instances
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP4")
+					(reference "TP6")
 					(unit 1)
 				)
 			)
