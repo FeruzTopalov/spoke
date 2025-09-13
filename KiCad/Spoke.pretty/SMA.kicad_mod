@@ -308,13 +308,13 @@
 	(embedded_fonts no)
 	(model "${KIPRJMOD}/packages3d/SMA_Amphenol_132289.step"
 		(offset
-			(xyz 0 0 0)
+			(xyz 0.4 0 0)
 		)
 		(scale
 			(xyz 1 1 1)
 		)
 		(rotate
-			(xyz 0 0 0)
+			(xyz -0 -0 -0)
 		)
 	)
 )
