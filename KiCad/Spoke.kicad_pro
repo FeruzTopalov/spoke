@@ -61,12 +61,24 @@
       ],
       "drc_exclusions": [
         [
-          "courtyards_overlap|121415000|56927316|7fb27039-1c75-4b9a-8f0c-2bade9600d15|f5ccb259-9269-4bc1-988d-08a502fb10ce",
-          "MH overlap"
+          "unconnected_items|103980000|97750000|F.Cu|4|2aae5d7a-b727-45d2-8d81-b9ce83663efe|6d1540e0-1c82-44b3-b190-84c1566583a3",
+          "Internally connected"
         ],
         [
-          "courtyards_overlap|88655000|110805000|51867e2e-9f28-4b70-b849-878235eb3dd1|69a9114b-84ea-4637-8d5b-81548e5f54db",
-          "Cap installed first, LCD second over it"
+          "unconnected_items|108020000|136750000|F.Cu|4|85155e18-ec2a-487d-9ca7-65f6beca6da0|5cc71c70-69d9-4eac-8710-d98299be2e9a",
+          "Internally connected"
+        ],
+        [
+          "unconnected_items|108020000|141250000|F.Cu|4|d6131748-e17c-447e-9712-1d130e90d0e1|7e8a566f-62d0-4cad-929e-a118ae20d2f7",
+          "Internally connected"
+        ],
+        [
+          "unconnected_items|109020000|97750000|F.Cu|4|825744ae-642a-447c-aaf2-2ff3fb0e8e25|eaf634df-0d5f-4c57-b487-8a4706f51a2e",
+          "Internally connected"
+        ],
+        [
+          "unconnected_items|90980000|97750000|F.Cu|4|4dbf9a07-64ea-42a4-9a0f-3a801c60b1a9|506dc5b1-58db-43e5-a17b-2eebc3b456a2",
+          "Internally connected"
         ]
       ],
       "meta": {
