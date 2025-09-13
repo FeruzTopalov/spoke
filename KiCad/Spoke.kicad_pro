@@ -59,7 +59,16 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "courtyards_overlap|121415000|56927316|7fb27039-1c75-4b9a-8f0c-2bade9600d15|f5ccb259-9269-4bc1-988d-08a502fb10ce",
+          "MH overlap"
+        ],
+        [
+          "courtyards_overlap|88655000|110805000|51867e2e-9f28-4b70-b849-878235eb3dd1|69a9114b-84ea-4637-8d5b-81548e5f54db",
+          "Cap installed first, LCD second over it"
+        ]
+      ],
       "meta": {
         "version": 2
       },
