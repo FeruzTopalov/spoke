@@ -61,7 +61,15 @@
       ],
       "drc_exclusions": [
         [
-          "unconnected_items|103980000|97750000|F.Cu|4|2aae5d7a-b727-45d2-8d81-b9ce83663efe|6d1540e0-1c82-44b3-b190-84c1566583a3",
+          "courtyards_overlap|121415000|56927316|7fb27039-1c75-4b9a-8f0c-2bade9600d15|f5ccb259-9269-4bc1-988d-08a502fb10ce",
+          "MH overlap"
+        ],
+        [
+          "courtyards_overlap|88655000|110805000|51867e2e-9f28-4b70-b849-878235eb3dd1|69a9114b-84ea-4637-8d5b-81548e5f54db",
+          "Cap is under LCD"
+        ],
+        [
+          "unconnected_items|103980000|97750000|F.Cu|4|2aae5d7a-b727-45d2-8d81-b9ce83663efe|29bc0c76-a1a3-4ca2-a6c9-df8370c471e3",
           "Internally connected"
         ],
         [
@@ -73,11 +81,11 @@
           "Internally connected"
         ],
         [
-          "unconnected_items|109020000|97750000|F.Cu|4|825744ae-642a-447c-aaf2-2ff3fb0e8e25|eaf634df-0d5f-4c57-b487-8a4706f51a2e",
+          "unconnected_items|109020000|97750000|F.Cu|4|e03cfc0a-9d47-4db9-a43c-bde9d2bb013b|eaf634df-0d5f-4c57-b487-8a4706f51a2e",
           "Internally connected"
         ],
         [
-          "unconnected_items|90980000|97750000|F.Cu|4|4dbf9a07-64ea-42a4-9a0f-3a801c60b1a9|506dc5b1-58db-43e5-a17b-2eebc3b456a2",
+          "unconnected_items|90980000|97750000|F.Cu|4|7ba3a697-3195-4eff-9f86-679b180eb406|506dc5b1-58db-43e5-a17b-2eebc3b456a2",
           "Internally connected"
         ]
       ],
