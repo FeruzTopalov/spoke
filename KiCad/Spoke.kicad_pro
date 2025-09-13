@@ -62,11 +62,27 @@
       "drc_exclusions": [
         [
           "courtyards_overlap|121415000|56927316|7fb27039-1c75-4b9a-8f0c-2bade9600d15|f5ccb259-9269-4bc1-988d-08a502fb10ce",
-          "MH overlap"
+          ""
         ],
         [
           "courtyards_overlap|88655000|110805000|51867e2e-9f28-4b70-b849-878235eb3dd1|69a9114b-84ea-4637-8d5b-81548e5f54db",
-          "Cap is under LCD"
+          ""
+        ],
+        [
+          "hole_clearance|102550000|143045000|0358f1cd-b0ca-4f47-88aa-aa07632a6c4d|c469c320-4645-4a0a-93aa-673e0e0a90c6",
+          "Cannot fix"
+        ],
+        [
+          "hole_clearance|103050000|143045000|0358f1cd-b0ca-4f47-88aa-aa07632a6c4d|8d5106a0-65c8-4e9f-99c3-70e7817a54bc",
+          "Cannot fix"
+        ],
+        [
+          "hole_clearance|96950000|143045000|d26d5f16-e129-4d42-8797-9539abb9748f|6fed84db-4a1c-4389-92e4-a73c41b1c34f",
+          "Cannot fix"
+        ],
+        [
+          "hole_clearance|97450000|143045000|d26d5f16-e129-4d42-8797-9539abb9748f|21d27619-e45d-470e-9f4b-2a0c1ffd46b4",
+          "Cannot fix"
         ],
         [
           "unconnected_items|103980000|97750000|F.Cu|4|2aae5d7a-b727-45d2-8d81-b9ce83663efe|6d1540e0-1c82-44b3-b190-84c1566583a3",
