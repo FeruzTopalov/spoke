@@ -187,7 +187,7 @@
 	(net 55 "GPS_RXD")
 	(net 56 "GPS_TXD")
 	(net 57 "Net-(A1-SWDCLK)")
-	(net 58 "Net-(A1-WAKEUP{slash}SLEEP)")
+	(net 58 "BLE_WKP_SLP")
 	(net 59 "unconnected-(A1-NC-Pad10)")
 	(net 60 "Net-(A1-DISC)")
 	(net 61 "Net-(A1-LINK)")
@@ -371,7 +371,7 @@
 		(layer "F.Cu")
 		(uuid "095e493f-5de0-4908-9588-fc2dbef0bcf6")
 		(at 121.5 95.5)
-		(property "Reference" "R36"
+		(property "Reference" "R37"
 			(at 0 -1.83 0)
 			(layer "F.SilkS")
 			(uuid "d9f53380-ff89-4aab-9f62-9df665041ab4")
@@ -1273,7 +1273,7 @@
 		(layer "F.Cu")
 		(uuid "1b1ec4a9-3d91-4372-932d-76b8c436d54c")
 		(at 118 105.2 90)
-		(property "Reference" "R35"
+		(property "Reference" "R36"
 			(at 0 -1.43 90)
 			(layer "F.SilkS")
 			(uuid "b86c0461-d0af-40af-afb2-85c50e895947")
@@ -3293,7 +3293,7 @@
 		(layer "F.Cu")
 		(uuid "b5476de0-4472-447b-874a-d4773f6e3256")
 		(at 119 62)
-		(property "Reference" "R25"
+		(property "Reference" "R26"
 			(at 0 -1.43 0)
 			(layer "F.SilkS")
 			(uuid "7e28d81c-a43e-469f-a2b6-a2a633c10108")
@@ -3895,7 +3895,7 @@
 		(layer "F.Cu")
 		(uuid "ee1b21eb-3047-43c8-95ab-bb4568c25a24")
 		(at 119 68)
-		(property "Reference" "R24"
+		(property "Reference" "R25"
 			(at 0 -1.43 0)
 			(layer "F.SilkS")
 			(uuid "46349032-c010-4fb6-84c9-796f945ac930")
@@ -4664,7 +4664,7 @@
 		(layer "B.Cu")
 		(uuid "090151a0-3d58-40d5-a66c-6078b90c35bc")
 		(at 87 76 180)
-		(property "Reference" "R23"
+		(property "Reference" "R24"
 			(at 0 1.43 0)
 			(layer "B.SilkS")
 			(uuid "245db54b-202c-4bf5-ab0c-a1d90b21dbda")
@@ -5614,7 +5614,7 @@
 		(layer "B.Cu")
 		(uuid "27b3c674-1e15-4d50-89a9-ab1197048af5")
 		(at 84 89.5 180)
-		(property "Reference" "R31"
+		(property "Reference" "R32"
 			(at 0 1.43 0)
 			(layer "B.SilkS")
 			(uuid "c05562a0-c4b1-4b12-b319-d246c2a7ff3c")
@@ -6644,7 +6644,7 @@
 		(layer "B.Cu")
 		(uuid "4088217d-257e-4e01-951f-4e991d9a6295")
 		(at 111.75 86 90)
-		(property "Reference" "R33"
+		(property "Reference" "R34"
 			(at 0 1.43 90)
 			(layer "B.SilkS")
 			(uuid "be89c24f-51f6-4f82-893f-7b4b3fdbb7c6")
@@ -7357,7 +7357,7 @@
 			(at 0 0 180)
 			(size 2 2)
 			(layers "B.Cu" "B.Mask" "B.Paste")
-			(net 58 "Net-(A1-WAKEUP{slash}SLEEP)")
+			(net 58 "BLE_WKP_SLP")
 			(pinfunction "1")
 			(pintype "unspecified")
 			(uuid "b4026c1b-d7e6-4335-8641-1476d693d08f")
@@ -7368,7 +7368,7 @@
 		(layer "B.Cu")
 		(uuid "4abb3945-5500-4764-894d-7eece2003b90")
 		(at 87 72 180)
-		(property "Reference" "R26"
+		(property "Reference" "R28"
 			(at 0 1.43 0)
 			(layer "B.SilkS")
 			(uuid "b372f558-0f18-4cae-8bda-fde7fffd53ad")
@@ -7905,7 +7905,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "CHG+"
+		(property "Value" "USB+"
 			(at -0.01092 -2.58572 90)
 			(layer "B.Fab")
 			(uuid "339bb62a-e60f-4dd1-92e9-86ba0f7e27ea")
@@ -10078,7 +10078,7 @@
 		(layer "B.Cu")
 		(uuid "6db271b8-29eb-4eac-ac55-cfbd772ae000")
 		(at 97 96 180)
-		(property "Reference" "R37"
+		(property "Reference" "R38"
 			(at 0 1.43 0)
 			(layer "B.SilkS")
 			(uuid "470588d7-fb13-409e-9a28-d9e2512acd65")
@@ -10444,7 +10444,7 @@
 		(layer "B.Cu")
 		(uuid "7123ab99-8391-4ade-a48f-ad6c9d8b948c")
 		(at 88 100.5)
-		(property "Reference" "R32"
+		(property "Reference" "R33"
 			(at 0 1.43 0)
 			(layer "B.SilkS")
 			(uuid "e19172ab-c3a5-46f9-a80a-206358b618a8")
@@ -10701,7 +10701,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "CHG-"
+		(property "Value" "USB-"
 			(at -0.01092 -2.58572 90)
 			(layer "B.Fab")
 			(uuid "a4b858a2-62dc-45e9-bb08-10d0b5f1149a")
@@ -14110,7 +14110,7 @@
 		(layer "B.Cu")
 		(uuid "a59359cf-19ff-4878-953d-42d7fe4db391")
 		(at 79 61.75)
-		(property "Reference" "R30"
+		(property "Reference" "R31"
 			(at 0 1.43 0)
 			(layer "B.SilkS")
 			(uuid "9079613a-9046-49ff-ad0a-b23841a9393a")
@@ -15441,7 +15441,7 @@
 		(layer "B.Cu")
 		(uuid "bc6a5512-234a-4207-b6dd-c0e60973d612")
 		(at 87 68)
-		(property "Reference" "R28"
+		(property "Reference" "R29"
 			(at 0 1.43 180)
 			(layer "B.SilkS")
 			(uuid "0fdcaab3-3749-42d5-8578-2b71aa457316")
@@ -15531,7 +15531,7 @@
 			(size 0.975 0.95)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(roundrect_rratio 0.25)
-			(net 58 "Net-(A1-WAKEUP{slash}SLEEP)")
+			(net 58 "BLE_WKP_SLP")
 			(pinfunction "1")
 			(pintype "unspecified")
 			(uuid "330748a8-e844-4228-a2fd-2d47c68a5b53")
@@ -16517,6 +16517,128 @@
 			(uuid "505ee427-9a65-48d7-a045-cba9d44c0b7b")
 		)
 		(embedded_fonts no)
+	)
+	(footprint "Spoke:R0603"
+		(layer "B.Cu")
+		(uuid "c35b7c7d-fbb7-4f3e-8030-e6425fb25b5c")
+		(at 70.3375 81.5 180)
+		(property "Reference" "R23"
+			(at 0 1.43 0)
+			(layer "B.SilkS")
+			(uuid "bf83ef57-e9bc-4dc2-815b-97a62ee3ddd8")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "Value" "0R"
+			(at 0 -1.43 0)
+			(layer "B.Fab")
+			(uuid "19ccd9e0-3c97-410d-b689-7d0011e98477")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "3cf4a34a-08aa-44dc-9e73-cb390cb5f648")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "f814494f-6a5c-470f-b659-a1215217dc6c")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(path "/c768cdcd-7131-46db-9110-d58fc94d1d96")
+		(sheetname "/")
+		(sheetfile "Spoke.kicad_sch")
+		(attr smd dnp)
+		(fp_line
+			(start -0.254724 0.5225)
+			(end 0.254724 0.5225)
+			(stroke
+				(width 0.2)
+				(type solid)
+			)
+			(layer "B.SilkS")
+			(uuid "37cb2890-2dc4-40ff-8a2a-0ba5969cbd8a")
+		)
+		(fp_line
+			(start -0.254724 -0.5225)
+			(end 0.254724 -0.5225)
+			(stroke
+				(width 0.2)
+				(type solid)
+			)
+			(layer "B.SilkS")
+			(uuid "713c9eca-654c-4730-920f-02bd913b8ffd")
+		)
+		(fp_rect
+			(start -1.6 0.7)
+			(end 1.6 -0.7)
+			(stroke
+				(width 0.2)
+				(type default)
+			)
+			(fill no)
+			(layer "B.CrtYd")
+			(uuid "4179c9ca-bce3-403d-a64f-1088bedca6e7")
+		)
+		(pad "1" smd roundrect
+			(at -0.9125 0 180)
+			(size 0.975 0.95)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(roundrect_rratio 0.25)
+			(net 58 "BLE_WKP_SLP")
+			(pinfunction "1")
+			(pintype "unspecified")
+			(uuid "9beb6a63-020a-4763-9e5e-a6dd0fa3ead6")
+		)
+		(pad "2" smd roundrect
+			(at 0.9125 0 180)
+			(size 0.975 0.95)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(roundrect_rratio 0.25)
+			(net 49 "MUX_BLE_USB")
+			(pinfunction "2")
+			(pintype "unspecified")
+			(uuid "1a79decf-eb34-4694-a0cc-e076c155260d")
+		)
+		(embedded_fonts no)
+		(model "${KIPRJMOD}/packages3d/R_0603_1608Metric.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Spoke:Pad_round"
 		(layer "B.Cu")
@@ -18190,7 +18312,7 @@
 			(size 0.84 0.96)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(roundrect_rratio 0.15)
-			(net 58 "Net-(A1-WAKEUP{slash}SLEEP)")
+			(net 58 "BLE_WKP_SLP")
 			(pinfunction "WAKEUP/SLEEP")
 			(pintype "unspecified")
 			(thermal_bridge_angle 45)
@@ -19336,7 +19458,7 @@
 		(layer "B.Cu")
 		(uuid "ec9529ba-8b05-4b95-90a7-36d541e9be19")
 		(at 110 86 -90)
-		(property "Reference" "R34"
+		(property "Reference" "R35"
 			(at 0 1.43 90)
 			(layer "B.SilkS")
 			(uuid "aa894824-8132-4e47-95b3-d4209d8d6c6a")
@@ -19459,7 +19581,7 @@
 		(layer "B.Cu")
 		(uuid "efcef356-c27a-4a67-8a7f-8f5f25d08c09")
 		(at 97 94 180)
-		(property "Reference" "R38"
+		(property "Reference" "R39"
 			(at 0 1.43 0)
 			(layer "B.SilkS")
 			(uuid "79e70875-a40e-4cac-893f-45329b8e2a33")
@@ -20038,7 +20160,7 @@
 		(layer "B.Cu")
 		(uuid "fcc02d0d-aff2-4d14-9fba-980e2252c453")
 		(at 87 70 180)
-		(property "Reference" "R29"
+		(property "Reference" "R30"
 			(at 0 1.43 0)
 			(layer "B.SilkS")
 			(uuid "e348168c-1fc8-4d3b-8321-80d19247a137")
