@@ -5,9 +5,9 @@
 	(uuid "e63e39d7-6ac0-4ffd-8aa3-1841a4541b55")
 	(paper "A2")
 	(title_block
-		(title "LRNS SPOKE HW rev. 2")
+		(title "LRNS SPOKE")
 		(date "2025-04-12")
-		(rev "1")
+		(rev "2.0")
 		(company "https://github.com/FeruzTopalov")
 	)
 	(lib_symbols
