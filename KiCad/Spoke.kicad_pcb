@@ -20334,8 +20334,8 @@
 		(uuid "e64b8c4a-a2ef-475a-82cb-cd3844004ee3")
 	)
 	(gr_rect
-		(start 260.5 55)
-		(end 278.5 120)
+		(start 185 50)
+		(end 203 115)
 		(stroke
 			(width 0.15)
 			(type solid)
@@ -20345,8 +20345,8 @@
 		(uuid "33f1bd58-8151-4845-871a-4e0ec2075183")
 	)
 	(gr_rect
-		(start 225.5 55)
-		(end 246.5 125)
+		(start 150 50)
+		(end 171 120)
 		(stroke
 			(width 0.15)
 			(type solid)
@@ -20594,7 +20594,7 @@
 		)
 	)
 	(gr_text "21700"
-		(at 228.5 56.5 0)
+		(at 153 51.5 0)
 		(layer "Dwgs.User")
 		(uuid "46f4cbef-6395-4201-bca7-3f2346fa64c6")
 		(effects
@@ -20605,7 +20605,7 @@
 		)
 	)
 	(gr_text "18650"
-		(at 263.5 56.5 0)
+		(at 188 51.5 0)
 		(layer "Dwgs.User")
 		(uuid "7c251e12-5a5d-40f9-bc97-c6a08dfce859")
 		(effects
