@@ -20273,16 +20273,16 @@
 	)
 	(symbol
 		(lib_id "Spoke:B2B-PH-K-S")
-		(at 40.64 53.34 180)
+		(at 40.64 50.8 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "42e2e8a1-3c2b-4987-8fba-bd685c3248f2")
 		(property "Reference" "J1"
-			(at 35.56 43.18 0)
+			(at 35.56 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20290,7 +20290,7 @@
 			)
 		)
 		(property "Value" "B2B-PH-K-S"
-			(at 35.56 45.72 0)
+			(at 35.56 46.99 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20298,7 +20298,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:B2B-PH-2.0"
-			(at 40.64 53.34 0)
+			(at 40.64 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20307,7 +20307,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 40.64 53.34 0)
+			(at 40.64 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20316,7 +20316,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 40.64 53.34 0)
+			(at 40.64 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
