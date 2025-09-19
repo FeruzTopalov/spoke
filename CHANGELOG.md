@@ -1,3 +1,26 @@
+# Release HW Rev.2.0 xx-Sep-2025
+Added USB Type C, USB-UART converter, UART-BLE Module, new LCD, DC/DC regulator
+
+
+Implemented:
+- New PCB size 100 x 50 mm
+- Type C USB with CP2102N-28pin USB-UART converter
+- UART-BLE connectivity by E104-BT5005A module
+- Multiplexer to switch between USB and BLE
+- New monochrome LCD with ST7567 controller
+- DC/DC regulator LM3671MF instead of linear
+- BOOT button to run the STM32 UART bootloader
+- SMA connector for LoRa antenna
+- MCU crystal in 3225 package
+- 0603 components everywhere
+- 3 mm TH LEDs
+- MCU lines kept the same assignment as in HW Rev.1.x. for back-compatibility
+
+
+Known issues:
+- No known issues
+
+
 # Release FW Rev.4 (for HW Rev.1.x) 12-Apr-2025 
 New look, compass with calibration, more settings & stabilization
 
