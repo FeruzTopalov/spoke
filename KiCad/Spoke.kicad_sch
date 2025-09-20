@@ -16907,7 +16907,7 @@
 		(at 63.5 344.17 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "0fb29585-fa93-4d53-805f-9ab87d647690")
@@ -17078,7 +17078,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 346.71 203.2 0)
+			(at 341.63 207.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17913,7 +17913,7 @@
 		(at 455.93 49.53 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "1d2f2fac-d383-4106-82d6-29c4fef4bfd6")
@@ -18185,7 +18185,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "2048dfaa-2ae2-434c-8fea-d6d77baaa026")
@@ -18251,7 +18251,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "20ba62f6-78a8-47ff-b298-2fb6deba4307")
@@ -18519,7 +18519,7 @@
 		(at 48.26 58.42 270)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "257bac10-8282-433b-91fb-17b16f314db8")
@@ -19967,7 +19967,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "3da0bb97-df4f-49cb-b184-31cadb5a3241")
@@ -20983,7 +20983,7 @@
 			)
 		)
 		(property "Value" "~"
-			(at 236.22 58.42 0)
+			(at 236.22 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21106,7 +21106,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "4c24d414-dfa2-44b5-a146-ef98515eca02")
@@ -21595,7 +21595,7 @@
 		(at 405.13 355.6 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "544b8fe2-9dcc-489b-80e7-9a4ab4db47f9")
@@ -21905,7 +21905,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 134.62 349.25 0)
+			(at 139.7 353.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -23011,7 +23011,7 @@
 		(at 472.44 306.07 90)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "713d394c-11f5-47ae-a70f-6f8936a1e895")
@@ -23824,7 +23824,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "77728665-f0cc-4b30-8790-e64ab639d626")
@@ -24362,7 +24362,7 @@
 		(at 405.13 347.98 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "7ed482be-8c6c-465d-b052-3d87bc104874")
@@ -24629,7 +24629,7 @@
 		(at 455.93 58.42 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "825d6ecc-06ea-4f08-a6be-272c3c8c15ff")
@@ -25148,7 +25148,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "8783e7bd-329c-427a-b70d-c90076b60bac")
@@ -25715,12 +25715,13 @@
 				)
 			)
 		)
-		(property "Value" "OK/UP"
+		(property "Value" "~"
 			(at 72.39 143.51 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Footprint" "Spoke:Button_6x6"
@@ -25741,13 +25742,12 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
-			(at 81.28 130.81 0)
+		(property "Description" "OK/UP"
+			(at 72.39 143.51 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -26809,7 +26809,7 @@
 		(at 48.26 45.72 90)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "a4359599-db43-47f2-be17-48996e596f07")
@@ -27421,12 +27421,13 @@
 				)
 			)
 		)
-		(property "Value" "ESC/DN"
+		(property "Value" "~"
 			(at 72.39 168.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Footprint" "Spoke:Button_6x6"
@@ -27447,13 +27448,12 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
-			(at 81.28 156.21 0)
+		(property "Description" "ESC/DN"
+			(at 72.39 168.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -28287,7 +28287,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "be5ce2cc-49c5-4f7d-a81e-468f57b3ec8d")
@@ -28751,7 +28751,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "c8390c66-b0bf-4ded-8f16-f37525f3660f")
@@ -29279,19 +29279,20 @@
 		(dnp no)
 		(uuid "ce70c149-bd9d-4ca2-b11d-6522f299221e")
 		(property "Reference" "SW4"
-			(at 207.01 209.55 0)
+			(at 207.01 210.82 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "BOOT"
+		(property "Value" "~"
 			(at 207.01 224.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Footprint" "Spoke:Button_6x6"
@@ -29312,13 +29313,12 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
-			(at 215.9 212.09 0)
+		(property "Description" "BOOT"
+			(at 207.01 223.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -29998,7 +29998,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 346.71 215.9 0)
+			(at 341.63 219.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -30263,7 +30263,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "d958de3a-c329-4d41-b957-ac451e668d4f")
@@ -31126,7 +31126,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "e7430507-f9d0-40c4-86bd-324a2b5cfefb")
@@ -31731,7 +31731,7 @@
 		(at 405.13 350.52 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "ee05f37e-2c3e-4202-a1c3-cdc252073756")
@@ -31797,7 +31797,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "ee71afd3-ee3d-43b7-95d8-0e911ff57074")
@@ -31975,12 +31975,13 @@
 				)
 			)
 		)
-		(property "Value" "PWR"
+		(property "Value" "~"
 			(at 72.39 93.98 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Footprint" "Spoke:Button_6x6"
@@ -32001,13 +32002,12 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
-			(at 81.28 81.28 0)
+		(property "Description" "PWR"
+			(at 72.39 93.98 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -32036,7 +32036,7 @@
 		(at 482.6 306.07 90)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "f1a94af4-23ae-4c75-b9c9-e15248638296")
@@ -32101,7 +32101,7 @@
 		(at 477.52 306.07 90)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "f24f75eb-3180-4b02-a5ee-b3f50f089eca")
@@ -32236,7 +32236,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "f34b7a2d-a869-4d24-868d-8f985514dd61")
@@ -32834,7 +32834,7 @@
 		(at 63.5 334.01 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "fa62b164-fdbc-4020-aeb1-d10be2535693")

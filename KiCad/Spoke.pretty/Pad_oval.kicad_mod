@@ -49,7 +49,7 @@
 			)
 		)
 	)
-	(attr smd)
+	(attr smd exclude_from_bom)
 	(fp_line
 		(start -2.2 -1.4)
 		(end 2.2 -1.4)
