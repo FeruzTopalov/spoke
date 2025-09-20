@@ -1,4 +1,4 @@
-# Release HW Rev.2.0 xx-Sep-2025
+# Release HW Rev.2.0 20-Sep-2025
 Added USB Type C, USB-UART converter, UART-BLE Module, new LCD, DC/DC regulator
 
 
