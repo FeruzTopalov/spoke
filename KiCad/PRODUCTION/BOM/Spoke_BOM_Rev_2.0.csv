@@ -1,39 +1,39 @@
-"#","Reference","Value","Qty","Footprint","Description"
-"1","A1","E104-BT5005A","1","Spoke:E104-BT5005A",""
-"2","A2","E22-400M22S","1","Spoke:E22",""
-"3","A3","GM12864-01A","1","Spoke:GM12864-01A",""
-"4","A4","GN-801","1","Spoke:GN-801",""
-"5","C33","220nF","1","Spoke:C0603",""
-"6","C1,C5,C8,C13,C31","10uF","5","Spoke:C1206",""
-"7","C14,C24,C25,C27","47uF","4","Spoke:C_tantA",""
-"8","C15,C19","12pF","2","Spoke:C0603",""
-"9","C2,C7,C28","4.7uF","3","Spoke:C0805",""
-"10","C3,C6,C10,C11,C16,C17,C18,C20,C21,C22,C23,C26,C29,C30,C32","100nF","15","Spoke:C0603",""
-"11","D1","BAT54C","1","Spoke:SOT-23",""
-"12","D4","Green","1","Spoke:LED_3mm",""
-"13","D2,D3","Red","2","Spoke:LED_3mm",""
-"14","J1","B2B-PH-K-S","1","Spoke:B2B-PH-2.0",""
-"15","J4","GCT USB4105/USB4110","1","Spoke:USB_C_16p_GCT4105",""
-"16","J8","PLS-1x6","1","Spoke:Header_1x6",""
-"17","J12","Amphenol 132289","1","Spoke:SMA",""
-"18","J7,J9","PLS-1x3","2","Spoke:Header_1x3",""
-"19","L1","2.2uH","1","Spoke:L1616",""
-"20","LS1","Buzzer-Passive","1","Spoke:Buzzer",""
-"21","Q1,Q2","AO3407A","2","Spoke:SOT-23",""
-"22","Q3,Q4","AO3400","2","Spoke:SOT-23",""
-"23","R5","22.1kR","1","Spoke:R0603",""
-"24","R6","47.5kR","1","Spoke:R0603",""
-"25","R20","0R","1","Spoke:R0603",""
-"26","R1,R3","5.1kR","2","Spoke:R0603",""
-"27","R4,R21,R39,R40","3.9kR","4","Spoke:R0603",""
-"28","R7,R9,R11,R13,R14,R15,R17,R23,R29,R30,R31,R32,R35,R36","100kR","14","Spoke:R0603",""
-"29","R8,R10,R12,R22,R25,R26,R27,R28","1kR","8","Spoke:R0603",""
-"30","SW1,SW2,SW3,SW4","~","4","Spoke:Button_6x6","BOOT,ESC/DN,OK/UP,PWR"
-"31","U1","SP0503BAHTG","1","Spoke:SOT-143",""
-"32","U2","TP4056","1","Spoke:SOIC-8-EP",""
-"33","U3","CP2102N-A02-GQFN28","1","Spoke:QFN-28",""
-"34","U4","LM3671MF-3.3","1","Spoke:SOT-23-5",""
-"35","U5","74HC4052PW","1","Spoke:TSSOP-16",""
-"36","U6","STM32F103C8T6","1","Spoke:LQFP-48",""
-"37","U7","LSM303DLHC","1","Spoke:LGA-14",""
-"38","X1","8MHz","1","Spoke:Xtal_3225",""
+#,Reference,Value,Qty,Footprint,Description
+1,A1,E104-BT5005A,1,Spoke:E104-BT5005A,Ebyte BLE-UART module
+2,A2,E22-400M22S,1,Spoke:E22,Ebyte LoRa module
+3,A3,GM12864-01A,1,Spoke:GM12864-01A,ST7567-based monochrome LCD module
+4,A4,GN-801,1,Spoke:GN-801,GPS module
+5,C33,220nF,1,Spoke:C0603,Ceramic capacitor
+6,"C1,C5,C8,C13,C31",10uF,5,Spoke:C1206,Ceramic capacitor
+7,"C14,C24,C25,C27",47uF,4,Spoke:C_tantA,Tantalum capacitor
+8,"C15,C19",12pF,2,Spoke:C0603,Ceramic capacitor
+9,"C2,C7,C28",4.7uF,3,Spoke:C0805,Ceramic capacitor
+10,"C3,C6,C10,C11,C16,C17,C18,C20,C21,C22,C23,C26,C29,C30,C32",100nF,15,Spoke:C0603,Ceramic capacitor
+11,D1,BAT54C,1,Spoke:SOT-23,Schottky diode array
+12,D4,Green,1,Spoke:LED_3mm,Through hole 3 mm LED
+13,"D2,D3",Red,2,Spoke:LED_3mm,Through hole 3 mm LED
+14,J1,B2B-PH-K-S,1,Spoke:B2B-PH-2.0,JST 2.0 mm connector
+15,J4,GCT USB4105/USB4110,1,Spoke:USB_C_16p_GCT4105,16-pin USB-C connector
+16,J8,PLS-1x6,1,Spoke:Header_1x6,Pin header 2.54 mm
+17,J12,Amphenol 132289,1,Spoke:SMA,"SMA connector, board edge, 1.6 mm PCB"
+18,"J7,J9",PLS-1x3,2,Spoke:Header_1x3,Pin header 2.54 mm
+19,L1,2.2uH,1,Spoke:L1616,"1616 (4040 metric) wirewound inductor, 2 A"
+20,LS1,Buzzer-Passive,1,Spoke:Buzzer,"Passive buzzer (no generator), 4-8 mm pitch"
+21,"Q1,Q2",AO3407A,2,Spoke:SOT-23,"P-MOSFET, 30 V, 4 A"
+22,"Q3,Q4",AO3400,2,Spoke:SOT-23,"N-MOSFET, 30 V, 5 A"
+23,R5,22.1kR,1,Spoke:R0603,"Chip resistor, 1%"
+24,R6,47.5kR,1,Spoke:R0603,"Chip resistor, 1%"
+25,R20,0R,1,Spoke:R0603,Chip resistor
+26,"R1,R3",5.1kR,2,Spoke:R0603,Chip resistor
+27,"R4,R21,R39,R40",3.9kR,4,Spoke:R0603,Chip resistor
+28,"R7,R9,R11,R13,R14,R15,R17,R23,R29,R30,R31,R32,R35,R36",100kR,14,Spoke:R0603,Chip resistor
+29,"R8,R10,R12,R22,R25,R26,R27,R28",1kR,8,Spoke:R0603,Chip resistor
+30,"SW1,SW2,SW3,SW4",~,4,Spoke:Button_6x6,"SPST-NO tactile switch, 6.0 x 6.0 mm"
+31,U1,SP0503BAHTG,1,Spoke:SOT-143,TVS diodes array for USB protection
+32,U2,TP4056,1,Spoke:SOIC-8-EP,Li-ion charger IC
+33,U3,CP2102N-A02-GQFN28,1,Spoke:QFN-28,"USB-UART IC, 28 pin (!) QFN package"
+34,U4,LM3671MF-3.3,1,Spoke:SOT-23-5,"DC/DC converter IC, fixed 3.3 V"
+35,U5,74HC4052PW,1,Spoke:TSSOP-16,Dual 4-ch analog MUX
+36,U6,STM32F103C8T6,1,Spoke:LQFP-48,MCU
+37,U7,LSM303DLHC,1,Spoke:LGA-14,3-axis accelerometer + 3-axis magnetometer
+38,X1,8MHz,1,Spoke:Xtal_3225,Crystal oscillator 3.2 x 2.5 mm
