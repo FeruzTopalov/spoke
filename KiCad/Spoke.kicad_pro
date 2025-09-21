@@ -583,7 +583,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "./",
-      "plot": "",
+      "plot": "PRODUCTION/PCB/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "PRODUCTION/3D/Spoke_02.06.2024.step",
