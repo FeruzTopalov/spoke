@@ -1,18 +1,103 @@
-(footprint "Pad_oval" (version 20211014) (generator pcbnew)
-  (layer "F.Cu")
-  (tedit 61D1AAB0)
-  (attr smd)
-  (fp_text reference "REF**" (at 1.00508 -2.42316) (layer "F.SilkS")
-    (effects (font (size 1.5 1.5) (thickness 0.2)))
-    (tstamp 97a26926-826d-45ba-9b18-a1eb92997b1a)
-  )
-  (fp_text value "Pad_oval" (at -0.01092 2.58572) (layer "F.Fab")
-    (effects (font (size 1.5 1.5) (thickness 0.2)))
-    (tstamp fb12cf74-5353-446a-a54b-387b0555f1f1)
-  )
-  (fp_line (start 2.2 -1.4) (end 2.2 1.4) (layer "F.CrtYd") (width 0.2) (tstamp 6b302d7f-0889-4c34-b438-a95807df14e6))
-  (fp_line (start 2.2 1.4) (end -2.2 1.4) (layer "F.CrtYd") (width 0.2) (tstamp 9243e9ef-e969-4eb9-863a-6dc63b457ba8))
-  (fp_line (start -2.2 -1.4) (end 2.2 -1.4) (layer "F.CrtYd") (width 0.2) (tstamp d70d71d2-80b1-4982-b1c2-f42a719d7ba1))
-  (fp_line (start -2.2 1.4) (end -2.2 -1.4) (layer "F.CrtYd") (width 0.2) (tstamp fb09791f-f653-4b4e-8ebd-bc3e3fd40daf))
-  (pad "1" smd oval (at 1 0) (size 4 2.4) (drill (offset -1 0)) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 73994233-cfbb-46fc-bde1-f075cce81f1a))
+(footprint "Pad_oval"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 1.00508 -2.42316 0)
+		(layer "F.SilkS")
+		(uuid "97a26926-826d-45ba-9b18-a1eb92997b1a")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.2)
+			)
+		)
+	)
+	(property "Value" "Pad_oval"
+		(at -0.01092 2.58572 0)
+		(layer "F.Fab")
+		(uuid "fb12cf74-5353-446a-a54b-387b0555f1f1")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.2)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "23ff346f-875b-434e-9bd1-7350a3282f3f")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "14fa5ff3-c50a-4986-b956-43cdd69d8958")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd exclude_from_bom)
+	(fp_line
+		(start -2.2 -1.4)
+		(end 2.2 -1.4)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "d70d71d2-80b1-4982-b1c2-f42a719d7ba1")
+	)
+	(fp_line
+		(start -2.2 1.4)
+		(end -2.2 -1.4)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "fb09791f-f653-4b4e-8ebd-bc3e3fd40daf")
+	)
+	(fp_line
+		(start 2.2 -1.4)
+		(end 2.2 1.4)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "6b302d7f-0889-4c34-b438-a95807df14e6")
+	)
+	(fp_line
+		(start 2.2 1.4)
+		(end -2.2 1.4)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "9243e9ef-e969-4eb9-863a-6dc63b457ba8")
+	)
+	(pad "1" smd oval
+		(at 1 0)
+		(size 4 2.4)
+		(drill
+			(offset -1 0)
+		)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "73994233-cfbb-46fc-bde1-f075cce81f1a")
+	)
+	(embedded_fonts no)
 )
