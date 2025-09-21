@@ -93,7 +93,7 @@
           ""
         ],
         [
-          "unconnected_items|103980000|97750000|F.Cu|4|2aae5d7a-b727-45d2-8d81-b9ce83663efe|6d1540e0-1c82-44b3-b190-84c1566583a3",
+          "unconnected_items|103980000|97750000|F.Cu|4|2aae5d7a-b727-45d2-8d81-b9ce83663efe|29bc0c76-a1a3-4ca2-a6c9-df8370c471e3",
           "Internally connected"
         ],
         [
@@ -105,11 +105,11 @@
           "Internally connected"
         ],
         [
-          "unconnected_items|116980000|97750000|F.Cu|4|eaf634df-0d5f-4c57-b487-8a4706f51a2e|825744ae-642a-447c-aaf2-2ff3fb0e8e25",
+          "unconnected_items|116980000|97750000|F.Cu|4|eaf634df-0d5f-4c57-b487-8a4706f51a2e|1971a4ff-74c1-4ed9-84f4-5cfeee29eb5e",
           "Internally connected"
         ],
         [
-          "unconnected_items|90980000|97750000|F.Cu|4|4dbf9a07-64ea-42a4-9a0f-3a801c60b1a9|506dc5b1-58db-43e5-a17b-2eebc3b456a2",
+          "unconnected_items|90980000|97750000|F.Cu|4|7ba3a697-3195-4eff-9f86-679b180eb406|506dc5b1-58db-43e5-a17b-2eebc3b456a2",
           "Internally connected"
         ]
       ],
@@ -586,7 +586,7 @@
       "plot": "PRODUCTION/PCB/",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "PRODUCTION/3D/Spoke_02.06.2024.step",
+      "step": "PRODUCTION/3D/Spoke.step",
       "svg": "",
       "vrml": ""
     },
