@@ -5,7 +5,6 @@
 */
 
 #include "stm32f10x.h"
-#include "config.h"
 #include "main.h"
 #include "settings.h"
 #include "memory.h"
@@ -14,6 +13,7 @@
 #include "lcd.h"
 #include "gps.h"
 #include "timer.h"
+#include "lrns.h"
 
 
 

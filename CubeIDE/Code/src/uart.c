@@ -10,7 +10,6 @@
 #include "uart.h"
 #include "gps.h"
 #include "lrns.h"
-#include "config.h"
 #include "service.h"
 #include "settings.h"
 

@@ -9,7 +9,6 @@
 #include <math.h>
 #include <string.h>
 #include "stm32f10x.h"
-#include "config.h"
 #include "menu.h"
 #include "buttons.h"
 #include "lcd.h"
