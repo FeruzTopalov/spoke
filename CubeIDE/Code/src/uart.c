@@ -12,6 +12,7 @@
 #include "lrns.h"
 #include "service.h"
 #include "settings.h"
+#include "config.h"
 
 
 
@@ -59,37 +60,25 @@ void uart_init(void)
 	p_settings = get_settings();
 	p_gps_num = get_gps_num();
 
-	/*
-	switch (p_settings->gps_baud_opt)
-	{
-		case GPS_BAUD_9600_SETTING:		//9600 bod; mantissa 19, frac 8
-			brr_gps_baud = 0x0138;
-			gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
-			break;
-
-		case GPS_BAUD_38400_SETTING:	//34800 bod; mantissa 4, frac 14
-			brr_gps_baud = 0x004E;
-			gps_uart_buf_len = 3500;		//3480 bytes/s max, fits buffer
-			break;
-
-		case GPS_BAUD_57600_SETTING:	//57600 bod; mantissa 3, frac 4
-			brr_gps_baud = 0x0034;
-			gps_uart_buf_len = 5790;		//5760 bytes/s max, fits buffer
-			break;
-
-		case GPS_BAUD_115200_SETTING:	//115200 bod; mantissa 1, frac 10
-			brr_gps_baud = 0x001A;
-			gps_uart_buf_len = 5790;		//11520 bytes/s max, does not fit buffer, pray for fit in actual use (otherwise no RF TX/RX will happen because uart overflow will be hitting earlier than pps interrupt)
-			break;
-
-		default:						//9600 bod; mantissa 19, frac 8
-			brr_gps_baud = 0x0138;
-			gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
-			break;
-	}*/
-
+#ifdef GPS_BAUD_9600
 	brr_gps_baud = 0x0138;
 	gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
+#endif
+
+#ifdef GPS_BAUD_38400
+	brr_gps_baud = 0x004E;
+	gps_uart_buf_len = 3500;		//3480 bytes/s max, fits buffer
+#endif
+
+#ifdef GPS_BAUD_57600
+	brr_gps_baud = 0x0034;
+	gps_uart_buf_len = 5790;		//5760 bytes/s max, fits buffer
+#endif
+
+#ifdef GPS_BAUD_115200
+	brr_gps_baud = 0x001A;
+	gps_uart_buf_len = 5790;		//11520 bytes/s max, does not fit buffer, pray for fit in actual use (otherwise no RF TX/RX will happen because uart overflow will be hitting earlier than pps interrupt)
+#endif
 
 	uart1_dma_init();
 	uart3_dma_init();
