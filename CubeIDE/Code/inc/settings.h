@@ -42,17 +42,6 @@
 
 
 
-//GPS BAUD
-#define GPS_BAUD_9600_SETTING   	(0)
-#define GPS_BAUD_38400_SETTING    	(1)
-#define GPS_BAUD_57600_SETTING   	(2)
-#define GPS_BAUD_115200_SETTING  	(3)
-
-#define GPS_BAUD_FIRST_OPTION 		(GPS_BAUD_9600_SETTING)
-#define GPS_BAUD_LAST_OPTION 		(GPS_BAUD_115200_SETTING)
-
-
-
 //ID
 #define DEVICE_ID_FIRST_SYMBOL      ('A')
 #define DEVICE_ID_LAST_SYMBOL       ('Z')
@@ -88,8 +77,6 @@ struct settings_struct
 
     uint8_t update_interval_opt;		//update interval option, not an actual value
 
-    uint8_t gps_baud_opt;				//GPS baud rate option, not an actual value
-
     uint16_t timeout_threshold;        	//timeout treshold in seconds, unsigned. if it == 0, then timeout alarm not trigger (but, anyway, timeout is counting). See TIMEOUT_ALARM_DISABLED
 
     uint16_t fence_threshold;        	//fence treshold in meters, unsigned. if it == 0, then fence alarm not trigger. See FENCE_ALARM_DISABLED
@@ -122,7 +109,6 @@ struct settings_struct
 struct settings_struct *get_settings(void);
 uint8_t *get_update_interval_values(void);
 int8_t *get_tx_power_values(void);
-uint32_t *get_gps_baud_values(void);
 void settings_save_default(void);
 void settings_load(void);
 void settings_save(struct settings_struct *settings);

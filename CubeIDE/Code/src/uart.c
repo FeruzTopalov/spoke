@@ -60,6 +60,7 @@ void uart_init(void)
 	p_settings = get_settings();
 	p_gps_num = get_gps_num();
 
+	/*
 	switch (p_settings->gps_baud_opt)
 	{
 		case GPS_BAUD_9600_SETTING:		//9600 bod; mantissa 19, frac 8
@@ -86,7 +87,10 @@ void uart_init(void)
 			brr_gps_baud = 0x0138;
 			gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
 			break;
-	}
+	}*/
+
+	brr_gps_baud = 0x0138;
+	gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
 
 	uart1_dma_init();
 	uart3_dma_init();

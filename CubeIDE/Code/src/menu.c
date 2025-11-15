@@ -27,7 +27,7 @@
 
 
 
-char *HW_FW_VERSION = "H1F4";	//revision HW.FW
+char *HW_FW_VERSION = "H2F5";	//revision HW.FW
 
 
 
@@ -68,7 +68,6 @@ void draw_set_update_interval(void);
 void draw_set_timeout(void);
 void draw_set_fence(void);
 void draw_set_timezone(void);
-void draw_set_gps_baud(void);
 void draw_confirm_settings_save(void);
 void draw_calibrate_compass(void);
 void draw_calibrating_compass(void);
@@ -127,10 +126,6 @@ void set_timezone_ok(void);
 void set_timezone_esc(void);
 void time_zone_inc(void);
 void time_zone_dec(void);
-void set_gps_baud_up(void);
-void set_gps_baud_down(void);
-void set_gps_baud_ok(void);
-void set_gps_baud_esc(void);
 void confirm_settings_save_ok(void);
 void confirm_settings_save_esc(void);
 void calibrate_compass_up(void);
@@ -165,7 +160,6 @@ enum
 	M_SET_TIMEOUT,
 	M_SET_FENCE,
 	M_SET_TIMEZONE,
-	M_SET_GPS_BAUD,
 	M_CONFIRM_SETTINGS_SAVE,
 	M_CALIBRATE_COMPASS,
 	M_CALIBRATING_COMPASS,
@@ -260,9 +254,8 @@ enum
 {
 	M_EDIT_OTHER_I_TIMEOUT = 0,
 	M_EDIT_OTHER_I_FENCE,
-	M_EDIT_OTHER_I_TIMEZONE,
-	M_EDIT_OTHER_I_GPS_BAUD,							//last item
-	M_EDIT_OTHER_I_LAST = M_EDIT_OTHER_I_GPS_BAUD		//copy last item here
+	M_EDIT_OTHER_I_TIMEZONE,							//last item
+	M_EDIT_OTHER_I_LAST = M_EDIT_OTHER_I_TIMEZONE		//copy last item here
 };
 
 
@@ -328,10 +321,6 @@ const struct
 	{M_SET_TIMEZONE,			BTN_DOWN,				set_timezone_down},
 	{M_SET_TIMEZONE,			BTN_OK,					set_timezone_ok},
 	{M_SET_TIMEZONE,			BTN_ESC,				set_timezone_esc},
-	{M_SET_GPS_BAUD,			BTN_UP,                 set_gps_baud_up},
-	{M_SET_GPS_BAUD,			BTN_DOWN,               set_gps_baud_down},
-	{M_SET_GPS_BAUD,			BTN_OK,                 set_gps_baud_ok},
-	{M_SET_GPS_BAUD,			BTN_ESC,            	set_gps_baud_esc},
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_OK,					confirm_settings_save_ok},
 	{M_CONFIRM_SETTINGS_SAVE,	BTN_ESC,				confirm_settings_save_esc},
 	{M_CALIBRATE_COMPASS,		BTN_UP,					calibrate_compass_up},
@@ -364,7 +353,6 @@ const struct
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_TIMEOUT,				M_SET_TIMEOUT},
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_FENCE,				M_SET_FENCE},
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_TIMEZONE,			M_SET_TIMEZONE},
-	{M_EDIT_OTHER,				M_EDIT_OTHER_I_GPS_BAUD,			M_SET_GPS_BAUD},
     {0, 0, 0}   //end marker
 };
 
@@ -450,7 +438,6 @@ const struct
 	{M_SET_TIMEOUT,				draw_set_timeout},
 	{M_SET_FENCE,				draw_set_fence},
 	{M_SET_TIMEZONE,			draw_set_timezone},
-	{M_SET_GPS_BAUD,			draw_set_gps_baud},
 	{M_CONFIRM_SETTINGS_SAVE,	draw_confirm_settings_save},
 	{M_CALIBRATE_COMPASS,		draw_calibrate_compass},
 	{M_CALIBRATING_COMPASS,		draw_calibrating_compass},
@@ -472,7 +459,6 @@ struct settings_struct settings_copy;
 
 uint8_t *p_update_interval_values;
 int8_t *p_tx_power_values;
-uint32_t *p_gps_baud_values;
 struct gps_raw_struct *p_gps_raw;
 struct gps_num_struct *p_gps_num;
 
@@ -501,7 +487,6 @@ void init_menu(void)
 	//Load other
 	p_tx_power_values = get_tx_power_values();
 	p_update_interval_values = get_update_interval_values();
-	p_gps_baud_values = get_gps_baud_values();
 	p_gps_raw = get_gps_raw();
 	p_gps_num = get_gps_num();
 
@@ -1301,19 +1286,21 @@ void draw_edit_device(void)
 
     lcd_clear();
 
-    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL, "Number");
-    itoa32(settings_copy.device_number, &tmp_buf[0]);
-    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL + 10, &tmp_buf[0]);
-    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL + 11, "/");
-    itoa32(settings_copy.devices_on_air, &tmp_buf[0]);
-    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL + 12, &tmp_buf[0]);
+    lcd_print(EDIT_DEVICE_ROW, EDIT_DEVICE_COL, "EDIT DEVICE");
 
-    lcd_print(EDIT_DEVICE_ROW + 1, EDIT_DEVICE_COL, "ID");
+    lcd_print(EDIT_DEVICE_ROW + 1, EDIT_DEVICE_COL, "Number");
+    itoa32(settings_copy.device_number, &tmp_buf[0]);
+    lcd_print(EDIT_DEVICE_ROW + 1, EDIT_DEVICE_COL + 10, &tmp_buf[0]);
+    lcd_print(EDIT_DEVICE_ROW + 1, EDIT_DEVICE_COL + 11, "/");
+    itoa32(settings_copy.devices_on_air, &tmp_buf[0]);
+    lcd_print(EDIT_DEVICE_ROW + 1, EDIT_DEVICE_COL + 12, &tmp_buf[0]);
+
+    lcd_print(EDIT_DEVICE_ROW + 2, EDIT_DEVICE_COL, "ID");
     tmp_buf[0] = settings_copy.device_id;
     tmp_buf[1] = 0;
-	lcd_print(EDIT_DEVICE_ROW + 1, EDIT_DEVICE_COL + 10, &tmp_buf[0]);
+	lcd_print(EDIT_DEVICE_ROW + 2, EDIT_DEVICE_COL + 10, &tmp_buf[0]);
 
-    lcd_print(EDIT_DEVICE_ROW + get_current_item(), EDIT_DEVICE_COL - 1, ">");
+    lcd_print(EDIT_DEVICE_ROW + get_current_item() + 1, EDIT_DEVICE_COL - 1, ">");
     lcd_update();
 }
 
@@ -1327,21 +1314,23 @@ void draw_edit_radio(void)
 
     lcd_clear();
 
-    lcd_print(EDIT_RADIO_ROW, EDIT_RADIO_COL, "Update");
+    lcd_print(EDIT_RADIO_ROW, EDIT_RADIO_COL, "EDIT RADIO");
+
+    lcd_print(EDIT_RADIO_ROW + 1, EDIT_RADIO_COL, "Update");
     itoa32(p_update_interval_values[settings_copy.update_interval_opt], &tmp_buf[0]);
-    lcd_print(EDIT_RADIO_ROW, EDIT_RADIO_COL + 10, &tmp_buf[0]);
+    lcd_print(EDIT_RADIO_ROW + 1, EDIT_RADIO_COL + 10, &tmp_buf[0]);
     lcd_print_next("s");
 
-    lcd_print(EDIT_RADIO_ROW + 1, EDIT_RADIO_COL, "Channel");
+    lcd_print(EDIT_RADIO_ROW + 2, EDIT_RADIO_COL, "Channel");
     itoa32(settings_copy.freq_channel, &tmp_buf[0]);
-    lcd_print(EDIT_RADIO_ROW + 1, EDIT_RADIO_COL + 10, &tmp_buf[0]);
-
-    lcd_print(EDIT_RADIO_ROW + 2, EDIT_RADIO_COL, "TX Power");
-    itoa32(p_tx_power_values[settings_copy.tx_power_opt], &tmp_buf[0]);
     lcd_print(EDIT_RADIO_ROW + 2, EDIT_RADIO_COL + 10, &tmp_buf[0]);
+
+    lcd_print(EDIT_RADIO_ROW + 3, EDIT_RADIO_COL, "TX Power");
+    itoa32(p_tx_power_values[settings_copy.tx_power_opt], &tmp_buf[0]);
+    lcd_print(EDIT_RADIO_ROW + 3, EDIT_RADIO_COL + 10, &tmp_buf[0]);
     lcd_print_next("dBm");
 
-    lcd_print(EDIT_RADIO_ROW + get_current_item(), EDIT_RADIO_COL - 1, ">");
+    lcd_print(EDIT_RADIO_ROW + get_current_item() + 1, EDIT_RADIO_COL - 1, ">");
     lcd_update();
 }
 
@@ -1355,24 +1344,26 @@ void draw_edit_other(void)
 
     lcd_clear();
 
-    lcd_print(EDIT_OTHER_ROW, EDIT_OTHER_COL, "Timeout");
+    lcd_print(EDIT_OTHER_ROW, EDIT_OTHER_COL, "EDIT OTHER");
+
+    lcd_print(EDIT_OTHER_ROW + 1, EDIT_OTHER_COL, "Timeout");
     itoa32(settings_copy.timeout_threshold, &tmp_buf[0]);
-    lcd_print(EDIT_OTHER_ROW, EDIT_OTHER_COL + 10, &tmp_buf[0]);
+    lcd_print(EDIT_OTHER_ROW + 1, EDIT_OTHER_COL + 10, &tmp_buf[0]);
     lcd_print_next("s");
 
-    lcd_print(EDIT_OTHER_ROW + 1, EDIT_OTHER_COL, "Fence");
+    lcd_print(EDIT_OTHER_ROW + 2, EDIT_OTHER_COL, "Fence");
     itoa32(settings_copy.fence_threshold, &tmp_buf[0]);
-    lcd_print(EDIT_OTHER_ROW + 1, EDIT_OTHER_COL + 10, &tmp_buf[0]);
+    lcd_print(EDIT_OTHER_ROW + 2, EDIT_OTHER_COL + 10, &tmp_buf[0]);
     lcd_print_next("m");
 
-    lcd_print(EDIT_OTHER_ROW + 2, EDIT_OTHER_COL, "Timezone");
+    lcd_print(EDIT_OTHER_ROW + 3, EDIT_OTHER_COL, "Timezone");
 	if (settings_copy.time_zone_dir > 0)
 	{
-		lcd_print(EDIT_OTHER_ROW + 2, EDIT_OTHER_COL + 9, "+");
+		lcd_print(EDIT_OTHER_ROW + 3, EDIT_OTHER_COL + 9, "+");
 	}
 	else
 	{
-		lcd_print(EDIT_OTHER_ROW + 2, EDIT_OTHER_COL + 9, "-");
+		lcd_print(EDIT_OTHER_ROW + 3, EDIT_OTHER_COL + 9, "-");
 	}
 
 	itoa32(settings_copy.time_zone_hour, &tmp_buf[0]);
@@ -1384,19 +1375,7 @@ void draw_edit_other(void)
 	time_date_add_leading_zero(&tmp_buf[0]);
 	lcd_print_next(&tmp_buf[0]);
 
-	lcd_print(EDIT_OTHER_ROW + 3, EDIT_OTHER_COL, "GPS Baud");
-    itoa32(p_gps_baud_values[settings_copy.gps_baud_opt], &tmp_buf[0]);
-
-    if (string_length(&tmp_buf[0]) > 4)
-    {
-    	lcd_print_viceversa(EDIT_OTHER_ROW + 3, 15, &tmp_buf[0]);
-    }
-    else
-    {
-    	lcd_print(EDIT_OTHER_ROW + 3, 11, &tmp_buf[0]);
-    }
-
-    lcd_print(EDIT_OTHER_ROW + get_current_item(), EDIT_OTHER_COL - 1, ">");
+    lcd_print(EDIT_OTHER_ROW + get_current_item() + 1, EDIT_OTHER_COL - 1, ">");
     lcd_update();
 }
 
@@ -1549,22 +1528,6 @@ void draw_set_timezone(void)
 	itoa32(settings_copy.time_zone_minute, &tmp_buf[0]);
 	time_date_add_leading_zero(&tmp_buf[0]);
 	lcd_print_next(&tmp_buf[0]);
-
-	lcd_update();
-}
-
-
-
-void draw_set_gps_baud(void)
-{
-	#define GPS_BAUD_ROW               (2)
-	#define GPS_BAUD_COL               (10)
-
-	lcd_clear();
-	lcd_print(0, 4, "GPS BAUD");
-
-    itoa32(p_gps_baud_values[settings_copy.gps_baud_opt], &tmp_buf[0]);
-    lcd_print_viceversa(GPS_BAUD_ROW, GPS_BAUD_COL, &tmp_buf[0]);
 
 	lcd_update();
 }
@@ -2461,54 +2424,6 @@ void set_timezone_esc(void)
 	settings_copy.time_zone_dir = p_settings->time_zone_dir;   //exit no save, reset value
 	settings_copy.time_zone_hour = p_settings->time_zone_hour;
 	settings_copy.time_zone_minute = p_settings->time_zone_minute;
-    current_menu = M_EDIT_OTHER;
-}
-
-
-
-void set_gps_baud_up(void)
-{
-    if (settings_copy.gps_baud_opt == GPS_BAUD_LAST_OPTION)
-    {
-        settings_copy.gps_baud_opt = GPS_BAUD_FIRST_OPTION;
-    }
-    else
-    {
-        settings_copy.gps_baud_opt++;
-    }
-}
-
-
-
-void set_gps_baud_down(void)
-{
-    if (settings_copy.gps_baud_opt == GPS_BAUD_FIRST_OPTION)
-    {
-        settings_copy.gps_baud_opt = GPS_BAUD_LAST_OPTION;
-    }
-    else
-    {
-        settings_copy.gps_baud_opt--;
-    }
-}
-
-
-
-void set_gps_baud_ok(void)
-{
-    if (settings_copy.gps_baud_opt != p_settings->gps_baud_opt)
-    {
-        flag_settings_changed = 1;
-    }
-
-    current_menu = M_EDIT_OTHER;
-}
-
-
-
-void set_gps_baud_esc(void)
-{
-    settings_copy.gps_baud_opt = p_settings->gps_baud_opt;   //exit no save, reset value
     current_menu = M_EDIT_OTHER;
 }
 
