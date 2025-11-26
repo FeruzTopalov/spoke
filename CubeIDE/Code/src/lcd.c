@@ -76,11 +76,26 @@ const uint8_t lcd_conf[] =
 //ST7567A init sequence
 const uint8_t lcd_conf[] =
 {// len,  val1, val2, ...
-    0x01, 0xA2,			/* Select 1/9 bias */ \
+    0x01, 0xA2,			/* Set 1/9 bias */ \
     0x01, 0xA0,			/* Set SEG normal direction */ \
 	0x01, 0xC8,			/* Set COM inverted direction */ \
 	0x01, 0x24,			/* Set regulation ration 5.0 */ \
 	0x02, 0x81,	0x24,	/* Set EV command, set EV = 36 */ \
+
+						/* BEGIN - DO NOT SPLIT */ \
+	0x01, 0xFF,			/* Enter Extension Command Set mode */ \
+	0x01, 0x72,			/* Enter Display Setting mode */ \
+	0x01, 0xFE,			/* Exit Extension Command Set mode */ \
+
+	0x01, 0xD4,			/* Set Duty 1/65 */ \
+	0x01, 0x90,			/* Set Bias 1/9 */ \
+	0x01, 0x9B,			/* Set FPS 190 */ \
+
+	0x01, 0xFF,			/* Enter Extension Command Set mode */ \
+	0x01, 0x70,			/* Exit Display Setting mode */ \
+	0x01, 0xFE,			/* Exit Extension Command Set mode */ \
+						/* END - DO NOT SPLIT */ \
+
 	0x01, 0x2C,			/* Booster On */ \
 	0x01, 0x2E,			/* Regulator On */ \
 	0x01, 0x2F,			/* Follower On */ \
