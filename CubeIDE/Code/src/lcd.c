@@ -32,10 +32,18 @@
 #define FONT16_BYTES_Y      	(2)		//size of font in bytes
 #define FONT16_BYTES      		(FONT16_BYTES_X * FONT16_BYTES_Y)	//size of font in bytes
 
-#define LCD_COMMAND_DISPLAY_ON	(0xAF)	//Same for both displays
+#define LCD_COMMAND_DISPLAY_ON	(0xAF)
 #define LCD_COMMAND_DISPLAY_OFF	(0xAE)
+#define LCD_COMMAND_SET_ROW_ADR_BASE	(0xB0)
+#define LCD_COMMAND_SET_COL_ADRH_BASE	(0x10)
 
+#ifdef LCD_TYPE_SH1106
+#define LCD_COMMAND_SET_COL_ADRL_BASE	(0x02)		//LCD panel is centered to SH1106 frame buffer
+#endif
 
+#ifdef LCD_TYPE_ST7567A
+#define LCD_COMMAND_SET_COL_ADRL_BASE	(0x00)		//LCD panel is left-adjusted to ST7567A frame buffer
+#endif
 
 uint8_t screen_buf[LCD_SIZE_BYTES];     		//public array 128x64 pixels
 uint16_t buf_pos = 0;                   		//public var 0 - 1023
@@ -180,9 +188,9 @@ void lcd_update(void)
 		{
 			lcd_busy = 1;
 			current_page = 0;
-			lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
-			lcd_send_command(0x10);			//reset column address high
-			lcd_send_command(0xB0);			//set 0 page address
+			lcd_send_command(LCD_COMMAND_SET_COL_ADRL_BASE); 		//reset column address low
+			lcd_send_command(LCD_COMMAND_SET_COL_ADRH_BASE);		//reset column address high
+			lcd_send_command(LCD_COMMAND_SET_ROW_ADR_BASE);			//set 0 page address
 			lcd_data_mode();
 			cs_lcd_active();
 			spi2_dma_start(&screen_buf[0], LCD_SIZE_X);
@@ -198,9 +206,9 @@ void lcd_continue_update(void)
 
 	if (current_page < 8)
 	{
-		lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
-		lcd_send_command(0x10);			//reset column address high
-		lcd_send_command(0xB0 | current_page);	//set page address
+		lcd_send_command(LCD_COMMAND_SET_COL_ADRL_BASE); 		//reset column address low
+		lcd_send_command(LCD_COMMAND_SET_COL_ADRH_BASE);			//reset column address high
+		lcd_send_command(LCD_COMMAND_SET_ROW_ADR_BASE | current_page);	//set page address
 
 		lcd_data_mode();
 		cs_lcd_active();
