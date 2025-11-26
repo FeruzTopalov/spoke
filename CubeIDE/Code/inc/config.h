@@ -17,9 +17,18 @@
 //#define GPS_BAUD_57600
 //#define GPS_BAUD_115200	/* Operation is not guaranteed due to limited buffer size */
 
+
+
 /* STEP 2 */
 /* Define/undefine POWER_HOLD fix */
-#define POWER_HOLD_FIX	/* Undefine for HW 1.x or 2.0; Define for HW 2.1 and above */
+#define POWER_HOLD_FIX		/* Undefine for HW 1.x or 2.0; Define for HW 2.1 and above */
+
+
+
+/* STEP 3 */
+/* Define LCD type */
+//#define LCD_TYPE_SH1106		/* Define for HW 1.x */
+#define LCD_TYPE_ST7567A	/* Define for HW 2.x */
 
 
 

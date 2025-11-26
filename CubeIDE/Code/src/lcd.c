@@ -13,6 +13,7 @@
 #include "gpio.h"
 #include "spi.h"
 #include "service.h"
+#include "config.h"
 
 
 
@@ -31,7 +32,7 @@
 #define FONT16_BYTES_Y      	(2)		//size of font in bytes
 #define FONT16_BYTES      		(FONT16_BYTES_X * FONT16_BYTES_Y)	//size of font in bytes
 
-#define LCD_COMMAND_DISPLAY_ON	(0xAF)
+#define LCD_COMMAND_DISPLAY_ON	(0xAF)	//Same for both displays
 #define LCD_COMMAND_DISPLAY_OFF	(0xAE)
 
 
@@ -46,8 +47,9 @@ uint8_t display_status = LCD_DISPLAY_ON;	//lcd panel status on/off
 
 
 
+#ifdef LCD_TYPE_SH1106
 //SH1106 init sequence (first byte in line = amount of config bytes in line)
-const uint8_t sh1106_conf[] =
+const uint8_t lcd_conf[] =
 {// len,  val1, val2, ...
     0x01, 0x00,			/* Set lower column address 0 */ \
     0x01, 0x10,			/* Set higher column address 0 */ \
@@ -58,6 +60,30 @@ const uint8_t sh1106_conf[] =
 	0x01, 0xAF,			/* enable display */ \
     0x00				/* end of the sequence */
 };
+#endif
+
+
+
+#ifdef LCD_TYPE_ST7567A
+//ST7567A init sequence
+const uint8_t lcd_conf[] =
+{// len,  val1, val2, ...
+    0x01, 0xA2,			/* Select 1/9 bias */ \
+    0x01, 0xA0,			/* Set SEG normal direction */ \
+	0x01, 0xC8,			/* Set COM inverted direction */ \
+	0x01, 0x24,			/* Set regulation ration 5.0 */ \
+	0x02, 0x81,	0x20,	/* Set EV command, set EV = 32 */ \
+	0x01, 0x2C,			/* Booster On */ \
+	0x01, 0x2E,			/* Regulator On */ \
+	0x01, 0x2F,			/* Follower On */ \
+    0x01, 0x00,			/* Set lower column address 0 */ \
+    0x01, 0x10,			/* Set higher column address 0 */ \
+	0x01, 0x40,			/* Set display start line 0 */ \
+	0x01, 0xB0,			/* Set page address 0 */ \
+	0x01, 0xAF,			/* enable display */ \
+    0x00				/* end of the sequence */
+};
+#endif
 
 
 
@@ -79,14 +105,14 @@ void lcd_init(void)
     uint8_t i = 0;
     uint8_t len = 0;
 
-    while (sh1106_conf[i] != 0x00)
+    while (lcd_conf[i] != 0x00)
     {
-        len = sh1106_conf[i++];
+        len = lcd_conf[i++];
 
         cs_lcd_active();
         while (len--)
         {
-            spi2_tx(sh1106_conf[i++]);
+            spi2_tx(lcd_conf[i++]);
         }
         cs_lcd_inactive();
     }
