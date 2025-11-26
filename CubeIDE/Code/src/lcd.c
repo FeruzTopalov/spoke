@@ -80,7 +80,7 @@ const uint8_t lcd_conf[] =
     0x01, 0xA0,			/* Set SEG normal direction */ \
 	0x01, 0xC8,			/* Set COM inverted direction */ \
 	0x01, 0x24,			/* Set regulation ration 5.0 */ \
-	0x02, 0x81,	0x20,	/* Set EV command, set EV = 32 */ \
+	0x02, 0x81,	0x24,	/* Set EV command, set EV = 36 */ \
 	0x01, 0x2C,			/* Booster On */ \
 	0x01, 0x2E,			/* Regulator On */ \
 	0x01, 0x2F,			/* Follower On */ \
