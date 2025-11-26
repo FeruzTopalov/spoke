@@ -80,7 +80,7 @@ const uint8_t lcd_conf[] =
     0x01, 0xA0,			/* Set SEG normal direction */ \
 	0x01, 0xC8,			/* Set COM inverted direction */ \
 	0x01, 0x24,			/* Set regulation ration 5.0 */ \
-	0x02, 0x81,	0x24,	/* Set EV command, set EV = 36 */ \
+	0x02, 0x81,	0x28,	/* Set EV command, set EV = 40 */ \
 
 						/* BEGIN - DO NOT SPLIT */ \
 	0x01, 0xFF,			/* Enter Extension Command Set mode */ \
@@ -161,6 +161,7 @@ void lcd_display_on(void)
 {
 	lcd_send_command(LCD_COMMAND_DISPLAY_ON);
 	display_status = LCD_DISPLAY_ON;
+	backlight_lcd_on();
 }
 
 
@@ -169,6 +170,7 @@ void lcd_display_off(void)
 {
 	lcd_send_command(LCD_COMMAND_DISPLAY_OFF);
 	display_status = LCD_DISPLAY_OFF;
+	backlight_lcd_off();
 }
 
 

@@ -205,7 +205,7 @@ void gpio_init(void)
     GPIOC->CRH |= GPIO_CRH_MODE14_1;
     GPIOC->CRH &= ~GPIO_CRH_CNF14;       //output push-pull
 
-    //PC15 - X5 test point
+    //PC15 - LCD Backlight
     GPIOC->CRH &= ~GPIO_CRH_MODE15_0;    //output 2 MHz
     GPIOC->CRH |= GPIO_CRH_MODE15_1;
     GPIOC->CRH &= ~GPIO_CRH_CNF15;       //output push-pull
@@ -292,7 +292,7 @@ void x4_low(void)
 
 
 //X5 high
-void x5_high(void)
+void backlight_lcd_on(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BS15;
 }
@@ -300,7 +300,7 @@ void x5_high(void)
 
 
 //X5 low
-void x5_low(void)
+void backlight_lcd_off(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BR15;
 }
