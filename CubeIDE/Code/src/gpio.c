@@ -9,6 +9,7 @@
 #include "stm32f10x.h"
 #include "gpio.h"
 #include "bit_band.h"
+#include "config.h"
 
 
 
@@ -81,7 +82,7 @@ void gpio_init(void)
     GPIOA->CRH &= ~GPIO_CRH_CNF10_1;
     GPIOA->ODR |= GPIO_ODR_ODR10;       //pull-up for stability
 
-    //PA11 - RF TX Enable
+    //PA11 - RF TX Enable (in HW 1.x or 2.0) or Power Switch Hold (in HW 2.1 and above)
     GPIOA->CRH &= ~GPIO_CRH_MODE11_0;   //output 2 MHz
     GPIOA->CRH |= GPIO_CRH_MODE11_1;
     GPIOA->CRH &= ~GPIO_CRH_CNF11;      //output push-pull
@@ -92,7 +93,7 @@ void gpio_init(void)
     GPIOA->CRH &= ~GPIO_CRH_CNF12;      //output push-pull
     GPIOA->ODR |= GPIO_ODR_ODR12;		//enable RX on power-up
 
-    //PA15 - Power Switch Hold
+    //PA15 - Power Switch Hold (in HW 1.x or 2.0) or RF TX Enable (in HW 2.1 and above)
     GPIOA->CRH &= ~GPIO_CRH_MODE15_0;   //output 2 MHz
     GPIOA->CRH |= GPIO_CRH_MODE15_1;
     GPIOA->CRH &= ~GPIO_CRH_CNF15;      //output push-pull
@@ -422,7 +423,11 @@ void cs_lcd_inactive(void)
 //Power switch On
 void hold_power(void)
 {
-    GPIOA->BSRR = GPIO_BSRR_BS15;
+#ifdef POWER_HOLD_FIX
+	GPIOA->BSRR = GPIO_BSRR_BS11;
+#else
+	GPIOA->BSRR = GPIO_BSRR_BS15;
+#endif
 }
 
 
@@ -430,7 +435,11 @@ void hold_power(void)
 //Power switch Off
 void release_power(void)
 {
+#ifdef POWER_HOLD_FIX
+	GPIOA->BSRR = GPIO_BSRR_BR11;
+#else
     GPIOA->BSRR = GPIO_BSRR_BR15;
+#endif
 }
 
 
@@ -439,7 +448,12 @@ void release_power(void)
 void rf_tx_mode(void)
 {
 	GPIOA->BSRR = GPIO_BSRR_BR12;	//off RX
+
+#ifdef POWER_HOLD_FIX
+	GPIOA->BSRR = GPIO_BSRR_BS15;	//on TX
+#else
 	GPIOA->BSRR = GPIO_BSRR_BS11;	//on TX
+#endif
 }
 
 
@@ -447,6 +461,10 @@ void rf_tx_mode(void)
 //RF RX mode
 void rf_rx_mode(void)
 {
+#ifdef	POWER_HOLD_FIX
+	GPIOA->BSRR = GPIO_BSRR_BR15;	//off TX
+#else
 	GPIOA->BSRR = GPIO_BSRR_BR11;	//off TX
+#endif
 	GPIOA->BSRR = GPIO_BSRR_BS12;	//on RX
 }
