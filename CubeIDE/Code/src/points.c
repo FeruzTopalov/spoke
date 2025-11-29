@@ -6,7 +6,6 @@
 
 
 #include "stm32f10x.h"
-#include "config.h"
 #include "points.h"
 #include "memory.h"
 #include "lrns.h"

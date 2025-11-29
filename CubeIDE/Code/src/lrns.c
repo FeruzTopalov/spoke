@@ -9,7 +9,6 @@
 #include <string.h>
 #include <math.h>
 #include "stm32f10x.h"
-#include "config.h"
 #include "lrns.h"
 #include "settings.h"
 #include "gps.h"

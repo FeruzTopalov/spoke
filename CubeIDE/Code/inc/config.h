@@ -10,19 +10,25 @@
 #define CONFIG_HEADER
 
 
+/* STEP 1 */
+/* Select GPS Baud speed */
+#define GPS_BAUD_9600
+//#define GPS_BAUD_38400
+//#define GPS_BAUD_57600
+//#define GPS_BAUD_115200	/* Operation is not guaranteed due to limited buffer size */
 
-#define DEVICES_ON_AIR_MAX	(5)												//max number of devices on air (real Spoke devices)
-#define MEMORY_POINTS_TOT	(4)												//total number of memory points
-#define NAV_OBJECTS_MAX		(DEVICES_ON_AIR_MAX + MEMORY_POINTS_TOT)         //max number of devices including real Spoke devices and memory points
 
-#define DEVICE_NUMBER_FIRST (1)
-#define DEVICE_NUMBER_LAST  (DEVICES_ON_AIR_MAX)
 
-#define MEMORY_POINT_FIRST	(DEVICES_ON_AIR_MAX + 1)
-#define MEMORY_POINT_LAST	(MEMORY_POINT_FIRST + MEMORY_POINTS_TOT - 1)
+/* STEP 2 */
+/* Define/undefine POWER_HOLD fix */
+#define POWER_HOLD_FIX		/* Undefine for HW 1.x or 2.0; Define for HW 2.1 and above */
 
-#define NAV_OBJECT_FIRST 	(1)
-#define NAV_OBJECT_LAST  	(NAV_OBJECTS_MAX)
+
+
+/* STEP 3 */
+/* Define LCD type */
+//#define LCD_TYPE_SH1106		/* Define for HW 1.x */
+#define LCD_TYPE_ST7567A	/* Define for HW 2.x */
 
 
 

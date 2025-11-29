@@ -13,6 +13,7 @@
 #include "gpio.h"
 #include "spi.h"
 #include "service.h"
+#include "config.h"
 
 
 
@@ -33,8 +34,16 @@
 
 #define LCD_COMMAND_DISPLAY_ON	(0xAF)
 #define LCD_COMMAND_DISPLAY_OFF	(0xAE)
+#define LCD_COMMAND_SET_ROW_ADR_BASE	(0xB0)
+#define LCD_COMMAND_SET_COL_ADRH_BASE	(0x10)
 
+#ifdef LCD_TYPE_SH1106
+#define LCD_COMMAND_SET_COL_ADRL_BASE	(0x02)		//LCD panel is centered to SH1106 frame buffer
+#endif
 
+#ifdef LCD_TYPE_ST7567A
+#define LCD_COMMAND_SET_COL_ADRL_BASE	(0x00)		//LCD panel is left-adjusted to ST7567A frame buffer
+#endif
 
 uint8_t screen_buf[LCD_SIZE_BYTES];     		//public array 128x64 pixels
 uint16_t buf_pos = 0;                   		//public var 0 - 1023
@@ -46,8 +55,9 @@ uint8_t display_status = LCD_DISPLAY_ON;	//lcd panel status on/off
 
 
 
+#ifdef LCD_TYPE_SH1106
 //SH1106 init sequence (first byte in line = amount of config bytes in line)
-const uint8_t sh1106_conf[] =
+const uint8_t lcd_conf[] =
 {// len,  val1, val2, ...
     0x01, 0x00,			/* Set lower column address 0 */ \
     0x01, 0x10,			/* Set higher column address 0 */ \
@@ -58,6 +68,45 @@ const uint8_t sh1106_conf[] =
 	0x01, 0xAF,			/* enable display */ \
     0x00				/* end of the sequence */
 };
+#endif
+
+
+
+#ifdef LCD_TYPE_ST7567A
+//ST7567A init sequence
+const uint8_t lcd_conf[] =
+{// len,  val1, val2, ...
+    0x01, 0xA2,			/* Set 1/9 bias */ \
+    0x01, 0xA0,			/* Set SEG normal direction */ \
+	0x01, 0xC8,			/* Set COM inverted direction */ \
+	0x01, 0x24,			/* Set regulation ration 5.0 */ \
+	0x02, 0x81,	0x28,	/* Set EV command, set EV = 40 */ \
+
+						/* BEGIN - DO NOT SPLIT */ \
+	0x01, 0xFF,			/* Enter Extension Command Set mode */ \
+	0x01, 0x72,			/* Enter Display Setting mode */ \
+	0x01, 0xFE,			/* Exit Extension Command Set mode */ \
+
+	0x01, 0xD4,			/* Set Duty 1/65 */ \
+	0x01, 0x90,			/* Set Bias 1/9 */ \
+	0x01, 0x9B,			/* Set FPS 190 */ \
+
+	0x01, 0xFF,			/* Enter Extension Command Set mode */ \
+	0x01, 0x70,			/* Exit Display Setting mode */ \
+	0x01, 0xFE,			/* Exit Extension Command Set mode */ \
+						/* END - DO NOT SPLIT */ \
+
+	0x01, 0x2C,			/* Booster On */ \
+	0x01, 0x2E,			/* Regulator On */ \
+	0x01, 0x2F,			/* Follower On */ \
+    0x01, 0x00,			/* Set lower column address 0 */ \
+    0x01, 0x10,			/* Set higher column address 0 */ \
+	0x01, 0x40,			/* Set display start line 0 */ \
+	0x01, 0xB0,			/* Set page address 0 */ \
+	0x01, 0xAF,			/* enable display */ \
+    0x00				/* end of the sequence */
+};
+#endif
 
 
 
@@ -79,14 +128,14 @@ void lcd_init(void)
     uint8_t i = 0;
     uint8_t len = 0;
 
-    while (sh1106_conf[i] != 0x00)
+    while (lcd_conf[i] != 0x00)
     {
-        len = sh1106_conf[i++];
+        len = lcd_conf[i++];
 
         cs_lcd_active();
         while (len--)
         {
-            spi2_tx(sh1106_conf[i++]);
+            spi2_tx(lcd_conf[i++]);
         }
         cs_lcd_inactive();
     }
@@ -112,6 +161,7 @@ void lcd_display_on(void)
 {
 	lcd_send_command(LCD_COMMAND_DISPLAY_ON);
 	display_status = LCD_DISPLAY_ON;
+	backlight_lcd_on();
 }
 
 
@@ -120,6 +170,7 @@ void lcd_display_off(void)
 {
 	lcd_send_command(LCD_COMMAND_DISPLAY_OFF);
 	display_status = LCD_DISPLAY_OFF;
+	backlight_lcd_off();
 }
 
 
@@ -154,9 +205,9 @@ void lcd_update(void)
 		{
 			lcd_busy = 1;
 			current_page = 0;
-			lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
-			lcd_send_command(0x10);			//reset column address high
-			lcd_send_command(0xB0);			//set 0 page address
+			lcd_send_command(LCD_COMMAND_SET_COL_ADRL_BASE); 		//reset column address low
+			lcd_send_command(LCD_COMMAND_SET_COL_ADRH_BASE);		//reset column address high
+			lcd_send_command(LCD_COMMAND_SET_ROW_ADR_BASE);			//set 0 page address
 			lcd_data_mode();
 			cs_lcd_active();
 			spi2_dma_start(&screen_buf[0], LCD_SIZE_X);
@@ -172,9 +223,9 @@ void lcd_continue_update(void)
 
 	if (current_page < 8)
 	{
-		lcd_send_command(0x02); 		//reset column address low to 2 because LCD panel is centered to SH1106 frame buffer
-		lcd_send_command(0x10);			//reset column address high
-		lcd_send_command(0xB0 | current_page);	//set page address
+		lcd_send_command(LCD_COMMAND_SET_COL_ADRL_BASE); 		//reset column address low
+		lcd_send_command(LCD_COMMAND_SET_COL_ADRH_BASE);			//reset column address high
+		lcd_send_command(LCD_COMMAND_SET_ROW_ADR_BASE | current_page);	//set page address
 
 		lcd_data_mode();
 		cs_lcd_active();
