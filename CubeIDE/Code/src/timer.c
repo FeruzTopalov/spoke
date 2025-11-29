@@ -259,7 +259,8 @@ void timer2_init(void)
 
 	TIM2->CCER |= TIM_CCER_CC1E;   	//CH1 output enable
 	TIM2->CCER |= TIM_CCER_CC2E;    //CH2 output enable
-	timer2_clock_disable();
+	TIM2->CR1 |= TIM_CR1_CEN;   	//enable PWM timer
+	//timer2_clock_disable();
 }
 
 
@@ -294,7 +295,7 @@ void timer2_stop(void) //todo
 
 void buzzer_pwm_start(void)
 {
-	timer2_clock_enable();
+	//timer2_clock_enable();
 
 #ifdef	BUZZER_DRIVE_SINGLE_ENDED
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1); //PWM mode 1 for CH1 (PA0, buzzer)
@@ -303,14 +304,14 @@ void buzzer_pwm_start(void)
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_0);    //PWM mode 2 for CH2 (PA1, buzzer n)
 #endif
 
-	TIM2->CR1 |= TIM_CR1_CEN;   	//enable PWM timer
+	//TIM2->CR1 |= TIM_CR1_CEN;   	//enable PWM timer
 }
 
 
 
 void buzzer_pwm_stop(void)
 {
-	TIM2->CR1 &= ~TIM_CR1_CEN;      //disable PWM timer
+	//TIM2->CR1 &= ~TIM_CR1_CEN;      //disable PWM timer
 	//TIM2->CNT = 0;                  //force output low
 
 #ifdef	BUZZER_DRIVE_SINGLE_ENDED
@@ -320,7 +321,7 @@ void buzzer_pwm_stop(void)
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2);    //Force low CH2 (PA1, buzzer n)
 #endif
 
-	timer2_clock_disable();
+	//timer2_clock_disable();
 }
 
 
@@ -328,9 +329,9 @@ void buzzer_pwm_stop(void)
 void backlight_pwm_start(void)
 {
 #ifdef	BUZZER_DRIVE_SINGLE_ENDED
-	timer2_clock_enable();
+	//timer2_clock_enable();
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1); //PWM mode 1 for CH2 (PA1, backlight)
-	TIM2->CR1 |= TIM_CR1_CEN;   	//enable PWM timer
+	//TIM2->CR1 |= TIM_CR1_CEN;   	//enable PWM timer
 #endif
 }
 
@@ -339,10 +340,10 @@ void backlight_pwm_start(void)
 void backlight_pwm_stop(void)
 {
 #ifdef	BUZZER_DRIVE_SINGLE_ENDED
-	TIM2->CR1 &= ~TIM_CR1_CEN;      //disable PWM timer
+	//TIM2->CR1 &= ~TIM_CR1_CEN;      //disable PWM timer
 	//TIM2->CNT = 0;                  //force output low
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2); //Force low CH2 (PA1, backlight)
-	timer2_clock_disable();
+	//timer2_clock_disable();
 #endif
 }
 
