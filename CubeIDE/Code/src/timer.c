@@ -291,6 +291,13 @@ void timer2_start(void) //todo
 
 
 
+void timer2_stop(void) //todo
+{
+	;
+}
+
+
+
 void buzzer_pwm_start(void)
 {
 	timer2_clock_enable();
@@ -307,13 +314,6 @@ void buzzer_pwm_start(void)
 
 
 
-void timer2_stop(void) //todo
-{
-	;
-}
-
-
-
 void buzzer_pwm_stop(void)
 {
 	TIM2->CR1 &= ~TIM_CR1_CEN;      //disable PWM timer
@@ -326,6 +326,25 @@ void buzzer_pwm_stop(void)
 	TIM2->CCER &= ~TIM_CCER_CC2E;   //CH2 output disable
 #endif
 
+	timer2_clock_disable();
+}
+
+
+
+void backlight_pwm_start(void)
+{
+	timer2_clock_enable();
+	TIM2->CCER |= TIM_CCER_CC2E;    //CH2 output enable
+	TIM2->CR1 |= TIM_CR1_CEN;   	//enable PWM timer
+}
+
+
+
+void backlight_pwm_stop(void)
+{
+	TIM2->CR1 &= ~TIM_CR1_CEN;      //disable PWM timer
+	TIM2->CNT = 0;                  //force output low
+	TIM2->CCER &= ~TIM_CCER_CC2E;   //CH2 output disable
 	timer2_clock_disable();
 }
 

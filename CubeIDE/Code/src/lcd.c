@@ -14,6 +14,7 @@
 #include "spi.h"
 #include "service.h"
 #include "config.h"
+#include "timer.h"
 
 
 
@@ -161,7 +162,12 @@ void lcd_display_on(void)
 {
 	lcd_send_command(LCD_COMMAND_DISPLAY_ON);
 	display_status = LCD_DISPLAY_ON;
+
+#ifdef	BUZZER_DRIVE_SINGLE_ENDED
+	backlight_pwm_start();
+#else
 	backlight_lcd_on();
+#endif
 }
 
 
@@ -170,7 +176,12 @@ void lcd_display_off(void)
 {
 	lcd_send_command(LCD_COMMAND_DISPLAY_OFF);
 	display_status = LCD_DISPLAY_OFF;
+
+#ifdef	BUZZER_DRIVE_SINGLE_ENDED
+	backlight_pwm_stop();
+#else
 	backlight_lcd_off();
+#endif
 }
 
 
