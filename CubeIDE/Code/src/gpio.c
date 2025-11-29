@@ -22,13 +22,15 @@ void gpio_init(void)
     //Port A
     RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
     
-    //PA0 - Piezo Buzzer (PWM) P
+    //PA0 - Passive Buzzer (PWM) Positive line in Differential drive
+    //PA0 - Passive Buzzer (PWM) Single line in Sidgle-ended drive
     GPIOA->CRL &= ~GPIO_CRL_MODE0_0;    //output 2 MHz
     GPIOA->CRL |= GPIO_CRL_MODE0_1;
     GPIOA->CRL &= ~GPIO_CRL_CNF0_0;       //alternate output push-pull
     GPIOA->CRL |= GPIO_CRL_CNF0_1;
     
-    //PA1 - Piezo Buzzer (PWM) N
+    //PA1 - Piezo Buzzer (PWM) Negative line in Differential drive
+    //PA1 - LCD Backlight (PWM) in PWM mode Backlight
     GPIOA->CRL &= ~GPIO_CRL_MODE1_0;  	//output 2 MHz
     GPIOA->CRL |= GPIO_CRL_MODE1_1;
     GPIOA->CRL &= ~GPIO_CRL_CNF1_0;    	//alternate output push-pull
@@ -275,7 +277,7 @@ void clear_buttons_interrupts(void)
 
 
 
-//X4 high
+//X4 high todo: MUX
 void x4_high(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BS14;
@@ -283,7 +285,7 @@ void x4_high(void)
 
 
 
-//X4 low
+//X4 low todo: MUX
 void x4_low(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BR14;
@@ -291,7 +293,7 @@ void x4_low(void)
 
 
 
-//X5 high
+//X5 high todo: bl
 void backlight_lcd_on(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BS15;
@@ -299,7 +301,7 @@ void backlight_lcd_on(void)
 
 
 
-//X5 low
+//X5 low todo: bl
 void backlight_lcd_off(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BR15;

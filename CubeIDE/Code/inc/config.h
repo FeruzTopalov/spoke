@@ -20,15 +20,21 @@
 
 
 /* STEP 2 */
-/* Define/undefine POWER_HOLD fix */
+/* Define/undefine power hold line fix, swapping POWER_HOLD (PA15) and RF_TXEN (PA11) */
 #define POWER_HOLD_FIX		/* Undefine for HW 1.x or 2.0; Define for HW 2.1 and above */
 
 
 
 /* STEP 3 */
-/* Define LCD type */
+/* Define LCD type, either OLED SH1106 or Monochrome with backlight ST7567A */
 //#define LCD_TYPE_SH1106		/* Define for HW 1.x */
 #define LCD_TYPE_ST7567A	/* Define for HW 2.x */
+
+
+
+/* STEP 4 */
+/* Define/undefine passive buzzer drive type, either differential or single-ended */
+#define BUZZER_DRIVE_SINGLE_ENDED		/* Undefine for HW 1.x or 2.0; Define for HW 2.1 and above */
 
 
 
