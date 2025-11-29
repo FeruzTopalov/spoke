@@ -27,7 +27,7 @@ void timer1_start_800ms(void);
 void timer1_start_100ms(void);
 void timer1_stop_reload(void);
 uint8_t timer1_get_intrvl_type(void);
-void timer2_stop(void);
+void buzzer_pwm_stop(void);
 void timer3_start(void);
 void timer3_stop(void);
 void timer4_start(void);

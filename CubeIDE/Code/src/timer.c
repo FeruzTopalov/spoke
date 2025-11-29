@@ -8,6 +8,7 @@
 #include "timer.h"
 #include "gpio.h"
 #include "bit_band.h"
+#include "config.h"
 
 
 
@@ -22,6 +23,8 @@ void timer2_init(void);
 void timer2_clock_disable(void);
 void timer2_clock_enable(void);
 void timer2_start(void);
+void timer2_stop(void);
+void buzzer_pwm_start(void);
 void timer3_init(void);
 void timer3_clock_disable(void);
 void timer3_clock_enable(void);
@@ -53,7 +56,7 @@ void make_a_beep(void)
 {
 	if (sound_enabled)
 	{
-		timer2_start();		//pwm
+		buzzer_pwm_start();		//pwm
 	}
 
 	systick_set_100ms();
@@ -67,7 +70,7 @@ void make_a_long_beep(void)
 {
 	if (sound_enabled)
 	{
-		timer2_start();		//pwm
+		buzzer_pwm_start();		//pwm
 	}
 
 	systick_set_1000ms();
@@ -235,20 +238,32 @@ void timer1_stop_reload(void)
 
 
 
-//Timer 2 init (pwm timer, the frequency of the "beep")
+//Timer 2 init (buzzer and/or backlight pwm timer, the frequency of the "beep" and/or backlight pwm)
 void timer2_init(void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; //enable timer clock
 	TIM2->PSC = (uint16_t)374;         	//3MHz/(374+1)=8kHz
 	TIM2->ARR = (uint16_t)3;            //8kHz/(3+1)=2kHz
-	TIM2->CCR1 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5
-	TIM2->CCR2 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5
-	TIM2->CCMR1 |= TIM_CCMR1_OC1M_2;    //PWM mode 1 for CH1
+
+#ifdef	BUZZER_DRIVE_SINGLE_ENDED
+	TIM2->CCR1 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5 (fixed)
+	TIM2->CCR2 = (uint16_t)1;           //duty cycle 1/(3+1)=0.25 (configurable by user via settings)
+	TIM2->CCMR1 |= TIM_CCMR1_OC1M_2;    //PWM mode 1 for CH1 (PA0, buzzer)
 	TIM2->CCMR1 |= TIM_CCMR1_OC1M_1;
 	TIM2->CCMR1 &= ~TIM_CCMR1_OC1M_0;
-	TIM2->CCMR1 |= TIM_CCMR1_OC2M_2;    //PWM mode 2 for CH2
+	TIM2->CCMR1 |= TIM_CCMR1_OC2M_2;    //PWM mode 1 for CH2 (PA1, backlight)
+	TIM2->CCMR1 |= TIM_CCMR1_OC2M_1;
+	TIM2->CCMR1 &= ~TIM_CCMR1_OC2M_0;
+#else
+	TIM2->CCR1 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5 (fixed)
+	TIM2->CCR2 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5 (fixed)
+	TIM2->CCMR1 |= TIM_CCMR1_OC1M_2;    //PWM mode 1 for CH1 (PA0, buzzer p)
+	TIM2->CCMR1 |= TIM_CCMR1_OC1M_1;
+	TIM2->CCMR1 &= ~TIM_CCMR1_OC1M_0;
+	TIM2->CCMR1 |= TIM_CCMR1_OC2M_2;    //PWM mode 2 for CH2 (PA1, buzzer n)
 	TIM2->CCMR1 |= TIM_CCMR1_OC2M_1;
 	TIM2->CCMR1 |= TIM_CCMR1_OC2M_0;
+#endif
 
 	timer2_clock_disable();
 }
@@ -269,23 +284,47 @@ void timer2_clock_enable(void)
 
 
 
-void timer2_start(void)
+void timer2_start(void) //todo
+{
+	;
+}
+
+
+
+void buzzer_pwm_start(void)
 {
 	timer2_clock_enable();
 
+#ifdef	BUZZER_DRIVE_SINGLE_ENDED
+	TIM2->CCER |= TIM_CCER_CC1E;   	//CH1 output enable
+#else
 	TIM2->CCER |= TIM_CCER_CC1E;   	//CH1 output enable
 	TIM2->CCER |= TIM_CCER_CC2E;    //CH2 output enable
+#endif
+
 	TIM2->CR1 |= TIM_CR1_CEN;   	//enable PWM timer
 }
 
 
 
-void timer2_stop(void)
+void timer2_stop(void) //todo
+{
+	;
+}
+
+
+
+void buzzer_pwm_stop(void)
 {
 	TIM2->CR1 &= ~TIM_CR1_CEN;      //disable PWM timer
 	TIM2->CNT = 0;                  //force output low
+
+#ifdef	BUZZER_DRIVE_SINGLE_ENDED
+	TIM2->CCER &= ~TIM_CCER_CC1E;   //CH1 output disable
+#else
 	TIM2->CCER &= ~TIM_CCER_CC1E;   //CH1 output disable
 	TIM2->CCER &= ~TIM_CCER_CC2E;   //CH2 output disable
+#endif
 
 	timer2_clock_disable();
 }

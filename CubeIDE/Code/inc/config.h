@@ -20,7 +20,7 @@
 
 
 /* STEP 2 */
-/* Define/undefine power hold line fix, swapping POWER_HOLD (PA15) and RF_TXEN (PA11) */
+/* Define/undefine power hold line fix, either legacy or swapping POWER_HOLD (PA15) and RF_TXEN (PA11) */
 #define POWER_HOLD_FIX		/* Undefine for HW 1.x or 2.0; Define for HW 2.1 and above */
 
 
@@ -33,7 +33,7 @@
 
 
 /* STEP 4 */
-/* Define/undefine passive buzzer drive type, either differential or single-ended */
+/* Define/undefine passive buzzer drive type, either differential (legacy) or single-ended (new) */
 #define BUZZER_DRIVE_SINGLE_ENDED		/* Undefine for HW 1.x or 2.0; Define for HW 2.1 and above */
 
 

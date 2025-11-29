@@ -484,7 +484,7 @@ void DMA1_Channel4_IRQHandler(void)
 //End of beep
 void SysTick_Handler(void)
 {
-	timer2_stop();	//pwm
+	buzzer_pwm_stop();	//pwm
 	systick_stop();	//gating
 	led_red_off();
 }
