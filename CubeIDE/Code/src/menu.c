@@ -130,7 +130,7 @@ void confirm_settings_save_esc(void);
 void calibrate_compass_up(void);
 void calibrated_compass_ok(void);
 void calibrated_compass_esc(void);
-void toggle_bl_options(void);
+void scroll_bl_options(void);
 
 
 
@@ -905,13 +905,13 @@ void draw_power(void)
     	lcd_print_next("0");
     }
 
-    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1, "BkLt");
+    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1, "Bklt");
     char bl_lsb_char = p_bl_level_values[settings_copy.bl_level_opt] & 0x00FF;
     char bl_msb_char = (p_bl_level_values[settings_copy.bl_level_opt] & 0xFF00) >> 8;
     lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 6, bl_lsb_char);
     lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 5, bl_msb_char);
 
-    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_2, "Cons U");
+    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_2, "Cnsl U");
     //todo: get console stat
 
     lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL_2, "Diag");
@@ -1831,7 +1831,7 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 			break;
 
 		case M_POWER_I_BLIGHT:
-			toggle_bl_options();
+			scroll_bl_options();
 			break;
 
 		case M_POWER_I_POWEROFF:
@@ -1849,13 +1849,18 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 
 void power_esc(void)
 {
+    if (settings_copy.bl_level_opt != p_settings->bl_level_opt) //save backlight level if changed
+    {
+    	settings_save(&settings_copy);
+    }
+
 	if (return_from_power_menu == M_NAVIGATION)
 	{
 		start_compass(); //start compass activity
 	}
+
 	reset_current_item_in_menu(M_POWER);
 	current_menu = return_from_power_menu;
-
 }
 
 
@@ -2509,7 +2514,7 @@ void calibrated_compass_esc(void)
 
 
 
-void toggle_bl_options(void)
+void scroll_bl_options(void)
 {
     if (settings_copy.bl_level_opt == BL_LEVEL_LAST_OPTION)
     {
@@ -2519,6 +2524,8 @@ void toggle_bl_options(void)
     {
         settings_copy.bl_level_opt++;
     }
+
+    //todo toggle_bl(settings_copy.bl_level_opt);
 }
 
 
