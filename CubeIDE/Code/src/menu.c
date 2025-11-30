@@ -130,6 +130,7 @@ void confirm_settings_save_esc(void);
 void calibrate_compass_up(void);
 void calibrated_compass_ok(void);
 void calibrated_compass_esc(void);
+void toggle_bl_options(void);
 
 
 
@@ -904,7 +905,7 @@ void draw_power(void)
     	lcd_print_next("0");
     }
 
-    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1, "BL");
+    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1, "BkLt");
     char bl_lsb_char = p_bl_level_values[settings_copy.bl_level_opt] & 0x00FF;
     char bl_msb_char = (p_bl_level_values[settings_copy.bl_level_opt] & 0xFF00) >> 8;
     lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 6, bl_lsb_char);
@@ -1829,6 +1830,10 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 			toggle_sound();
 			break;
 
+		case M_POWER_I_BLIGHT:
+			toggle_bl_options();
+			break;
+
 		case M_POWER_I_POWEROFF:
 			release_power();
 			break;
@@ -2500,6 +2505,20 @@ void calibrated_compass_ok(void)
 void calibrated_compass_esc(void)
 {
 	current_menu = M_CALIBRATE_COMPASS;	//restart calibration same way we enter calibration from main menu
+}
+
+
+
+void toggle_bl_options(void)
+{
+    if (settings_copy.bl_level_opt == BL_LEVEL_LAST_OPTION)
+    {
+        settings_copy.bl_level_opt = BL_LEVEL_FIRST_OPTION;
+    }
+    else
+    {
+        settings_copy.bl_level_opt++;
+    }
 }
 
 

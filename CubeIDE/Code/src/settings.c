@@ -47,17 +47,17 @@ void settings_interactive_save_default(void);
 #define BL_LEVEL_LOW_AUTO_VALUE		(0x6131)	//"a1"
 #define BL_LEVEL_MID_AUTO_VALUE		(0x6132)	//"a2"
 #define BL_LEVEL_HIGH_AUTO_VALUE	(0x6133)	//"a3"
-#define BL_LEVEL_LOW_VALUE    		(0x2031)	//" 1"
-#define BL_LEVEL_MID_VALUE   		(0x2032)	//" 2"
-#define BL_LEVEL_HIGH_VALUE  		(0x2033)	//" 3"
+#define BL_LEVEL_LOW_CONST_VALUE    (0x6331)	//"c1"
+#define BL_LEVEL_MID_CONST_VALUE   	(0x6332)	//"c2"
+#define BL_LEVEL_HIGH_CONST_VALUE  	(0x6333)	//"c3"
 
 #define BL_LEVEL_VALUES_ARRAY 		{ 	BL_LEVEL_OFF_VALUE, 		\
 										BL_LEVEL_LOW_AUTO_VALUE, 	\
 										BL_LEVEL_MID_AUTO_VALUE, 	\
 										BL_LEVEL_HIGH_AUTO_VALUE,	\
-										BL_LEVEL_LOW_VALUE, 		\
-										BL_LEVEL_MID_VALUE, 		\
-										BL_LEVEL_HIGH_VALUE			}
+										BL_LEVEL_LOW_CONST_VALUE, 	\
+										BL_LEVEL_MID_CONST_VALUE, 	\
+										BL_LEVEL_HIGH_CONST_VALUE	}
 
 
 
