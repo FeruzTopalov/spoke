@@ -242,17 +242,17 @@ void timer1_stop_reload(void)
 void timer2_init(void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; //enable timer clock
-	TIM2->PSC = (uint16_t)374;         	//3MHz/(374+1)=8kHz
-	TIM2->ARR = (uint16_t)3;            //8kHz/(3+1)=2kHz
+	TIM2->PSC = (uint16_t)149;         	//3MHz/(149+1)=20kHz
+	TIM2->ARR = (uint16_t)9;            //20kHz/(9+1)=2kHz
 
 #ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
-	TIM2->CCR1 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5 (fixed)
-	TIM2->CCR2 = (uint16_t)1;           //duty cycle 1/(3+1)=0.25 (configurable by user via settings)
+	TIM2->CCR1 = (uint16_t)5;           //duty cycle 5/(9+1)=0.5 (fixed)
+	TIM2->CCR2 = (uint16_t)1;           //duty cycle 1/(9+1)=0.1 (configurable by user via settings)
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2); //Force low CH1 (PA0, buzzer)
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2); //Force low CH2 (PA1, backlight)
 #else
-	TIM2->CCR1 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5 (fixed)
-	TIM2->CCR2 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5 (fixed)
+	TIM2->CCR1 = (uint16_t)5;           //duty cycle 5/(9+1)=0.5 (fixed)
+	TIM2->CCR2 = (uint16_t)5;           //duty cycle 5/(9+1)=0.5 (fixed)
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2);    //Force low CH1 (PA0, buzzer p)
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2);    //Force low CH2 (PA1, buzzer n)
 #endif
