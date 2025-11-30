@@ -12,6 +12,11 @@
 
 
 
+#define BL_PWM_LEVEL_LOW_CCR_VALUE		(1)
+#define BL_PWM_LEVEL_MID_CCR_VALUE		(5)
+
+
+
 void systick_init(void);
 void systick_start(void);
 void systick_set_100ms(void);
@@ -316,19 +321,33 @@ void buzzer_pwm_stop(void)
 
 
 
-void backlight_pwm_start(void)
+void backlight_pwm_set(uint8_t pwm_level)
 {
 #ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
-	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1); //PWM mode 1 for CH2 (PA1, backlight)
-#endif
-}
+	switch (pwm_level)
+	{
+	case BL_PWM_LEVEL_OFF:
+		TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2); //Force low CH2 (PA1, backlight)
+		break;
 
+	case BL_PWM_LEVEL_LOW:
+		TIM2->CCR2 = (uint16_t)BL_PWM_LEVEL_LOW_CCR_VALUE;           //set PWM duty cycle
+		TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1); //PWM mode 1 for CH2 (PA1, backlight)
+		break;
 
+	case BL_PWM_LEVEL_MID:
+		TIM2->CCR2 = (uint16_t)BL_PWM_LEVEL_MID_CCR_VALUE;           //set PWM duty cycle
+		TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1); //PWM mode 1 for CH2 (PA1, backlight)
+		break;
 
-void backlight_pwm_stop(void)
-{
-#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
-	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2); //Force low CH2 (PA1, backlight)
+	case BL_PWM_LEVEL_MAX:
+		TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_0); //Force high CH2 (PA1, backlight)
+		break;
+
+	default:
+		TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2); //Force low CH2 (PA1, backlight)
+		break;
+	}
 #endif
 }
 

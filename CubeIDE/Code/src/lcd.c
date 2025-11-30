@@ -15,6 +15,12 @@
 #include "service.h"
 #include "config.h"
 #include "timer.h"
+#include "settings.h"
+
+
+
+void lcd_backlight_enable(void);
+void lcd_backlight_disable(void);
 
 
 
@@ -53,7 +59,7 @@ uint8_t lcd_busy = 0;	//is lcd update ongoing?
 uint8_t lcd_pending_off = 0; 	//pending command to off the lcd
 
 uint8_t display_status = LCD_DISPLAY_ON;	//lcd panel status on/off
-
+uint8_t current_backlight_option;			//latest (current) backlight option
 
 
 #ifdef LCD_TYPE_SH1106
@@ -163,11 +169,7 @@ void lcd_display_on(void)
 	lcd_send_command(LCD_COMMAND_DISPLAY_ON);
 	display_status = LCD_DISPLAY_ON;
 
-#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
-	backlight_pwm_start();
-#else
-	backlight_lcd_on();
-#endif
+	lcd_toggle_backlight_opt(current_backlight_option); //fed it with own current_backlight_option state because upon LCD ON the current option could be LCD_COMMAND_DISPLAY_OFF
 }
 
 
@@ -177,11 +179,7 @@ void lcd_display_off(void)
 	lcd_send_command(LCD_COMMAND_DISPLAY_OFF);
 	display_status = LCD_DISPLAY_OFF;
 
-#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
-	backlight_pwm_stop();
-#else
-	backlight_lcd_off();
-#endif
+	lcd_backlight_disable();
 }
 
 
@@ -203,6 +201,83 @@ void lcd_display_off_request(void)
 uint8_t lcd_get_display_status(void)
 {
 	return display_status;
+}
+
+
+
+void lcd_toggle_backlight_opt(uint8_t bl_option)
+{
+	current_backlight_option = bl_option;	//get value from menu and set it as current
+
+	if (current_backlight_option == BL_LEVEL_OFF_SETTING)
+	{
+		lcd_backlight_disable();
+	}
+	else
+	{
+		lcd_backlight_enable();
+	}
+}
+
+
+
+void lcd_backlight_enable(void) //for safety it can also disable pwm
+{
+#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
+
+	uint8_t bl_pwm_timer_level = BL_PWM_LEVEL_OFF;
+
+	switch (current_backlight_option)
+	{
+		case BL_LEVEL_OFF_SETTING:
+			lcd_backlight_disable();
+			break;
+
+		case BL_LEVEL_LOW_AUTO_SETTING:
+			bl_pwm_timer_level = BL_PWM_LEVEL_LOW;
+			break;
+
+		case BL_LEVEL_MID_AUTO_SETTING:
+			bl_pwm_timer_level = BL_PWM_LEVEL_MID;
+			break;
+
+		case BL_LEVEL_HIGH_AUTO_SETTING:
+			bl_pwm_timer_level = BL_PWM_LEVEL_MAX;
+			break;
+
+		case BL_LEVEL_LOW_CONSTANT_SETTING:
+			bl_pwm_timer_level = BL_PWM_LEVEL_LOW;
+			break;
+
+		case BL_LEVEL_MID_CONSTANT_SETTING:
+			bl_pwm_timer_level = BL_PWM_LEVEL_MID;
+			break;
+
+		case BL_LEVEL_HIGH_CONSTANT_SETTING:
+			bl_pwm_timer_level = BL_PWM_LEVEL_MAX;
+			break;
+
+		default:
+			lcd_backlight_disable();
+			break;
+	}
+
+	backlight_pwm_set(bl_pwm_timer_level);
+
+#else
+	backlight_lcd_high();
+#endif
+}
+
+
+
+void lcd_backlight_disable(void)
+{
+#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
+	backlight_pwm_set(BL_PWM_LEVEL_OFF);
+#else
+	backlight_lcd_low();
+#endif
 }
 
 

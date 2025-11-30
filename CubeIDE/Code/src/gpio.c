@@ -294,17 +294,21 @@ void x4_low(void)
 
 
 //X5 high todo: bl
-void backlight_lcd_on(void)
+void backlight_lcd_high(void)
 {
+#ifndef	SPLIT_PWM_BUZZER_BACKLIGHT
 	GPIOC->BSRR = GPIO_BSRR_BS15;
+#endif
 }
 
 
 
 //X5 low todo: bl
-void backlight_lcd_off(void)
+void backlight_lcd_low(void)
 {
+#ifndef	SPLIT_PWM_BUZZER_BACKLIGHT
 	GPIOC->BSRR = GPIO_BSRR_BR15;
+#endif
 }
 
 

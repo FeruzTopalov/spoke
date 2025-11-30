@@ -56,6 +56,7 @@ void lcd_display_on(void);
 void lcd_display_off(void);
 void lcd_display_off_request(void);
 uint8_t lcd_get_display_status(void);
+void lcd_toggle_backlight_opt(uint8_t bl_option);
 void lcd_fill(void);
 void lcd_clear(void);
 void lcd_pixel(uint8_t x, uint8_t y, int8_t action);

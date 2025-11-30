@@ -28,14 +28,20 @@ void timer1_start_100ms(void);
 void timer1_stop_reload(void);
 uint8_t timer1_get_intrvl_type(void);
 void buzzer_pwm_stop(void);
-void backlight_pwm_start(void);
-void backlight_pwm_stop(void);
+void backlight_pwm_set(uint8_t pwm_level);
 void timer3_start(void);
 void timer3_stop(void);
 void timer4_start(void);
 void timer4_stop(void);
 void toggle_sound(void);
 uint8_t get_sound_status(void);
+
+
+
+#define BL_PWM_LEVEL_OFF   		(0)
+#define BL_PWM_LEVEL_LOW		(1)
+#define BL_PWM_LEVEL_MID		(2)
+#define BL_PWM_LEVEL_MAX		(3)
 
 
 

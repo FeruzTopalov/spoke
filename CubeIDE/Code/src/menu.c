@@ -2525,7 +2525,7 @@ void scroll_bl_options(void)
         settings_copy.bl_level_opt++;
     }
 
-    //todo toggle_bl(settings_copy.bl_level_opt);
+    lcd_toggle_backlight_opt(settings_copy.bl_level_opt);
 }
 
 
