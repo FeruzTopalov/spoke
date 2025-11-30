@@ -59,7 +59,9 @@ uint8_t lcd_busy = 0;	//is lcd update ongoing?
 uint8_t lcd_pending_off = 0; 	//pending command to off the lcd
 
 uint8_t display_status = LCD_DISPLAY_ON;	//lcd panel status on/off
-uint8_t current_backlight_option;			//latest (current) backlight option
+uint8_t current_backlight_option = BL_LEVEL_OFF_SETTING; //latest (current) backlight option
+
+struct settings_struct *p_settings;
 
 
 #ifdef LCD_TYPE_SH1106
@@ -120,6 +122,10 @@ const uint8_t lcd_conf[] =
 //LCD Init
 void lcd_init(void)
 {
+	p_settings = get_settings();
+	current_backlight_option = p_settings->bl_level_opt;
+	lcd_toggle_backlight_opt(current_backlight_option); //initialize backlight with saved setting
+
 	spi2_clock_enable();
 
     cs_lcd_inactive();      //ports init state

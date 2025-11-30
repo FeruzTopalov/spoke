@@ -63,9 +63,11 @@ uint8_t *p_update_interval_values;
 //PROGRAM
 int main(void)
 {
-    gpio_init();
+    gpio_init(); //for SPI and backlight pins
     manage_power();
-    spi_init();
+    spi_init();	//for LCD operation
+    timers_init(); //for LCD PWM backlight
+    settings_load(); //for saved backlight setting
     setup_interrupt_priorities();
     __enable_irq();	//for LCD DMA operation
     lcd_init();
@@ -75,14 +77,8 @@ int main(void)
     lcd_update();
     delay_cyc(800000);
 
-     lcd_print_only(0, 0, "settings..");
-    settings_load();
-
     lcd_print_only(0, 0, "uart..");
     uart_init();
-
-    lcd_print_only(0, 0, "timers..");
-    timers_init();
 
     lcd_print_only(0, 0, "adc..");
     adc_init();
