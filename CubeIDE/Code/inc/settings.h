@@ -126,6 +126,7 @@ struct settings_struct *get_settings(void);
 uint8_t *get_update_interval_values(void);
 int8_t *get_tx_power_values(void);
 uint16_t *get_bl_level_values(void);
+void process_pending_save_default(void);
 void settings_save_default(void);
 void settings_load(void);
 void settings_save(struct settings_struct *settings);

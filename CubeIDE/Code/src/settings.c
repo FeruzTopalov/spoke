@@ -113,6 +113,8 @@ uint8_t update_interval_values[] = UPDATE_INTERVAL_VALUES_ARRAY;
 int8_t tx_power_values[] = TX_POWER_VALUES_ARRAY;
 uint16_t bl_level_values[] = BL_LEVEL_VALUES_ARRAY;
 
+uint8_t pending_interactive_save_defaults = 0; //since settings are loaded before lcd init, the flag is set to accomplish interactive settings reset after lcd init
+
 
 
 uint8_t *get_update_interval_values(void)
@@ -153,7 +155,7 @@ void settings_load(void)
     }
     else if (!((GPIOB->IDR) & GPIO_IDR_IDR3) && ((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK released, ESC pressed
     {
-    	settings_interactive_save_default();
+    	pending_interactive_save_defaults = 1;
     }
 
     //read from flash
@@ -178,6 +180,17 @@ void settings_load(void)
     settings.magn_scale_x.as_array[1] = 		settings_array[SETTINGS_MAGN_SCALE_X_POS + 1];
     settings.magn_scale_y.as_array[0] = 		settings_array[SETTINGS_MAGN_SCALE_Y_POS];
     settings.magn_scale_y.as_array[1] = 		settings_array[SETTINGS_MAGN_SCALE_Y_POS + 1];
+}
+
+
+
+void process_pending_save_default(void)	//to be called after lcd init only
+{
+	if (pending_interactive_save_defaults == 1)
+	{
+		pending_interactive_save_defaults = 0;
+		settings_interactive_save_default();
+	}
 }
 
 

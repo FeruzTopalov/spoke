@@ -71,6 +71,7 @@ int main(void)
     setup_interrupt_priorities();
     __enable_irq();	//for LCD DMA operation
     lcd_init();
+    process_pending_save_default(); //if it was requested upon settings_load()
 
     //start screen
     lcd_bitmap(&startup_screen[0]);
