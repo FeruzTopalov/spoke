@@ -461,6 +461,7 @@ struct settings_struct settings_copy;
 
 uint8_t *p_update_interval_values;
 int8_t *p_tx_power_values;
+uint16_t *p_bl_level_values;
 struct gps_raw_struct *p_gps_raw;
 struct gps_num_struct *p_gps_num;
 
@@ -487,8 +488,9 @@ void init_menu(void)
 	pp_devices = get_devices();
 
 	//Load other
-	p_tx_power_values = get_tx_power_values();
 	p_update_interval_values = get_update_interval_values();
+	p_tx_power_values = get_tx_power_values();
+	p_bl_level_values = get_bl_level_values();
 	p_gps_raw = get_gps_raw();
 	p_gps_num = get_gps_num();
 
@@ -902,8 +904,11 @@ void draw_power(void)
     	lcd_print_next("0");
     }
 
-    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1, "Light 1");
-    //todo: get blight stat
+    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1, "BL");
+    char bl_lsb_char = p_bl_level_values[settings_copy.bl_level_opt] & 0x00FF;
+    char bl_msb_char = (p_bl_level_values[settings_copy.bl_level_opt] & 0xFF00) >> 8;
+    lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 6, bl_lsb_char);
+    lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 5, bl_msb_char);
 
     lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_2, "Cons U");
     //todo: get console stat
