@@ -245,7 +245,7 @@ void timer2_init(void)
 	TIM2->PSC = (uint16_t)374;         	//3MHz/(374+1)=8kHz
 	TIM2->ARR = (uint16_t)3;            //8kHz/(3+1)=2kHz
 
-#ifdef	BUZZER_DRIVE_SINGLE_ENDED
+#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
 	TIM2->CCR1 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5 (fixed)
 	TIM2->CCR2 = (uint16_t)1;           //duty cycle 1/(3+1)=0.25 (configurable by user via settings)
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2); //Force low CH1 (PA0, buzzer)
@@ -294,7 +294,7 @@ void timer2_stop(void) //todo del
 
 void buzzer_pwm_start(void)
 {
-#ifdef	BUZZER_DRIVE_SINGLE_ENDED
+#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1); //PWM mode 1 for CH1 (PA0, buzzer)
 #else
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1);    //PWM mode 1 for CH1 (PA0, buzzer p)
@@ -306,7 +306,7 @@ void buzzer_pwm_start(void)
 
 void buzzer_pwm_stop(void)
 {
-#ifdef	BUZZER_DRIVE_SINGLE_ENDED
+#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2); //Force low CH1 (PA0, buzzer)
 #else
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2);    //Force low CH1 (PA0, buzzer p)
@@ -318,7 +318,7 @@ void buzzer_pwm_stop(void)
 
 void backlight_pwm_start(void)
 {
-#ifdef	BUZZER_DRIVE_SINGLE_ENDED
+#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1); //PWM mode 1 for CH2 (PA1, backlight)
 #endif
 }
@@ -327,7 +327,7 @@ void backlight_pwm_start(void)
 
 void backlight_pwm_stop(void)
 {
-#ifdef	BUZZER_DRIVE_SINGLE_ENDED
+#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2); //Force low CH2 (PA1, backlight)
 #endif
 }

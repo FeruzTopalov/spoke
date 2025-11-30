@@ -33,8 +33,8 @@
 
 
 /* STEP 4 */
-/* Define/undefine passive buzzer drive type, either differential (legacy) or single-ended (new) */
-#define BUZZER_DRIVE_SINGLE_ENDED		/* Undefine for HW 1.x or 2.0; Define for HW 2.1 and above */
+/* Define/undefine passive buzzer drive type and LCD backlight control type, either differential buzzer drive and on/off backlight (legacy) or single-ended buzzer drive and PWM backlight (new) */
+#define SPLIT_PWM_BUZZER_BACKLIGHT		/* Undefine for HW 1.x or 2.0; Define for HW 2.1 and above */
 
 
 
