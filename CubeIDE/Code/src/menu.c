@@ -200,6 +200,9 @@ enum
 {
     M_POWER_I_ALARM = 0,
 	M_POWER_I_SOUND,
+	M_POWER_I_BLIGHT,
+	M_POWER_I_CONSOLE,
+	M_POWER_I_DIAG,
 	M_POWER_I_POWEROFF,						//last item
 	M_POWER_I_LAST = M_POWER_I_POWEROFF		//copy last item here
 };
@@ -872,36 +875,56 @@ void draw_power(void)
 {
 
 	#define EDIT_POWER_ROW               (1)
-	#define EDIT_POWER_COL               (1)
+	#define EDIT_POWER_COL_1             (1)
+	#define EDIT_POWER_COL_2             (10)
+	#define COL_DELIM_THR				 (2)
 
 	lcd_clear();
-	lcd_print(0, EDIT_POWER_COL + 4, "POWER");
+	lcd_print(0, EDIT_POWER_COL_1 + 4, "POWER");
 
-    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL, "Alarm is ");
+    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_1, "Alarm ");
     if (get_my_alarm_status())
     {
-    	lcd_print_next("On");
+    	lcd_print_next("1");
     }
     else
     {
-    	lcd_print_next("Off");
+    	lcd_print_next("0");
     }
 
-    lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL, "Sound is ");
+    lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL_1, "Sound ");
     if (get_sound_status())
     {
-    	lcd_print_next("On");
+    	lcd_print_next("1");
     }
     else
     {
-    	lcd_print_next("Off");
+    	lcd_print_next("0");
     }
 
-    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL, "Power Off");
-    lcd_print(EDIT_POWER_ROW + get_current_item(), EDIT_POWER_COL - 1, ">");
+    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1, "Light 1");
+    //todo: get blight stat
+
+    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_2, "Cons U");
+    //todo: get console stat
+
+    lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL_2, "Diag");
+
+    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_2, "Power");
+
+
+    if (get_current_item() <= COL_DELIM_THR)
+    {
+    	//col 1
+    	lcd_print(EDIT_POWER_ROW + get_current_item(), EDIT_POWER_COL_1 - 1, ">");
+    }
+    else
+    {
+    	//col 2
+    	lcd_print(EDIT_POWER_ROW + get_current_item() - COL_DELIM_THR - 1, EDIT_POWER_COL_2 - 1, ">");
+    }
 
     draw_bat_level();
-
     lcd_update();
 }
 
