@@ -905,13 +905,13 @@ void draw_power(void)
     	lcd_print_next("0");
     }
 
-    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1, "Bklt");
+    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1, "Blit");
     char bl_lsb_char = p_bl_level_values[settings_copy.bl_level_opt] & 0x00FF;
     char bl_msb_char = (p_bl_level_values[settings_copy.bl_level_opt] & 0xFF00) >> 8;
     lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 6, bl_lsb_char);
     lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 5, bl_msb_char);
 
-    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_2, "Cnsl U");
+    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_2, "Cons U");
     //todo: get console stat
 
     lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL_2, "Diag");
