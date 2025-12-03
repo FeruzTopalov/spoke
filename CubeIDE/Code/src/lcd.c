@@ -227,19 +227,19 @@ void lcd_toggle_backlight_opt(uint8_t bl_option)
 
 
 
-void lcd_backlight_enable(void) //for safety it can also disable pwm
+void lcd_backlight_enable(void)
 {
 #ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
 
-	uint8_t bl_pwm_timer_level = BL_PWM_LEVEL_OFF;
+	uint8_t bl_pwm_timer_level;
 
 	switch (current_backlight_option)
 	{
-		case BL_LEVEL_OFF_SETTING:
-			lcd_backlight_disable();
+		case BL_LEVEL_LOW_AUTO_SETTING:
+			bl_pwm_timer_level = BL_PWM_LEVEL_LOW;
 			break;
 
-		case BL_LEVEL_LOW_AUTO_SETTING:
+		case BL_LEVEL_LOW_CONSTANT_SETTING:
 			bl_pwm_timer_level = BL_PWM_LEVEL_LOW;
 			break;
 
@@ -247,16 +247,12 @@ void lcd_backlight_enable(void) //for safety it can also disable pwm
 			bl_pwm_timer_level = BL_PWM_LEVEL_MID;
 			break;
 
-		case BL_LEVEL_HIGH_AUTO_SETTING:
-			bl_pwm_timer_level = BL_PWM_LEVEL_MAX;
-			break;
-
-		case BL_LEVEL_LOW_CONSTANT_SETTING:
-			bl_pwm_timer_level = BL_PWM_LEVEL_LOW;
-			break;
-
 		case BL_LEVEL_MID_CONSTANT_SETTING:
 			bl_pwm_timer_level = BL_PWM_LEVEL_MID;
+			break;
+
+		case BL_LEVEL_HIGH_AUTO_SETTING:
+			bl_pwm_timer_level = BL_PWM_LEVEL_MAX;
 			break;
 
 		case BL_LEVEL_HIGH_CONSTANT_SETTING:
@@ -264,7 +260,7 @@ void lcd_backlight_enable(void) //for safety it can also disable pwm
 			break;
 
 		default:
-			lcd_backlight_disable();
+			bl_pwm_timer_level = BL_PWM_LEVEL_OFF;
 			break;
 	}
 
