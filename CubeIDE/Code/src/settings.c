@@ -216,6 +216,8 @@ void settings_interactive_save_default(void)
 
     	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for exit
     	{
+    		while (!((GPIOB->IDR) & GPIO_IDR_IDR3)) {}		//wait for user to release ESC
+    		delay_cyc(100000);
     		NVIC_SystemReset();
     	}
 
