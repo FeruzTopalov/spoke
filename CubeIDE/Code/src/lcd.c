@@ -182,9 +182,11 @@ void lcd_send_command(uint8_t command)
 
 void lcd_display_on(void)
 {
+#ifdef LCD_TYPE_SH1106
 	lcd_send_command(LCD_COMMAND_DISPLAY_ON);
-	display_status = LCD_DISPLAY_ON;
+#endif
 
+	display_status = LCD_DISPLAY_ON;
 	lcd_toggle_backlight_opt(current_backlight_option); //fed it with own current_backlight_option state because upon LCD ON the current option could be LCD_COMMAND_DISPLAY_OFF
 }
 
@@ -192,9 +194,19 @@ void lcd_display_on(void)
 
 void lcd_display_off(void)
 {
+#ifdef LCD_TYPE_SH1106
 	lcd_send_command(LCD_COMMAND_DISPLAY_OFF);
-	display_status = LCD_DISPLAY_OFF;
+#endif
 
+#ifdef LCD_TYPE_ST7567A
+	lcd_clear();
+	lcd_print(1, 5, "LOCKED");
+	lcd_print(2, 2, "PWR to unlock");
+	lcd_update();
+	while (lcd_busy);
+#endif
+
+	display_status = LCD_DISPLAY_OFF;
 	lcd_backlight_disable();
 }
 
