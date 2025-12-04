@@ -134,6 +134,7 @@ int main(void)
     	{
     		main_flags.buttons_scanned = 0;
 			change_menu(button_code);
+			reset_backlight_counter();
 			main_flags.update_screen = 1;
     	}
 
@@ -166,6 +167,8 @@ int main(void)
         if (main_flags.tick_1s == 1)
         {
         	main_flags.tick_1s = 0;
+
+        	decrement_backlight_counter();
 
             adc_check_bat_voltage();
             if (is_battery_critical())

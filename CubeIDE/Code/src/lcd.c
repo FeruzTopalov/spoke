@@ -52,6 +52,13 @@ void lcd_backlight_disable(void);
 #define LCD_COMMAND_SET_COL_ADRL_BASE	(0x00)		//LCD panel is left-adjusted to ST7567A frame buffer
 #endif
 
+#define BL_MODE_CONSTANT	(0)	//always on BL
+#define BL_MODE_AUTO 		(1) //auto off BL
+#define BL_TIMEOUT_TOP		(5)//timeout in seconds to auto bl turn off
+#define BL_TIMEOUT_END		(-1)//end of timeout period
+
+
+
 uint8_t screen_buf[LCD_SIZE_BYTES];     		//public array 128x64 pixels
 uint16_t buf_pos = 0;                   		//public var 0 - 1023
 uint8_t current_page = 0;
@@ -60,8 +67,11 @@ uint8_t lcd_pending_off = 0; 	//pending command to off the lcd
 
 uint8_t display_status = LCD_DISPLAY_ON;	//lcd panel status on/off
 uint8_t current_backlight_option = BL_LEVEL_OFF_SETTING; //latest (current) backlight option
+uint8_t current_backlight_mode = BL_MODE_CONSTANT; 	//initial mode
+int8_t backlight_timeout_counter = 0;	//BL timeout counter in seconds
 
 struct settings_struct *p_settings;
+
 
 
 #ifdef LCD_TYPE_SH1106
@@ -237,30 +247,40 @@ void lcd_backlight_enable(void)
 	{
 		case BL_LEVEL_LOW_AUTO_SETTING:
 			bl_pwm_timer_level = BL_PWM_LEVEL_LOW;
+			current_backlight_mode = BL_MODE_AUTO;
+			backlight_timeout_counter = BL_TIMEOUT_TOP;
 			break;
 
 		case BL_LEVEL_LOW_CONSTANT_SETTING:
 			bl_pwm_timer_level = BL_PWM_LEVEL_LOW;
+			current_backlight_mode = BL_MODE_CONSTANT;
 			break;
 
 		case BL_LEVEL_MID_AUTO_SETTING:
 			bl_pwm_timer_level = BL_PWM_LEVEL_MID;
+			current_backlight_mode = BL_MODE_AUTO;
+			backlight_timeout_counter = BL_TIMEOUT_TOP;
 			break;
 
 		case BL_LEVEL_MID_CONSTANT_SETTING:
 			bl_pwm_timer_level = BL_PWM_LEVEL_MID;
+			current_backlight_mode = BL_MODE_CONSTANT;
 			break;
 
 		case BL_LEVEL_HIGH_AUTO_SETTING:
 			bl_pwm_timer_level = BL_PWM_LEVEL_MAX;
+			current_backlight_mode = BL_MODE_AUTO;
+			backlight_timeout_counter = BL_TIMEOUT_TOP;
 			break;
 
 		case BL_LEVEL_HIGH_CONSTANT_SETTING:
 			bl_pwm_timer_level = BL_PWM_LEVEL_MAX;
+			current_backlight_mode = BL_MODE_CONSTANT;
 			break;
 
 		default:
 			bl_pwm_timer_level = BL_PWM_LEVEL_OFF;
+			current_backlight_mode = BL_MODE_CONSTANT;
 			break;
 	}
 
@@ -280,6 +300,39 @@ void lcd_backlight_disable(void)
 #else
 	backlight_lcd_low();
 #endif
+}
+
+
+
+void reset_backlight_counter(void)
+{
+	if (current_backlight_mode == BL_MODE_AUTO)
+	{
+		if (backlight_timeout_counter == BL_TIMEOUT_END)
+		{
+			lcd_backlight_enable();
+		}
+		backlight_timeout_counter = BL_TIMEOUT_TOP;	//reset to top value; decremented in uptime counter
+	}
+}
+
+
+
+void decrement_backlight_counter(void)
+{
+	if (current_backlight_mode == BL_MODE_AUTO)
+	{
+		if (backlight_timeout_counter > 0)
+		{
+			backlight_timeout_counter--;
+		}
+
+		if (backlight_timeout_counter == 0)
+		{
+			backlight_timeout_counter = BL_TIMEOUT_END;
+			lcd_backlight_disable();
+		}
+	}
 }
 
 
