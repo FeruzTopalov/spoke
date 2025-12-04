@@ -54,7 +54,7 @@ void lcd_backlight_disable(void);
 
 #define BL_MODE_CONSTANT	(0)	//always on BL
 #define BL_MODE_AUTO 		(1) //auto off BL
-#define BL_TIMEOUT_TOP		(5)//timeout in seconds to auto bl turn off
+#define BL_TIMEOUT_TOP		(30)//timeout in seconds to auto bl turn off
 #define BL_TIMEOUT_END		(-1)//end of timeout period
 
 
@@ -310,7 +310,13 @@ void reset_backlight_counter(void)
 	{
 		if (backlight_timeout_counter == BL_TIMEOUT_END)
 		{
-			lcd_backlight_enable();
+			if (display_status == LCD_DISPLAY_ON)
+			{
+				if (lcd_pending_off == 0)
+				{
+					lcd_backlight_enable();
+				}
+			}
 		}
 		backlight_timeout_counter = BL_TIMEOUT_TOP;	//reset to top value; decremented in uptime counter
 	}
