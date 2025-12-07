@@ -130,6 +130,7 @@ void confirm_settings_save_esc(void);
 void calibrate_compass_up(void);
 void calibrated_compass_ok(void);
 void calibrated_compass_esc(void);
+void scroll_bl_options(void);
 
 
 
@@ -200,6 +201,9 @@ enum
 {
     M_POWER_I_ALARM = 0,
 	M_POWER_I_SOUND,
+	M_POWER_I_BLIGHT,
+	M_POWER_I_CONSOLE,
+	M_POWER_I_DIAG,
 	M_POWER_I_POWEROFF,						//last item
 	M_POWER_I_LAST = M_POWER_I_POWEROFF		//copy last item here
 };
@@ -458,6 +462,7 @@ struct settings_struct settings_copy;
 
 uint8_t *p_update_interval_values;
 int8_t *p_tx_power_values;
+uint16_t *p_bl_level_values;
 struct gps_raw_struct *p_gps_raw;
 struct gps_num_struct *p_gps_num;
 
@@ -484,8 +489,9 @@ void init_menu(void)
 	pp_devices = get_devices();
 
 	//Load other
-	p_tx_power_values = get_tx_power_values();
 	p_update_interval_values = get_update_interval_values();
+	p_tx_power_values = get_tx_power_values();
+	p_bl_level_values = get_bl_level_values();
 	p_gps_raw = get_gps_raw();
 	p_gps_num = get_gps_num();
 
@@ -872,36 +878,59 @@ void draw_power(void)
 {
 
 	#define EDIT_POWER_ROW               (1)
-	#define EDIT_POWER_COL               (1)
+	#define EDIT_POWER_COL_1             (1)
+	#define EDIT_POWER_COL_2             (10)
+	#define COL_DELIM_THR				 (2)
 
 	lcd_clear();
-	lcd_print(0, EDIT_POWER_COL + 4, "POWER");
+	lcd_print(0, EDIT_POWER_COL_1 + 4, "POWER");
 
-    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL, "Alarm is ");
+    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_1, "Alarm ");
     if (get_my_alarm_status())
     {
-    	lcd_print_next("On");
+    	lcd_print_next("1");
     }
     else
     {
-    	lcd_print_next("Off");
+    	lcd_print_next("0");
     }
 
-    lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL, "Sound is ");
+    lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL_1, "Sound ");
     if (get_sound_status())
     {
-    	lcd_print_next("On");
+    	lcd_print_next("1");
     }
     else
     {
-    	lcd_print_next("Off");
+    	lcd_print_next("0");
     }
 
-    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL, "Power Off");
-    lcd_print(EDIT_POWER_ROW + get_current_item(), EDIT_POWER_COL - 1, ">");
+    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1, "Blit");
+    char bl_lsb_char = p_bl_level_values[settings_copy.bl_level_opt] & 0x00FF;
+    char bl_msb_char = (p_bl_level_values[settings_copy.bl_level_opt] & 0xFF00) >> 8;
+    lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 6, bl_lsb_char);
+    lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 5, bl_msb_char);
+
+    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_2, "Cons U");
+    //todo: get console stat
+
+    lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL_2, "Diag");
+
+    lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_2, "Power");
+
+
+    if (get_current_item() <= COL_DELIM_THR)
+    {
+    	//col 1
+    	lcd_print(EDIT_POWER_ROW + get_current_item(), EDIT_POWER_COL_1 - 1, ">");
+    }
+    else
+    {
+    	//col 2
+    	lcd_print(EDIT_POWER_ROW + get_current_item() - COL_DELIM_THR - 1, EDIT_POWER_COL_2 - 1, ">");
+    }
 
     draw_bat_level();
-
     lcd_update();
 }
 
@@ -1801,6 +1830,10 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 			toggle_sound();
 			break;
 
+		case M_POWER_I_BLIGHT:
+			scroll_bl_options();
+			break;
+
 		case M_POWER_I_POWEROFF:
 			release_power();
 			break;
@@ -1816,13 +1849,18 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 
 void power_esc(void)
 {
+    if (settings_copy.bl_level_opt != p_settings->bl_level_opt) //save backlight level if changed
+    {
+    	settings_save(&settings_copy);
+    }
+
 	if (return_from_power_menu == M_NAVIGATION)
 	{
 		start_compass(); //start compass activity
 	}
+
 	reset_current_item_in_menu(M_POWER);
 	current_menu = return_from_power_menu;
-
 }
 
 
@@ -2472,6 +2510,22 @@ void calibrated_compass_ok(void)
 void calibrated_compass_esc(void)
 {
 	current_menu = M_CALIBRATE_COMPASS;	//restart calibration same way we enter calibration from main menu
+}
+
+
+
+void scroll_bl_options(void)
+{
+    if (settings_copy.bl_level_opt == BL_LEVEL_LAST_OPTION)
+    {
+        settings_copy.bl_level_opt = BL_LEVEL_FIRST_OPTION;
+    }
+    else
+    {
+        settings_copy.bl_level_opt++;
+    }
+
+    lcd_toggle_backlight_opt(settings_copy.bl_level_opt);
 }
 
 

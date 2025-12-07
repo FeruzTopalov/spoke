@@ -63,26 +63,23 @@ uint8_t *p_update_interval_values;
 //PROGRAM
 int main(void)
 {
-    gpio_init();
+    gpio_init(); //for SPI and backlight pins
     manage_power();
-    spi_init();
+    spi_init();	//for LCD operation
+    timers_init(); //for LCD PWM backlight
+    settings_load(); //for saved backlight setting
     setup_interrupt_priorities();
     __enable_irq();	//for LCD DMA operation
     lcd_init();
+    process_pending_save_default(); //if it was requested upon settings_load()
 
     //start screen
     lcd_bitmap(&startup_screen[0]);
     lcd_update();
     delay_cyc(800000);
 
-     lcd_print_only(0, 0, "settings..");
-    settings_load();
-
     lcd_print_only(0, 0, "uart..");
     uart_init();
-
-    lcd_print_only(0, 0, "timers..");
-    timers_init();
 
     lcd_print_only(0, 0, "adc..");
     adc_init();
@@ -137,6 +134,7 @@ int main(void)
     	{
     		main_flags.buttons_scanned = 0;
 			change_menu(button_code);
+			reset_backlight_counter();
 			main_flags.update_screen = 1;
     	}
 
@@ -169,6 +167,8 @@ int main(void)
         if (main_flags.tick_1s == 1)
         {
         	main_flags.tick_1s = 0;
+
+        	decrement_backlight_counter();
 
             adc_check_bat_voltage();
             if (is_battery_critical())
@@ -484,7 +484,7 @@ void DMA1_Channel4_IRQHandler(void)
 //End of beep
 void SysTick_Handler(void)
 {
-	timer2_stop();	//pwm
+	buzzer_pwm_stop();	//pwm
 	systick_stop();	//gating
 	led_red_off();
 }

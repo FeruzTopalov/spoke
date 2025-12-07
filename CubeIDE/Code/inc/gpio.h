@@ -19,8 +19,8 @@ void clear_buttons_interrupts(void);
 
 void x4_high(void);
 void x4_low(void);
-void backlight_lcd_on(void);
-void backlight_lcd_off(void);
+void backlight_lcd_high(void);
+void backlight_lcd_low(void);
 
 void led_red_on(void);
 void led_red_off(void);

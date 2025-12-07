@@ -36,6 +36,20 @@
 
 
 
+//LCD BL Levels
+#define BL_LEVEL_OFF_SETTING   			(0)
+#define BL_LEVEL_LOW_AUTO_SETTING		(1)
+#define BL_LEVEL_MID_AUTO_SETTING		(2)
+#define BL_LEVEL_HIGH_AUTO_SETTING		(3)
+#define BL_LEVEL_LOW_CONSTANT_SETTING   (4)
+#define BL_LEVEL_MID_CONSTANT_SETTING   (5)
+#define BL_LEVEL_HIGH_CONSTANT_SETTING  (6)
+
+#define BL_LEVEL_FIRST_OPTION 		(BL_LEVEL_OFF_SETTING)
+#define BL_LEVEL_LAST_OPTION 		(BL_LEVEL_HIGH_CONSTANT_SETTING)
+
+
+
 //FREQ
 #define FREQ_CHANNEL_FIRST  (1)
 #define FREQ_CHANNEL_LAST   (8)	//see radio.c
@@ -87,6 +101,8 @@ struct settings_struct
 
     int8_t time_zone_minute;			//can be 0, 15, 30, 45
 
+    uint8_t bl_level_opt;				//LCD backlight level option, not an actual value
+
     int16_t magn_offset_x;				//magnetometer offset X for hard iron compensation
 
     int16_t magn_offset_y;				//magnetometer offset Y for hard iron compensation
@@ -109,6 +125,8 @@ struct settings_struct
 struct settings_struct *get_settings(void);
 uint8_t *get_update_interval_values(void);
 int8_t *get_tx_power_values(void);
+uint16_t *get_bl_level_values(void);
+void process_pending_save_default(void);
 void settings_save_default(void);
 void settings_load(void);
 void settings_save(struct settings_struct *settings);

@@ -43,6 +43,24 @@ void settings_interactive_save_default(void);
 
 
 
+#define BL_LEVEL_OFF_VALUE   		(0x2030)	//" 0"
+#define BL_LEVEL_LOW_AUTO_VALUE		(0x6131)	//"a1"
+#define BL_LEVEL_MID_AUTO_VALUE		(0x6132)	//"a2"
+#define BL_LEVEL_HIGH_AUTO_VALUE	(0x6133)	//"a3"
+#define BL_LEVEL_LOW_CONST_VALUE    (0x6331)	//"c1"
+#define BL_LEVEL_MID_CONST_VALUE   	(0x6332)	//"c2"
+#define BL_LEVEL_HIGH_CONST_VALUE  	(0x6333)	//"c3"
+
+#define BL_LEVEL_VALUES_ARRAY 		{ 	BL_LEVEL_OFF_VALUE, 		\
+										BL_LEVEL_LOW_AUTO_VALUE, 	\
+										BL_LEVEL_MID_AUTO_VALUE, 	\
+										BL_LEVEL_HIGH_AUTO_VALUE,	\
+										BL_LEVEL_LOW_CONST_VALUE, 	\
+										BL_LEVEL_MID_CONST_VALUE, 	\
+										BL_LEVEL_HIGH_CONST_VALUE	}
+
+
+
 //positions:
 #define SETTINGS_INIT_FLAG_POS          	(0)
 #define SETTINGS_DEVICE_NUMBER_POS      	(1)
@@ -56,10 +74,11 @@ void settings_interactive_save_default(void);
 #define SETTINGS_TIME_ZONE_DIR_POS			(9)
 #define SETTINGS_TIME_ZONE_HOUR_POS			(10)
 #define SETTINGS_TIME_ZONE_MINUTE_POS		(11)
-#define SETTINGS_MAGN_OFFSET_X_POS			(12)
-#define SETTINGS_MAGN_OFFSET_Y_POS			(13)
-#define SETTINGS_MAGN_SCALE_X_POS			(14)
-#define SETTINGS_MAGN_SCALE_Y_POS			(16)
+#define SETTINGS_BL_LEVEL_POS				(12)
+#define SETTINGS_MAGN_OFFSET_X_POS			(13)
+#define SETTINGS_MAGN_OFFSET_Y_POS			(14)
+#define SETTINGS_MAGN_SCALE_X_POS			(15) //2 byte
+#define SETTINGS_MAGN_SCALE_Y_POS			(17) //2 byte
 
 //default values:
 #define SETTINGS_INIT_FLAG_DEFAULT      	(0xAA)
@@ -74,6 +93,7 @@ void settings_interactive_save_default(void);
 #define SETTINGS_TIME_ZONE_DIR_DEFAULT		(1)
 #define SETTINGS_TIME_ZONE_HOUR_DEFAULT		(0)
 #define SETTINGS_TIME_ZONE_MINUTE_DEFAULT	(0)
+#define SETTINGS_BL_LEVEL_DEFAULT			(BL_LEVEL_LOW_AUTO_SETTING)
 #define SETTINGS_MAGN_OFFSET_X_DEFAULT		(0)
 #define SETTINGS_MAGN_OFFSET_Y_DEFAULT		(0)
 #define SETTINGS_MAGN_SCALE_XM_DEFAULT		(0x3f80)	//float 1.0
@@ -82,7 +102,7 @@ void settings_interactive_save_default(void);
 #define SETTINGS_MAGN_SCALE_YL_DEFAULT		(0x0000)
 
 //settings size
-#define SETTINGS_SIZE						(18) //half-words
+#define SETTINGS_SIZE						(19) //half-words
 
 
 
@@ -91,6 +111,9 @@ struct settings_struct settings;
 
 uint8_t update_interval_values[] = UPDATE_INTERVAL_VALUES_ARRAY;
 int8_t tx_power_values[] = TX_POWER_VALUES_ARRAY;
+uint16_t bl_level_values[] = BL_LEVEL_VALUES_ARRAY;
+
+uint8_t pending_interactive_save_defaults = 0; //since settings are loaded before lcd init, the flag is set to accomplish interactive settings reset after lcd init
 
 
 
@@ -104,6 +127,13 @@ uint8_t *get_update_interval_values(void)
 int8_t *get_tx_power_values(void)
 {
 	return &tx_power_values[0];
+}
+
+
+
+uint16_t *get_bl_level_values(void)
+{
+	return &bl_level_values[0];
 }
 
 
@@ -125,7 +155,7 @@ void settings_load(void)
     }
     else if (!((GPIOB->IDR) & GPIO_IDR_IDR3) && ((GPIOB->IDR) & GPIO_IDR_IDR4))	//OK released, ESC pressed
     {
-    	settings_interactive_save_default();
+    	pending_interactive_save_defaults = 1;
     }
 
     //read from flash
@@ -143,12 +173,24 @@ void settings_load(void)
     settings.time_zone_dir = 					settings_array[SETTINGS_TIME_ZONE_DIR_POS];
     settings.time_zone_hour = 					settings_array[SETTINGS_TIME_ZONE_HOUR_POS];
     settings.time_zone_minute = 				settings_array[SETTINGS_TIME_ZONE_MINUTE_POS];
+    settings.bl_level_opt = 					settings_array[SETTINGS_BL_LEVEL_POS];
     settings.magn_offset_x =					settings_array[SETTINGS_MAGN_OFFSET_X_POS];
     settings.magn_offset_y =					settings_array[SETTINGS_MAGN_OFFSET_Y_POS];
     settings.magn_scale_x.as_array[0] = 		settings_array[SETTINGS_MAGN_SCALE_X_POS];
     settings.magn_scale_x.as_array[1] = 		settings_array[SETTINGS_MAGN_SCALE_X_POS + 1];
     settings.magn_scale_y.as_array[0] = 		settings_array[SETTINGS_MAGN_SCALE_Y_POS];
     settings.magn_scale_y.as_array[1] = 		settings_array[SETTINGS_MAGN_SCALE_Y_POS + 1];
+}
+
+
+
+void process_pending_save_default(void)	//to be called after lcd init only
+{
+	if (pending_interactive_save_defaults == 1)
+	{
+		pending_interactive_save_defaults = 0;
+		settings_interactive_save_default();
+	}
 }
 
 
@@ -174,6 +216,8 @@ void settings_interactive_save_default(void)
 
     	if (!((GPIOB->IDR) & GPIO_IDR_IDR3))	//ECS for exit
     	{
+    		while (!((GPIOB->IDR) & GPIO_IDR_IDR3)) {}		//wait for user to release ESC
+    		delay_cyc(100000);
     		NVIC_SystemReset();
     	}
 
@@ -224,6 +268,7 @@ void settings_save_default(void)
     settings_array[SETTINGS_TIME_ZONE_DIR_POS] = 		SETTINGS_TIME_ZONE_DIR_DEFAULT;
     settings_array[SETTINGS_TIME_ZONE_HOUR_POS] = 		SETTINGS_TIME_ZONE_HOUR_DEFAULT;
     settings_array[SETTINGS_TIME_ZONE_MINUTE_POS] = 	SETTINGS_TIME_ZONE_MINUTE_DEFAULT;
+    settings_array[SETTINGS_BL_LEVEL_POS] = 			SETTINGS_BL_LEVEL_DEFAULT;
     settings_array[SETTINGS_MAGN_OFFSET_X_POS] = 		SETTINGS_MAGN_OFFSET_X_DEFAULT;
     settings_array[SETTINGS_MAGN_OFFSET_Y_POS] = 		SETTINGS_MAGN_OFFSET_Y_DEFAULT;
     settings_array[SETTINGS_MAGN_SCALE_X_POS] = 		SETTINGS_MAGN_SCALE_XL_DEFAULT;	//little-endian
@@ -255,6 +300,7 @@ void settings_save(struct settings_struct *p_settings)
     settings_array[SETTINGS_TIME_ZONE_DIR_POS] = 		p_settings->time_zone_dir;
     settings_array[SETTINGS_TIME_ZONE_HOUR_POS] = 		p_settings->time_zone_hour;
     settings_array[SETTINGS_TIME_ZONE_MINUTE_POS] = 	p_settings->time_zone_minute;
+    settings_array[SETTINGS_BL_LEVEL_POS] = 			p_settings->bl_level_opt;
     settings_array[SETTINGS_MAGN_OFFSET_X_POS] = 		p_settings->magn_offset_x;
     settings_array[SETTINGS_MAGN_OFFSET_Y_POS] = 		p_settings->magn_offset_y;
     settings_array[SETTINGS_MAGN_SCALE_X_POS] = 		p_settings->magn_scale_x.as_array[0];
