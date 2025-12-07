@@ -456,6 +456,8 @@ void EXTI9_5_IRQHandler(void)
 void EXTI15_10_IRQHandler(void)
 {
 	enable_my_alarm();
+	button_code = BTN_NO_ACTION;
+	main_flags.buttons_scanned = 1; //fake buttons scanned event to light up backlight and update menu
 	EXTI->PR = EXTI_PR_PR15;		//clear interrupt
 }
 
