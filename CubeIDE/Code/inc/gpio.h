@@ -17,8 +17,8 @@ void enable_buttons_interrupts(void);
 void disable_buttons_interrupts(void);
 void clear_buttons_interrupts(void);
 
-void x4_high(void);
-void x4_low(void);
+void mux_console_usb(void);
+void mux_console_ble(void);
 void backlight_lcd_high(void);
 void backlight_lcd_low(void);
 

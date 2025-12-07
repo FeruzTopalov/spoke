@@ -163,7 +163,7 @@ void gpio_init(void)
     GPIOB->CRH &= ~GPIO_CRH_MODE10_0;    //output 2 MHz
     GPIOB->CRH |= GPIO_CRH_MODE10_1;
     GPIOB->CRH &= ~GPIO_CRH_CNF10;       //output push-pull
-    GPIOB->ODR |= GPIO_ODR_ODR10;			//workaround, this sets RX pin of the GPS to high state and prevents RX frame error which takes place when this pin is low for a long time (between gpio and uart inits)
+    GPIOB->ODR |= GPIO_ODR_ODR10;		 //workaround, this sets RX pin of the GPS to high state and prevents RX frame error which takes place when this pin is low for a long time (between gpio and uart inits)
 
     //PB11 - USART3 RX (GPS)
     GPIOB->CRH &= ~GPIO_CRH_MODE11;      //input
@@ -202,10 +202,11 @@ void gpio_init(void)
     GPIOC->CRH |= GPIO_CRH_CNF13_1;
     GPIOC->ODR |= GPIO_ODR_ODR13;        //pull-up
 
-    //PC14 - X4 test point
+    //PC14 - USB/BLE Console Multiplexer Switch
     GPIOC->CRH &= ~GPIO_CRH_MODE14_0;    //output 2 MHz
     GPIOC->CRH |= GPIO_CRH_MODE14_1;
     GPIOC->CRH &= ~GPIO_CRH_CNF14;       //output push-pull
+
 
 #ifdef SPLIT_PWM_BUZZER_BACKLIGHT
     //PC15 - Button Alarm
@@ -294,16 +295,16 @@ void clear_buttons_interrupts(void)
 
 
 
-//X4 high todo: MUX
-void x4_high(void)
+//MUX to Console <-> USB
+void mux_console_usb(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BS14;
 }
 
 
 
-//X4 low todo: MUX
-void x4_low(void)
+//MUX to Console <-> BLE
+void mux_console_ble(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BR14;
 }
