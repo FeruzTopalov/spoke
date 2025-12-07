@@ -258,6 +258,7 @@ void ext_int_init(void)
     //PC15 - Alarm button
     AFIO->EXTICR[3] |= AFIO_EXTICR4_EXTI15_PC;	//exti 15 source is port C
     EXTI->FTSR |= EXTI_FTSR_TR15;				//interrupt 15 on falling edge
+    EXTI->IMR |= EXTI_IMR_MR15;					//unmask interrupt 15
     NVIC_EnableIRQ(EXTI15_10_IRQn);             //enable interrupt
 #endif
 
