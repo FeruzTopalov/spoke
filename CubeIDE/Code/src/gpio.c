@@ -207,10 +207,19 @@ void gpio_init(void)
     GPIOC->CRH |= GPIO_CRH_MODE14_1;
     GPIOC->CRH &= ~GPIO_CRH_CNF14;       //output push-pull
 
-    //PC15 - LCD Backlight
+#ifdef SPLIT_PWM_BUZZER_BACKLIGHT
+    //PC15 - Button Alarm
+    GPIOC->CRH &= ~GPIO_CRH_MODE15;      //input mode
+    GPIOC->CRH &= ~GPIO_CRH_CNF15_0;     //input with pull
+    GPIOC->CRH |= GPIO_CRH_CNF15_1;
+    GPIOC->ODR |= GPIO_ODR_ODR15;        //pull-up on
+#else
+    //PC15 - LCD baclkight
     GPIOC->CRH &= ~GPIO_CRH_MODE15_0;    //output 2 MHz
     GPIOC->CRH |= GPIO_CRH_MODE15_1;
     GPIOC->CRH &= ~GPIO_CRH_CNF15;       //output push-pull
+#endif
+
 }
 
 
@@ -244,6 +253,13 @@ void ext_int_init(void)
     AFIO->EXTICR[1] |= AFIO_EXTICR2_EXTI5_PB;   //exti 5 source is port B
     EXTI->FTSR |= EXTI_FTSR_TR5;                //interrupt 5 on falling edge
     NVIC_EnableIRQ(EXTI9_5_IRQn);               //enable interrupt
+
+#ifdef SPLIT_PWM_BUZZER_BACKLIGHT
+    //PC15 - Alarm button
+    AFIO->EXTICR[3] |= AFIO_EXTICR4_EXTI15_PC;	//exti 15 source is port C
+    EXTI->FTSR |= EXTI_FTSR_TR15;				//interrupt 15 on falling edge
+    NVIC_EnableIRQ(EXTI15_10_IRQn);             //enable interrupt
+#endif
 
     EXTI->PR = (uint32_t)0x0007FFFF;            //clear all pending interrupts
 }
@@ -293,7 +309,7 @@ void x4_low(void)
 
 
 
-//X5 high todo: bl
+//LCD backlight on
 void backlight_lcd_high(void)
 {
 #ifndef	SPLIT_PWM_BUZZER_BACKLIGHT
@@ -303,7 +319,7 @@ void backlight_lcd_high(void)
 
 
 
-//X5 low todo: bl
+//LCD backlight off
 void backlight_lcd_low(void)
 {
 #ifndef	SPLIT_PWM_BUZZER_BACKLIGHT

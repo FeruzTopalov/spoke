@@ -126,7 +126,6 @@ int main(void)
     make_a_beep();	//end of device loading
     draw_current_menu();
 
-
     while (1)
     {
     	//Scan Keys
@@ -454,11 +453,21 @@ void EXTI9_5_IRQHandler(void)
 
 
 
+void EXTI15_10_IRQHandler(void)
+{
+	enable_my_alarm();
+	EXTI->PR = EXTI_PR_PR15;		//clear interrupt
+}
+
+
+
 //Console RX symbol
 void USART1_IRQHandler(void)
 {
     uint8_t rx_data;
     rx_data = USART1->DR;
+
+    uart1_tx_byte(rx_data); //debug
 
     if (rx_data == '1')
     {

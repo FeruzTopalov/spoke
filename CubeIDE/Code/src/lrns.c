@@ -380,6 +380,14 @@ void toggle_my_alarm(void)
 
 
 
+void enable_my_alarm(void)
+{
+	devices[this_device].alarm_flag = 1;
+	devices[this_device].alarm_flag_for_beep = 1;
+}
+
+
+
 uint8_t get_my_alarm_status(void)
 {
 	return devices[this_device].alarm_flag;
