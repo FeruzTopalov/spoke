@@ -13,6 +13,10 @@
 
 
 
+uint8_t mux_state = MUX_STATE_USB;
+
+
+
 //Initialization of all used ports
 void gpio_init(void)
 {
@@ -203,6 +207,7 @@ void gpio_init(void)
     GPIOC->ODR |= GPIO_ODR_ODR13;        //pull-up
 
     //PC14 - USB/BLE Console Multiplexer Switch
+    mux_console_usb();					 //pre-set MUX state to log 1 (USB default)
     GPIOC->CRH &= ~GPIO_CRH_MODE14_0;    //output 2 MHz
     GPIOC->CRH |= GPIO_CRH_MODE14_1;
     GPIOC->CRH &= ~GPIO_CRH_CNF14;       //output push-pull
@@ -299,6 +304,7 @@ void clear_buttons_interrupts(void)
 void mux_console_usb(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BS14;
+	mux_state = MUX_STATE_USB;
 }
 
 
@@ -307,6 +313,28 @@ void mux_console_usb(void)
 void mux_console_ble(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BR14;
+	mux_state = MUX_STATE_BLE;
+}
+
+
+
+void toggle_mux_state(void)
+{
+	if (mux_state == MUX_STATE_USB)
+	{
+		mux_console_ble();
+	}
+	else
+	{
+		mux_console_usb();
+	}
+}
+
+
+
+uint8_t get_mux_state(void)
+{
+	return mux_state;
 }
 
 

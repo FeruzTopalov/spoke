@@ -911,8 +911,16 @@ void draw_power(void)
     lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 6, bl_lsb_char);
     lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 5, bl_msb_char);
 
-    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_2, "Cons U");
+    lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_2, "Cons ");
     //todo: get console stat
+    if (get_mux_state() == MUX_STATE_BLE)
+    {
+    	lcd_print_next("B");
+    }
+    else
+    {
+    	lcd_print_next("U");
+    }
 
     lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL_2, "Diag");
 
@@ -1832,6 +1840,11 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 
 		case M_POWER_I_BLIGHT:
 			scroll_bl_options();
+			break;
+
+		case M_POWER_I_CONSOLE:
+			//todo
+			toggle_mux_state();
 			break;
 
 		case M_POWER_I_POWEROFF:
