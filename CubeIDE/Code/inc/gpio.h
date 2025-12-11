@@ -21,10 +21,9 @@ void ext_int_init(void);
 void enable_buttons_interrupts(void);
 void disable_buttons_interrupts(void);
 void clear_buttons_interrupts(void);
-
+void init_mux_state(uint8_t desired_state);
 void mux_console_usb(void);
 void mux_console_ble(void);
-void toggle_mux_state(void);
 uint8_t get_mux_state(void);
 void backlight_lcd_high(void);
 void backlight_lcd_low(void);

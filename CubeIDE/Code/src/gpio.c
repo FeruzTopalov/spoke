@@ -300,6 +300,21 @@ void clear_buttons_interrupts(void)
 
 
 
+//Init MUX state based on settings
+void init_mux_state(uint8_t desired_state)
+{
+	if (desired_state == MUX_STATE_USB)
+	{
+		mux_console_usb();
+	}
+	else
+	{
+		mux_console_ble();
+	}
+}
+
+
+
 //MUX to Console <-> USB
 void mux_console_usb(void)
 {
@@ -314,20 +329,6 @@ void mux_console_ble(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BR14;
 	mux_state = MUX_STATE_BLE;
-}
-
-
-
-void toggle_mux_state(void)
-{
-	if (mux_state == MUX_STATE_USB)
-	{
-		mux_console_ble();
-	}
-	else
-	{
-		mux_console_usb();
-	}
 }
 
 

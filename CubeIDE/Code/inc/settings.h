@@ -76,6 +76,12 @@
 
 
 
+//MUX
+#define MUX_STATE_USB_SYMBOL	('U')
+#define MUX_STATE_BLE_SYMBOL	('B')
+
+
+
 //Structure with settings
 struct settings_struct
 {
@@ -102,6 +108,8 @@ struct settings_struct
     int8_t time_zone_minute;			//can be 0, 15, 30, 45
 
     uint8_t bl_level_opt;				//LCD backlight level option, not an actual value
+
+    uint8_t mux_state_opt;				//Console MUX state, also corresponds to the MUX pin state
 
     int16_t magn_offset_x;				//magnetometer offset X for hard iron compensation
 

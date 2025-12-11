@@ -131,6 +131,7 @@ void calibrate_compass_up(void);
 void calibrated_compass_ok(void);
 void calibrated_compass_esc(void);
 void scroll_bl_options(void);
+void toggle_mux_state(void);
 
 
 
@@ -912,15 +913,16 @@ void draw_power(void)
     lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 5, bl_msb_char);
 
     lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_2, "Cons ");
-    //todo: get console stat
     if (get_mux_state() == MUX_STATE_BLE)
     {
-    	lcd_print_next("B");
+        tmp_buf[0] = MUX_STATE_BLE_SYMBOL;
     }
     else
     {
-    	lcd_print_next("U");
+    	tmp_buf[0] = MUX_STATE_USB_SYMBOL;
     }
+	tmp_buf[1] = 0;
+	lcd_print_next(&tmp_buf[0]);
 
     lcd_print(EDIT_POWER_ROW + 1, EDIT_POWER_COL_2, "Diag");
 
@@ -1843,7 +1845,6 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 			break;
 
 		case M_POWER_I_CONSOLE:
-			//todo
 			toggle_mux_state();
 			break;
 
@@ -1862,7 +1863,19 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 
 void power_esc(void)
 {
+	uint8_t to_be_saved = 0;
+
     if (settings_copy.bl_level_opt != p_settings->bl_level_opt) //save backlight level if changed
+    {
+    	to_be_saved++;
+    }
+
+    if (settings_copy.mux_state_opt != p_settings->mux_state_opt) //save MUX state if changed
+    {
+    	to_be_saved++;
+    }
+
+    if (to_be_saved)
     {
     	settings_save(&settings_copy);
     }
@@ -2539,6 +2552,22 @@ void scroll_bl_options(void)
     }
 
     lcd_toggle_backlight_opt(settings_copy.bl_level_opt);
+}
+
+
+
+void toggle_mux_state(void)
+{
+	if (get_mux_state() == MUX_STATE_USB)
+	{
+		mux_console_ble();
+		settings_copy.mux_state_opt = MUX_STATE_BLE;
+	}
+	else
+	{
+		mux_console_usb();
+		settings_copy.mux_state_opt = MUX_STATE_USB;
+	}
 }
 
 
