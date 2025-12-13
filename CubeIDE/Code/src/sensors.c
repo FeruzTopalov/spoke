@@ -90,10 +90,12 @@
 struct acc_data acceleration;
 struct mag_data magnetic_field;
 
-
-
 float acc_k = ACC_KALMAN_K;
 float mag_k = MAG_KALMAN_K;
+
+
+uint8_t acc_first_run = 0;	//flags to indicate first run in order to properly initialize previous sensor value for Kalman filtering
+uint8_t mag_first_run = 0;
 
 
 
@@ -173,8 +175,15 @@ void read_accel(void)
 	acceleration.acc_y.as_integer *= -1;	//invert Y and Z due to physical location of the sensor on the PCB
 	acceleration.acc_z.as_integer *= -1;	//after this correction and for the device in normal orientation: X - to the right, Y - forward, Z - up into face
 
-	//Kalman filtration of Z axis because it is only used
-	acceleration.acc_z.as_integer = (int16_t)(acc_k * acceleration.acc_z.as_integer + (1 - acc_k) * acc_z_prev);
+	//Kalman filtration of Z axis because it is the only used
+	if (acc_first_run == 1)
+	{
+		acc_first_run = 0; //clear after first run; no changes to acc value
+	}
+	else //not the first run, use prev value
+	{
+		acceleration.acc_z.as_integer = (int16_t)(acc_k * acceleration.acc_z.as_integer + (1 - acc_k) * acc_z_prev);
+	}
 }
 
 
@@ -201,8 +210,15 @@ void read_magn(void)
 	magnetic_field.mag_y.as_integer *= -1;	//after this correction and for the device in normal orientation: X - to the right, Y - forward, Z - up into face
 
 	//Kalman filtration of X and Y axes because they are only used
-	magnetic_field.mag_x.as_integer = (int16_t)(mag_k * magnetic_field.mag_x.as_integer + (1 - mag_k) * mag_x_prev);
-	magnetic_field.mag_y.as_integer = (int16_t)(mag_k * magnetic_field.mag_y.as_integer + (1 - mag_k) * mag_y_prev);
+	if (mag_first_run == 1)
+	{
+		mag_first_run = 0; //clear after first run; no changes to mag values
+	}
+	else //not the first run, use prev value
+	{
+		magnetic_field.mag_x.as_integer = (int16_t)(mag_k * magnetic_field.mag_x.as_integer + (1 - mag_k) * mag_x_prev);
+		magnetic_field.mag_y.as_integer = (int16_t)(mag_k * magnetic_field.mag_y.as_integer + (1 - mag_k) * mag_y_prev);
+	}
 }
 
 
@@ -218,6 +234,14 @@ uint8_t is_horizontal(void)
 	{
 		return 0;
 	}
+}
+
+
+
+void sensors_mark_as_first_run(void)
+{
+	acc_first_run = 1;
+	mag_first_run = 1;
 }
 
 

@@ -1702,7 +1702,7 @@ void draw_compass_calibrated(void)
 void draw_calibration_saved_popup(void)
 {
 	lcd_clear();
-	lcd_print(0, 4, "Saved!");
+	lcd_print(1, 5, "Saved!");
     lcd_print(2, 3, "ESC close");
 	lcd_update();
 }

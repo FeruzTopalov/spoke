@@ -286,6 +286,7 @@ void start_compass(void)
 {
 	if (compass_availability == COMPASS_IS_AVAILABLE)
 	{
+		sensors_mark_as_first_run();
 		start_magnetometer();
 		timer4_start();
 	}
