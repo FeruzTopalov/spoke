@@ -62,7 +62,7 @@ void settings_interactive_save_default(void);
 
 
 //positions:
-#define SETTINGS_INIT_FLAG_POS          	(0)
+#define SETTINGS_INIT_FLAG_POS          	(0)	//starts form 0
 #define SETTINGS_DEVICE_NUMBER_POS      	(1)
 #define SETTINGS_DEVICES_ON_AIR_POS			(2)
 #define SETTINGS_DEVICE_ID_POS          	(3)
@@ -78,8 +78,8 @@ void settings_interactive_save_default(void);
 #define SETTINGS_MUX_STATE_POS				(13)
 #define SETTINGS_MAGN_OFFSET_X_POS			(14)
 #define SETTINGS_MAGN_OFFSET_Y_POS			(15)
-#define SETTINGS_MAGN_SCALE_X_POS			(16) //2 byte
-#define SETTINGS_MAGN_SCALE_Y_POS			(18) //2 byte
+#define SETTINGS_MAGN_SCALE_X_POS			(16) //2 bytes
+#define SETTINGS_MAGN_SCALE_Y_POS			(18) //2 bytes
 
 //default values:
 #define SETTINGS_INIT_FLAG_DEFAULT      	(0xAA)
@@ -104,7 +104,7 @@ void settings_interactive_save_default(void);
 #define SETTINGS_MAGN_SCALE_YL_DEFAULT		(0x0000)
 
 //settings size
-#define SETTINGS_SIZE						(19) //half-words
+#define SETTINGS_SIZE						(20) //half-words (i.e. bytes)
 
 
 
