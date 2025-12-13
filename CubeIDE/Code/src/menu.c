@@ -1281,7 +1281,7 @@ void draw_delete_device(void)
 void draw_saved_popup(void)
 {
 	lcd_clear();
-	lcd_print(0, 4, "Saved!");
+	lcd_print(1, 5, "Saved!");
     lcd_print(2, 3, "ESC close");
 	lcd_update();
 }
@@ -1292,7 +1292,7 @@ void draw_saved_popup(void)
 void draw_deleted_popup(void)
 {
 	lcd_clear();
-	lcd_print(0, 3, "Deleted!");
+	lcd_print(1, 3, "Deleted!");
     lcd_print(2, 3, "ESC close");
 	lcd_update();
 }

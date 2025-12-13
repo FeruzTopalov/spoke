@@ -260,6 +260,12 @@ void ext_int_init(void)
     EXTI->FTSR |= EXTI_FTSR_TR5;                //interrupt 5 on falling edge
     NVIC_EnableIRQ(EXTI9_5_IRQn);               //enable interrupt
 
+    //PC13 - ACC interrupt
+    AFIO->EXTICR[3] |= AFIO_EXTICR4_EXTI13_PC;	//exti 13 source is port C
+    EXTI->FTSR |= EXTI_FTSR_TR13;				//interrupt 13 on falling edge
+    EXTI->IMR |= EXTI_IMR_MR13;					//unmask interrupt 13
+    NVIC_EnableIRQ(EXTI15_10_IRQn);             //enable interrupt
+
 #ifdef SPLIT_PWM_BUZZER_BACKLIGHT
     //PC15 - Alarm button
     AFIO->EXTICR[3] |= AFIO_EXTICR4_EXTI15_PC;	//exti 15 source is port C

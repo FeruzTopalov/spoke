@@ -29,6 +29,7 @@
 #include "compass.h"
 #include "sensors.h"
 #include "adc.h"
+#include "config.h"
 
 
 
@@ -455,10 +456,23 @@ void EXTI9_5_IRQHandler(void)
 
 void EXTI15_10_IRQHandler(void)
 {
-	enable_my_alarm();
-	button_code = BTN_NO_ACTION;
-	main_flags.buttons_scanned = 1; //fake buttons scanned event to light up backlight and update menu
-	EXTI->PR = EXTI_PR_PR15;		//clear interrupt
+#ifdef SPLIT_PWM_BUZZER_BACKLIGHT
+	if (EXTI->PR & EXTI_PR_PR15)	//Alarm button interrupt
+	{
+		enable_my_alarm();
+		button_code = BTN_NO_ACTION;
+		main_flags.buttons_scanned = 1; //fake buttons scanned event to light up backlight and update menu
+		EXTI->PR = EXTI_PR_PR15;		//clear interrupt
+	}
+#endif
+
+	if (EXTI->PR & EXTI_PR_PR13)	//ACC move interrupt
+	{
+		led_green_on();
+		delay_cyc(500);
+		led_green_off();
+		EXTI->PR = EXTI_PR_PR13;		//clear interrupt
+	}
 }
 
 
@@ -581,7 +595,7 @@ void setup_interrupt_priorities(void)
 	NVIC_SetPriority(ADC1_2_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 6, 1));		//End of ADC conversion (battery voltage)
 
 	NVIC_SetPriority(SysTick_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 7, 0));		//End of beep
-	//NVIC_SetPriority(, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 7, 1));		//Empty
+	NVIC_SetPriority(EXTI15_10_IRQn, 		NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 7, 1));		//ALARM button or ACC interrupt
 }
 
 
