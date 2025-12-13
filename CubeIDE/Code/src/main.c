@@ -466,11 +466,10 @@ void EXTI15_10_IRQHandler(void)
 	}
 #endif
 
-	if (EXTI->PR & EXTI_PR_PR13)	//ACC move interrupt
+	if (EXTI->PR & EXTI_PR_PR13)	//ACC movement interrupt
 	{
-		led_green_on();
-		delay_cyc(500);
-		led_green_off();
+		set_acc_movement_flag(ACC_MOVEMENT_DETECTED);
+		disable_acc_movement_interrupt();				//once movement is detected, switch interrupt off until the beginning of the next update interval
 		EXTI->PR = EXTI_PR_PR13;		//clear interrupt
 	}
 }

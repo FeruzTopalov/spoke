@@ -26,6 +26,11 @@
 
 
 
+#define ACC_MOVEMENT_NOT_DETECTED 	(0)
+#define ACC_MOVEMENT_DETECTED 		(1)
+
+
+
 extern const double deg_to_rad;       //deg to rad multiplyer
 
 
@@ -43,6 +48,7 @@ void toggle_my_alarm(void);
 void enable_my_alarm(void);
 uint8_t get_my_alarm_status(void);
 void set_lowbat_flag(uint8_t value);
+void set_acc_movement_flag(uint8_t value);
 struct devices_struct **get_devices(void);
 
 
@@ -59,6 +65,7 @@ struct devices_struct
 	uint8_t fence_flag;				//is a predefined fence distance reached?
 	uint8_t fence_flag_for_beep;	//for beep clear
 	uint8_t lowbat_flag;			//did the device transmit low battery flag?
+	uint8_t acc_movement_flag;		//flag if accelerometer detected movement in the recent update interval
 	int8_t lora_rssi;				//RSSI of the last received packet
 
     //TIME

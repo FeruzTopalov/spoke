@@ -306,6 +306,20 @@ void clear_buttons_interrupts(void)
 
 
 
+void enable_acc_movement_interrupt(void)
+{
+	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR13) = 1;		//unmask interrupt 13
+}
+
+
+
+void disable_acc_movement_interrupt(void)
+{
+	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR13) = 0;		//mask interrupt 13
+}
+
+
+
 //Init MUX state based on settings
 void init_mux_state(uint8_t desired_state)
 {

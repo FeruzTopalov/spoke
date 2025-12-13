@@ -116,6 +116,11 @@ void fill_air_packet(uint32_t current_uptime)
 
 	p_air_packet_tx[INPACKET_ALTITUDE_POS] = 		devices[this_device].altitude.as_array[0];
 	p_air_packet_tx[INPACKET_ALTITUDE_POS + 1] = 	devices[this_device].altitude.as_array[1];
+
+	//todo: add acc movement flag first
+
+	set_acc_movement_flag(ACC_MOVEMENT_NOT_DETECTED);	//clear flag only after the acc movement flag was written to tx but
+	enable_acc_movement_interrupt();					//enable acc interrupt
 }
 
 
@@ -398,6 +403,13 @@ uint8_t get_my_alarm_status(void)
 void set_lowbat_flag(uint8_t value)
 {
 	devices[this_device].lowbat_flag = value;
+}
+
+
+
+void set_acc_movement_flag(uint8_t value)
+{
+	devices[this_device].acc_movement_flag = value;
 }
 
 

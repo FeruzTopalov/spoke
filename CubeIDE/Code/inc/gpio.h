@@ -21,6 +21,8 @@ void ext_int_init(void);
 void enable_buttons_interrupts(void);
 void disable_buttons_interrupts(void);
 void clear_buttons_interrupts(void);
+void enable_acc_movement_interrupt(void);
+void disable_acc_movement_interrupt(void);
 void init_mux_state(uint8_t desired_state);
 void mux_console_usb(void);
 void mux_console_ble(void);
