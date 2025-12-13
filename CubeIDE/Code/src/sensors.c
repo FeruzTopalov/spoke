@@ -82,11 +82,18 @@
 
 
 #define ACC_HORIZ_THRS	(900)	//threshold value for Z axis when checking horizontality
+#define ACC_KALMAN_K 	(0.15)	//Kalman filter coefficient for accelerometer
+#define MAG_KALMAN_K 	(0.3)	//Kalman filter coefficient for magnetometer
 
 
 
 struct acc_data acceleration;
 struct mag_data magnetic_field;
+
+
+
+float acc_k = ACC_KALMAN_K;
+float mag_k = MAG_KALMAN_K;
 
 
 
@@ -166,16 +173,21 @@ void read_accel(void)
 	acceleration.acc_y.as_integer *= -1;	//invert Y and Z due to physical location of the sensor on the PCB
 	acceleration.acc_z.as_integer *= -1;	//after this correction and for the device in normal orientation: X - to the right, Y - forward, Z - up into face
 
-	//Kalman filtration
-	float k = 0.1;
-	acceleration.acc_z.as_integer = (int16_t)(k * acceleration.acc_z.as_integer + (1 - k) * acc_z_prev);
+	//Kalman filtration of Z axis because it is only used
+	acceleration.acc_z.as_integer = (int16_t)(acc_k * acceleration.acc_z.as_integer + (1 - acc_k) * acc_z_prev);
 }
 
 
 
 void read_magn(void)
 {
+	int16_t mag_x_prev;
+	int16_t mag_y_prev;
 	uint8_t buf[6];
+
+	mag_x_prev = magnetic_field.mag_x.as_integer;
+	mag_y_prev = magnetic_field.mag_y.as_integer;
+
 	i2c_read_multiple(LSM303_ADDR_MAG, LSM303_REG_MAG_OUT_X_H_M, 6, buf);
 
 	magnetic_field.mag_x.as_array[1] = buf[0];
@@ -187,6 +199,10 @@ void read_magn(void)
 
 	magnetic_field.mag_z.as_integer *= -1;	//invert Y and Z due to physical location of the sensor on the PCB
 	magnetic_field.mag_y.as_integer *= -1;	//after this correction and for the device in normal orientation: X - to the right, Y - forward, Z - up into face
+
+	//Kalman filtration of X and Y axes because they are only used
+	magnetic_field.mag_x.as_integer = (int16_t)(mag_k * magnetic_field.mag_x.as_integer + (1 - mag_k) * mag_x_prev);
+	magnetic_field.mag_y.as_integer = (int16_t)(mag_k * magnetic_field.mag_y.as_integer + (1 - mag_k) * mag_y_prev);
 }
 
 
