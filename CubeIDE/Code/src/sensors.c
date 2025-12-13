@@ -145,7 +145,11 @@ void stop_magnetometer(void)
 
 void read_accel(void)
 {
+	int16_t acc_z_prev;
 	uint8_t buf[6];
+
+	acc_z_prev = acceleration.acc_z.as_integer; //save for Kalman filter
+
 	i2c_read_multiple(LSM303_ADDR_ACC, LSM303_REG_ACC_OUT_X_L_A, 6, buf);
 
 	acceleration.acc_x.as_array[0] = buf[0];
@@ -161,6 +165,10 @@ void read_accel(void)
 
 	acceleration.acc_y.as_integer *= -1;	//invert Y and Z due to physical location of the sensor on the PCB
 	acceleration.acc_z.as_integer *= -1;	//after this correction and for the device in normal orientation: X - to the right, Y - forward, Z - up into face
+
+	//Kalman filtration
+	float k = 0.1;
+	acceleration.acc_z.as_integer = (int16_t)(k * acceleration.acc_z.as_integer + (1 - k) * acc_z_prev);
 }
 
 
