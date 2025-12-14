@@ -13,6 +13,7 @@
 #include "service.h"
 #include "settings.h"
 #include "config.h"
+#include "gpio.h"
 
 
 
@@ -79,6 +80,8 @@ void uart_init(void)
 	brr_gps_baud = 0x001A;
 	gps_uart_buf_len = 5790;		//11520 bytes/s max, does not fit buffer, pray for fit in actual use (otherwise no RF TX/RX will happen because uart overflow will be hitting earlier than pps interrupt)
 #endif
+
+	init_mux_state(p_settings->mux_state_opt);				//init console MUX here because settings are already available
 
 	uart1_dma_init();
 	uart3_dma_init();

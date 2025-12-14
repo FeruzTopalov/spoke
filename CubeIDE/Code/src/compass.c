@@ -75,6 +75,66 @@ void init_compass(void)
 		if (init_magnetometer())
 		{
 			compass_availability = COMPASS_IS_AVAILABLE;
+
+			/*//--------------------
+			char buf[15];
+			start_compass();
+
+			while (1)
+			{
+				lcd_clear();
+
+				led_green_on();
+
+				read_accel();
+				read_magn();
+
+				p_acceleration = get_acceleration();
+				p_magnetic_field = get_magnetic_field();
+
+				led_green_off();
+
+				lcd_print(0, 0, "ACC");
+
+				lcd_print(1, 0, "X");
+				itoa32(p_acceleration->acc_x.as_integer, buf);
+				lcd_print(1, 2, buf);
+
+				lcd_print(2, 0, "Y");
+				itoa32(p_acceleration->acc_y.as_integer, buf);
+				lcd_print(2, 2, buf);
+
+				lcd_print(3, 0, "Z");
+				itoa32(p_acceleration->acc_z.as_integer, buf);
+				lcd_print(3, 2, buf);
+
+
+
+				lcd_print(0, 8, "MAG");
+
+				lcd_print(1, 8, "X");
+				itoa32(p_magnetic_field->mag_x.as_integer, buf);
+				lcd_print(1, 10, buf);
+
+				lcd_print(2, 8, "Y");
+				itoa32(p_magnetic_field->mag_y.as_integer, buf);
+				lcd_print(2, 10, buf);
+
+				lcd_print(3, 8, "Z");
+				itoa32(p_magnetic_field->mag_z.as_integer, buf);
+				lcd_print(3, 10, buf);
+
+
+				lcd_update();
+				while (get_lcd_busy())
+				{
+					;
+				}
+				delay_cyc(50000);
+
+				reload_watchdog();
+			}
+			//--------------------*/
 		}
 	}
 
@@ -226,7 +286,7 @@ void start_compass(void)
 {
 	if (compass_availability == COMPASS_IS_AVAILABLE)
 	{
-		start_accelerometer();
+		sensors_mark_as_first_run();
 		start_magnetometer();
 		timer4_start();
 	}
@@ -239,7 +299,6 @@ void stop_compass(void)
 	if (compass_availability == COMPASS_IS_AVAILABLE)
 	{
 		timer4_stop();
-		stop_accelerometer();
 		stop_magnetometer();
 		gps_course = 0;
 		north_ready = 0;

@@ -62,7 +62,7 @@ void settings_interactive_save_default(void);
 
 
 //positions:
-#define SETTINGS_INIT_FLAG_POS          	(0)
+#define SETTINGS_INIT_FLAG_POS          	(0)	//starts form 0
 #define SETTINGS_DEVICE_NUMBER_POS      	(1)
 #define SETTINGS_DEVICES_ON_AIR_POS			(2)
 #define SETTINGS_DEVICE_ID_POS          	(3)
@@ -75,10 +75,11 @@ void settings_interactive_save_default(void);
 #define SETTINGS_TIME_ZONE_HOUR_POS			(10)
 #define SETTINGS_TIME_ZONE_MINUTE_POS		(11)
 #define SETTINGS_BL_LEVEL_POS				(12)
-#define SETTINGS_MAGN_OFFSET_X_POS			(13)
-#define SETTINGS_MAGN_OFFSET_Y_POS			(14)
-#define SETTINGS_MAGN_SCALE_X_POS			(15) //2 byte
-#define SETTINGS_MAGN_SCALE_Y_POS			(17) //2 byte
+#define SETTINGS_MUX_STATE_POS				(13)
+#define SETTINGS_MAGN_OFFSET_X_POS			(14)
+#define SETTINGS_MAGN_OFFSET_Y_POS			(15)
+#define SETTINGS_MAGN_SCALE_X_POS			(16) //2 bytes
+#define SETTINGS_MAGN_SCALE_Y_POS			(18) //2 bytes
 
 //default values:
 #define SETTINGS_INIT_FLAG_DEFAULT      	(0xAA)
@@ -94,6 +95,7 @@ void settings_interactive_save_default(void);
 #define SETTINGS_TIME_ZONE_HOUR_DEFAULT		(0)
 #define SETTINGS_TIME_ZONE_MINUTE_DEFAULT	(0)
 #define SETTINGS_BL_LEVEL_DEFAULT			(BL_LEVEL_LOW_AUTO_SETTING)
+#define SETTINGS_MUX_STATE_DEFAULT			(MUX_STATE_USB)
 #define SETTINGS_MAGN_OFFSET_X_DEFAULT		(0)
 #define SETTINGS_MAGN_OFFSET_Y_DEFAULT		(0)
 #define SETTINGS_MAGN_SCALE_XM_DEFAULT		(0x3f80)	//float 1.0
@@ -102,7 +104,7 @@ void settings_interactive_save_default(void);
 #define SETTINGS_MAGN_SCALE_YL_DEFAULT		(0x0000)
 
 //settings size
-#define SETTINGS_SIZE						(19) //half-words
+#define SETTINGS_SIZE						(20) //half-words (i.e. bytes)
 
 
 
@@ -174,6 +176,7 @@ void settings_load(void)
     settings.time_zone_hour = 					settings_array[SETTINGS_TIME_ZONE_HOUR_POS];
     settings.time_zone_minute = 				settings_array[SETTINGS_TIME_ZONE_MINUTE_POS];
     settings.bl_level_opt = 					settings_array[SETTINGS_BL_LEVEL_POS];
+    settings.mux_state_opt = 					settings_array[SETTINGS_MUX_STATE_POS];
     settings.magn_offset_x =					settings_array[SETTINGS_MAGN_OFFSET_X_POS];
     settings.magn_offset_y =					settings_array[SETTINGS_MAGN_OFFSET_Y_POS];
     settings.magn_scale_x.as_array[0] = 		settings_array[SETTINGS_MAGN_SCALE_X_POS];
@@ -269,6 +272,7 @@ void settings_save_default(void)
     settings_array[SETTINGS_TIME_ZONE_HOUR_POS] = 		SETTINGS_TIME_ZONE_HOUR_DEFAULT;
     settings_array[SETTINGS_TIME_ZONE_MINUTE_POS] = 	SETTINGS_TIME_ZONE_MINUTE_DEFAULT;
     settings_array[SETTINGS_BL_LEVEL_POS] = 			SETTINGS_BL_LEVEL_DEFAULT;
+    settings_array[SETTINGS_MUX_STATE_POS] = 			SETTINGS_MUX_STATE_DEFAULT;
     settings_array[SETTINGS_MAGN_OFFSET_X_POS] = 		SETTINGS_MAGN_OFFSET_X_DEFAULT;
     settings_array[SETTINGS_MAGN_OFFSET_Y_POS] = 		SETTINGS_MAGN_OFFSET_Y_DEFAULT;
     settings_array[SETTINGS_MAGN_SCALE_X_POS] = 		SETTINGS_MAGN_SCALE_XL_DEFAULT;	//little-endian
@@ -301,6 +305,7 @@ void settings_save(struct settings_struct *p_settings)
     settings_array[SETTINGS_TIME_ZONE_HOUR_POS] = 		p_settings->time_zone_hour;
     settings_array[SETTINGS_TIME_ZONE_MINUTE_POS] = 	p_settings->time_zone_minute;
     settings_array[SETTINGS_BL_LEVEL_POS] = 			p_settings->bl_level_opt;
+    settings_array[SETTINGS_MUX_STATE_POS] = 			p_settings->mux_state_opt;
     settings_array[SETTINGS_MAGN_OFFSET_X_POS] = 		p_settings->magn_offset_x;
     settings_array[SETTINGS_MAGN_OFFSET_Y_POS] = 		p_settings->magn_offset_y;
     settings_array[SETTINGS_MAGN_SCALE_X_POS] = 		p_settings->magn_scale_x.as_array[0];

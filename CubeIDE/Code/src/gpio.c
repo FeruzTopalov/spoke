@@ -13,6 +13,10 @@
 
 
 
+uint8_t mux_state = MUX_STATE_USB;
+
+
+
 //Initialization of all used ports
 void gpio_init(void)
 {
@@ -163,7 +167,7 @@ void gpio_init(void)
     GPIOB->CRH &= ~GPIO_CRH_MODE10_0;    //output 2 MHz
     GPIOB->CRH |= GPIO_CRH_MODE10_1;
     GPIOB->CRH &= ~GPIO_CRH_CNF10;       //output push-pull
-    GPIOB->ODR |= GPIO_ODR_ODR10;			//workaround, this sets RX pin of the GPS to high state and prevents RX frame error which takes place when this pin is low for a long time (between gpio and uart inits)
+    GPIOB->ODR |= GPIO_ODR_ODR10;		 //workaround, this sets RX pin of the GPS to high state and prevents RX frame error which takes place when this pin is low for a long time (between gpio and uart inits)
 
     //PB11 - USART3 RX (GPS)
     GPIOB->CRH &= ~GPIO_CRH_MODE11;      //input
@@ -202,15 +206,26 @@ void gpio_init(void)
     GPIOC->CRH |= GPIO_CRH_CNF13_1;
     GPIOC->ODR |= GPIO_ODR_ODR13;        //pull-up
 
-    //PC14 - X4 test point
+    //PC14 - USB/BLE Console Multiplexer Switch
+    mux_console_usb();					 //pre-set MUX state to log 1 (USB default)
     GPIOC->CRH &= ~GPIO_CRH_MODE14_0;    //output 2 MHz
     GPIOC->CRH |= GPIO_CRH_MODE14_1;
     GPIOC->CRH &= ~GPIO_CRH_CNF14;       //output push-pull
 
-    //PC15 - LCD Backlight
+
+#ifdef SPLIT_PWM_BUZZER_BACKLIGHT
+    //PC15 - Button Alarm
+    GPIOC->CRH &= ~GPIO_CRH_MODE15;      //input mode
+    GPIOC->CRH &= ~GPIO_CRH_CNF15_0;     //input with pull
+    GPIOC->CRH |= GPIO_CRH_CNF15_1;
+    GPIOC->ODR |= GPIO_ODR_ODR15;        //pull-up on
+#else
+    //PC15 - LCD baclkight
     GPIOC->CRH &= ~GPIO_CRH_MODE15_0;    //output 2 MHz
     GPIOC->CRH |= GPIO_CRH_MODE15_1;
     GPIOC->CRH &= ~GPIO_CRH_CNF15;       //output push-pull
+#endif
+
 }
 
 
@@ -245,6 +260,20 @@ void ext_int_init(void)
     EXTI->FTSR |= EXTI_FTSR_TR5;                //interrupt 5 on falling edge
     NVIC_EnableIRQ(EXTI9_5_IRQn);               //enable interrupt
 
+    //PC13 - ACC interrupt
+    AFIO->EXTICR[3] |= AFIO_EXTICR4_EXTI13_PC;	//exti 13 source is port C
+    EXTI->FTSR |= EXTI_FTSR_TR13;				//interrupt 13 on falling edge
+    EXTI->IMR |= EXTI_IMR_MR13;					//unmask interrupt 13
+    NVIC_EnableIRQ(EXTI15_10_IRQn);             //enable interrupt
+
+#ifdef SPLIT_PWM_BUZZER_BACKLIGHT
+    //PC15 - Alarm button
+    AFIO->EXTICR[3] |= AFIO_EXTICR4_EXTI15_PC;	//exti 15 source is port C
+    EXTI->FTSR |= EXTI_FTSR_TR15;				//interrupt 15 on falling edge
+    EXTI->IMR |= EXTI_IMR_MR15;					//unmask interrupt 15
+    NVIC_EnableIRQ(EXTI15_10_IRQn);             //enable interrupt
+#endif
+
     EXTI->PR = (uint32_t)0x0007FFFF;            //clear all pending interrupts
 }
 
@@ -277,23 +306,61 @@ void clear_buttons_interrupts(void)
 
 
 
-//X4 high todo: MUX
-void x4_high(void)
+void enable_acc_movement_interrupt(void)
+{
+	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR13) = 1;		//unmask interrupt 13
+}
+
+
+
+void disable_acc_movement_interrupt(void)
+{
+	BIT_BAND_PERI(EXTI->IMR, EXTI_IMR_MR13) = 0;		//mask interrupt 13
+}
+
+
+
+//Init MUX state based on settings
+void init_mux_state(uint8_t desired_state)
+{
+	if (desired_state == MUX_STATE_USB)
+	{
+		mux_console_usb();
+	}
+	else
+	{
+		mux_console_ble();
+	}
+}
+
+
+
+//MUX to Console <-> USB
+void mux_console_usb(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BS14;
+	mux_state = MUX_STATE_USB;
 }
 
 
 
-//X4 low todo: MUX
-void x4_low(void)
+//MUX to Console <-> BLE
+void mux_console_ble(void)
 {
 	GPIOC->BSRR = GPIO_BSRR_BR14;
+	mux_state = MUX_STATE_BLE;
 }
 
 
 
-//X5 high todo: bl
+uint8_t get_mux_state(void)
+{
+	return mux_state;
+}
+
+
+
+//LCD backlight on
 void backlight_lcd_high(void)
 {
 #ifndef	SPLIT_PWM_BUZZER_BACKLIGHT
@@ -303,7 +370,7 @@ void backlight_lcd_high(void)
 
 
 
-//X5 low todo: bl
+//LCD backlight off
 void backlight_lcd_low(void)
 {
 #ifndef	SPLIT_PWM_BUZZER_BACKLIGHT
