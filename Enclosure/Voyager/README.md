@@ -1,6 +1,6 @@
 # "Voyager" enclosure
 
-Author: Andrew I.
+Author: Andrew I.   
 Designed and tested for Spoke HW Rev. 1.0  
 Fix with 4x M3*20 DIN 7985
 
