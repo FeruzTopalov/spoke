@@ -122,6 +122,10 @@ void rf_init(void)
 			power_reg_dbm = 10;
 			break;
 
+		case TX_POWER_POS14DBM_SETTING:
+			power_reg_dbm = 14;
+			break;
+
 		case TX_POWER_POS22DBM_SETTING:
 			power_reg_dbm = 20;
 			break;

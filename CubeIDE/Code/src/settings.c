@@ -33,12 +33,14 @@ void settings_interactive_save_default(void);
 
 #define TX_POWER_NEG9DBM_VALUE   	(-9)
 #define TX_POWER_POS0DBM_VALUE   	(0)
-#define TX_POWER_POS10DBM_VALUE   	(10)//todo add 14 dBm
+#define TX_POWER_POS10DBM_VALUE   	(10)
+#define TX_POWER_POS14DBM_VALUE   	(14)
 #define TX_POWER_POS22DBM_VALUE  	(22)
 
 #define TX_POWER_VALUES_ARRAY 		{ 	TX_POWER_NEG9DBM_VALUE, 	\
 										TX_POWER_POS0DBM_VALUE, 	\
 										TX_POWER_POS10DBM_VALUE, 	\
+										TX_POWER_POS14DBM_VALUE,	\
 										TX_POWER_POS22DBM_VALUE		}
 
 

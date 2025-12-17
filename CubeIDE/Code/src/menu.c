@@ -1491,14 +1491,14 @@ void draw_set_freq_channel(void)
 void draw_set_tx_power(void)
 {
 	#define TX_POWER_ROW               (2)
-	#define TX_POWER_COL               (6)
+	#define TX_POWER_COL               (5)
 
 	lcd_clear();
 	lcd_print(0, 4, "TX POWER");
 
     itoa32(p_tx_power_values[settings_copy.tx_power_opt], &tmp_buf[0]);
     lcd_print(TX_POWER_ROW, TX_POWER_COL, &tmp_buf[0]);
-    lcd_print_next("dBm");
+    lcd_print_next(" dBm");
 
 	lcd_update();
 }
