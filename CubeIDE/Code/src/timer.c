@@ -250,7 +250,7 @@ void timer1_stop_reload(void)
 void timer2_init(void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; //enable timer clock
-	TIM2->PSC = (uint16_t)TIM2_PSC_BUZZER_VALUE; 	//Start with buzzer value
+	TIM2->PSC = (uint16_t)TIM2_PSC_LCDBL_VALUE; 	//Start with LCD BL value
 	TIM2->ARR = (uint16_t)9;            			//200kHz/(9+1)=20kHz - in case of TIM2_PSC_LCDBL_VALUE
 													//20kHz/(9+1)=2kHz - in case of TIM2_PSC_BUZZER_VALUE
 
