@@ -30,8 +30,6 @@ void timer1_clock_enable(void);
 void timer2_init(void);
 void timer2_clock_disable(void);
 void timer2_clock_enable(void);
-void timer2_start(void);
-void timer2_stop(void);
 void buzzer_pwm_start(void);
 void timer3_init(void);
 void timer3_clock_disable(void);
@@ -283,20 +281,6 @@ void timer2_clock_disable(void) //todo del
 void timer2_clock_enable(void) //todo del
 {
 	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM2EN) = 1;
-}
-
-
-
-void timer2_start(void) //todo del
-{
-	;
-}
-
-
-
-void timer2_stop(void) //todo del
-{
-	;
 }
 
 
