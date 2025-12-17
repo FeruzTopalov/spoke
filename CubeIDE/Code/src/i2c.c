@@ -46,7 +46,7 @@ void i2c_clock_disable(void)
 void i2c_clock_enable(void)
 {
 	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_I2C1EN) = 1;
-	delay_cyc(10);
+	delay_cyc(20);
 }
 
 
