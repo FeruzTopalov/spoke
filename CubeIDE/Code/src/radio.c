@@ -26,7 +26,7 @@ void rf_config_frequency(uint8_t channel_num);
 void rf_config_tx_power(int8_t power_dbm);
 void rf_set_cw_tx(void);
 
-
+//successfull tx/rx!
 
 #define RADIO_CRYSTAL					(32000000)
 #define POWER_2_TO_25					(33554432)
