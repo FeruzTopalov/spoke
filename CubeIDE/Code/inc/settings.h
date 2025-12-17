@@ -9,6 +9,8 @@
 #ifndef SETTINGS_HEADER
 #define SETTINGS_HEADER
 
+#include "config.h"
+
 
 
 #define TIMEOUT_ALARM_DISABLED		(0)
@@ -29,7 +31,8 @@
 #define TX_POWER_NEG9DBM_SETTING   	(0)
 #define TX_POWER_POS0DBM_SETTING    (1)
 #define TX_POWER_POS10DBM_SETTING   (2)
-#define TX_POWER_POS22DBM_SETTING  	(3)
+#define TX_POWER_POS14DBM_SETTING   (3)
+#define TX_POWER_POS22DBM_SETTING  	(4)
 
 #define TX_POWER_FIRST_OPTION 		(TX_POWER_NEG9DBM_SETTING)
 #define TX_POWER_LAST_OPTION 		(TX_POWER_POS22DBM_SETTING)
@@ -51,9 +54,15 @@
 
 
 //FREQ
+#ifdef FREQ_BAND_433
 #define FREQ_CHANNEL_FIRST  (1)
 #define FREQ_CHANNEL_LAST   (8)	//see radio.c
+#endif
 
+#ifdef FREQ_BAND_868
+#define FREQ_CHANNEL_FIRST  (1)
+#define FREQ_CHANNEL_LAST   (21)	//see radio.c
+#endif
 
 
 //ID

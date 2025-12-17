@@ -13,7 +13,7 @@
 #include "service.h"
 #include "main.h"
 #include "settings.h"
-#include "uart.h"
+#include "config.h"
 
 
 
@@ -26,22 +26,10 @@ void rf_config_frequency(uint8_t channel_num);
 void rf_config_tx_power(int8_t power_dbm);
 void rf_set_cw_tx(void);
 
+//successfull tx/rx!
 
-
-//CH1 - 433.175 MHz
-//CH2 - 433.375 MHz
-//CH3 - 433.575 MHz
-//CH4 - 433.775 MHz
-//CH5 - 433.975 MHz
-//CH6 - 434.175 MHz
-//CH7 - 434.375 MHz
-//CH8 - 434.575 MHz
-#define BASE_CHANNEL_FREQUENCY 			(432975000)	// base freq or ch0, not used actually
-#define CHANNEL_FREQUENCY_STEP			(200000)
 #define RADIO_CRYSTAL					(32000000)
 #define POWER_2_TO_25					(33554432)
-
-
 
 
 
@@ -134,6 +122,10 @@ void rf_init(void)
 			power_reg_dbm = 10;
 			break;
 
+		case TX_POWER_POS14DBM_SETTING:
+			power_reg_dbm = 14;
+			break;
+
 		case TX_POWER_POS22DBM_SETTING:
 			power_reg_dbm = 20;
 			break;
@@ -177,6 +169,8 @@ void rf_config_tx_power(int8_t power_dbm)
 	spi1_trx(power_dbm);
 	spi1_trx(TX_RAMP_TIME_800U);
 	cs_rf_inactive();
+
+	//todo: add SET_PA_CFG
 
 	spi1_clock_disable();
 }
