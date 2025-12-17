@@ -202,8 +202,9 @@ void lcd_display_off(void)
 	lcd_clear();
 	lcd_print(1, 5, "LOCKED");
 	lcd_print(2, 2, "PWR to unlock");
-	lcd_update();
 	while (lcd_busy);
+	lcd_update();
+//	while (lcd_busy);
 #endif
 
 	display_status = LCD_DISPLAY_OFF;
@@ -380,7 +381,7 @@ void lcd_continue_update(void)
 {
 	current_page++;
 
-	if (current_page < 8)
+	if (current_page < 8)//todo replace magic number
 	{
 		lcd_send_command(LCD_COMMAND_SET_COL_ADRL_BASE); 		//reset column address low
 		lcd_send_command(LCD_COMMAND_SET_COL_ADRH_BASE);			//reset column address high
@@ -392,13 +393,13 @@ void lcd_continue_update(void)
 	}
 	else
 	{
+		lcd_busy = 0;
 		current_page = 0;
 		if (lcd_pending_off == 1)
 		{
-			lcd_display_off();
 			lcd_pending_off = 0;
+			lcd_display_off();
 		}
-		lcd_busy = 0;
 	}
 }
 
