@@ -9,6 +9,8 @@
 #ifndef SETTINGS_HEADER
 #define SETTINGS_HEADER
 
+#include "config.h"
+
 
 
 #define TIMEOUT_ALARM_DISABLED		(0)
@@ -51,9 +53,15 @@
 
 
 //FREQ
+#ifdef FREQ_BAND_433
 #define FREQ_CHANNEL_FIRST  (1)
 #define FREQ_CHANNEL_LAST   (8)	//see radio.c
+#endif
 
+#ifdef FREQ_BAND_868
+#define FREQ_CHANNEL_FIRST  (1)
+#define FREQ_CHANNEL_LAST   (21)	//see radio.c
+#endif
 
 
 //ID

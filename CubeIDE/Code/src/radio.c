@@ -13,7 +13,7 @@
 #include "service.h"
 #include "main.h"
 #include "settings.h"
-#include "uart.h"
+#include "config.h"
 
 
 
@@ -27,7 +27,7 @@ void rf_config_tx_power(int8_t power_dbm);
 void rf_set_cw_tx(void);
 
 
-
+#ifdef FREQ_BAND_433
 //CH1 - 433.175 MHz
 //CH2 - 433.375 MHz
 //CH3 - 433.575 MHz
@@ -38,10 +38,36 @@ void rf_set_cw_tx(void);
 //CH8 - 434.575 MHz
 #define BASE_CHANNEL_FREQUENCY 			(432975000)	// base freq or ch0, not used actually
 #define CHANNEL_FREQUENCY_STEP			(200000)
+#endif
+
+#ifdef FREQ_BAND_868
+//CH1 - 865.100 MHz
+//CH2 - 865.300 MHz
+//CH3 - 865.500 MHz
+//CH4 - 865.700 MHz
+//CH5 - 865.900 MHz
+//CH6 - 866.100 MHz
+//CH7 - 866.300 MHz
+//CH8 - 866.500 MHz
+//CH9 - 866.700 MHz
+//CH10 - 866.900 MHz
+//CH11 - 867.100 MHz
+//CH12 - 867.300 MHz
+//CH13 - 867.500 MHz
+//CH14 - 867.700 MHz
+//CH15 - 867.900 MHz
+//CH16 - 868.100 MHz
+//CH17 - 868.300 MHz
+//CH18 - 868.500 MHz
+//CH19 - 868.700 MHz
+//CH20 - 868.900 MHz
+//CH21 - 869.100 MHz
+#define BASE_CHANNEL_FREQUENCY 			(864900000)	// base freq or ch0, not used actually
+#define CHANNEL_FREQUENCY_STEP			(200000)
+#endif
+
 #define RADIO_CRYSTAL					(32000000)
 #define POWER_2_TO_25					(33554432)
-
-
 
 
 
@@ -177,6 +203,8 @@ void rf_config_tx_power(int8_t power_dbm)
 	spi1_trx(power_dbm);
 	spi1_trx(TX_RAMP_TIME_800U);
 	cs_rf_inactive();
+
+	//todo: add SET_PA_CFG
 
 	spi1_clock_disable();
 }

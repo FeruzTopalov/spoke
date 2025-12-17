@@ -38,4 +38,11 @@
 
 
 
+/* STEP 5 */
+/* Define Frequency Band */
+#define FREQ_BAND_433		/* Define for E22-400M22S module (SX1268) for any HW revision */
+//#define FREQ_BAND_868		/* Define for E22-900M22S module (SX1262) for any HW revision */
+
+
+
 #endif /*CONFIG_HEADER*/
