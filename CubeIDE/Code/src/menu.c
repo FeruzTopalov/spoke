@@ -23,6 +23,7 @@
 #include "gps.h"
 #include "compass.h"
 #include "adc.h"
+#include "radio.h"
 
 
 
@@ -1460,13 +1461,27 @@ void draw_set_device_id(void)
 void draw_set_freq_channel(void)
 {
 	#define FREQ_CHANNEL_ROW               (2)
-	#define FREQ_CHANNEL_COL               (7)
+	#define FREQ_CHANNEL_COL               (6)
+
+	uint32_t freq_value_kHz;
 
 	lcd_clear();
 	lcd_print(0, 2, "FREQ CHANNEL");
 
+	lcd_print(FREQ_CHANNEL_ROW, FREQ_CHANNEL_COL, "CH ");
+
     itoa32(settings_copy.freq_channel, &tmp_buf[0]);
-	lcd_print(FREQ_CHANNEL_ROW, FREQ_CHANNEL_COL, &tmp_buf[0]);
+	lcd_print_next(&tmp_buf[0]);
+
+	freq_value_kHz = ((uint32_t)BASE_CHANNEL_FREQUENCY + settings_copy.freq_channel * (uint32_t)CHANNEL_FREQUENCY_STEP) / 1000;
+	itoa32(freq_value_kHz, &tmp_buf[0]);
+	lcd_print(FREQ_CHANNEL_ROW + 1, FREQ_CHANNEL_COL - 3, &tmp_buf[0]);
+
+	//trick to print freq in kHz with dot to get MHz
+	lcd_print(FREQ_CHANNEL_ROW + 1, FREQ_CHANNEL_COL, ".");
+	lcd_print(FREQ_CHANNEL_ROW + 1, FREQ_CHANNEL_COL + 1, &tmp_buf[3]);
+
+	lcd_print_next(" MHz");
 
 	lcd_update();
 }
