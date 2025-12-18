@@ -320,7 +320,10 @@ void EXTI0_IRQHandler(void)
 
 			rf_get_rx_packet();
 			rx_dev = parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
-			pp_devices[rx_dev]->lora_rssi = rf_get_last_rssi();	//read and save RSSI
+			if (rx_dev != NAV_OBJECT_NULL)
+			{
+				pp_devices[rx_dev]->lora_rssi = rf_get_last_rssi();	//read and save RSSI
+			}
 		}
 	}
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
