@@ -74,13 +74,11 @@ const double pi_div_by_4 = 0.7853981633974483;      // pi / 4
 #define BYT_HEADER_0_RES_RES_POS  			(5)
 #define BYT_HEADER_0_RES_RES_MASK			(0b11100000)
 
-
 #define BYT_HEADER_1_DEV_NUM_POS  			(0)
 #define BYT_HEADER_1_DEV_NUM_MASK			(0b00011111)
 
 #define BYT_HEADER_1_RES_RES_POS  			(5)
 #define BYT_HEADER_1_RES_RES_MASK			(0b11100000)
-
 
 #define BYT_HEADER_2_DEV_ID_POS  			(0)
 #define BYT_HEADER_2_DEV_ID_MASK			(0b00011111)
@@ -122,6 +120,7 @@ void init_lrns(void)
     //Activate this device
 	devices[this_device].exist_flag = 1;
 	devices[this_device].device_id = p_settings->device_id;
+	devices[this_device].beacon_flag = 0; //device is not a beacon
 
 	//Get update interval
 	p_update_interval_values = get_update_interval_values();
@@ -131,27 +130,33 @@ void init_lrns(void)
 
 void fill_air_packet(uint32_t current_uptime)
 {
-	p_air_packet_tx[INPACKET_HEADER_POS] = 			(this_device << INBYTE_HEADER_NUM_POS) | ((devices[this_device].device_id - 'A') << INBYTE_HEADER_ID_POS);	   //transmit dev id as A-Z, but with 0x41 ('A') shift resulting in 0-25 dec
-	devices[this_device].timestamp =				current_uptime;
+	devices[this_device].timestamp = current_uptime;
 
-	p_air_packet_tx[INPACKET_FLAGS_POS] = 			(devices[this_device].alarm_flag << INBYTE_FLAGS_ALARM_POS) | (devices[this_device].lowbat_flag << INBYTE_FLAGS_LOWBAT_POS);
+	p_air_packet_tx[PKT_HEADER_0_POS] = 			(devices[this_device].alarm_flag << BYT_HEADER_0_FLAG_ALARM_POS) |
+													(devices[this_device].beacon_flag << BYT_HEADER_0_FLAG_BEACON_POS) |
+													(devices[this_device].lowbat_flag << BYT_HEADER_0_FLAG_LOW_BAT_POS) |
+													(devices[this_device].acc_movement_flag << BYT_HEADER_0_FLAG_ACC_MOVE_POS) |
+													(devices[this_device].pdop_flag << BYT_HEADER_0_FLAG_PDOP_POS); //todo set pdop flag in gps parse()									;
 
-	p_air_packet_tx[INPACKET_LATITUDE_POS] = 		devices[this_device].latitude.as_array[0];
-	p_air_packet_tx[INPACKET_LATITUDE_POS + 1] = 	devices[this_device].latitude.as_array[1];
-	p_air_packet_tx[INPACKET_LATITUDE_POS + 2] = 	devices[this_device].latitude.as_array[2];
-	p_air_packet_tx[INPACKET_LATITUDE_POS + 3] = 	devices[this_device].latitude.as_array[3];
+	p_air_packet_tx[PKT_HEADER_1_POS] = 			(this_device << BYT_HEADER_1_DEV_NUM_POS);
 
-	p_air_packet_tx[INPACKET_LONGITUDE_POS] = 		devices[this_device].longitude.as_array[0];
-	p_air_packet_tx[INPACKET_LONGITUDE_POS + 1] = 	devices[this_device].longitude.as_array[1];
-	p_air_packet_tx[INPACKET_LONGITUDE_POS + 2] = 	devices[this_device].longitude.as_array[2];
-	p_air_packet_tx[INPACKET_LONGITUDE_POS + 3] = 	devices[this_device].longitude.as_array[3];
+	//transmit dev id as A-Z, but with 0x41 ('A') shift resulting in 0-25 dec
+	p_air_packet_tx[PKT_HEADER_2_POS] = 			((devices[this_device].device_id - 'A') << BYT_HEADER_2_DEV_ID_POS);
 
-	p_air_packet_tx[INPACKET_ALTITUDE_POS] = 		devices[this_device].altitude.as_array[0];
-	p_air_packet_tx[INPACKET_ALTITUDE_POS + 1] = 	devices[this_device].altitude.as_array[1];
+	p_air_packet_tx[PKT_LATITUDE_0_POS] = 			devices[this_device].latitude.as_array[0];
+	p_air_packet_tx[PKT_LATITUDE_1_POS] = 			devices[this_device].latitude.as_array[1];
+	p_air_packet_tx[PKT_LATITUDE_2_POS] = 			devices[this_device].latitude.as_array[2];
+	p_air_packet_tx[PKT_LATITUDE_3_POS] = 			devices[this_device].latitude.as_array[3];
 
-	//todo: add acc movement flag first
+	p_air_packet_tx[PKT_LONGITUDE_0_POS] = 			devices[this_device].longitude.as_array[0];
+	p_air_packet_tx[PKT_LONGITUDE_1_POS] = 			devices[this_device].longitude.as_array[1];
+	p_air_packet_tx[PKT_LONGITUDE_2_POS] = 			devices[this_device].longitude.as_array[2];
+	p_air_packet_tx[PKT_LONGITUDE_3_POS] = 			devices[this_device].longitude.as_array[3];
 
-	set_acc_movement_flag(ACC_MOVEMENT_NOT_DETECTED);	//clear flag only after the acc movement flag was written to tx but
+	p_air_packet_tx[PKT_ALTITUDE_0_POS] = 			devices[this_device].altitude.as_array[0];
+	p_air_packet_tx[PKT_ALTITUDE_1_POS] = 			devices[this_device].altitude.as_array[1];
+
+	set_acc_movement_flag(ACC_MOVEMENT_NOT_DETECTED);	//clear flag only after the acc movement flag was written to tx buf
 	enable_acc_movement_interrupt();					//enable acc interrupt
 }
 
