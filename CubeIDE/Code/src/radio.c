@@ -170,8 +170,6 @@ void rf_config_tx_power(int8_t power_dbm)
 	spi1_trx(TX_RAMP_TIME_800U);
 	cs_rf_inactive();
 
-	//todo: add SET_PA_CFG
-
 	spi1_clock_disable();
 }
 

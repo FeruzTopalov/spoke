@@ -139,7 +139,7 @@ void fill_air_packet(uint32_t current_uptime)
 													(devices[this_device].beacon_flag << BYT_HEADER_0_FLAG_BEACON_POS) |
 													(devices[this_device].lowbat_flag << BYT_HEADER_0_FLAG_LOW_BAT_POS) |
 													(devices[this_device].acc_movement_flag << BYT_HEADER_0_FLAG_ACC_MOVE_POS) |
-													(devices[this_device].pdop_flag << BYT_HEADER_0_FLAG_PDOP_POS); //todo set pdop flag in gps parse()
+													(devices[this_device].pdop_good_flag << BYT_HEADER_0_FLAG_PDOP_POS);
 	p_air_packet_tx[PKT_HEADER_0_POS] &= ~BYT_HEADER_0_RES_RES_MASK;
 
 	p_air_packet_tx[PKT_HEADER_1_POS] = 			(this_device << BYT_HEADER_1_DEV_NUM_POS);
@@ -206,7 +206,7 @@ uint8_t parse_air_packet(uint32_t current_uptime)
 	devices[rx_device].beacon_flag				=	(p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_FLAG_BEACON_MASK) >> BYT_HEADER_0_FLAG_BEACON_POS;
 	devices[rx_device].lowbat_flag				=	(p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_FLAG_LOW_BAT_MASK) >> BYT_HEADER_0_FLAG_LOW_BAT_POS;
 	devices[rx_device].acc_movement_flag		=	(p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_FLAG_ACC_MOVE_MASK) >> BYT_HEADER_0_FLAG_ACC_MOVE_POS;
-	devices[rx_device].pdop_flag				=	(p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_FLAG_PDOP_MASK) >> BYT_HEADER_0_FLAG_PDOP_POS;
+	devices[rx_device].pdop_good_flag				=	(p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_FLAG_PDOP_MASK) >> BYT_HEADER_0_FLAG_PDOP_POS;
 
 	devices[rx_device].latitude.as_array[0]	=		p_air_packet_rx[PKT_LATITUDE_0_POS];
 	devices[rx_device].latitude.as_array[1]	=		p_air_packet_rx[PKT_LATITUDE_1_POS];
