@@ -15,6 +15,9 @@
 #define BL_PWM_LEVEL_LOW_CCR_VALUE		(1)
 #define BL_PWM_LEVEL_MID_CCR_VALUE		(5)
 
+#define TIM2_PSC_LCDBL_VALUE			(374)	//3MHz/(374+1)=8kHz for LCD Backlight (when no buzzer beeping)
+#define TIM2_PSC_BUZZER_VALUE			(149)	//3MHz/(149+1)=20kHz for Buzzer sound (LCD BL is high freq when buzzer is beeping)
+												//Note: Cannot use high LCD BL freq because of flickering when switching between BL and buzzer freqs; thus using low BL freq as close as possible to buzzer freq but as least as possible audible when BL is lit
 
 
 void systick_init(void);
@@ -27,8 +30,6 @@ void timer1_clock_enable(void);
 void timer2_init(void);
 void timer2_clock_disable(void);
 void timer2_clock_enable(void);
-void timer2_start(void);
-void timer2_stop(void);
 void buzzer_pwm_start(void);
 void timer3_init(void);
 void timer3_clock_disable(void);
@@ -247,8 +248,9 @@ void timer1_stop_reload(void)
 void timer2_init(void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; //enable timer clock
-	TIM2->PSC = (uint16_t)149;         	//3MHz/(149+1)=20kHz
-	TIM2->ARR = (uint16_t)9;            //20kHz/(9+1)=2kHz
+	TIM2->PSC = (uint16_t)TIM2_PSC_LCDBL_VALUE; 	//Start with LCD BL value
+	TIM2->ARR = (uint16_t)9;            			//8kHz/(9+1)=800Hz - in case of TIM2_PSC_LCDBL_VALUE
+													//20kHz/(9+1)=2kHz - in case of TIM2_PSC_BUZZER_VALUE
 
 #ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
 	TIM2->CCR1 = (uint16_t)5;           //duty cycle 5/(9+1)=0.5 (fixed)
@@ -283,22 +285,10 @@ void timer2_clock_enable(void) //todo del
 
 
 
-void timer2_start(void) //todo del
-{
-	;
-}
-
-
-
-void timer2_stop(void) //todo del
-{
-	;
-}
-
-
-
 void buzzer_pwm_start(void)
 {
+	TIM2->PSC = (uint16_t)TIM2_PSC_BUZZER_VALUE;	//switch from low backlight freq to high buzzer freq
+
 #ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1); //PWM mode 1 for CH1 (PA0, buzzer)
 #else
@@ -317,6 +307,8 @@ void buzzer_pwm_stop(void)
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2);    //Force low CH1 (PA0, buzzer p)
 	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2);    //Force low CH2 (PA1, buzzer n)
 #endif
+
+	TIM2->PSC = (uint16_t)TIM2_PSC_LCDBL_VALUE;	//switch back from high buzzer freq to low backlight freq
 }
 
 
