@@ -31,30 +31,62 @@ const double pi_div_by_4 = 0.7853981633974483;      // pi / 4
 
 
 //Air packet structure and fields position
-//1 byte (0) header = device number and ID (single char)
-//1 byte (1) flags
-//4 bytes (2, 3, 4, 5) lat
-//4 bytes (6, 7, 8, 9) lon
-//2 bytes (10, 11) altitude
-//TOTAL 12 bytes - see radio.c for AIR_PACKET_LEN
+//1 byte (0) header =  and ID (single char)
+//pos 0, size 1 - flags
+//pos 1, size 1 - device number
+//pos 2, size 1 - device ID
+//pos 3-6, size 4 - latitude
+//pos 7-10, size 4 - longitude
+//pos 11-12, size 2 - altitude
+//TOTAL 13 bytes - see radio.c for AIR_PACKET_LEN
 
 //Bytes positions in a packet
-#define INPACKET_HEADER_POS           	(0)
-#define INPACKET_FLAGS_POS            	(1)
-#define INPACKET_LATITUDE_POS         	(2)
-#define INPACKET_LONGITUDE_POS        	(6)
-#define INPACKET_ALTITUDE_POS         	(10)
+#define PKT_HEADER_0_POS           (0)
+#define PKT_HEADER_1_POS           (1)
+#define PKT_HEADER_2_POS           (2)
+#define PKT_LATITUDE_0_POS         (3)
+#define PKT_LATITUDE_1_POS         (4)
+#define PKT_LATITUDE_2_POS         (5)
+#define PKT_LATITUDE_3_POS         (6)
+#define PKT_LONGITUDE_0_POS        (7)
+#define PKT_LONGITUDE_1_POS        (8)
+#define PKT_LONGITUDE_2_POS        (9)
+#define PKT_LONGITUDE_3_POS        (10)
+#define PKT_ALTITUDE_0_POS         (11)
+#define PKT_ALTITUDE_1_POS         (12)
 
 //Bits positions in bytes
-#define INBYTE_HEADER_ID_POS           	(0)
-#define INBYTE_HEADER_ID_MASK           (0x1F)
-#define INBYTE_HEADER_NUM_POS           (5)
-#define INBYTE_HEADER_NUM_MASK          (0xE0)
-#define INBYTE_FLAGS_ALARM_POS          (0)
-#define INBYTE_FLAGS_ALARM_MASK         (0x01)
-#define INBYTE_FLAGS_LOWBAT_POS         (1)
-#define INBYTE_FLAGS_LOWBAT_MASK        (0x02)
+#define BYT_HEADER_0_FLAG_ALARM_POS  		(0)
+#define BYT_HEADER_0_FLAG_ALARM_MASK		(0b00000001)
 
+#define BYT_HEADER_0_FLAG_BEACON_POS  		(1)
+#define BYT_HEADER_0_FLAG_BEACON_MASK		(0b00000010)
+
+#define BYT_HEADER_0_FLAG_LOW_BAT_POS  		(2)
+#define BYT_HEADER_0_FLAG_LOW_BAT_MASK		(0b00000100)
+
+#define BYT_HEADER_0_FLAG_ACC_MOVE_POS  	(3)
+#define BYT_HEADER_0_FLAG_ACC_MOVE_MASK		(0b00001000)
+
+#define BYT_HEADER_0_FLAG_PDOP_POS  		(4)
+#define BYT_HEADER_0_FLAG_PDOP_MASK			(0b00010000)
+
+#define BYT_HEADER_0_RES_RES_POS  			(5)
+#define BYT_HEADER_0_RES_RES_MASK			(0b11100000)
+
+
+#define BYT_HEADER_1_DEV_NUM_POS  			(0)
+#define BYT_HEADER_1_DEV_NUM_MASK			(0b00011111)
+
+#define BYT_HEADER_1_RES_RES_POS  			(5)
+#define BYT_HEADER_1_RES_RES_MASK			(0b11100000)
+
+
+#define BYT_HEADER_2_DEV_ID_POS  			(0)
+#define BYT_HEADER_2_DEV_ID_MASK			(0b00011111)
+
+#define BYT_HEADER_2_RES_RES_POS  			(5)
+#define BYT_HEADER_2_RES_RES_MASK			(0b11100000)
 
 
 
