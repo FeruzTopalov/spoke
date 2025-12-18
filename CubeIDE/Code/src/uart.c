@@ -24,8 +24,8 @@ void console_combine_timestamp_nav_data(void);
 
 
 
-#define TIMESTAMP_SZ	(27)
-#define CONS_DATA_SZ	(255)
+#define TIMESTAMP_SZ	(32)
+#define CONS_DATA_SZ	(512)
 
 
 
@@ -38,13 +38,13 @@ uint16_t brr_gps_baud;						//BRR reg value depending on 'GPS baud' setting
 uint8_t console_timestamp[TIMESTAMP_SZ];	//for console, timestamp data
 
 uint8_t console_nav_data[CONS_DATA_SZ];		//for console, raw nav data
-uint8_t nav_data_len = 0;					//nav data length
+uint16_t nav_data_len = 0;					//nav data length
 
 uint8_t console_nav_data_base64[CONS_DATA_SZ];//for console, base64 nav data
-uint8_t nav_data_base64_len = 0;			//base64 nav data length
+uint16_t nav_data_base64_len = 0;			//base64 nav data length
 
 uint8_t console_data[CONS_DATA_SZ];			//resulting console data
-uint8_t console_data_len = 0;				//console data length
+uint16_t console_data_len = 0;				//console data length
 
 uint8_t console_report_enabled = 1;			//enable send logs via console
 
@@ -179,8 +179,8 @@ void console_prepare_timestamp(void)
 {
 	char tmp_buf[10];
 
-	//FORMAT: "2025-03-02T10:45:00+03:00 "
-	//FORMAT: "YYYY-MM-DDTHH:MM:SS+hh:mm " where +/-hh:mm is timezone
+	//FORMAT: "2025-03-02T10:45:00+03:00"
+	//FORMAT: "YYYY-MM-DDTHH:MM:SS+hh:mm" where +/-hh:mm is timezone
 	//fixed sym:   ^  ^  ^  ^  ^  ^  ^
 
 	//clear
@@ -247,7 +247,7 @@ void console_prepare_timestamp(void)
 	itoa32(p_settings->time_zone_minute, &tmp_buf[0]);
 	time_date_add_leading_zero(&tmp_buf[0]);
 	strcat(console_timestamp, tmp_buf);
-	strcat(console_timestamp, " ");
+	strcat(console_timestamp, " "); // add sp before base64 data
 }
 
 
@@ -305,7 +305,7 @@ void console_prepare_nav_data(void)
 			// 4) external flags, 1 byte
 			console_nav_data[nav_data_len++] = external_flags;
 
-			// 5) SNA value, 1 byte, signed
+			// 5) SNR value, 1 byte, signed
 			console_nav_data[nav_data_len++] = pp_devices[dev]->lora_snr;
 
 			// 6) Timeout in s since last activity, 4 bytes
