@@ -322,7 +322,7 @@ void EXTI0_IRQHandler(void)
 			rx_dev = parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
 			if (rx_dev != NAV_OBJECT_NULL)
 			{
-				pp_devices[rx_dev]->lora_rssi = rf_get_last_rssi();	//read and save RSSI
+				pp_devices[rx_dev]->lora_snr = rf_get_last_snr();	//read and save SNR
 			}
 		}
 	}

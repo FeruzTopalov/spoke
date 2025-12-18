@@ -287,7 +287,7 @@ void console_prepare_nav_data(void)
 							((pp_devices[dev]->link_status_flag) << 6) 			);
 
 			console_nav_data[nav_data_len++] = all_flags;
-			console_nav_data[nav_data_len++] = pp_devices[dev]->lora_rssi;
+			console_nav_data[nav_data_len++] = pp_devices[dev]->lora_snr;
 
 			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->timeout), 4);
 			nav_data_len += 4;

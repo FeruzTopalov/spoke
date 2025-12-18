@@ -69,7 +69,7 @@ struct devices_struct
 	uint8_t lowbat_flag;			//did the device transmit low battery flag?
 	uint8_t acc_movement_flag;		//flag if accelerometer detected movement in the recent update interval
 	uint8_t pdop_flag;				//GPS PDOP quality flag
-	int8_t lora_rssi;				//RSSI of the last received packet
+	int8_t lora_snr;				//SNR of the last received packet
 
     //TIME
     uint32_t timestamp;					//time stamp in seconds when the last activity was detected
