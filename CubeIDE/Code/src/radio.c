@@ -40,7 +40,7 @@ void rf_set_cw_tx(void);
 //4 bytes lon
 //2 bytes altitude
 //TOTAL 12 bytes
-#define AIR_PACKET_LEN      (LORA_PP4_PLOAD_LEN_12_BYTE)
+#define AIR_PACKET_LEN      (LORA_PP4_PLOAD_LEN_13_BYTE)
 
 
 
