@@ -11,7 +11,7 @@
 
 
 
-#define LSM303_ADDR_ACC         	(0x32)		//write address	//todo move to H file
+#define LSM303_ADDR_ACC         	(0x32)		//write address
 #define LSM303_ADDR_MAG          	(0x3C)		//write address
 
 //acc reg addr

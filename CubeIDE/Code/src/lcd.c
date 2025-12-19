@@ -39,17 +39,20 @@ void lcd_backlight_disable(void);
 #define FONT16_BYTES_Y      	(2)		//size of font in bytes
 #define FONT16_BYTES      		(FONT16_BYTES_X * FONT16_BYTES_Y)	//size of font in bytes
 
+
+
+#ifdef LCD_TYPE_SH1106
 #define LCD_COMMAND_DISPLAY_ON	(0xAF)
 #define LCD_COMMAND_DISPLAY_OFF	(0xAE)
 #define LCD_COMMAND_SET_ROW_ADR_BASE	(0xB0)
-#define LCD_COMMAND_SET_COL_ADRH_BASE	(0x10)
-
-#ifdef LCD_TYPE_SH1106
 #define LCD_COMMAND_SET_COL_ADRL_BASE	(0x02)		//LCD panel is centered to SH1106 frame buffer
+#define LCD_COMMAND_SET_COL_ADRH_BASE	(0x10)
 #endif
 
 #ifdef LCD_TYPE_ST7567A
+#define LCD_COMMAND_SET_ROW_ADR_BASE	(0xB0)
 #define LCD_COMMAND_SET_COL_ADRL_BASE	(0x00)		//LCD panel is left-adjusted to ST7567A frame buffer
+#define LCD_COMMAND_SET_COL_ADRH_BASE	(0x10)
 #endif
 
 
