@@ -68,74 +68,28 @@ float cal_scale_y;
 
 void init_compass(void)
 {
+	uint8_t acc_availaility = 0;
+	uint8_t mag_availaility = 0;
+
 	compass_availability = COMPASS_IS_NOT_AVAILABLE;
 
-	if (init_accelerometer())//todo change init check
+	if (init_accelerometer() == 1)
 	{
-		if (init_magnetometer())
-		{
-			compass_availability = COMPASS_IS_AVAILABLE;
+		acc_availaility = 1;
+	}
 
-			/*//--------------------
-			char buf[15];
-			start_compass();
+	if (init_magnetometer() == 1)
+	{
+		mag_availaility = 1;
+	}
 
-			while (1)
-			{
-				lcd_clear();
-
-				led_green_on();
-
-				read_accel();
-				read_magn();
-
-				p_acceleration = get_acceleration();
-				p_magnetic_field = get_magnetic_field();
-
-				led_green_off();
-
-				lcd_print(0, 0, "ACC");
-
-				lcd_print(1, 0, "X");
-				itoa32(p_acceleration->acc_x.as_integer, buf);
-				lcd_print(1, 2, buf);
-
-				lcd_print(2, 0, "Y");
-				itoa32(p_acceleration->acc_y.as_integer, buf);
-				lcd_print(2, 2, buf);
-
-				lcd_print(3, 0, "Z");
-				itoa32(p_acceleration->acc_z.as_integer, buf);
-				lcd_print(3, 2, buf);
-
-
-
-				lcd_print(0, 8, "MAG");
-
-				lcd_print(1, 8, "X");
-				itoa32(p_magnetic_field->mag_x.as_integer, buf);
-				lcd_print(1, 10, buf);
-
-				lcd_print(2, 8, "Y");
-				itoa32(p_magnetic_field->mag_y.as_integer, buf);
-				lcd_print(2, 10, buf);
-
-				lcd_print(3, 8, "Z");
-				itoa32(p_magnetic_field->mag_z.as_integer, buf);
-				lcd_print(3, 10, buf);
-
-
-				lcd_update();
-				while (get_lcd_busy())
-				{
-					;
-				}
-				delay_cyc(50000);
-
-				reload_watchdog();
-			}
-			//--------------------*/
-		}
+	if ((acc_availaility == 1) && (mag_availaility == 1))
+	{
+		compass_availability = COMPASS_IS_AVAILABLE;
+	}
+	else
+	{
+		compass_availability = COMPASS_IS_NOT_AVAILABLE;
 	}
 
 	p_acceleration = get_acceleration();
