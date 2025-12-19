@@ -44,12 +44,14 @@ void lcd_backlight_disable(void);
 #ifdef LCD_TYPE_SH1106
 #define LCD_COMMAND_DISPLAY_ON	(0xAF)
 #define LCD_COMMAND_DISPLAY_OFF	(0xAE)
+#define LCD_NUM_OF_PAGES		(8)
 #define LCD_COMMAND_SET_ROW_ADR_BASE	(0xB0)
 #define LCD_COMMAND_SET_COL_ADRL_BASE	(0x02)		//LCD panel is centered to SH1106 frame buffer
 #define LCD_COMMAND_SET_COL_ADRH_BASE	(0x10)
 #endif
 
 #ifdef LCD_TYPE_ST7567A
+#define LCD_NUM_OF_PAGES		(8)
 #define LCD_COMMAND_SET_ROW_ADR_BASE	(0xB0)
 #define LCD_COMMAND_SET_COL_ADRL_BASE	(0x00)		//LCD panel is left-adjusted to ST7567A frame buffer
 #define LCD_COMMAND_SET_COL_ADRH_BASE	(0x10)
@@ -66,7 +68,7 @@ void lcd_backlight_disable(void);
 
 uint8_t screen_buf[LCD_SIZE_BYTES];     		//public array 128x64 pixels
 uint16_t buf_pos = 0;                   		//public var 0 - 1023
-uint8_t current_page = 0;
+uint8_t current_page = 0;						//LCD page number from 0 to (LCD_NUM_OF_PAGES - 1)
 uint8_t lcd_busy = 0;	//is lcd update ongoing?
 uint8_t lcd_pending_off = 0; 	//pending command to off the lcd
 
@@ -386,7 +388,7 @@ void lcd_continue_update(void)
 {
 	current_page++;
 
-	if (current_page < 8)//todo replace magic number
+	if (current_page < LCD_NUM_OF_PAGES)//todo replace magic number
 	{
 		lcd_send_command(LCD_COMMAND_SET_COL_ADRL_BASE); 		//reset column address low
 		lcd_send_command(LCD_COMMAND_SET_COL_ADRH_BASE);			//reset column address high
@@ -791,11 +793,11 @@ void lcd_draw_dot(int8_t x0, int8_t y0)
 	uint8_t loop = 0;
 
 	//            draw a filled circle as filled rect but with skipped corners
-	//             xxx
-	//            xxxxx
-	//            xxoxx
-	//            xxxxx
-	//             xxx
+	//             ooo
+	//            ooooo
+	//            ooxoo
+	//            ooooo
+	//             ooo
 
 	for (int8_t px = -2; px <= 2; px++)
 	{
