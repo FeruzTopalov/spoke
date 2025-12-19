@@ -388,7 +388,7 @@ void lcd_continue_update(void)
 {
 	current_page++;
 
-	if (current_page < LCD_NUM_OF_PAGES)//todo replace magic number
+	if (current_page < LCD_NUM_OF_PAGES)
 	{
 		lcd_send_command(LCD_COMMAND_SET_COL_ADRL_BASE); 		//reset column address low
 		lcd_send_command(LCD_COMMAND_SET_COL_ADRH_BASE);			//reset column address high
