@@ -24,9 +24,6 @@
 
 
 #define SYMB16_HOME			('=')
-#define SYMB16_TIMEOUT      (':')
-#define SYMB16_ALARM        (';')
-#define SYMB16_FENCE        ('<')
 
 #define SYMB8_DEGREE        ('\x80')
 #define SYMB8_BAT_TAIL    	('\x81')
