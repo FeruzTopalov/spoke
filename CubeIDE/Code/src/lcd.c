@@ -52,9 +52,11 @@ void lcd_backlight_disable(void);
 #define LCD_COMMAND_SET_COL_ADRL_BASE	(0x00)		//LCD panel is left-adjusted to ST7567A frame buffer
 #endif
 
+
+
 #define BL_MODE_CONSTANT	(0)	//always on BL
 #define BL_MODE_AUTO 		(1) //auto off BL
-#define BL_TIMEOUT_TOP		(30)//timeout in seconds to auto bl turn off
+#define BL_TIMEOUT_TOP		(60)//timeout in seconds to auto bl turn off
 #define BL_TIMEOUT_END		(-1)//end of timeout period
 
 
