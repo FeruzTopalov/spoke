@@ -72,7 +72,7 @@ void rf_init(void)
     rf_rx_mode();
     
     res_rf_active();        	//reset the chip
-    delay_cyc(10);
+    delay_cyc(20);
     res_rf_inactive();
     rf_wait_busy();
 
