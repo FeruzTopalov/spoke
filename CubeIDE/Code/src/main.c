@@ -482,18 +482,16 @@ void EXTI15_10_IRQHandler(void)
 //Console RX symbol
 void USART1_IRQHandler(void)
 {
-    uint8_t rx_data;
-    rx_data = USART1->DR;
+    uint8_t uart_rx_data;
+    uart_rx_data = USART1->DR;
 
-    uart1_tx_byte(rx_data); //debug
-
-    if (rx_data == '1')
+    if (uart_rx_data == UART_CMD_CONSOLE_START)
     {
-    	toggle_console_reports(1);
+    	switch_console_reports(CONSOLE_REPORT_ENABLED);
     }
-    else if (rx_data == '0')
+    else if (uart_rx_data == UART_CMD_CONSOLE_STOP)
     {
-    	toggle_console_reports(0);
+    	switch_console_reports(CONSOLE_REPORT_DISABLED);
     }
 }
 

@@ -46,7 +46,7 @@ uint16_t nav_data_base64_len = 0;			//base64 nav data length
 uint8_t console_data[CONS_DATA_SZ];			//resulting console data
 uint16_t console_data_len = 0;				//console data length
 
-uint8_t console_report_enabled = 1;			//enable send logs via console
+uint8_t console_report_state = CONSOLE_REPORT_ENABLED;			//enable sending logs via console (enabled by default)
 
 struct devices_struct **pp_devices;
 struct settings_struct *p_settings;
@@ -146,16 +146,9 @@ void uart1_tx_byte(uint8_t tx_data)
 
 
 //switch on/off console reports
-void toggle_console_reports(uint8_t enabled)
+void switch_console_reports(uint8_t state)
 {
-	if (enabled == 0)
-	{
-		console_report_enabled = 0;
-	}
-	else
-	{
-		console_report_enabled = 1;
-	}
+	console_report_state = state;
 }
 
 
@@ -163,7 +156,7 @@ void toggle_console_reports(uint8_t enabled)
 //Send all active devices via console to either BLE or just a terminal
 void report_to_console(void)
 {
-	if (console_report_enabled == 1)
+	if (console_report_state == 1)
 	{
 		console_prepare_timestamp();			//timestamp in ISO 8601
 		console_prepare_nav_data();				//fill buffer with data
