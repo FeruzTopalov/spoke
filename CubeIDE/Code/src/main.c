@@ -482,16 +482,27 @@ void EXTI15_10_IRQHandler(void)
 //Console RX symbol
 void USART1_IRQHandler(void)
 {
+    uint32_t uart_sr;
     uint8_t uart_rx_data;
-    uart_rx_data = USART1->DR;
 
-    if (uart_rx_data == UART_CMD_CONSOLE_START)
+    uart_sr = USART1->SR;   //read SR first
+
+    if (uart_sr & USART_SR_RXNE)
     {
-    	switch_console_reports(CONSOLE_REPORT_ENABLED);
+        uart_rx_data = USART1->DR;
+
+        if (uart_rx_data == UART_CMD_CONSOLE_START)
+        {
+        	switch_console_reports(CONSOLE_REPORT_ENABLED);
+        }
+        else if (uart_rx_data == UART_CMD_CONSOLE_STOP)
+        {
+        	switch_console_reports(CONSOLE_REPORT_DISABLED);
+        }
     }
-    else if (uart_rx_data == UART_CMD_CONSOLE_STOP)
+    else if (uart_sr & (USART_SR_ORE | USART_SR_FE | USART_SR_NE | USART_SR_PE))
     {
-    	switch_console_reports(CONSOLE_REPORT_DISABLED);
+        (void)USART1->DR;  // clear error flags performing a read SR and read DR sequence
     }
 }
 
