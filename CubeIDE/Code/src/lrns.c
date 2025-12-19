@@ -31,30 +31,63 @@ const double pi_div_by_4 = 0.7853981633974483;      // pi / 4
 
 
 //Air packet structure and fields position
-//1 byte (0) header = device number and ID (single char)
-//1 byte (1) flags
-//4 bytes (2, 3, 4, 5) lat
-//4 bytes (6, 7, 8, 9) lon
-//2 bytes (10, 11) altitude
-//TOTAL 12 bytes - see radio.c for AIR_PACKET_LEN
+//1 byte (0) header =  and ID (single char)
+//pos 0, size 1 - flags
+//pos 1, size 1 - device number
+//pos 2, size 1 - device ID
+//pos 3-6, size 4 - latitude
+//pos 7-10, size 4 - longitude
+//pos 11-12, size 2 - altitude
+//TOTAL 13 bytes - see radio.c for AIR_PACKET_LEN
 
 //Bytes positions in a packet
-#define INPACKET_HEADER_POS           	(0)
-#define INPACKET_FLAGS_POS            	(1)
-#define INPACKET_LATITUDE_POS         	(2)
-#define INPACKET_LONGITUDE_POS        	(6)
-#define INPACKET_ALTITUDE_POS         	(10)
+#define PKT_HEADER_0_POS           (0)
+#define PKT_HEADER_1_POS           (1)
+#define PKT_HEADER_2_POS           (2)
+#define PKT_LATITUDE_0_POS         (3)
+#define PKT_LATITUDE_1_POS         (4)
+#define PKT_LATITUDE_2_POS         (5)
+#define PKT_LATITUDE_3_POS         (6)
+#define PKT_LONGITUDE_0_POS        (7)
+#define PKT_LONGITUDE_1_POS        (8)
+#define PKT_LONGITUDE_2_POS        (9)
+#define PKT_LONGITUDE_3_POS        (10)
+#define PKT_ALTITUDE_0_POS         (11)
+#define PKT_ALTITUDE_1_POS         (12)
 
 //Bits positions in bytes
-#define INBYTE_HEADER_ID_POS           	(0)
-#define INBYTE_HEADER_ID_MASK           (0x1F)
-#define INBYTE_HEADER_NUM_POS           (5)
-#define INBYTE_HEADER_NUM_MASK          (0xE0)
-#define INBYTE_FLAGS_ALARM_POS          (0)
-#define INBYTE_FLAGS_ALARM_MASK         (0x01)
-#define INBYTE_FLAGS_LOWBAT_POS         (1)
-#define INBYTE_FLAGS_LOWBAT_MASK        (0x02)
+#define BYT_HEADER_0_FLAG_ALARM_POS  		(0)
+#define BYT_HEADER_0_FLAG_ALARM_MASK		(0b00000001)
 
+#define BYT_HEADER_0_FLAG_BEACON_POS  		(1)
+#define BYT_HEADER_0_FLAG_BEACON_MASK		(0b00000010)
+
+#define BYT_HEADER_0_FLAG_LOW_BAT_POS  		(2)
+#define BYT_HEADER_0_FLAG_LOW_BAT_MASK		(0b00000100)
+
+#define BYT_HEADER_0_FLAG_ACC_MOVE_POS  	(3)
+#define BYT_HEADER_0_FLAG_ACC_MOVE_MASK		(0b00001000)
+
+#define BYT_HEADER_0_FLAG_PDOP_POS  		(4)
+#define BYT_HEADER_0_FLAG_PDOP_MASK			(0b00010000)
+
+#define BYT_HEADER_0_RES_RES_POS  			(5)				//reserved to be used as message type in future
+#define BYT_HEADER_0_RES_RES_MASK			(0b11100000)
+
+#define BYT_HEADER_1_DEV_NUM_POS  			(0)
+#define BYT_HEADER_1_DEV_NUM_MASK			(0b00011111)
+
+#define BYT_HEADER_1_RES_RES_POS  			(5)
+#define BYT_HEADER_1_RES_RES_MASK			(0b11100000)
+
+#define BYT_HEADER_2_DEV_ID_POS  			(0)
+#define BYT_HEADER_2_DEV_ID_MASK			(0b00011111)
+
+#define BYT_HEADER_2_RES_RES_POS  			(5)
+#define BYT_HEADER_2_RES_RES_MASK			(0b11100000)
+
+//Values
+#define BYT_HEADER_0_RES_RES_VAL			(0)		//reserved as a general message type
 
 
 
@@ -73,7 +106,7 @@ uint8_t *p_update_interval_values;
 void init_lrns(void)
 {
 	//Clear mem
-    for (uint8_t dev = 1; dev <= NAV_OBJECTS_MAX; dev++)
+    for (uint8_t dev = NAV_OBJECT_FIRST; dev <= NAV_OBJECT_LAST; dev++)
     {
         memset(&devices[dev], 0, sizeof(devices[dev]));
     }
@@ -90,6 +123,7 @@ void init_lrns(void)
     //Activate this device
 	devices[this_device].exist_flag = 1;
 	devices[this_device].device_id = p_settings->device_id;
+	devices[this_device].beacon_flag = 0; //device is not a beacon
 
 	//Get update interval
 	p_update_interval_values = get_update_interval_values();
@@ -99,27 +133,36 @@ void init_lrns(void)
 
 void fill_air_packet(uint32_t current_uptime)
 {
-	p_air_packet_tx[INPACKET_HEADER_POS] = 			(this_device << INBYTE_HEADER_NUM_POS) | ((devices[this_device].device_id - 'A') << INBYTE_HEADER_ID_POS);	   //transmit dev id as A-Z, but with 0x41 ('A') shift resulting in 0-25 dec
-	devices[this_device].timestamp =				current_uptime;
+	devices[this_device].timestamp = current_uptime;
 
-	p_air_packet_tx[INPACKET_FLAGS_POS] = 			(devices[this_device].alarm_flag << INBYTE_FLAGS_ALARM_POS) | (devices[this_device].lowbat_flag << INBYTE_FLAGS_LOWBAT_POS);
+	p_air_packet_tx[PKT_HEADER_0_POS] = 			(devices[this_device].alarm_flag << BYT_HEADER_0_FLAG_ALARM_POS) |
+													(devices[this_device].beacon_flag << BYT_HEADER_0_FLAG_BEACON_POS) |
+													(devices[this_device].lowbat_flag << BYT_HEADER_0_FLAG_LOW_BAT_POS) |
+													(devices[this_device].acc_movement_flag << BYT_HEADER_0_FLAG_ACC_MOVE_POS) |
+													(devices[this_device].pdop_good_flag << BYT_HEADER_0_FLAG_PDOP_POS);
+	p_air_packet_tx[PKT_HEADER_0_POS] &= ~BYT_HEADER_0_RES_RES_MASK;
 
-	p_air_packet_tx[INPACKET_LATITUDE_POS] = 		devices[this_device].latitude.as_array[0];
-	p_air_packet_tx[INPACKET_LATITUDE_POS + 1] = 	devices[this_device].latitude.as_array[1];
-	p_air_packet_tx[INPACKET_LATITUDE_POS + 2] = 	devices[this_device].latitude.as_array[2];
-	p_air_packet_tx[INPACKET_LATITUDE_POS + 3] = 	devices[this_device].latitude.as_array[3];
+	p_air_packet_tx[PKT_HEADER_1_POS] = 			(this_device << BYT_HEADER_1_DEV_NUM_POS);
+	p_air_packet_tx[PKT_HEADER_1_POS] &= ~BYT_HEADER_1_RES_RES_MASK;
 
-	p_air_packet_tx[INPACKET_LONGITUDE_POS] = 		devices[this_device].longitude.as_array[0];
-	p_air_packet_tx[INPACKET_LONGITUDE_POS + 1] = 	devices[this_device].longitude.as_array[1];
-	p_air_packet_tx[INPACKET_LONGITUDE_POS + 2] = 	devices[this_device].longitude.as_array[2];
-	p_air_packet_tx[INPACKET_LONGITUDE_POS + 3] = 	devices[this_device].longitude.as_array[3];
+	//transmit dev id as A-Z, but with 0x41 ('A') shift resulting in 0-25 dec
+	p_air_packet_tx[PKT_HEADER_2_POS] = 			((devices[this_device].device_id - 'A') << BYT_HEADER_2_DEV_ID_POS);
+	p_air_packet_tx[PKT_HEADER_2_POS] &= ~BYT_HEADER_2_RES_RES_MASK;
 
-	p_air_packet_tx[INPACKET_ALTITUDE_POS] = 		devices[this_device].altitude.as_array[0];
-	p_air_packet_tx[INPACKET_ALTITUDE_POS + 1] = 	devices[this_device].altitude.as_array[1];
+	p_air_packet_tx[PKT_LATITUDE_0_POS] = 			devices[this_device].latitude.as_array[0];
+	p_air_packet_tx[PKT_LATITUDE_1_POS] = 			devices[this_device].latitude.as_array[1];
+	p_air_packet_tx[PKT_LATITUDE_2_POS] = 			devices[this_device].latitude.as_array[2];
+	p_air_packet_tx[PKT_LATITUDE_3_POS] = 			devices[this_device].latitude.as_array[3];
 
-	//todo: add acc movement flag first
+	p_air_packet_tx[PKT_LONGITUDE_0_POS] = 			devices[this_device].longitude.as_array[0];
+	p_air_packet_tx[PKT_LONGITUDE_1_POS] = 			devices[this_device].longitude.as_array[1];
+	p_air_packet_tx[PKT_LONGITUDE_2_POS] = 			devices[this_device].longitude.as_array[2];
+	p_air_packet_tx[PKT_LONGITUDE_3_POS] = 			devices[this_device].longitude.as_array[3];
 
-	set_acc_movement_flag(ACC_MOVEMENT_NOT_DETECTED);	//clear flag only after the acc movement flag was written to tx but
+	p_air_packet_tx[PKT_ALTITUDE_0_POS] = 			devices[this_device].altitude.as_array[0];
+	p_air_packet_tx[PKT_ALTITUDE_1_POS] = 			devices[this_device].altitude.as_array[1];
+
+	set_acc_movement_flag(ACC_MOVEMENT_NOT_DETECTED);	//clear flag only after the acc movement flag was written to tx buf
 	enable_acc_movement_interrupt();					//enable acc interrupt
 }
 
@@ -128,13 +171,24 @@ void fill_air_packet(uint32_t current_uptime)
 uint8_t parse_air_packet(uint32_t current_uptime)
 {
 	uint8_t temp_alarm_flag = 0;
-	uint8_t rx_device = (p_air_packet_rx[INPACKET_HEADER_POS] & INBYTE_HEADER_NUM_MASK) >> INBYTE_HEADER_NUM_POS; //extract device number from received packet
+	uint8_t rx_device;
+	uint8_t hdr_0_res;
+
+	hdr_0_res = (p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_RES_RES_MASK) >> BYT_HEADER_0_RES_RES_POS;
+
+	if (hdr_0_res != BYT_HEADER_0_RES_RES_VAL)
+	{
+		return NAV_OBJECT_NULL;	//return NULL if reserved bits are non-zero
+	}
+
+	//extract device number from received packet
+	rx_device = (p_air_packet_rx[PKT_HEADER_1_POS] & BYT_HEADER_1_DEV_NUM_MASK) >> BYT_HEADER_1_DEV_NUM_POS;
 
 	devices[rx_device].exist_flag 				=	1;
-	devices[rx_device].device_id				=	((p_air_packet_rx[INPACKET_HEADER_POS] & INBYTE_HEADER_ID_MASK) + 'A') >> INBYTE_HEADER_ID_POS;	//restore 0x41 shift
+	devices[rx_device].device_id				=	((p_air_packet_rx[PKT_HEADER_2_POS] & BYT_HEADER_2_DEV_ID_MASK) + 'A') >> BYT_HEADER_2_DEV_ID_POS;	//restore 0x41 shift
 	devices[rx_device].timestamp				=	current_uptime;
 
-	temp_alarm_flag 							=	(p_air_packet_rx[INPACKET_FLAGS_POS] & INBYTE_FLAGS_ALARM_MASK) >> INBYTE_FLAGS_ALARM_POS;
+	temp_alarm_flag 							=	(p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_FLAG_ALARM_MASK) >> BYT_HEADER_0_FLAG_ALARM_POS;
 
 	if (temp_alarm_flag == 1)
 	{
@@ -149,20 +203,23 @@ uint8_t parse_air_packet(uint32_t current_uptime)
 	}
 
 	devices[rx_device].alarm_flag 				=	temp_alarm_flag;
-	devices[rx_device].lowbat_flag				=	(p_air_packet_rx[INPACKET_FLAGS_POS] & INBYTE_FLAGS_LOWBAT_MASK) >> INBYTE_FLAGS_LOWBAT_POS;
+	devices[rx_device].beacon_flag				=	(p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_FLAG_BEACON_MASK) >> BYT_HEADER_0_FLAG_BEACON_POS;
+	devices[rx_device].lowbat_flag				=	(p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_FLAG_LOW_BAT_MASK) >> BYT_HEADER_0_FLAG_LOW_BAT_POS;
+	devices[rx_device].acc_movement_flag		=	(p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_FLAG_ACC_MOVE_MASK) >> BYT_HEADER_0_FLAG_ACC_MOVE_POS;
+	devices[rx_device].pdop_good_flag				=	(p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_FLAG_PDOP_MASK) >> BYT_HEADER_0_FLAG_PDOP_POS;
 
-	devices[rx_device].latitude.as_array[0]	=		p_air_packet_rx[INPACKET_LATITUDE_POS];
-	devices[rx_device].latitude.as_array[1]	=		p_air_packet_rx[INPACKET_LATITUDE_POS + 1];
-	devices[rx_device].latitude.as_array[2]	=		p_air_packet_rx[INPACKET_LATITUDE_POS + 2];
-	devices[rx_device].latitude.as_array[3]	=		p_air_packet_rx[INPACKET_LATITUDE_POS + 3];
+	devices[rx_device].latitude.as_array[0]	=		p_air_packet_rx[PKT_LATITUDE_0_POS];
+	devices[rx_device].latitude.as_array[1]	=		p_air_packet_rx[PKT_LATITUDE_1_POS];
+	devices[rx_device].latitude.as_array[2]	=		p_air_packet_rx[PKT_LATITUDE_2_POS];
+	devices[rx_device].latitude.as_array[3]	=		p_air_packet_rx[PKT_LATITUDE_3_POS];
 
-	devices[rx_device].longitude.as_array[0]	=	p_air_packet_rx[INPACKET_LONGITUDE_POS];
-	devices[rx_device].longitude.as_array[1]	=	p_air_packet_rx[INPACKET_LONGITUDE_POS + 1];
-	devices[rx_device].longitude.as_array[2]	=	p_air_packet_rx[INPACKET_LONGITUDE_POS + 2];
-	devices[rx_device].longitude.as_array[3]	=	p_air_packet_rx[INPACKET_LONGITUDE_POS + 3];
+	devices[rx_device].longitude.as_array[0]	=	p_air_packet_rx[PKT_LONGITUDE_0_POS];
+	devices[rx_device].longitude.as_array[1]	=	p_air_packet_rx[PKT_LONGITUDE_1_POS];
+	devices[rx_device].longitude.as_array[2]	=	p_air_packet_rx[PKT_LONGITUDE_2_POS];
+	devices[rx_device].longitude.as_array[3]	=	p_air_packet_rx[PKT_LONGITUDE_3_POS];
 
-	devices[rx_device].altitude.as_array[0] =		p_air_packet_rx[INPACKET_ALTITUDE_POS];
-	devices[rx_device].altitude.as_array[1] = 		p_air_packet_rx[INPACKET_ALTITUDE_POS + 1];
+	devices[rx_device].altitude.as_array[0] =		p_air_packet_rx[PKT_ALTITUDE_0_POS];
+	devices[rx_device].altitude.as_array[1] = 		p_air_packet_rx[PKT_ALTITUDE_1_POS];
 
 	return rx_device;
 }

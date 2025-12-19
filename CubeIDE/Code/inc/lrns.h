@@ -21,6 +21,7 @@
 #define MEMORY_POINT_FIRST	(DEVICES_ON_AIR_MAX + 1)
 #define MEMORY_POINT_LAST	(MEMORY_POINT_FIRST + MEMORY_POINTS_TOT - 1)
 
+#define NAV_OBJECT_NULL 	(0)
 #define NAV_OBJECT_FIRST 	(1)
 #define NAV_OBJECT_LAST  	(NAV_OBJECTS_MAX)
 
@@ -64,9 +65,11 @@ struct devices_struct
 	uint8_t alarm_flag_for_beep;	//for beep clear
 	uint8_t fence_flag;				//is a predefined fence distance reached?
 	uint8_t fence_flag_for_beep;	//for beep clear
+	uint8_t beacon_flag;			//is device a beacon?
 	uint8_t lowbat_flag;			//did the device transmit low battery flag?
 	uint8_t acc_movement_flag;		//flag if accelerometer detected movement in the recent update interval
-	int8_t lora_rssi;				//RSSI of the last received packet
+	uint8_t pdop_good_flag;			//GPS PDOP quality flag
+	int8_t lora_snr;				//SNR of the last received packet
 
     //TIME
     uint32_t timestamp;					//time stamp in seconds when the last activity was detected

@@ -40,7 +40,7 @@ void rf_set_cw_tx(void);
 //4 bytes lon
 //2 bytes altitude
 //TOTAL 12 bytes
-#define AIR_PACKET_LEN      (LORA_PP4_PLOAD_LEN_12_BYTE)
+#define AIR_PACKET_LEN      (LORA_PP4_PLOAD_LEN_13_BYTE)
 
 
 
@@ -169,8 +169,6 @@ void rf_config_tx_power(int8_t power_dbm)
 	spi1_trx(power_dbm);
 	spi1_trx(TX_RAMP_TIME_800U);
 	cs_rf_inactive();
-
-	//todo: add SET_PA_CFG
 
 	spi1_clock_disable();
 }
@@ -468,9 +466,9 @@ void rf_workaround_15_4(void)
 
 
 
-int8_t rf_get_last_rssi(void)
+int8_t rf_get_last_snr(void)
 {
-	uint8_t last_rssi = 0;
+	uint8_t last_snr = 0;
 
 	spi1_clock_enable();
 
@@ -478,13 +476,13 @@ int8_t rf_get_last_rssi(void)
     spi1_trx(SX126X_GET_PKT_STATUS);
     spi1_trx(0); 				//NOP
     spi1_trx(0);				//RssiPkt
-    spi1_trx(0);				//SnrPkt
-    last_rssi = spi1_trx(0);	//SignalRssiPkt
+    last_snr = spi1_trx(0);	//SnrPkt
+    spi1_trx(0);				//SignalRssiPkt
     cs_rf_inactive();
 
     spi1_clock_disable();
 
-    return -(last_rssi / 2);
+    return (last_snr / 4);
 }
 
 

@@ -22,7 +22,7 @@ void rf_set_standby_xosc(void);
 uint8_t rf_get_status(void);
 uint16_t rf_get_irq_status(void);
 void rf_clear_irq(void);
-int8_t rf_get_last_rssi(void);
+int8_t rf_get_last_snr(void);
 uint8_t *get_air_packet_tx(void);
 uint8_t *get_air_packet_rx(void);
 

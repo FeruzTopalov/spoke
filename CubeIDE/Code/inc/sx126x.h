@@ -241,6 +241,7 @@
 #define		LORA_PP3_HEADER_EXPLCT		(0x00)
 #define		LORA_PP3_HEADER_IMPLCT		(0x01)
 #define		LORA_PP4_PLOAD_LEN_12_BYTE	(0x0C)
+#define		LORA_PP4_PLOAD_LEN_13_BYTE	(0x0D)
 #define		LORA_PP5_CRC_ON				(0x01)
 #define		LORA_PP5_CRC_OFF			(0x00)
 #define		LORA_PP6_IQ_STD				(0x00)

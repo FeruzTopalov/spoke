@@ -24,8 +24,8 @@ void console_combine_timestamp_nav_data(void);
 
 
 
-#define TIMESTAMP_SZ	(27)
-#define CONS_DATA_SZ	(256)
+#define TIMESTAMP_SZ	(32)
+#define CONS_DATA_SZ	(512)
 
 
 
@@ -38,13 +38,13 @@ uint16_t brr_gps_baud;						//BRR reg value depending on 'GPS baud' setting
 uint8_t console_timestamp[TIMESTAMP_SZ];	//for console, timestamp data
 
 uint8_t console_nav_data[CONS_DATA_SZ];		//for console, raw nav data
-uint8_t nav_data_len = 0;					//nav data length
+uint16_t nav_data_len = 0;					//nav data length
 
 uint8_t console_nav_data_base64[CONS_DATA_SZ];//for console, base64 nav data
-uint8_t nav_data_base64_len = 0;			//base64 nav data length
+uint16_t nav_data_base64_len = 0;			//base64 nav data length
 
 uint8_t console_data[CONS_DATA_SZ];			//resulting console data
-uint8_t console_data_len = 0;				//console data length
+uint16_t console_data_len = 0;				//console data length
 
 uint8_t console_report_enabled = 1;			//enable send logs via console
 
@@ -179,8 +179,9 @@ void console_prepare_timestamp(void)
 {
 	char tmp_buf[10];
 
-	//FORMAT: "2025-03-02T10:45:00+03:00 "
-	//FORMAT: "YYYY-MM-DDTHH:MM:SS+hh:mm "
+	//FORMAT: "2025-03-02T10:45:00+03:00"
+	//FORMAT: "YYYY-MM-DDTHH:MM:SS+hh:mm" where +/-hh:mm is timezone
+	//fixed sym:   ^  ^  ^  ^  ^  ^  ^
 
 	//clear
 	memset(console_timestamp, 0, TIMESTAMP_SZ);
@@ -226,7 +227,7 @@ void console_prepare_timestamp(void)
 	time_date_add_leading_zero(&tmp_buf[0]);
 	strcat(console_timestamp, tmp_buf);
 
-	//+
+	//+/-
 	if (p_settings->time_zone_dir > 0)
 	{
 		strcat(console_timestamp, "+");
@@ -246,7 +247,7 @@ void console_prepare_timestamp(void)
 	itoa32(p_settings->time_zone_minute, &tmp_buf[0]);
 	time_date_add_leading_zero(&tmp_buf[0]);
 	strcat(console_timestamp, tmp_buf);
-	strcat(console_timestamp, " ");
+	strcat(console_timestamp, " "); // add sp before base64 data
 }
 
 
@@ -255,49 +256,71 @@ void console_prepare_timestamp(void)
 void console_prepare_nav_data(void)
 {
 	//init
-	uint8_t all_flags = 0;
+	uint8_t internal_flags; //flags calculated and used internally to this device
+	uint8_t external_flags;	//flags transmitted over the air
+	uint8_t is_you;	//is this dev "you" flag
 	nav_data_len = 0;
 
 	//clear
 	memset(console_nav_data, 0, CONS_DATA_SZ);
 
-	for (uint8_t dev = NAV_OBJECT_FIRST; dev < NAV_OBJECT_LAST + 1; dev++)		//max: 9 objects x 18 bytes = 162 bytes
+	for (uint8_t dev = NAV_OBJECT_FIRST; dev < NAV_OBJECT_LAST + 1; dev++)		//max: 9 objects x 19 bytes each = 171 bytes
 	{
 		if (pp_devices[dev]->exist_flag == 1)	//only existing devices
 		{
+			internal_flags = 0;
+			external_flags = 0;
+
+			// 1) dev number, 1 byte
 			console_nav_data[nav_data_len++] = dev;
+
+			// 2) dev id, 1 byte
 			console_nav_data[nav_data_len++] = pp_devices[dev]->device_id;
 
-			all_flags = 0;
-
-			if ((p_settings->device_number) == dev)	//set 0s flag if it is you
+			if ((p_settings->device_number) == dev)	//set 0's flag as "you"
 			{
-				all_flags |= 0x01 << 0;
+				is_you = 1;
 			}
 			else
 			{
-				all_flags |= 0x00 << 0;
+				is_you = 0;
 			}
 
-			all_flags |= (	((pp_devices[dev]->memory_point_flag) << 1) 		|\
-							((pp_devices[dev]->alarm_flag) << 2) 				|\
-							((pp_devices[dev]->fence_flag) << 3) 				|\
-							((pp_devices[dev]->timeout_flag) << 4) 				|\
-							((pp_devices[dev]->lowbat_flag) << 5) 				|\
-							((pp_devices[dev]->link_status_flag) << 6) 			);
+			internal_flags |= (		(is_you << 0) 								|\
+									((pp_devices[dev]->memory_point_flag) << 1) |\
+									((pp_devices[dev]->fence_flag) << 2) 		|\
+									((pp_devices[dev]->timeout_flag) << 3) 		|\
+									((pp_devices[dev]->link_status_flag) << 4) 	);
 
-			console_nav_data[nav_data_len++] = all_flags;
-			console_nav_data[nav_data_len++] = pp_devices[dev]->lora_rssi;
+			// 3) internal flags, 1 byte
+			console_nav_data[nav_data_len++] = internal_flags;
 
+			//preserve flags order of packet structure
+			external_flags |= (		((pp_devices[dev]->alarm_flag) << 0) 		|\
+									((pp_devices[dev]->beacon_flag) << 1) 		|\
+									((pp_devices[dev]->lowbat_flag) << 2) 		|\
+									((pp_devices[dev]->acc_movement_flag) << 3) |\
+									((pp_devices[dev]->pdop_good_flag) << 4) 	);
+
+			// 4) external flags, 1 byte
+			console_nav_data[nav_data_len++] = external_flags;
+
+			// 5) SNR value, 1 byte, signed
+			console_nav_data[nav_data_len++] = pp_devices[dev]->lora_snr;
+
+			// 6) Timeout in s since last activity, 4 bytes
 			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->timeout), 4);
 			nav_data_len += 4;
 
+			// 7) Latitude, 4 bytes, float
 			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->latitude.as_float), 4);
 			nav_data_len += 4;
 
+			// 8) Longitude, 4 bytes, float
 			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->longitude.as_float), 4);
 			nav_data_len += 4;
 
+			// 9) Altitude, 2 bytes, signed
 			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->altitude), 2);
 			nav_data_len += 2;
 		}
