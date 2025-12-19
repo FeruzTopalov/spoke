@@ -1740,11 +1740,16 @@ void draw_calibration_saved_popup(void)
 
 
 
-void draw_diag(void)
+void draw_diag(void) //todo wip
 {
 	lcd_clear();
-	lcd_print_small(0, 0, "diag");
-	lcd_print_small(7, 17, "diag");
+
+	lcd_print_small(6, 0, HW_REV);
+	lcd_print_small(7, 0, FW_REV);
+
+	lcd_print_small(6, 13, __TIME__);
+	lcd_print_small(7, 10, __DATE__);
+
 	lcd_update();
 }
 
