@@ -85,6 +85,7 @@ void draw_calibrate_compass(void);
 void draw_calibrating_compass(void);
 void draw_compass_calibrated(void);
 void draw_calibration_saved_popup(void);
+void draw_diag(void);
 
 
 
@@ -178,7 +179,8 @@ enum
 	M_CALIBRATE_COMPASS,
 	M_CALIBRATING_COMPASS,
 	M_COMPASS_CALIBRATED,
-	M_CALIBRATION_SAVED_POPUP
+	M_CALIBRATION_SAVED_POPUP,
+	M_DIAG
 };
 
 
@@ -370,6 +372,7 @@ const struct
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_TIMEOUT,				M_SET_TIMEOUT},
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_FENCE,				M_SET_FENCE},
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_TIMEZONE,			M_SET_TIMEZONE},
+	{M_POWER,					M_POWER_I_DIAG,						M_DIAG},
     {0, 0, 0}   //end marker
 };
 
@@ -397,6 +400,7 @@ const struct
 	{M_MAIN,					M_CALIBRATE_COMPASS},
 	{M_CALIBRATE_COMPASS,		M_MAIN},
 	{M_CALIBRATION_SAVED_POPUP,	M_MAIN},
+	{M_DIAG,					M_POWER},
     {0, 0}      //end marker
 };
 
@@ -460,6 +464,7 @@ const struct
 	{M_CALIBRATING_COMPASS,		draw_calibrating_compass},
 	{M_COMPASS_CALIBRATED,		draw_compass_calibrated},
 	{M_CALIBRATION_SAVED_POPUP,	draw_calibration_saved_popup},
+	{M_DIAG,					draw_diag},
     {0, 0}      //end marker
 };
 
@@ -1735,6 +1740,15 @@ void draw_calibration_saved_popup(void)
 
 
 
+void draw_diag(void)
+{
+	lcd_clear();
+	lcd_print(0, 0, "diag");
+	lcd_update();
+}
+
+
+
 //--------------------------------------------------------------
 //--------------------------- SET ------------------------------
 //--------------------------------------------------------------
@@ -1872,6 +1886,10 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 
 		case M_POWER_I_CONSOLE:
 			toggle_mux_state();
+			break;
+
+		case M_POWER_I_DIAG:
+			switch_forward();	//perform default action for forward menu
 			break;
 
 		case M_POWER_I_POWEROFF:
