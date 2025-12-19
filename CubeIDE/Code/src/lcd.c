@@ -26,6 +26,11 @@ void lcd_backlight_disable(void);
 
 #define LCD_SIZE_BYTES    	(1024)
 
+#define FONT_6X8_SIZE_X       	(6)		//size of font in pixels
+#define FONT_6X8_SIZE_Y       	(8)		//size of font in pixels
+#define FONT_6X8_BYTES_X      	(6)		//size of font in bytes
+#define FONT_6X8_BYTES_Y      	(1)		//size of font in bytes
+#define FONT_6X8_BYTES      	(FONT_6X8_BYTES_X * FONT_6X8_BYTES_Y)	//size of font in bytes
 
 #define FONT_8X16_SIZE_X       	(8)		//size of font in pixels
 #define FONT_8X16_SIZE_Y       	(16)	//size of font in pixels
@@ -475,7 +480,7 @@ void lcd_set_pixel_plot(uint8_t x, uint8_t y)
 //Set 6x8 character position on screen (rows 0-7, cols 0-20)
 void lcd_pos_6x8(uint8_t row, uint8_t col)
 {
-    buf_pos = (col + row * LCD_COLS_6X8) * FONT_8X16_SIZE_X + 2 * row;   //+2 bytes, because 128 - (21 * 6) = 2
+    buf_pos = (col + row * LCD_COLS_6X8) * FONT_6X8_SIZE_X + 2 * row;   //+2 bytes, because 128 - (21 * 6) = 2
 }
 
 
@@ -484,6 +489,19 @@ void lcd_pos_6x8(uint8_t row, uint8_t col)
 void lcd_pos_8x16(uint8_t row, uint8_t col)
 {
     buf_pos = (col + LCD_COLS_8X16 * row * FONT_8X16_BYTES_Y) * FONT_8X16_BYTES_X;
+}
+
+
+
+//Put one char in buffer in position, defined previously via ssd1306_pos() //todo del 1306 text everywhere
+void lcd_char_6x8(char chr)
+{
+    for (uint8_t i = 0; i < FONT_6X8_SIZE_X - 1; i++)
+    {
+        screen_buf[buf_pos++] = font_6x8[(uint8_t)chr][i];
+    }
+
+    screen_buf[buf_pos++] = 0x00;       //intercharacter space
 }
 
 
