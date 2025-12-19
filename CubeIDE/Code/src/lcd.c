@@ -7,6 +7,7 @@
 #include <string.h>
 #include <math.h>
 #include "stm32f10x.h"
+#include "lcd_font6x8.h"
 #include "lcd_font8x16.h"
 #include "lcd_font16x16.h"
 #include "lcd.h"
@@ -498,10 +499,10 @@ void lcd_char_6x8(char chr)
 {
     for (uint8_t i = 0; i < FONT_6X8_SIZE_X - 1; i++)
     {
-        screen_buf[buf_pos++] = font_6x8[(uint8_t)chr][i];
+        screen_buf[buf_pos++] = font_6x8[(uint8_t)chr - ' '][i]; //subtract space char because font table starts with space
     }
 
-    screen_buf[buf_pos++] = 0x00;       //intercharacter space
+    screen_buf[buf_pos++] = 0;       //intercharacter space
 }
 
 
@@ -604,8 +605,22 @@ void lcd_char_16x16(char chr)
 //Put one char in defined pos
 void lcd_char_16x16_pos(uint8_t row, uint8_t col, char chr)
 {
-    lcd_pos_8x16(row, col);
+    lcd_pos_8x16(row, col);//todo add independent 16x16 pos func
     lcd_char_16x16(chr);
+}
+
+
+
+//Print string on screen (with position (rows 0-7, cols 0-20))
+//Small print with 6x8 font
+void lcd_print_small(uint8_t row, uint8_t col, char *p_str)
+{
+    lcd_pos_6x8(row, col);
+
+    while (*p_str)
+    {
+        lcd_char_6x8(*p_str++);
+    }
 }
 
 

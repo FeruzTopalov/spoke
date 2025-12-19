@@ -1743,7 +1743,8 @@ void draw_calibration_saved_popup(void)
 void draw_diag(void)
 {
 	lcd_clear();
-	lcd_print(0, 0, "diag");
+	lcd_print_small(0, 0, "diag");
+	lcd_print_small(7, 17, "diag");
 	lcd_update();
 }
 
