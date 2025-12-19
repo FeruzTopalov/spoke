@@ -27,7 +27,19 @@
 
 
 
-char *HW_FW_VERSION = "H2F5";	//revision HW.FW
+#ifdef SPOKE_HW_REV_1_x
+#define HW_REV	("HW 1.x")
+#endif
+
+#ifdef SPOKE_HW_REV_2_0
+#define HW_REV	("HW 2.0")
+#endif
+
+#ifdef SPOKE_HW_REV_2_1
+#define HW_REV	("HW 2.1")
+#endif
+
+#define FW_REV 	("FW 5.0")
 
 
 
@@ -738,11 +750,10 @@ void draw_main(void)
     lcd_print(MAIN_ROW, MAIN_COL, "Navigation");
     lcd_print(MAIN_ROW + 1, MAIN_COL, "Devices");
     lcd_print(MAIN_ROW + 2, MAIN_COL, "Settings");
-    lcd_print_viceversa(MAIN_ROW + 2, 15, HW_FW_VERSION);
     lcd_print(MAIN_ROW + get_current_item(), MAIN_COL - 1, ">");
     draw_bat_level();
 
-	//debug output bat voltage
+	//print bat voltage
 	ftoa32(get_bat_voltage(), 2, &tmp_buf[0]);
 	lcd_print_viceversa(0, 12, &tmp_buf[0]);
 
