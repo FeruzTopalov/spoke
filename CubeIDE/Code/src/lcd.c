@@ -494,7 +494,7 @@ void lcd_pos_8x16(uint8_t row, uint8_t col)
 
 
 
-//Put one char in buffer in position, defined previously via ssd1306_pos() //todo del 1306 text everywhere
+//Put one char in buffer in position, defined previously
 void lcd_char_6x8(char chr)
 {
     for (uint8_t i = 0; i < FONT_6X8_SIZE_X - 1; i++)
@@ -507,7 +507,7 @@ void lcd_char_6x8(char chr)
 
 
 
-//Put one char in buffer in position, defined previously via ssd1306_pos()
+//Put one char in buffer in position, defined previously
 void lcd_char_8x16(char chr)
 {
 	uint16_t buf_pos_copy = buf_pos;
@@ -533,7 +533,7 @@ void lcd_char_8x16(char chr)
 
 
 
-//Put one char in buffer in position with content overlay, defined previously via ssd1306_pos()
+//Put one char in buffer in position with content overlay, defined previously
 void lcd_char_8x16_overlay(char chr)
 {
 	uint16_t buf_pos_copy = buf_pos;
@@ -605,7 +605,7 @@ void lcd_char_16x16(char chr)
 //Put one char in defined pos
 void lcd_char_16x16_pos(uint8_t row, uint8_t col, char chr)
 {
-    lcd_pos_8x16(row, col);//todo add independent 16x16 pos func
+    lcd_pos_8x16(row, col); //using 8x16 pos function for fine positioning along x if needed
     lcd_char_16x16(chr);
 }
 
