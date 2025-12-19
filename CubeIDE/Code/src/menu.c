@@ -770,9 +770,9 @@ void draw_main(void)
 //Draw an icon in top right corner
 void draw_bat_level(void)
 {
-	lcd_char_pos(0, 13, SYMB8_BAT_TAIL);
-	lcd_char_pos(0, 14, SYMB8_BAT_MID);
-	lcd_char_pos(0, 15, SYMB8_BAT_HEAD);
+	lcd_char_8x16_pos(0, 13, SYMB8_BAT_TAIL);
+	lcd_char_8x16_pos(0, 14, SYMB8_BAT_MID);
+	lcd_char_8x16_pos(0, 15, SYMB8_BAT_HEAD);
 
 	for (uint8_t px = 0; px < get_battery_level(); px++)
 	{
@@ -803,38 +803,38 @@ void draw_devices(void)
 					itoa32(dev, &tmp_buf[0]);
 					lcd_print(active_row, 0, tmp_buf);
 
-					lcd_char_pos(active_row, 1, pp_devices[dev]->device_id);
+					lcd_char_8x16_pos(active_row, 1, pp_devices[dev]->device_id);
 
 					convert_main_distance(pp_devices[dev]->distance, &tmp_buf[0]);
 					lcd_print_viceversa(active_row, 6, &tmp_buf[0]);
-					lcd_char_pos(active_row, 7, 'm');
+					lcd_char_8x16_pos(active_row, 7, 'm');
 
 					lcd_print(active_row, 9, convert_heading(pp_devices[dev]->heading_deg));
 
 					if (pp_devices[dev]->timeout_flag)
 					{
-						lcd_char_pos(active_row, 13, SYMB8_TIMEOUT);
+						lcd_char_8x16_pos(active_row, 13, SYMB8_TIMEOUT);
 					}
 					else
 					{
 						if (pp_devices[dev]->link_status_flag == 1)
 						{
-							lcd_char_pos(active_row, 13, SYMB8_LINK_OK);
+							lcd_char_8x16_pos(active_row, 13, SYMB8_LINK_OK);
 						}
 						else
 						{
-							lcd_char_pos(active_row, 13, SYMB8_LINK_LOST);
+							lcd_char_8x16_pos(active_row, 13, SYMB8_LINK_LOST);
 						}
 					}
 
 			    	if (pp_devices[dev]->fence_flag)
 			    	{
-			    		lcd_char_pos(active_row, 14, SYMB8_FENCE);
+			    		lcd_char_8x16_pos(active_row, 14, SYMB8_FENCE);
 			    	}
 
 			    	if (pp_devices[dev]->alarm_flag)
 			    	{
-			    		lcd_char_pos(active_row, 15, SYMB8_ALARM);
+			    		lcd_char_8x16_pos(active_row, 15, SYMB8_ALARM);
 			    	}
 
 					active_row++;
@@ -867,7 +867,7 @@ void draw_devices(void)
 
 				convert_main_distance(pp_devices[pt]->distance, &tmp_buf[0]);
 				lcd_print_viceversa(active_row, 8, &tmp_buf[0]);
-				lcd_char_pos(active_row, 9, 'm');
+				lcd_char_8x16_pos(active_row, 9, 'm');
 
 				lcd_print(active_row, 11, convert_heading(pp_devices[pt]->heading_deg));
 
@@ -926,8 +926,8 @@ void draw_power(void)
     lcd_print(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1, "Blit");
     char bl_lsb_char = p_bl_level_values[settings_copy.bl_level_opt] & 0x00FF;
     char bl_msb_char = (p_bl_level_values[settings_copy.bl_level_opt] & 0xFF00) >> 8;
-    lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 6, bl_lsb_char);
-    lcd_char_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 5, bl_msb_char);
+    lcd_char_8x16_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 6, bl_lsb_char);
+    lcd_char_8x16_pos(EDIT_POWER_ROW + 2, EDIT_POWER_COL_1 + 5, bl_msb_char);
 
     lcd_print(EDIT_POWER_ROW, EDIT_POWER_COL_2, "Cons ");
     if (get_mux_state() == MUX_STATE_BLE)
@@ -989,11 +989,11 @@ void draw_navigation(void)
 	{
 		if (is_gps_course()) //if course is from GPS data
 		{
-			lcd_char_overlay_pos(3, 0, SYMB8_TRUE_NORTH); //true north, from GPS
+			lcd_char_8x16_overlay_pos(3, 0, SYMB8_TRUE_NORTH); //true north, from GPS
 		}
 		else
 		{
-			lcd_char_overlay_pos(3, 0, SYMB8_MAG_NORTH); //magnetic north, from acc/mag sensor
+			lcd_char_8x16_overlay_pos(3, 0, SYMB8_MAG_NORTH); //magnetic north, from acc/mag sensor
 		}
 
 		float x1, y1;
@@ -1035,19 +1035,19 @@ void draw_navigation(void)
 
 
 	//print ID
-	lcd_char16_pos(3, 8, pp_devices[navigate_to_device]->device_id);
+	lcd_char_16x16_pos(3, 8, pp_devices[navigate_to_device]->device_id);
 
 
     if (navigate_to_device == this_device)		//if navigate to this device
     {
     	if (pp_devices[navigate_to_device]->timeout_flag)
 		{
-			lcd_char_pos(0, 8, SYMB8_TIMEOUT);
+			lcd_char_8x16_pos(0, 8, SYMB8_TIMEOUT);
 		}
 
     	if (pp_devices[navigate_to_device]->alarm_flag)
     	{
-    		lcd_char_pos(0, 9, SYMB8_ALARM);
+    		lcd_char_8x16_pos(0, 9, SYMB8_ALARM);
     	}
 
     	itoa32(p_gps_num->hour_tz, &tmp_buf[0]);
@@ -1092,28 +1092,28 @@ void draw_navigation(void)
     	{
     		if (pp_devices[navigate_to_device]->timeout_flag)
     		{
-    			lcd_char_pos(0, 8, SYMB8_TIMEOUT);
+    			lcd_char_8x16_pos(0, 8, SYMB8_TIMEOUT);
     		}
     		else
     		{
 				if (pp_devices[navigate_to_device]->link_status_flag == 1)
 				{
-					lcd_char_pos(0, 8, SYMB8_LINK_OK);
+					lcd_char_8x16_pos(0, 8, SYMB8_LINK_OK);
 				}
 				else
 				{
-					lcd_char_pos(0, 8, SYMB8_LINK_LOST);
+					lcd_char_8x16_pos(0, 8, SYMB8_LINK_LOST);
 				}
     		}
     	}
 
     	if (pp_devices[navigate_to_device]->alarm_flag)
     	{
-    		lcd_char_pos(0, 9, SYMB8_ALARM);
+    		lcd_char_8x16_pos(0, 9, SYMB8_ALARM);
     	}
     	else if (pp_devices[navigate_to_device]->fence_flag)
 		{
-    		lcd_char_pos(0, 9, SYMB8_FENCE);
+    		lcd_char_8x16_pos(0, 9, SYMB8_FENCE);
 		}
 
 		//Draw notch
@@ -1136,20 +1136,20 @@ void draw_navigation(void)
 
 		//print distance
 		convert_main_distance(pp_devices[navigate_to_device]->distance, &tmp_buf[0]);
-		lcd_print16_viceversa(1, 14, &tmp_buf[0]);
+		lcd_print_large_viceversa(1, 14, &tmp_buf[0]);
 
 		//print heading
-		lcd_char_pos(2, 15, SYMB8_DEGREE); //degree char
+		lcd_char_8x16_pos(2, 15, SYMB8_DEGREE); //degree char
 		itoa32(pp_devices[navigate_to_device]->heading_deg, &tmp_buf[0]);
 		lcd_print_viceversa(2, 14, &tmp_buf[0]);
 
 		//print altitude diff
-		lcd_char_pos(3, 15, 'm'); //meter char
+		lcd_char_8x16_pos(3, 15, 'm'); //meter char
 		convert_main_alt_difference(pp_devices[navigate_to_device]->delta_altitude, &tmp_buf[0]);
 		lcd_print_viceversa(3, 14, &tmp_buf[0]);
 		if (pp_devices[navigate_to_device]->delta_altitude > 0)
 		{
-			lcd_char('+');
+			lcd_char_8x16('+');
 		}
     }
 
@@ -1188,7 +1188,7 @@ void draw_coordinates(void)
     else
     {
 		lcd_print(0, 3, "ID");
-		lcd_char_pos(0, 6, pp_devices[navigate_to_device]->device_id);
+		lcd_char_8x16_pos(0, 6, pp_devices[navigate_to_device]->device_id);
 
 		if (navigate_to_device == this_device)
 		{
@@ -1205,9 +1205,9 @@ void draw_coordinates(void)
     lcd_print_viceversa(1, 14, &tmp_buf[0]);
     if (pp_devices[navigate_to_device]->latitude.as_float >= 0)
     {
-        lcd_char('+');
+        lcd_char_8x16('+');
     }
-    lcd_char_pos(1, 15, SYMB8_DEGREE); //degree char
+    lcd_char_8x16_pos(1, 15, SYMB8_DEGREE); //degree char
 
 
     lcd_print(2, 0, "LON");
@@ -1215,16 +1215,16 @@ void draw_coordinates(void)
     lcd_print_viceversa(2, 14, &tmp_buf[0]);
     if (pp_devices[navigate_to_device]->longitude.as_float >= 0)
     {
-        lcd_char('+');
+        lcd_char_8x16('+');
     }
-    lcd_char_pos(2, 15, SYMB8_DEGREE); //degree char
+    lcd_char_8x16_pos(2, 15, SYMB8_DEGREE); //degree char
 
 
     //print ALT here for all
     lcd_print(3, 0, "ALT");
     itoa32(pp_devices[navigate_to_device]->altitude.as_integer, &tmp_buf[0]);
     lcd_print(3, 4, &tmp_buf[0]);
-    lcd_char('m'); //meter char
+    lcd_char_8x16('m'); //meter char
 
     draw_bat_level();
 

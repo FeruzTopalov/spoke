@@ -70,7 +70,7 @@ void init_compass(void)
 {
 	compass_availability = COMPASS_IS_NOT_AVAILABLE;
 
-	if (init_accelerometer())
+	if (init_accelerometer())//todo change init check
 	{
 		if (init_magnetometer())
 		{
