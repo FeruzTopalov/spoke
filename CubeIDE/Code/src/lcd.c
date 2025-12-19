@@ -538,7 +538,7 @@ void lcd_char16(char chr)
 	uint16_t font_char_pos, c;
 	uint8_t px;
 
-    font_char_pos = ((uint8_t)chr - 48) * FONT16_BYTES;
+    font_char_pos = ((uint8_t)chr - '0') * FONT16_BYTES;	//subtract char '0'
 
     for (px = 0, c = font_char_pos; px < FONT16_BYTES_X; px++, c += 2)		//upper symbol row
     {
