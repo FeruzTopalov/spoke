@@ -16,10 +16,11 @@
 
 
 
-#define LCD_COLS     		(16)
-#define LCD_ROWS       		(4)
-#define LCD_LAST_COL     	(LCD_COLS - 1)
-#define LCD_LAST_ROW       	(LCD_ROWS - 1)
+#define LCD_ROWS_8X16       	(4)
+#define LCD_COLS_8X16     		(16)
+
+#define LCD_ROWS_6X8       		(8)
+#define LCD_COLS_6X8     		(21)
 
 
 
