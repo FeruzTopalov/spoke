@@ -677,3 +677,43 @@ uint8_t get_days_in_month(uint8_t month, uint8_t year)	//month 1-12; year - last
 
 	return days_in_month[month - 1];
 }
+
+
+
+void stack_fill_pattern(void)
+{
+	uint32_t stack_bot;
+	uint32_t stack_top;
+	uint32_t stack_size;
+
+	stack_size = 0x400; //if _Min_Stack_Size = 0x400, see LinkerScript.ld
+	stack_top = 0x20005000; //end of RAM + 1 byte
+	stack_bot = stack_top - stack_size;
+
+    for (uint32_t *p = (uint32_t *)stack_bot; p < (uint32_t *)stack_top; p++)
+    {
+        *p = (uint32_t)0xDEADBEEF;
+    }
+}
+
+
+
+uint32_t stack_get_used(void)
+{
+	uint32_t stack_bot;
+	uint32_t stack_top;
+	uint32_t stack_size;
+
+	stack_size = 0x400; //if _Min_Stack_Size = 0x400, see LinkerScript.ld
+	stack_top = 0x20005000; //end of RAM + 1 byte
+	stack_bot = stack_top - stack_size;
+
+    uint32_t *p = (uint32_t *)stack_bot;
+
+    while ((p < (uint32_t *)stack_top) && (*p == 0xDEADBEEF))
+    {
+        p++;
+    }
+
+    return (uint8_t *)stack_top - (uint8_t *)p;
+}

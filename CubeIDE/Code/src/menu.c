@@ -1775,6 +1775,15 @@ void draw_calibration_saved_popup(void)
 
 void draw_diag(void) //todo wip
 {
+/*	UT 9999999 NO 9999999
+	PA 9999999 PC 9999999
+	TX 9999999 RX 9999999
+	CE 9999999 TO 9999999
+	SN -20/Y/-20/-20/-20/
+	AZ +1024  HW 2.1 x400
+	MX +1024  FW 5.0 G1B4
+	MY +1024  Dec 19 2025	*/
+
 	lcd_clear();
 
 	//Uptime
@@ -1786,8 +1795,6 @@ void draw_diag(void) //todo wip
 	lcd_print_small(0, 11, "NO ");
 	itoa32(get_nmea_overflow_cntr(), tmp_buf);
 	lcd_print_small_next(tmp_buf);
-
-	//stack max waterline
 
 	//PPS absolute
 	lcd_print_small(1, 0, "PA ");
@@ -1874,6 +1881,10 @@ void draw_diag(void) //todo wip
 		lcd_print_small(6, 3, "n/a");
 		lcd_print_small(7, 3, "n/a");
 	}
+
+	//stack max watermark
+	itoa32(stack_get_used(), tmp_buf);
+	lcd_print_small(5, 17, tmp_buf);
 
 	//hw and fw revs
 	lcd_print_small(5, 10, HW_REV);

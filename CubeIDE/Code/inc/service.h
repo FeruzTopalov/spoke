@@ -35,6 +35,8 @@ void string_cat(char *destination, char *source);
 void byte2hex(uint8_t byte, char *array);
 void time_date_add_leading_zero(char *buf);
 uint8_t get_days_in_month(uint8_t month, uint8_t year);
+void stack_fill_pattern(void);
+uint32_t stack_get_used(void);
 
 
 
