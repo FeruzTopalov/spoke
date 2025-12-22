@@ -40,6 +40,8 @@ uint8_t gps_course = 0; //gps course is used instead of magnet course
 uint8_t north_ready = 0; //flag is north value ready to readout
 uint8_t last_is_horizontal = 0;
 
+uint8_t acc_availaility = 0;
+uint8_t mag_availaility = 0;
 
 
 int16_t cal_buf_x[COMP_CAL_BUF_MAX_LEN];
@@ -68,9 +70,6 @@ float cal_scale_y;
 
 void init_compass(void)
 {
-	uint8_t acc_availaility = 0;
-	uint8_t mag_availaility = 0;
-
 	compass_availability = COMPASS_IS_NOT_AVAILABLE;
 
 	if (init_accelerometer() == 1)
@@ -364,6 +363,20 @@ int16_t *get_cal_buf_y(void)
 float get_cal_plot_scale(void)
 {
 	return cal_plot_scale;
+}
+
+
+
+uint8_t get_acc_availability(void)
+{
+	return acc_availaility;
+}
+
+
+
+uint8_t get_mag_availability(void)
+{
+	return mag_availaility;
 }
 
 

@@ -24,6 +24,7 @@
 #include "compass.h"
 #include "adc.h"
 #include "radio.h"
+#include "sensors.h"
 
 
 
@@ -168,6 +169,7 @@ void confirm_settings_save_esc(void);
 void calibrate_compass_up(void);
 void calibrated_compass_ok(void);
 void calibrated_compass_esc(void);
+void diag_esc(void);
 void scroll_bl_options(void);
 void toggle_mux_state(void);
 
@@ -369,6 +371,7 @@ const struct
 	{M_CALIBRATE_COMPASS,		BTN_UP,					calibrate_compass_up},
 	{M_COMPASS_CALIBRATED,		BTN_OK,					calibrated_compass_ok},
 	{M_COMPASS_CALIBRATED,		BTN_ESC,				calibrated_compass_esc},
+	{M_DIAG,					BTN_ESC,				diag_esc},
     {0, 0, 0}   //end marker
 };
 
@@ -396,7 +399,6 @@ const struct
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_TIMEOUT,				M_SET_TIMEOUT},
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_FENCE,				M_SET_FENCE},
 	{M_EDIT_OTHER,				M_EDIT_OTHER_I_TIMEZONE,			M_SET_TIMEZONE},
-	{M_POWER,					M_POWER_I_DIAG,						M_DIAG},
     {0, 0, 0}   //end marker
 };
 
@@ -517,6 +519,9 @@ struct devices_struct **pp_devices;
 int16_t *p_comp_cal_buf_x;
 int16_t *p_comp_cal_buf_y;
 
+struct acc_data *p_acceleration;
+struct mag_data *p_magnetic_field;
+
 
 
 //Init and show MAIN menu
@@ -541,6 +546,10 @@ void init_menu(void)
 	//Load compass related
 	p_comp_cal_buf_x = get_cal_buf_x();
 	p_comp_cal_buf_y = get_cal_buf_y();
+
+	//Load for Diag menu
+	p_acceleration = get_acceleration();
+	p_magnetic_field = get_magnetic_field();
 
 	//Init start menu
     current_menu = M_MAIN;
@@ -1768,11 +1777,43 @@ void draw_diag(void) //todo wip
 {
 	lcd_clear();
 
+	//acc and magn
+	lcd_print_small(5, 0, "AZ");
+
+	if (get_acc_availability() == 1)
+	{
+		itoa32(p_acceleration->acc_z.as_integer, tmp_buf);
+		lcd_print_small(5, 3, tmp_buf);
+	}
+	else
+	{
+		lcd_print_small(5, 3, "n/a");
+	}
+
+
+	lcd_print_small(6, 0, "MX");
+	lcd_print_small(7, 0, "MY");
+
+	if (get_mag_availability() == 1)
+	{
+		itoa32(p_magnetic_field->mag_x.as_integer, tmp_buf);
+		lcd_print_small(6, 3, tmp_buf);
+		itoa32(p_magnetic_field->mag_y.as_integer, tmp_buf);
+		lcd_print_small(7, 3, tmp_buf);
+	}
+	else
+	{
+		lcd_print_small(6, 3, "n/a");
+		lcd_print_small(7, 3, "n/a");
+	}
+
+	//hw and fw revs
 	lcd_print_small(5, 10, HW_REV);
 	lcd_print_small(6, 10, FW_REV);
 	lcd_print_small(6, 17, GPS_BAUD);
 	lcd_print_small(6, 19, FREQ_BAND);
 
+	//compilation date
 	lcd_print_small(7, 10, __DATE__);
 
 	lcd_update();
@@ -1920,7 +1961,8 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 			break;
 
 		case M_POWER_I_DIAG:
-			switch_forward();	//perform default action for forward menu
+			start_compass();	//to show acc and mag data live
+			current_menu = M_DIAG;
 			break;
 
 		case M_POWER_I_POWEROFF:
@@ -1930,8 +1972,6 @@ void power_ok(void)	//non standard implementation: switch the current item and d
 		default:
 			break;
 	}
-
-
 }
 
 
@@ -2611,6 +2651,14 @@ void calibrated_compass_ok(void)
 void calibrated_compass_esc(void)
 {
 	current_menu = M_CALIBRATE_COMPASS;	//restart calibration same way we enter calibration from main menu
+}
+
+
+
+void diag_esc(void)
+{
+	stop_compass();
+	current_menu = M_POWER;
 }
 
 
