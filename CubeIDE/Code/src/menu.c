@@ -27,6 +27,8 @@
 
 
 
+#define FW_REV 	("FW 5.0")
+
 #ifdef SPOKE_HW_REV_1_x
 #define HW_REV	("HW 1.x")
 #endif
@@ -39,7 +41,29 @@
 #define HW_REV	("HW 2.1")
 #endif
 
-#define FW_REV 	("FW 5.0")
+#ifdef GPS_BAUD_9600
+#define GPS_BAUD	("G9")
+#endif
+
+#ifdef GPS_BAUD_38400
+#define GPS_BAUD	("G3")
+#endif
+
+#ifdef GPS_BAUD_57600
+#define GPS_BAUD	("G5")
+#endif
+
+#ifdef GPS_BAUD_115200
+#define GPS_BAUD	("G1")
+#endif
+
+#ifdef FREQ_BAND_433
+#define FREQ_BAND	("B4")
+#endif
+
+#ifdef FREQ_BAND_868
+#define FREQ_BAND	("B8")
+#endif
 
 
 
@@ -1744,10 +1768,11 @@ void draw_diag(void) //todo wip
 {
 	lcd_clear();
 
-	lcd_print_small(6, 0, HW_REV);
-	lcd_print_small(7, 0, FW_REV);
+	lcd_print_small(5, 10, HW_REV);
+	lcd_print_small(6, 10, FW_REV);
+	lcd_print_small(6, 17, GPS_BAUD);
+	lcd_print_small(6, 19, FREQ_BAND);
 
-	lcd_print_small(6, 13, __TIME__);
 	lcd_print_small(7, 10, __DATE__);
 
 	lcd_update();
