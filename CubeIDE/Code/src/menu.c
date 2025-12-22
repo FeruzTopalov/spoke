@@ -1777,6 +1777,48 @@ void draw_diag(void) //todo wip
 {
 	lcd_clear();
 
+	//Uptime
+	lcd_print_small(0, 0, "UT ");
+	itoa32(get_uptime_cntr(), tmp_buf);
+	lcd_print_small_next(tmp_buf);
+
+	//NMEA overflows
+	lcd_print_small(0, 11, "NO ");
+	itoa32(get_nmea_overflow_cntr(), tmp_buf);
+	lcd_print_small_next(tmp_buf);
+
+	//stack max waterline
+
+	//PPS absolute
+	lcd_print_small(1, 0, "PA ");
+	itoa32(get_abs_pps_cntr(), tmp_buf);
+	lcd_print_small_next(tmp_buf);
+
+	//PPS continuous
+	lcd_print_small(1, 11, "PC ");
+	itoa32(get_cont_pps_cntr(), tmp_buf);
+	lcd_print_small_next(tmp_buf);
+
+	//Lora TX cycles
+	lcd_print_small(2, 0, "TX ");
+	itoa32(get_lora_tx_cycles_cntr(), tmp_buf);
+	lcd_print_small_next(tmp_buf);
+
+	//Lora successfull RX cycles
+	lcd_print_small(2, 11, "RX ");
+	itoa32(get_lora_rx_cycles_cntr(), tmp_buf);
+	lcd_print_small_next(tmp_buf);
+
+	//Lora CRC errors
+	lcd_print_small(3, 0, "CE ");
+	itoa32(get_lora_crc_errors_cntr(), tmp_buf);
+	lcd_print_small_next(tmp_buf);
+
+	//Lora RX timeouts
+	lcd_print_small(3, 11, "RT ");
+	itoa32(get_lora_rx_timeouts_cntr(), tmp_buf);
+	lcd_print_small_next(tmp_buf);
+
 	//SNR all devs
 	lcd_print_small(4, 0, "SN");
 	lcd_pos_6x8(4, 3);

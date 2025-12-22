@@ -48,9 +48,15 @@ uint8_t button_code = 0;
 uint8_t processing_button = 0;
 
 //TIMERS
-uint32_t uptime = 0;
-uint32_t pps_absolute_counter = 0;
-uint32_t pps_continuous_counter = 0;
+uint32_t uptime_cntr = 0;
+uint32_t nmea_overflow_cntr = 0;
+uint32_t pps_absolute_cntr = 0;
+uint32_t pps_continuous_cntr = 0;
+uint32_t lora_tx_cycles_cntr = 0;
+uint32_t lora_rx_cycles_cntr = 0;
+uint32_t lora_crc_err_cntr = 0;
+uint32_t lora_rx_timeouts_cntr = 0;
+
 
 uint8_t second_modulo = 0;
 uint8_t device_tx_second = 0;
@@ -178,7 +184,7 @@ int main(void)
             	release_power();	//turn off immediately
             }
 
-			calc_timeout(uptime);
+			calc_timeout(uptime_cntr);
             if (main_flags.pps_synced == 0) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
             {
             	main_flags.do_beep += check_any_alarm_fence_timeout();
@@ -195,7 +201,7 @@ int main(void)
         	process_all_devices();
 
         	calc_fence();
-        	calc_timeout(uptime);
+        	calc_timeout(uptime_cntr);
         	main_flags.do_beep += check_any_alarm_fence_timeout();
         	main_flags.do_beep += is_battery_low();
         	main_flags.update_screen = 1;
@@ -268,7 +274,8 @@ void DMA1_Channel3_IRQHandler(void)
     backup_and_clear_uart_buffer();
     uart3_dma_restart();
 
-    pps_continuous_counter = 0;
+    nmea_overflow_cntr++;
+    pps_continuous_cntr = 0;
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;
 
@@ -286,10 +293,10 @@ void EXTI2_IRQHandler(void)
 	clear_uart_buffer();
 	uart3_dma_restart();
 
-	pps_continuous_counter++;
-	pps_absolute_counter++;
+	pps_continuous_cntr++;
+	pps_absolute_cntr++;
 
-	if (pps_continuous_counter > MIN_CONT_PPS)		//drop all possible "glitch" pps, or several first pps to get it stabilized
+	if (pps_continuous_cntr > MIN_CONT_PPS)		//drop all possible "glitch" pps, or several first pps to get it stabilized
 	{
 		timer1_start_800ms();           //start gps acquire timer
 		main_flags.pps_synced = 1;
@@ -319,21 +326,29 @@ void EXTI0_IRQHandler(void)
 			uint8_t rx_dev = 0;
 
 			rf_get_rx_packet();
-			rx_dev = parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
+			rx_dev = parse_air_packet(uptime_cntr);   //parse air data from another device (which has ended TX in the current time_slot)
 			if (rx_dev != NAV_OBJECT_NULL)
 			{
 				pp_devices[rx_dev]->lora_snr = rf_get_last_snr();	//read and save SNR
 			}
+
+			lora_rx_cycles_cntr++;
+		}
+		else if (current_radio_status & IRQ_CRC_ERROR)
+		{
+			lora_crc_err_cntr++;
 		}
 	}
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
+		lora_tx_cycles_cntr++;
 		led_green_off();
 	}
 	else if (current_radio_status & IRQ_RX_TX_TIMEOUT)	//RX timeout only, because TX timeout feature is not used at all
 	{
 		main_flags.rx_state = 0;
+		lora_rx_timeouts_cntr++;
 		led_green_off();
 	}
 }
@@ -377,7 +392,7 @@ void TIM1_UP_IRQHandler(void)
     		if (second_modulo == device_tx_second)
     		{
     			//tx
-				fill_air_packet(uptime);
+				fill_air_packet(uptime_cntr);
 				if (rf_tx_packet())
 				{
 					main_flags.tx_state = 1;
@@ -554,7 +569,7 @@ void RTC_IRQHandler(void)
 {
 	RTC->CRL &= ~RTC_CRL_SECF;		//Clear interrupt
 
-    uptime++;
+    uptime_cntr++;
     main_flags.tick_1s = 1;
 }
 
@@ -571,9 +586,58 @@ void ADC1_2_IRQHandler(void)
 
 
 
+uint32_t get_uptime_cntr(void)
+{
+	return uptime_cntr;
+}
+
+
+
+uint32_t get_nmea_overflow_cntr(void)
+{
+	return nmea_overflow_cntr;
+}
+
+
+
+uint32_t get_lora_tx_cycles_cntr(void)
+{
+	return lora_tx_cycles_cntr;
+}
+
+
+
+uint32_t get_lora_rx_cycles_cntr(void)
+{
+	return lora_rx_cycles_cntr;
+}
+
+
+
+uint32_t get_abs_pps_cntr(void)
+{
+	return pps_absolute_cntr;
+}
+
+
+
 uint32_t get_cont_pps_cntr(void)
 {
-	return pps_continuous_counter;
+	return pps_continuous_cntr;
+}
+
+
+
+uint32_t get_lora_crc_errors_cntr(void)
+{
+	return lora_crc_err_cntr;
+}
+
+
+
+uint32_t get_lora_rx_timeouts_cntr(void)
+{
+	return lora_rx_timeouts_cntr;
 }
 
 
