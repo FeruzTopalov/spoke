@@ -625,6 +625,18 @@ void lcd_print_small(uint8_t row, uint8_t col, char *p_str)
 
 
 
+//Print string on screen (with position (rows 0-7, cols 0-20))
+//Small print with 6x8 font
+void lcd_print_small_next(char *p_str)
+{
+    while (*p_str)
+    {
+        lcd_char_6x8(*p_str++);
+    }
+}
+
+
+
 //Print string on screen (with position (rows 0-3, cols 0-15))
 //Standard print with 8x16 font
 void lcd_print(uint8_t row, uint8_t col, char *p_str)

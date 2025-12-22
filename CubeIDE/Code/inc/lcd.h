@@ -72,6 +72,7 @@ void lcd_char_8x16_pos(uint8_t row, uint8_t col, char chr);
 void lcd_char_8x16_overlay_pos(uint8_t row, uint8_t col, char chr);
 void lcd_char_16x16_pos(uint8_t row, uint8_t col, char chr);
 void lcd_print_small(uint8_t row, uint8_t col, char *p_str);
+void lcd_print_small_next(char *p_str);
 void lcd_print(uint8_t row, uint8_t col, char *p_str);
 void lcd_print_only(uint8_t row, uint8_t col, char *p_str);
 void lcd_print_large(uint8_t row, uint8_t col, char *p_str);

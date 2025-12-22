@@ -1777,6 +1777,32 @@ void draw_diag(void) //todo wip
 {
 	lcd_clear();
 
+	//SNR all devs
+	lcd_print_small(4, 0, "SN");
+	lcd_pos_6x8(4, 3);
+
+	for (uint8_t dev = DEVICE_NUMBER_FIRST; dev < DEVICE_NUMBER_LAST + 1; dev++)
+	{
+		if (pp_devices[dev]->exist_flag == 1)
+		{
+			if (dev != this_device)
+			{
+				itoa32(pp_devices[dev]->lora_snr, tmp_buf);
+				lcd_print_small_next(tmp_buf);
+			}
+			else
+			{
+				lcd_print_small_next("Y");	//you
+			}
+		}
+		else
+		{
+			lcd_print_small_next("n");  //no device
+		}
+
+		lcd_print_small_next("/");  //separator
+	}
+
 	//acc and magn
 	lcd_print_small(5, 0, "AZ");
 
