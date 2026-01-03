@@ -44,9 +44,6 @@ struct devices_struct **pp_devices;
 
 
 
-uint8_t button_code = 0;
-uint8_t processing_button = 0;
-
 //TIMERS
 uint32_t uptime_cntr = 0;
 uint32_t nmea_overflow_cntr = 0;
@@ -57,13 +54,13 @@ uint32_t lora_rx_cycles_cntr = 0;
 uint32_t lora_crc_err_cntr = 0;
 uint32_t lora_rx_timeouts_cntr = 0;
 
-
-uint8_t second_modulo = 0;
-uint8_t device_tx_second = 0;
-uint8_t max_rx_second = 0;
-
-
+//OTHER
 uint8_t *p_update_interval_values;
+
+uint8_t button_code = 0;
+uint8_t processing_button = 0;
+
+uint8_t radio_action;
 
 
 
@@ -124,9 +121,6 @@ int main(void)
     p_gps_num = get_gps_num();
     p_update_interval_values = get_update_interval_values();
     pp_devices = get_devices();
-
-    device_tx_second = (2 * (p_settings->device_number - 1));		//time slots each even second
-    max_rx_second = (2 * (p_settings->devices_on_air - 1));
 
 
 
@@ -385,11 +379,9 @@ void TIM1_UP_IRQHandler(void)
     	{
     		main_flags.start_radio = 0;
 
-    		//calc a remainder of current second division by update interval
-    		second_modulo = p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt];
+    		radio_action = get_lrns_protocol_radio_action();
 
-    		//timeslots are at X0, X2, X4, X6, X8 second; where X is 0, 1, 2, 3, 4, 5 depending on the update interval
-    		if (second_modulo == device_tx_second)
+    		if (radio_action == LRNS_RADIO_ACTION_TX)
     		{
     			//tx
 				fill_air_packet(uptime_cntr);
@@ -399,14 +391,14 @@ void TIM1_UP_IRQHandler(void)
 					led_green_on();
 				}
     		}
-    		else if ((second_modulo <= max_rx_second)  && ((second_modulo % 2) == 0))
+    		else if ((radio_action == LRNS_RADIO_ACTION_RX) || (radio_action == LRNS_RADIO_ACTION_RX_ACTIVE_DEV))
     		{
     			//rx
 				if (rf_start_rx())
 				{
 					main_flags.rx_state = 1;
 
-					if (second_modulo == (2 * (get_current_device() - 1)))	//blink green if going to receive from current navigate-to device
+					if (radio_action == LRNS_RADIO_ACTION_RX_ACTIVE_DEV)	//blink green if going to receive from current navigate-to device
 					{
 						led_green_on();
 					}

@@ -91,6 +91,10 @@ const double pi_div_by_4 = 0.7853981633974483;      // pi / 4
 
 
 
+#define LRNS_TIMESLOT_DURATION				(2)
+
+
+
 struct settings_struct *p_settings;
 uint8_t *p_air_packet_tx;
 uint8_t *p_air_packet_rx;
@@ -100,6 +104,13 @@ struct devices_struct devices[NAV_OBJECTS_MAX + 1];        //structures array fo
 struct devices_struct *p_devices[NAV_OBJECTS_MAX + 1];		//structure pointers array
 
 uint8_t *p_update_interval_values;
+
+uint8_t timeslot_duration = 0;	//duration of a single time slot in seconds
+uint8_t second_modulo = 0;		//current second of time modulo update interval
+uint8_t device_tx_second = 0;	//second of time device should TX at
+uint8_t max_rx_second = 0;		//top second of time device should RX at
+
+struct gps_num_struct *p_gps_num;
 
 
 
@@ -115,7 +126,7 @@ void init_lrns(void)
 	p_settings = get_settings();
 	p_air_packet_tx = get_air_packet_tx();
 	p_air_packet_rx = get_air_packet_rx();
-
+	p_gps_num = get_gps_num();
 
 	//This device number
 	this_device = p_settings->device_number;
@@ -127,6 +138,40 @@ void init_lrns(void)
 
 	//Get update interval
 	p_update_interval_values = get_update_interval_values();
+
+	//Set protocol settings
+	timeslot_duration = LRNS_TIMESLOT_DURATION;
+    device_tx_second = (timeslot_duration * (p_settings->device_number - 1));
+    max_rx_second = (timeslot_duration * (p_settings->devices_on_air - 1));
+}
+
+
+
+uint8_t get_lrns_protocol_radio_action(void)
+{
+	//calc a remainder of current second division by update interval
+	second_modulo = p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt];
+
+	//for a 2 sec timeslot - timeslots are at X0, X2, X4, X6, X8 second; where X is 0, 1, 2, 3, 4, 5 depending on the update interval
+	if (second_modulo == device_tx_second) //tx timeslot
+	{
+		return LRNS_RADIO_ACTION_TX;
+	}
+	else if ((second_modulo <= max_rx_second) && ((second_modulo % timeslot_duration) == 0)) //rx timeslots
+	{
+		if (second_modulo == (timeslot_duration * (get_current_device() - 1)))	//rx currently-active-in-menu device?
+		{
+			return LRNS_RADIO_ACTION_RX_ACTIVE_DEV;
+		}
+		else
+		{
+			return LRNS_RADIO_ACTION_RX;
+		}
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 
