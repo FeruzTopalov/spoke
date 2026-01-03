@@ -106,7 +106,8 @@ struct devices_struct *p_devices[NAV_OBJECTS_MAX + 1];		//structure pointers arr
 uint8_t *p_update_interval_values;
 
 uint8_t timeslot_duration = 0;	//duration of a single time slot in seconds
-uint8_t second_modulo = 0;		//current second of time modulo update interval
+uint16_t total_second = 0;		//minute * 60 + second
+uint16_t second_modulo = 0;		//current second of time modulo update interval
 uint8_t device_tx_second = 0;	//second of time device should TX at
 uint8_t max_rx_second = 0;		//top second of time device should RX at
 
@@ -149,8 +150,11 @@ void init_lrns(void)
 
 uint8_t get_lrns_protocol_radio_action(void)
 {
-	//calc a remainder of current second division by update interval
-	second_modulo = p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt];
+	//calc total second
+	total_second = (60 * p_gps_num->minute) + p_gps_num->second;
+
+	//calc a remainder of total second divided by update interval
+	second_modulo = total_second % p_update_interval_values[p_settings->update_interval_opt];
 
 	//for a 2 sec timeslot - timeslots are at X0, X2, X4, X6, X8 second; where X is 0, 1, 2, 3, 4, 5 depending on the update interval
 	if (second_modulo == device_tx_second) //tx timeslot
