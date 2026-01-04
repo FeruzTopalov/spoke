@@ -468,7 +468,7 @@ void rf_workaround_15_4(void)
 
 int8_t rf_get_last_snr(void)
 {
-	uint8_t last_snr = 0;
+	int8_t last_snr = 0;
 
 	spi1_clock_enable();
 
@@ -476,7 +476,7 @@ int8_t rf_get_last_snr(void)
     spi1_trx(SX126X_GET_PKT_STATUS);
     spi1_trx(0); 				//NOP
     spi1_trx(0);				//RssiPkt
-    last_snr = spi1_trx(0);	//SnrPkt
+    last_snr = spi1_trx(0);		//SnrPkt
     spi1_trx(0);				//SignalRssiPkt
     cs_rf_inactive();
 
