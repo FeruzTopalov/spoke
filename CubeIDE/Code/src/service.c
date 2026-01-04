@@ -372,7 +372,7 @@ char *convert_heading(uint16_t heading)
 
 
 
-uint8_t base64_encode(uint8_t *input, uint8_t *output, uint8_t length)
+uint8_t base64_encode(char *input, char *output, uint8_t length)
 {
     //calculate Base64 output length
     uint8_t encoded_length = ((length + 2) / 3) * 4;

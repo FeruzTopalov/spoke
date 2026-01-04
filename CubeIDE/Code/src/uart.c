@@ -35,15 +35,15 @@ char *backup_buf;							//backup for raw UART data
 uint16_t gps_uart_buf_len; 					//dynamically allocated part of the uart_buffer[MAX_UART_BUF_LEN]
 uint16_t brr_gps_baud;						//BRR reg value depending on 'GPS baud' setting
 
-uint8_t console_timestamp[TIMESTAMP_SZ];	//for console, timestamp data
+char console_timestamp[TIMESTAMP_SZ];	//for console, timestamp data
 
-uint8_t console_nav_data[CONS_DATA_SZ];		//for console, raw nav data
+char console_nav_data[CONS_DATA_SZ];		//for console, raw nav data
 uint16_t nav_data_len = 0;					//nav data length
 
-uint8_t console_nav_data_base64[CONS_DATA_SZ];//for console, base64 nav data
+char console_nav_data_base64[CONS_DATA_SZ];//for console, base64 nav data
 uint16_t nav_data_base64_len = 0;			//base64 nav data length
 
-uint8_t console_data[CONS_DATA_SZ];			//resulting console data
+char console_data[CONS_DATA_SZ];			//resulting console data
 uint16_t console_data_len = 0;				//console data length
 
 uint8_t console_report_state = CONSOLE_REPORT_ENABLED;			//enable sending logs via console (enabled by default)
