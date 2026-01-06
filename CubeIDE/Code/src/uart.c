@@ -10,9 +10,10 @@
 #include "uart.h"
 #include "gps.h"
 #include "lrns.h"
-#include "config.h"
 #include "service.h"
 #include "settings.h"
+#include "config.h"
+#include "gpio.h"
 
 
 
@@ -23,8 +24,8 @@ void console_combine_timestamp_nav_data(void);
 
 
 
-#define TIMESTAMP_SZ	(27)
-#define CONS_DATA_SZ	(256)
+#define TIMESTAMP_SZ	(32)
+#define CONS_DATA_SZ	(512)
 
 
 
@@ -34,18 +35,18 @@ char *backup_buf;							//backup for raw UART data
 uint16_t gps_uart_buf_len; 					//dynamically allocated part of the uart_buffer[MAX_UART_BUF_LEN]
 uint16_t brr_gps_baud;						//BRR reg value depending on 'GPS baud' setting
 
-uint8_t console_timestamp[TIMESTAMP_SZ];	//for console, timestamp data
+char console_timestamp[TIMESTAMP_SZ];	//for console, timestamp data
 
-uint8_t console_nav_data[CONS_DATA_SZ];		//for console, raw nav data
-uint8_t nav_data_len = 0;					//nav data length
+char console_nav_data[CONS_DATA_SZ];		//for console, raw nav data
+uint16_t nav_data_len = 0;					//nav data length
 
-uint8_t console_nav_data_base64[CONS_DATA_SZ];//for console, base64 nav data
-uint8_t nav_data_base64_len = 0;			//base64 nav data length
+char console_nav_data_base64[CONS_DATA_SZ];//for console, base64 nav data
+uint16_t nav_data_base64_len = 0;			//base64 nav data length
 
-uint8_t console_data[CONS_DATA_SZ];			//resulting console data
-uint8_t console_data_len = 0;				//console data length
+char console_data[CONS_DATA_SZ];			//resulting console data
+uint16_t console_data_len = 0;				//console data length
 
-uint8_t console_report_enabled = 1;			//enable send logs via console
+uint8_t console_report_state = CONSOLE_REPORT_ENABLED;			//enable sending logs via console (enabled by default)
 
 struct devices_struct **pp_devices;
 struct settings_struct *p_settings;
@@ -60,33 +61,27 @@ void uart_init(void)
 	p_settings = get_settings();
 	p_gps_num = get_gps_num();
 
-	switch (p_settings->gps_baud_opt)
-	{
-		case GPS_BAUD_9600_SETTING:		//9600 bod; mantissa 19, frac 8
-			brr_gps_baud = 0x0138;
-			gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
-			break;
+#ifdef GPS_BAUD_9600
+	brr_gps_baud = 0x0138;
+	gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
+#endif
 
-		case GPS_BAUD_38400_SETTING:	//34800 bod; mantissa 4, frac 14
-			brr_gps_baud = 0x004E;
-			gps_uart_buf_len = 3500;		//3480 bytes/s max, fits buffer
-			break;
+#ifdef GPS_BAUD_38400
+	brr_gps_baud = 0x004E;
+	gps_uart_buf_len = 3500;		//3480 bytes/s max, fits buffer
+#endif
 
-		case GPS_BAUD_57600_SETTING:	//57600 bod; mantissa 3, frac 4
-			brr_gps_baud = 0x0034;
-			gps_uart_buf_len = 5790;		//5760 bytes/s max, fits buffer
-			break;
+#ifdef GPS_BAUD_57600
+	brr_gps_baud = 0x0034;
+	gps_uart_buf_len = 5790;		//5760 bytes/s max, fits buffer
+#endif
 
-		case GPS_BAUD_115200_SETTING:	//115200 bod; mantissa 1, frac 10
-			brr_gps_baud = 0x001A;
-			gps_uart_buf_len = 5790;		//11520 bytes/s max, does not fit buffer, pray for fit in actual use (otherwise no RF TX/RX will happen because uart overflow will be hitting earlier than pps interrupt)
-			break;
+#ifdef GPS_BAUD_115200
+	brr_gps_baud = 0x001A;
+	gps_uart_buf_len = 5790;		//11520 bytes/s max, does not fit buffer, pray for fit in actual use (otherwise no RF TX/RX will happen because uart overflow will be hitting earlier than pps interrupt)
+#endif
 
-		default:						//9600 bod; mantissa 19, frac 8
-			brr_gps_baud = 0x0138;
-			gps_uart_buf_len = 1000;		//960 bytes/s max, fits buffer
-			break;
-	}
+	init_mux_state(p_settings->mux_state_opt);				//init console MUX here because settings are already available
 
 	uart1_dma_init();
 	uart3_dma_init();
@@ -151,16 +146,9 @@ void uart1_tx_byte(uint8_t tx_data)
 
 
 //switch on/off console reports
-void toggle_console_reports(uint8_t enabled)
+void switch_console_reports(uint8_t state)
 {
-	if (enabled == 0)
-	{
-		console_report_enabled = 0;
-	}
-	else
-	{
-		console_report_enabled = 1;
-	}
+	console_report_state = state;
 }
 
 
@@ -168,7 +156,7 @@ void toggle_console_reports(uint8_t enabled)
 //Send all active devices via console to either BLE or just a terminal
 void report_to_console(void)
 {
-	if (console_report_enabled == 1)
+	if (console_report_state == 1)
 	{
 		console_prepare_timestamp();			//timestamp in ISO 8601
 		console_prepare_nav_data();				//fill buffer with data
@@ -184,8 +172,9 @@ void console_prepare_timestamp(void)
 {
 	char tmp_buf[10];
 
-	//FORMAT: "2025-03-02T10:45:00+03:00 "
-	//FORMAT: "YYYY-MM-DDTHH:MM:SS+hh:mm "
+	//FORMAT: "2025-03-02T10:45:00+03:00"
+	//FORMAT: "YYYY-MM-DDTHH:MM:SS+hh:mm" where +/-hh:mm is timezone
+	//fixed sym:   ^  ^  ^  ^  ^  ^  ^
 
 	//clear
 	memset(console_timestamp, 0, TIMESTAMP_SZ);
@@ -231,7 +220,7 @@ void console_prepare_timestamp(void)
 	time_date_add_leading_zero(&tmp_buf[0]);
 	strcat(console_timestamp, tmp_buf);
 
-	//+
+	//+/-
 	if (p_settings->time_zone_dir > 0)
 	{
 		strcat(console_timestamp, "+");
@@ -251,7 +240,7 @@ void console_prepare_timestamp(void)
 	itoa32(p_settings->time_zone_minute, &tmp_buf[0]);
 	time_date_add_leading_zero(&tmp_buf[0]);
 	strcat(console_timestamp, tmp_buf);
-	strcat(console_timestamp, " ");
+	strcat(console_timestamp, " "); // add sp before base64 data
 }
 
 
@@ -260,49 +249,71 @@ void console_prepare_timestamp(void)
 void console_prepare_nav_data(void)
 {
 	//init
-	uint8_t all_flags = 0;
+	uint8_t internal_flags; //flags calculated and used internally to this device
+	uint8_t external_flags;	//flags transmitted over the air
+	uint8_t is_you;	//is this dev "you" flag
 	nav_data_len = 0;
 
 	//clear
 	memset(console_nav_data, 0, CONS_DATA_SZ);
 
-	for (uint8_t dev = NAV_OBJECT_FIRST; dev < NAV_OBJECT_LAST + 1; dev++)		//max: 9 objects x 18 bytes = 162 bytes
+	for (uint8_t dev = NAV_OBJECT_FIRST; dev < NAV_OBJECT_LAST + 1; dev++)		//max: 9 objects x 19 bytes each = 171 bytes
 	{
 		if (pp_devices[dev]->exist_flag == 1)	//only existing devices
 		{
+			internal_flags = 0;
+			external_flags = 0;
+
+			// 1) dev number, 1 byte
 			console_nav_data[nav_data_len++] = dev;
+
+			// 2) dev id, 1 byte
 			console_nav_data[nav_data_len++] = pp_devices[dev]->device_id;
 
-			all_flags = 0;
-
-			if ((p_settings->device_number) == dev)	//set 0s flag if it is you
+			if ((p_settings->device_number) == dev)	//set 0's flag as "you"
 			{
-				all_flags |= 0x01 << 0;
+				is_you = 1;
 			}
 			else
 			{
-				all_flags |= 0x00 << 0;
+				is_you = 0;
 			}
 
-			all_flags |= (	((pp_devices[dev]->memory_point_flag) << 1) 		|\
-							((pp_devices[dev]->alarm_flag) << 2) 				|\
-							((pp_devices[dev]->fence_flag) << 3) 				|\
-							((pp_devices[dev]->timeout_flag) << 4) 				|\
-							((pp_devices[dev]->lowbat_flag) << 5) 				|\
-							((pp_devices[dev]->link_status_flag) << 6) 			);
+			internal_flags |= (		(is_you << 0) 								|\
+									((pp_devices[dev]->memory_point_flag) << 1) |\
+									((pp_devices[dev]->fence_flag) << 2) 		|\
+									((pp_devices[dev]->timeout_flag) << 3) 		|\
+									((pp_devices[dev]->link_status_flag) << 4) 	);
 
-			console_nav_data[nav_data_len++] = all_flags;
-			console_nav_data[nav_data_len++] = pp_devices[dev]->lora_rssi;
+			// 3) internal flags, 1 byte
+			console_nav_data[nav_data_len++] = internal_flags;
 
+			//preserve flags order of packet structure
+			external_flags |= (		((pp_devices[dev]->alarm_flag) << 0) 		|\
+									((pp_devices[dev]->beacon_flag) << 1) 		|\
+									((pp_devices[dev]->lowbat_flag) << 2) 		|\
+									((pp_devices[dev]->acc_movement_flag) << 3) |\
+									((pp_devices[dev]->pdop_good_flag) << 4) 	);
+
+			// 4) external flags, 1 byte
+			console_nav_data[nav_data_len++] = external_flags;
+
+			// 5) SNR value, 1 byte, signed
+			console_nav_data[nav_data_len++] = pp_devices[dev]->lora_snr;
+
+			// 6) Timeout in s since last activity, 4 bytes
 			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->timeout), 4);
 			nav_data_len += 4;
 
+			// 7) Latitude, 4 bytes, float
 			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->latitude.as_float), 4);
 			nav_data_len += 4;
 
+			// 8) Longitude, 4 bytes, float
 			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->longitude.as_float), 4);
 			nav_data_len += 4;
 
+			// 9) Altitude, 2 bytes, signed
 			memcpy(&console_nav_data[nav_data_len], &(pp_devices[dev]->altitude), 2);
 			nav_data_len += 2;
 		}

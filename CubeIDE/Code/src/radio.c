@@ -13,7 +13,7 @@
 #include "service.h"
 #include "main.h"
 #include "settings.h"
-#include "uart.h"
+#include "config.h"
 
 
 
@@ -26,22 +26,10 @@ void rf_config_frequency(uint8_t channel_num);
 void rf_config_tx_power(int8_t power_dbm);
 void rf_set_cw_tx(void);
 
+//successfull tx/rx!
 
-
-//CH1 - 433.175 MHz
-//CH2 - 433.375 MHz
-//CH3 - 433.575 MHz
-//CH4 - 433.775 MHz
-//CH5 - 433.975 MHz
-//CH6 - 434.175 MHz
-//CH7 - 434.375 MHz
-//CH8 - 434.575 MHz
-#define BASE_CHANNEL_FREQUENCY 			(432975000)	// base freq or ch0, not used actually
-#define CHANNEL_FREQUENCY_STEP			(200000)
 #define RADIO_CRYSTAL					(32000000)
 #define POWER_2_TO_25					(33554432)
-
-
 
 
 
@@ -52,7 +40,7 @@ void rf_set_cw_tx(void);
 //4 bytes lon
 //2 bytes altitude
 //TOTAL 12 bytes
-#define AIR_PACKET_LEN      (LORA_PP4_PLOAD_LEN_12_BYTE)
+#define AIR_PACKET_LEN      (LORA_PP4_PLOAD_LEN_13_BYTE)
 
 
 
@@ -84,7 +72,7 @@ void rf_init(void)
     rf_rx_mode();
     
     res_rf_active();        	//reset the chip
-    delay_cyc(10);
+    delay_cyc(20);
     res_rf_inactive();
     rf_wait_busy();
 
@@ -132,6 +120,10 @@ void rf_init(void)
 
 		case TX_POWER_POS10DBM_SETTING:
 			power_reg_dbm = 10;
+			break;
+
+		case TX_POWER_POS14DBM_SETTING:
+			power_reg_dbm = 14;
 			break;
 
 		case TX_POWER_POS22DBM_SETTING:
@@ -474,9 +466,9 @@ void rf_workaround_15_4(void)
 
 
 
-int8_t rf_get_last_rssi(void)
+int8_t rf_get_last_snr(void)
 {
-	uint8_t last_rssi = 0;
+	int8_t last_snr = 0;
 
 	spi1_clock_enable();
 
@@ -484,13 +476,13 @@ int8_t rf_get_last_rssi(void)
     spi1_trx(SX126X_GET_PKT_STATUS);
     spi1_trx(0); 				//NOP
     spi1_trx(0);				//RssiPkt
-    spi1_trx(0);				//SnrPkt
-    last_rssi = spi1_trx(0);	//SignalRssiPkt
+    last_snr = spi1_trx(0);		//SnrPkt
+    spi1_trx(0);				//SignalRssiPkt
     cs_rf_inactive();
 
     spi1_clock_disable();
 
-    return -(last_rssi / 2);
+    return (last_snr / 4);
 }
 
 

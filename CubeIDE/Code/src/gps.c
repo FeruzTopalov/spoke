@@ -19,6 +19,10 @@
 
 
 
+#define GPS_PDOP_THRS 	(4)		//PDOP threshold. pdop < GPS_PDOP_THRS is good
+
+
+
 void gps_raw_convert_to_numerical(void);
 void configure_gps_receiver(void);
 void send_ubx(uint8_t class, uint8_t id, uint8_t payload[], uint8_t len);
@@ -399,6 +403,16 @@ void update_my_coordinates(void)
 
 	//Altitude
 	pp_devices[this_device]->altitude.as_integer = (int16_t)gps_num.altitude;
+
+	//PDOP
+	if (gps_num.pdop < GPS_PDOP_THRS)
+	{
+		pp_devices[this_device]->pdop_good_flag = 1;
+	}
+	else
+	{
+		pp_devices[this_device]->pdop_good_flag = 0;
+	}
 }
 
 

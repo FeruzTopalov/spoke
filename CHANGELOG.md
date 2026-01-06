@@ -1,3 +1,35 @@
+# Release FW Rev.5.0 (for HW Rev.1.x, Rev. 2.0, Rev 2.1) 06-Jan-2026 
+All HW versions support, 868 MHz band with 1% duty cycle compliance, new packet format and lots of fixes and improvements
+
+
+Implemented:
+- Support of the Spoke HW Rev.2.x
+- Unified FW for all HW versions
+- FW configuration is done at compile-time through defines in "config.h"
+- PWM-controlled LCD backligh for Spoke HW Rev.2.x
+- Single-ended PWM-controled passive buzzer drive for Spoke HW Rev.2.x
+- PWR_HOLD line fix for Spoke HW Rev.2.x by swapping with RF_TXEN
+- Separate BTN_ALARM line for alarm button for Spoke HW Rev.2.x
+- Added 868 MHz band support for E22-900M22S radio module
+- Added +14 dBm output power setting
+- Added 120 sec update interval
+- Updated packet format to 13 bytes with LDRO enabled
+- Extended to POWER menu two-collumns
+- Added DIAG menu with debug and test information
+- Switching USB-UART/BLE-UART from menu
+- Reading LoRa SNR instead of RSSI
+- Removed GPS baud setting from menu
+- Updated console-reports data sturcutre
+- Implemented Kalman filter for accelerometer Z and magnetometed X, Y channels
+- Minor and major fixes everywhere
+- Refactoring for better code perception
+
+
+Known issues & limitations:
+- This FW version is incompatible over-the-air with previous FW versions because of different radio packet structure
+- GPS NMEA parsing at 115200 baud may fail due to insufficient buffer size
+
+
 # Release HW Rev.2.0 20-Sep-2025
 Added USB Type C, USB-UART converter, UART-BLE Module, new LCD, DC/DC regulator
 
@@ -17,11 +49,11 @@ Implemented:
 - MCU lines kept the same assignment as in HW Rev.1.x. for back-compatibility
 
 
-Known issues:
+Known issues & limitations:
 - No known issues
 
 
-# Release FW Rev.4 (for HW Rev.1.x) 12-Apr-2025 
+# Release FW Rev.4.0 (for HW Rev.1.x) 12-Apr-2025 
 New look, compass with calibration, more settings & stabilization
 
 
@@ -41,7 +73,7 @@ Implemented:
 - Changed optimization level to reduce flash usage
 
 
-Known issues:
+Known issues & limitations:
 - GPS NMEA parsing at 115200 baud may fail due to insufficient buffer size
 
 
@@ -55,7 +87,7 @@ Implemented:
 - Updated stack-up to 1.6 mm overall thickness
 
 
-Known issues:
+Known issues & limitations:
 - No known issues
 
 
@@ -67,11 +99,11 @@ Implemented:
 - TEMP pin of the TP4056 connected to the GND directly
 
 
-Known issues:
+Known issues & limitations:
 - No known issues
 
 
-# Release FW Rev.3 (for HW Rev.1.0) 28-Jan-2024 
+# Release FW Rev.3.0 (for HW Rev.1.0) 28-Jan-2024 
 Switch to LoRa modulation, new TDMA approach, minor fixes
 
 
@@ -81,11 +113,11 @@ Implemented:
 - Other minor fixes
 
 
-Known issues:
+Known issues & limitations:
 - Might be not stable, need to be tested for a long run
 
 
-# Release FW Rev.2 (for HW Rev.1.0) 21-Nov-2023 
+# Release FW Rev.2.0 (for HW Rev.1.0) 21-Nov-2023 
 Lots of fixes, power consumption improvements, changes in apperance
 
 
@@ -99,11 +131,11 @@ Implemented:
 - Change loading sequence; add infromation output to LCD for debug
 
 
-Known issues:
+Known issues & limitations:
 - No known issues
 
 
-# Release FW Rev.1 (for HW Rev.1.0) 01-Nov-2023 
+# Release FW Rev.1.0 (for HW Rev.1.0) 01-Nov-2023 
 The very first release of the firmware. Lots of imperfections and weak spots in code, as well as some minor bugs, but correctly working HW and SW with no major issues. 
 
 
@@ -115,7 +147,7 @@ Implemented:
 - 2D compass with calibration and compensation
 
 
-Known issues:
+Known issues & limitations:
 - ADC battery readings are incorrect below 3.3 V battery voltage due to Vref = VCC
 
 
@@ -127,5 +159,5 @@ Implemented:
 - See schematic
 
 
-Known issues:
+Known issues & limitations:
 - TEMP pin of the TP4056 must be connected to the GND directly to disable temp protection feature. Cut the trace between U5 pin 1 and R8; then connect the pin 1 to GND.

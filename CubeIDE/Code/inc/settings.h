@@ -9,6 +9,8 @@
 #ifndef SETTINGS_HEADER
 #define SETTINGS_HEADER
 
+#include "config.h"
+
 
 
 #define TIMEOUT_ALARM_DISABLED		(0)
@@ -20,37 +22,48 @@
 #define UPDATE_INTERVAL_10S_SETTING		(0)
 #define UPDATE_INTERVAL_30S_SETTING		(1)
 #define UPDATE_INTERVAL_60S_SETTING		(2)
+#define UPDATE_INTERVAL_120S_SETTING	(3)
 
 #define UPDATE_INTERVAL_FIRST_OPTION 	(UPDATE_INTERVAL_10S_SETTING)
-#define UPDATE_INTERVAL_LAST_OPTION 	(UPDATE_INTERVAL_60S_SETTING)
+#define UPDATE_INTERVAL_LAST_OPTION 	(UPDATE_INTERVAL_120S_SETTING)
 
 
 //POWER SETTINGS
 #define TX_POWER_NEG9DBM_SETTING   	(0)
 #define TX_POWER_POS0DBM_SETTING    (1)
 #define TX_POWER_POS10DBM_SETTING   (2)
-#define TX_POWER_POS22DBM_SETTING  	(3)
+#define TX_POWER_POS14DBM_SETTING   (3)
+#define TX_POWER_POS22DBM_SETTING  	(4)
 
 #define TX_POWER_FIRST_OPTION 		(TX_POWER_NEG9DBM_SETTING)
 #define TX_POWER_LAST_OPTION 		(TX_POWER_POS22DBM_SETTING)
 
 
 
+//LCD BL Levels
+#define BL_LEVEL_OFF_SETTING   			(0)
+#define BL_LEVEL_LOW_AUTO_SETTING		(1)
+#define BL_LEVEL_MID_AUTO_SETTING		(2)
+#define BL_LEVEL_HIGH_AUTO_SETTING		(3)
+#define BL_LEVEL_LOW_CONSTANT_SETTING   (4)
+#define BL_LEVEL_MID_CONSTANT_SETTING   (5)
+#define BL_LEVEL_HIGH_CONSTANT_SETTING  (6)
+
+#define BL_LEVEL_FIRST_OPTION 		(BL_LEVEL_OFF_SETTING)
+#define BL_LEVEL_LAST_OPTION 		(BL_LEVEL_HIGH_CONSTANT_SETTING)
+
+
+
 //FREQ
+#ifdef FREQ_BAND_433
 #define FREQ_CHANNEL_FIRST  (1)
 #define FREQ_CHANNEL_LAST   (8)	//see radio.c
+#endif
 
-
-
-//GPS BAUD
-#define GPS_BAUD_9600_SETTING   	(0)
-#define GPS_BAUD_38400_SETTING    	(1)
-#define GPS_BAUD_57600_SETTING   	(2)
-#define GPS_BAUD_115200_SETTING  	(3)
-
-#define GPS_BAUD_FIRST_OPTION 		(GPS_BAUD_9600_SETTING)
-#define GPS_BAUD_LAST_OPTION 		(GPS_BAUD_115200_SETTING)
-
+#ifdef FREQ_BAND_868
+#define FREQ_CHANNEL_FIRST  (1)
+#define FREQ_CHANNEL_LAST   (21)	//see radio.c
+#endif
 
 
 //ID
@@ -73,6 +86,12 @@
 
 
 
+//MUX
+#define MUX_STATE_USB_SYMBOL	('U')
+#define MUX_STATE_BLE_SYMBOL	('B')
+
+
+
 //Structure with settings
 struct settings_struct
 {
@@ -88,8 +107,6 @@ struct settings_struct
 
     uint8_t update_interval_opt;		//update interval option, not an actual value
 
-    uint8_t gps_baud_opt;				//GPS baud rate option, not an actual value
-
     uint16_t timeout_threshold;        	//timeout treshold in seconds, unsigned. if it == 0, then timeout alarm not trigger (but, anyway, timeout is counting). See TIMEOUT_ALARM_DISABLED
 
     uint16_t fence_threshold;        	//fence treshold in meters, unsigned. if it == 0, then fence alarm not trigger. See FENCE_ALARM_DISABLED
@@ -99,6 +116,10 @@ struct settings_struct
     int8_t time_zone_hour;				//can be 0 ... 14 if time_zone_dir = 1; and 0 ... 12 if time_zone_dir = -1
 
     int8_t time_zone_minute;			//can be 0, 15, 30, 45
+
+    uint8_t bl_level_opt;				//LCD backlight level option, not an actual value
+
+    uint8_t mux_state_opt;				//Console MUX state, also corresponds to the MUX pin state
 
     int16_t magn_offset_x;				//magnetometer offset X for hard iron compensation
 
@@ -122,7 +143,8 @@ struct settings_struct
 struct settings_struct *get_settings(void);
 uint8_t *get_update_interval_values(void);
 int8_t *get_tx_power_values(void);
-uint32_t *get_gps_baud_values(void);
+uint16_t *get_bl_level_values(void);
+void process_pending_save_default(void);
 void settings_save_default(void);
 void settings_load(void);
 void settings_save(struct settings_struct *settings);

@@ -29,6 +29,7 @@
 #include "compass.h"
 #include "sensors.h"
 #include "adc.h"
+#include "config.h"
 
 
 
@@ -43,46 +44,46 @@ struct devices_struct **pp_devices;
 
 
 
+//TIMERS
+uint32_t uptime_cntr = 0;
+uint32_t nmea_overflow_cntr = 0;
+uint32_t pps_absolute_cntr = 0;
+uint32_t pps_continuous_cntr = 0;
+uint32_t lora_tx_cycles_cntr = 0;
+uint32_t lora_rx_cycles_cntr = 0;
+uint32_t lora_crc_err_cntr = 0;
+uint32_t lora_rx_timeouts_cntr = 0;
+
+//OTHER
+uint8_t *p_update_interval_values;
+
 uint8_t button_code = 0;
 uint8_t processing_button = 0;
 
-//TIMERS
-uint32_t uptime = 0;
-uint32_t pps_absolute_counter = 0;
-uint32_t pps_continuous_counter = 0;
-
-uint8_t second_modulo = 0;
-uint8_t device_tx_second = 0;
-uint8_t max_rx_second = 0;
-
-
-uint8_t *p_update_interval_values;
+uint8_t radio_action;
 
 
 
 //PROGRAM
 int main(void)
 {
-    gpio_init();
+    gpio_init(); //for SPI and backlight pins
     manage_power();
-    spi_init();
+    spi_init();	//for LCD operation
+    timers_init(); //for LCD PWM backlight
+    settings_load(); //for saved backlight setting
     setup_interrupt_priorities();
     __enable_irq();	//for LCD DMA operation
     lcd_init();
+    process_pending_save_default(); //if it was requested upon settings_load()
 
     //start screen
     lcd_bitmap(&startup_screen[0]);
     lcd_update();
     delay_cyc(800000);
 
-     lcd_print_only(0, 0, "settings..");
-    settings_load();
-
     lcd_print_only(0, 0, "uart..");
     uart_init();
-
-    lcd_print_only(0, 0, "timers..");
-    timers_init();
 
     lcd_print_only(0, 0, "adc..");
     adc_init();
@@ -121,14 +122,10 @@ int main(void)
     p_update_interval_values = get_update_interval_values();
     pp_devices = get_devices();
 
-    device_tx_second = (2 * (p_settings->device_number - 1));		//time slots each even second
-    max_rx_second = (2 * (p_settings->devices_on_air - 1));
-
 
 
     make_a_beep();	//end of device loading
     draw_current_menu();
-
 
     while (1)
     {
@@ -137,6 +134,7 @@ int main(void)
     	{
     		main_flags.buttons_scanned = 0;
 			change_menu(button_code);
+			reset_backlight_counter();
 			main_flags.update_screen = 1;
     	}
 
@@ -170,6 +168,8 @@ int main(void)
         {
         	main_flags.tick_1s = 0;
 
+        	decrement_backlight_counter();
+
             adc_check_bat_voltage();
             if (is_battery_critical())
             {
@@ -178,7 +178,7 @@ int main(void)
             	release_power();	//turn off immediately
             }
 
-			calc_timeout(uptime);
+			calc_timeout(uptime_cntr);
             if (main_flags.pps_synced == 0) 	//when no PPS we still need timeout alarming once in a sec (mostly for our device to alarm about no PPS)
             {
             	main_flags.do_beep += check_any_alarm_fence_timeout();
@@ -195,7 +195,7 @@ int main(void)
         	process_all_devices();
 
         	calc_fence();
-        	calc_timeout(uptime);
+        	calc_timeout(uptime_cntr);
         	main_flags.do_beep += check_any_alarm_fence_timeout();
         	main_flags.do_beep += is_battery_low();
         	main_flags.update_screen = 1;
@@ -268,7 +268,8 @@ void DMA1_Channel3_IRQHandler(void)
     backup_and_clear_uart_buffer();
     uart3_dma_restart();
 
-    pps_continuous_counter = 0;
+    nmea_overflow_cntr++;
+    pps_continuous_cntr = 0;
     main_flags.pps_synced = 0;
     main_flags.parse_nmea = 1;
 
@@ -286,10 +287,10 @@ void EXTI2_IRQHandler(void)
 	clear_uart_buffer();
 	uart3_dma_restart();
 
-	pps_continuous_counter++;
-	pps_absolute_counter++;
+	pps_continuous_cntr++;
+	pps_absolute_cntr++;
 
-	if (pps_continuous_counter > MIN_CONT_PPS)		//drop all possible "glitch" pps, or several first pps to get it stabilized
+	if (pps_continuous_cntr > MIN_CONT_PPS)		//drop all possible "glitch" pps, or several first pps to get it stabilized
 	{
 		timer1_start_800ms();           //start gps acquire timer
 		main_flags.pps_synced = 1;
@@ -319,18 +320,29 @@ void EXTI0_IRQHandler(void)
 			uint8_t rx_dev = 0;
 
 			rf_get_rx_packet();
-			rx_dev = parse_air_packet(uptime);   //parse air data from another device (which has ended TX in the current time_slot)
-			pp_devices[rx_dev]->lora_rssi = rf_get_last_rssi();	//read and save RSSI
+			rx_dev = parse_air_packet(uptime_cntr);   //parse air data from another device (which has ended TX in the current time_slot)
+			if (rx_dev != NAV_OBJECT_NULL)
+			{
+				pp_devices[rx_dev]->lora_snr = rf_get_last_snr();	//read and save SNR
+			}
+
+			lora_rx_cycles_cntr++;
+		}
+		else if (current_radio_status & IRQ_CRC_ERROR)
+		{
+			lora_crc_err_cntr++;
 		}
 	}
 	else if (current_radio_status & IRQ_TX_DONE)		//Packet transmission completed
 	{
 		main_flags.tx_state = 0;
+		lora_tx_cycles_cntr++;
 		led_green_off();
 	}
 	else if (current_radio_status & IRQ_RX_TX_TIMEOUT)	//RX timeout only, because TX timeout feature is not used at all
 	{
 		main_flags.rx_state = 0;
+		lora_rx_timeouts_cntr++;
 		led_green_off();
 	}
 }
@@ -367,28 +379,26 @@ void TIM1_UP_IRQHandler(void)
     	{
     		main_flags.start_radio = 0;
 
-    		//calc a remainder of current second division by update interval
-    		second_modulo = p_gps_num->second % p_update_interval_values[p_settings->update_interval_opt];
+    		radio_action = get_lrns_protocol_radio_action();
 
-    		//timeslots are at X0, X2, X4, X6, X8 second; where X is 0, 1, 2, 3, 4, 5 depending on the update interval
-    		if (second_modulo == device_tx_second)
+    		if (radio_action == LRNS_RADIO_ACTION_TX)
     		{
     			//tx
-				fill_air_packet(uptime);
+				fill_air_packet(uptime_cntr);
 				if (rf_tx_packet())
 				{
 					main_flags.tx_state = 1;
 					led_green_on();
 				}
     		}
-    		else if ((second_modulo <= max_rx_second)  && ((second_modulo % 2) == 0))
+    		else if ((radio_action == LRNS_RADIO_ACTION_RX) || (radio_action == LRNS_RADIO_ACTION_RX_ACTIVE_DEV))
     		{
     			//rx
 				if (rf_start_rx())
 				{
 					main_flags.rx_state = 1;
 
-					if (second_modulo == (2 * (get_current_device() - 1)))	//blink green if going to receive from current navigate-to device
+					if (radio_action == LRNS_RADIO_ACTION_RX_ACTIVE_DEV)	//blink green if going to receive from current navigate-to device
 					{
 						led_green_on();
 					}
@@ -454,19 +464,52 @@ void EXTI9_5_IRQHandler(void)
 
 
 
+void EXTI15_10_IRQHandler(void)
+{
+#ifdef SPLIT_PWM_BUZZER_BACKLIGHT
+	if (EXTI->PR & EXTI_PR_PR15)	//Alarm button interrupt
+	{
+		enable_my_alarm();
+		button_code = BTN_NO_ACTION;
+		main_flags.buttons_scanned = 1; //fake buttons scanned event to light up backlight and update menu
+		EXTI->PR = EXTI_PR_PR15;		//clear interrupt
+	}
+#endif
+
+	if (EXTI->PR & EXTI_PR_PR13)	//ACC movement interrupt
+	{
+		set_acc_movement_flag(ACC_MOVEMENT_DETECTED);
+		disable_acc_movement_interrupt();				//once movement is detected, switch interrupt off until the beginning of the next update interval
+		EXTI->PR = EXTI_PR_PR13;		//clear interrupt
+	}
+}
+
+
+
 //Console RX symbol
 void USART1_IRQHandler(void)
 {
-    uint8_t rx_data;
-    rx_data = USART1->DR;
+    uint32_t uart_sr;
+    uint8_t uart_rx_data;
 
-    if (rx_data == '1')
+    uart_sr = USART1->SR;   //read SR first
+
+    if (uart_sr & USART_SR_RXNE)
     {
-    	toggle_console_reports(1);
+        uart_rx_data = USART1->DR;
+
+        if (uart_rx_data == UART_CMD_CONSOLE_START)
+        {
+        	switch_console_reports(CONSOLE_REPORT_ENABLED);
+        }
+        else if (uart_rx_data == UART_CMD_CONSOLE_STOP)
+        {
+        	switch_console_reports(CONSOLE_REPORT_DISABLED);
+        }
     }
-    else if (rx_data == '0')
+    else if (uart_sr & (USART_SR_ORE | USART_SR_FE | USART_SR_NE | USART_SR_PE))
     {
-    	toggle_console_reports(0);
+        (void)USART1->DR;  // clear error flags performing a read SR and read DR sequence
     }
 }
 
@@ -484,7 +527,7 @@ void DMA1_Channel4_IRQHandler(void)
 //End of beep
 void SysTick_Handler(void)
 {
-	timer2_stop();	//pwm
+	buzzer_pwm_stop();	//pwm
 	systick_stop();	//gating
 	led_red_off();
 }
@@ -518,7 +561,7 @@ void RTC_IRQHandler(void)
 {
 	RTC->CRL &= ~RTC_CRL_SECF;		//Clear interrupt
 
-    uptime++;
+    uptime_cntr++;
     main_flags.tick_1s = 1;
 }
 
@@ -535,9 +578,58 @@ void ADC1_2_IRQHandler(void)
 
 
 
+uint32_t get_uptime_cntr(void)
+{
+	return uptime_cntr;
+}
+
+
+
+uint32_t get_nmea_overflow_cntr(void)
+{
+	return nmea_overflow_cntr;
+}
+
+
+
+uint32_t get_lora_tx_cycles_cntr(void)
+{
+	return lora_tx_cycles_cntr;
+}
+
+
+
+uint32_t get_lora_rx_cycles_cntr(void)
+{
+	return lora_rx_cycles_cntr;
+}
+
+
+
+uint32_t get_abs_pps_cntr(void)
+{
+	return pps_absolute_cntr;
+}
+
+
+
 uint32_t get_cont_pps_cntr(void)
 {
-	return pps_continuous_counter;
+	return pps_continuous_cntr;
+}
+
+
+
+uint32_t get_lora_crc_errors_cntr(void)
+{
+	return lora_crc_err_cntr;
+}
+
+
+
+uint32_t get_lora_rx_timeouts_cntr(void)
+{
+	return lora_rx_timeouts_cntr;
 }
 
 
@@ -570,7 +662,7 @@ void setup_interrupt_priorities(void)
 	NVIC_SetPriority(ADC1_2_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 6, 1));		//End of ADC conversion (battery voltage)
 
 	NVIC_SetPriority(SysTick_IRQn, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 7, 0));		//End of beep
-	//NVIC_SetPriority(, 			NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 7, 1));		//Empty
+	NVIC_SetPriority(EXTI15_10_IRQn, 		NVIC_EncodePriority(GROUPS_8_SUBGROUPS_2, 7, 1));		//ALARM button or ACC interrupt
 }
 
 

@@ -8,7 +8,16 @@
 #include "timer.h"
 #include "gpio.h"
 #include "bit_band.h"
+#include "config.h"
 
+
+
+#define BL_PWM_LEVEL_LOW_CCR_VALUE		(1)
+#define BL_PWM_LEVEL_MID_CCR_VALUE		(5)
+
+#define TIM2_PSC_LCDBL_VALUE			(374)	//3MHz/(374+1)=8kHz for LCD Backlight (when no buzzer beeping)
+#define TIM2_PSC_BUZZER_VALUE			(149)	//3MHz/(149+1)=20kHz for Buzzer sound (LCD BL is high freq when buzzer is beeping)
+												//Note: Cannot use high LCD BL freq because of flickering when switching between BL and buzzer freqs; thus using low BL freq as close as possible to buzzer freq but as least as possible audible when BL is lit
 
 
 void systick_init(void);
@@ -19,9 +28,7 @@ void timer1_init(void);
 void timer1_clock_disable(void);
 void timer1_clock_enable(void);
 void timer2_init(void);
-void timer2_clock_disable(void);
-void timer2_clock_enable(void);
-void timer2_start(void);
+void buzzer_pwm_start(void);
 void timer3_init(void);
 void timer3_clock_disable(void);
 void timer3_clock_enable(void);
@@ -53,7 +60,7 @@ void make_a_beep(void)
 {
 	if (sound_enabled)
 	{
-		timer2_start();		//pwm
+		buzzer_pwm_start();		//pwm
 	}
 
 	systick_set_100ms();
@@ -67,7 +74,7 @@ void make_a_long_beep(void)
 {
 	if (sound_enabled)
 	{
-		timer2_start();		//pwm
+		buzzer_pwm_start();		//pwm
 	}
 
 	systick_set_1000ms();
@@ -235,43 +242,25 @@ void timer1_stop_reload(void)
 
 
 
-//Timer 2 init (pwm timer, the frequency of the "beep")
+//Timer 2 init (buzzer and/or backlight pwm timer, the frequency of the "beep" and/or backlight pwm)
 void timer2_init(void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; //enable timer clock
-	TIM2->PSC = (uint16_t)374;         	//3MHz/(374+1)=8kHz
-	TIM2->ARR = (uint16_t)3;            //8kHz/(3+1)=2kHz
-	TIM2->CCR1 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5
-	TIM2->CCR2 = (uint16_t)2;           //duty cycle 2/(3+1)=0.5
-	TIM2->CCMR1 |= TIM_CCMR1_OC1M_2;    //PWM mode 1 for CH1
-	TIM2->CCMR1 |= TIM_CCMR1_OC1M_1;
-	TIM2->CCMR1 &= ~TIM_CCMR1_OC1M_0;
-	TIM2->CCMR1 |= TIM_CCMR1_OC2M_2;    //PWM mode 2 for CH2
-	TIM2->CCMR1 |= TIM_CCMR1_OC2M_1;
-	TIM2->CCMR1 |= TIM_CCMR1_OC2M_0;
+	TIM2->PSC = (uint16_t)TIM2_PSC_LCDBL_VALUE; 	//Start with LCD BL value
+	TIM2->ARR = (uint16_t)9;            			//8kHz/(9+1)=800Hz - in case of TIM2_PSC_LCDBL_VALUE
+													//20kHz/(9+1)=2kHz - in case of TIM2_PSC_BUZZER_VALUE
 
-	timer2_clock_disable();
-}
-
-
-
-void timer2_clock_disable(void)
-{
-	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM2EN) = 0;
-}
-
-
-
-void timer2_clock_enable(void)
-{
-	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM2EN) = 1;
-}
-
-
-
-void timer2_start(void)
-{
-	timer2_clock_enable();
+#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
+	TIM2->CCR1 = (uint16_t)5;           //duty cycle 5/(9+1)=0.5 (fixed)
+	TIM2->CCR2 = (uint16_t)1;           //duty cycle 1/(9+1)=0.1 (configurable by user via settings)
+	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2); //Force low CH1 (PA0, buzzer)
+	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2); //Force low CH2 (PA1, backlight)
+#else
+	TIM2->CCR1 = (uint16_t)5;           //duty cycle 5/(9+1)=0.5 (fixed)
+	TIM2->CCR2 = (uint16_t)5;           //duty cycle 5/(9+1)=0.5 (fixed)
+	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2);    //Force low CH1 (PA0, buzzer p)
+	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2);    //Force low CH2 (PA1, buzzer n)
+#endif
 
 	TIM2->CCER |= TIM_CCER_CC1E;   	//CH1 output enable
 	TIM2->CCER |= TIM_CCER_CC2E;    //CH2 output enable
@@ -280,14 +269,62 @@ void timer2_start(void)
 
 
 
-void timer2_stop(void)
+void buzzer_pwm_start(void)
 {
-	TIM2->CR1 &= ~TIM_CR1_CEN;      //disable PWM timer
-	TIM2->CNT = 0;                  //force output low
-	TIM2->CCER &= ~TIM_CCER_CC1E;   //CH1 output disable
-	TIM2->CCER &= ~TIM_CCER_CC2E;   //CH2 output disable
+	TIM2->PSC = (uint16_t)TIM2_PSC_BUZZER_VALUE;	//switch from low backlight freq to high buzzer freq
 
-	timer2_clock_disable();
+#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
+	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1); //PWM mode 1 for CH1 (PA0, buzzer)
+#else
+	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1);    //PWM mode 1 for CH1 (PA0, buzzer p)
+	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_0);    //PWM mode 2 for CH2 (PA1, buzzer n)
+#endif
+}
+
+
+
+void buzzer_pwm_stop(void)
+{
+#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
+	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2); //Force low CH1 (PA0, buzzer)
+#else
+	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC1M) | (TIM_CCMR1_OC1M_2);    //Force low CH1 (PA0, buzzer p)
+	TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2);    //Force low CH2 (PA1, buzzer n)
+#endif
+
+	TIM2->PSC = (uint16_t)TIM2_PSC_LCDBL_VALUE;	//switch back from high buzzer freq to low backlight freq
+}
+
+
+
+void backlight_pwm_set(uint8_t pwm_level)
+{
+#ifdef	SPLIT_PWM_BUZZER_BACKLIGHT
+	switch (pwm_level)
+	{
+	case BL_PWM_LEVEL_OFF:
+		TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2); //Force low CH2 (PA1, backlight)
+		break;
+
+	case BL_PWM_LEVEL_LOW:
+		TIM2->CCR2 = (uint16_t)BL_PWM_LEVEL_LOW_CCR_VALUE;           //set PWM duty cycle
+		TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1); //PWM mode 1 for CH2 (PA1, backlight)
+		break;
+
+	case BL_PWM_LEVEL_MID:
+		TIM2->CCR2 = (uint16_t)BL_PWM_LEVEL_MID_CCR_VALUE;           //set PWM duty cycle
+		TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1); //PWM mode 1 for CH2 (PA1, backlight)
+		break;
+
+	case BL_PWM_LEVEL_MAX:
+		TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_0); //Force high CH2 (PA1, backlight)
+		break;
+
+	default:
+		TIM2->CCMR1 = (TIM2->CCMR1 & ~TIM_CCMR1_OC2M) | (TIM_CCMR1_OC2M_2); //Force low CH2 (PA1, backlight)
+		break;
+	}
+#endif
 }
 
 

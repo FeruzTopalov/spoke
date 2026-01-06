@@ -11,11 +11,39 @@
 
 
 
+#define DEVICES_ON_AIR_MAX	(5)												//max number of devices on air (real Spoke devices)
+#define MEMORY_POINTS_TOT	(4)												//total number of memory points
+#define NAV_OBJECTS_MAX		(DEVICES_ON_AIR_MAX + MEMORY_POINTS_TOT)         //max number of devices including real Spoke devices and memory points
+
+#define DEVICE_NUMBER_FIRST (1)
+#define DEVICE_NUMBER_LAST  (DEVICES_ON_AIR_MAX)
+
+#define MEMORY_POINT_FIRST	(DEVICES_ON_AIR_MAX + 1)
+#define MEMORY_POINT_LAST	(MEMORY_POINT_FIRST + MEMORY_POINTS_TOT - 1)
+
+#define NAV_OBJECT_NULL 	(0)
+#define NAV_OBJECT_FIRST 	(1)
+#define NAV_OBJECT_LAST  	(NAV_OBJECTS_MAX)
+
+
+
+#define ACC_MOVEMENT_NOT_DETECTED 	(0)
+#define ACC_MOVEMENT_DETECTED 		(1)
+
+
+
+#define LRNS_RADIO_ACTION_TX				(1)
+#define LRNS_RADIO_ACTION_RX				(2)
+#define LRNS_RADIO_ACTION_RX_ACTIVE_DEV		(3)
+
+
+
 extern const double deg_to_rad;       //deg to rad multiplyer
 
 
 
 void init_lrns(void);
+uint8_t get_lrns_protocol_radio_action(void);
 void fill_air_packet(uint32_t current_uptime);
 uint8_t parse_air_packet(uint32_t current_uptime);
 void process_all_devices(void);
@@ -25,8 +53,10 @@ void calc_fence(void);
 uint8_t check_any_alarm_fence_timeout(void);
 void clear_beep_for_active_dev(uint8_t active_device);
 void toggle_my_alarm(void);
+void enable_my_alarm(void);
 uint8_t get_my_alarm_status(void);
 void set_lowbat_flag(uint8_t value);
+void set_acc_movement_flag(uint8_t value);
 struct devices_struct **get_devices(void);
 
 
@@ -42,8 +72,11 @@ struct devices_struct
 	uint8_t alarm_flag_for_beep;	//for beep clear
 	uint8_t fence_flag;				//is a predefined fence distance reached?
 	uint8_t fence_flag_for_beep;	//for beep clear
+	uint8_t beacon_flag;			//is device a beacon?
 	uint8_t lowbat_flag;			//did the device transmit low battery flag?
-	int8_t lora_rssi;				//RSSI of the last received packet
+	uint8_t acc_movement_flag;		//flag if accelerometer detected movement in the recent update interval
+	uint8_t pdop_good_flag;			//GPS PDOP quality flag
+	int8_t lora_snr;				//SNR of the last received packet
 
     //TIME
     uint32_t timestamp;					//time stamp in seconds when the last activity was detected

@@ -48,7 +48,7 @@ void spi1_clock_disable(void)
 void spi1_clock_enable(void)
 {
 	BIT_BAND_PERI(RCC->APB2ENR, RCC_APB2ENR_SPI1EN) = 1;
-	delay_cyc(10);
+	delay_cyc(20);
 }
 
 
@@ -129,7 +129,7 @@ void spi2_clock_disable(void)
 void spi2_clock_enable(void)
 {
 	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_SPI2EN) = 1;
-	delay_cyc(10);
+	delay_cyc(20);
 }
 
 

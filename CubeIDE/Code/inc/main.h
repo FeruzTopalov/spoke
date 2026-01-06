@@ -15,7 +15,14 @@
 
 
 
+uint32_t get_uptime_cntr(void);
+uint32_t get_nmea_overflow_cntr(void);
+uint32_t get_lora_tx_cycles_cntr(void);
+uint32_t get_lora_rx_cycles_cntr(void);
+uint32_t get_abs_pps_cntr(void);
 uint32_t get_cont_pps_cntr(void);
+uint32_t get_lora_crc_errors_cntr(void);
+uint32_t get_lora_rx_timeouts_cntr(void);
 
 
 
