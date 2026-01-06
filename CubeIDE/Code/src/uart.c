@@ -35,18 +35,18 @@ char *backup_buf;							//backup for raw UART data
 uint16_t gps_uart_buf_len; 					//dynamically allocated part of the uart_buffer[MAX_UART_BUF_LEN]
 uint16_t brr_gps_baud;						//BRR reg value depending on 'GPS baud' setting
 
-uint8_t console_timestamp[TIMESTAMP_SZ];	//for console, timestamp data
+char console_timestamp[TIMESTAMP_SZ];	//for console, timestamp data
 
-uint8_t console_nav_data[CONS_DATA_SZ];		//for console, raw nav data
+char console_nav_data[CONS_DATA_SZ];		//for console, raw nav data
 uint16_t nav_data_len = 0;					//nav data length
 
-uint8_t console_nav_data_base64[CONS_DATA_SZ];//for console, base64 nav data
+char console_nav_data_base64[CONS_DATA_SZ];//for console, base64 nav data
 uint16_t nav_data_base64_len = 0;			//base64 nav data length
 
-uint8_t console_data[CONS_DATA_SZ];			//resulting console data
+char console_data[CONS_DATA_SZ];			//resulting console data
 uint16_t console_data_len = 0;				//console data length
 
-uint8_t console_report_enabled = 1;			//enable send logs via console
+uint8_t console_report_state = CONSOLE_REPORT_ENABLED;			//enable sending logs via console (enabled by default)
 
 struct devices_struct **pp_devices;
 struct settings_struct *p_settings;
@@ -146,16 +146,9 @@ void uart1_tx_byte(uint8_t tx_data)
 
 
 //switch on/off console reports
-void toggle_console_reports(uint8_t enabled)
+void switch_console_reports(uint8_t state)
 {
-	if (enabled == 0)
-	{
-		console_report_enabled = 0;
-	}
-	else
-	{
-		console_report_enabled = 1;
-	}
+	console_report_state = state;
 }
 
 
@@ -163,7 +156,7 @@ void toggle_console_reports(uint8_t enabled)
 //Send all active devices via console to either BLE or just a terminal
 void report_to_console(void)
 {
-	if (console_report_enabled == 1)
+	if (console_report_state == 1)
 	{
 		console_prepare_timestamp();			//timestamp in ISO 8601
 		console_prepare_nav_data();				//fill buffer with data

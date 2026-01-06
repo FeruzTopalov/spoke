@@ -32,11 +32,18 @@
 
 
 
+#define LRNS_RADIO_ACTION_TX				(1)
+#define LRNS_RADIO_ACTION_RX				(2)
+#define LRNS_RADIO_ACTION_RX_ACTIVE_DEV		(3)
+
+
+
 extern const double deg_to_rad;       //deg to rad multiplyer
 
 
 
 void init_lrns(void);
+uint8_t get_lrns_protocol_radio_action(void);
 void fill_air_packet(uint32_t current_uptime);
 uint8_t parse_air_packet(uint32_t current_uptime);
 void process_all_devices(void);

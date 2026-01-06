@@ -28,8 +28,6 @@ void timer1_init(void);
 void timer1_clock_disable(void);
 void timer1_clock_enable(void);
 void timer2_init(void);
-void timer2_clock_disable(void);
-void timer2_clock_enable(void);
 void buzzer_pwm_start(void);
 void timer3_init(void);
 void timer3_clock_disable(void);
@@ -267,20 +265,6 @@ void timer2_init(void)
 	TIM2->CCER |= TIM_CCER_CC1E;   	//CH1 output enable
 	TIM2->CCER |= TIM_CCER_CC2E;    //CH2 output enable
 	TIM2->CR1 |= TIM_CR1_CEN;   	//enable PWM timer
-}
-
-
-
-void timer2_clock_disable(void) //todo del
-{
-	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM2EN) = 0;
-}
-
-
-
-void timer2_clock_enable(void) //todo del
-{
-	BIT_BAND_PERI(RCC->APB1ENR, RCC_APB1ENR_TIM2EN) = 1;
 }
 
 

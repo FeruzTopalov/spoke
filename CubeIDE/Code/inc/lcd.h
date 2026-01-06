@@ -16,17 +16,15 @@
 
 
 
-#define LCD_COLS     		(16)
-#define LCD_ROWS       		(4)
-#define LCD_LAST_COL     	(LCD_COLS - 1)
-#define LCD_LAST_ROW       	(LCD_ROWS - 1)
+#define LCD_ROWS_8X16       	(4)
+#define LCD_COLS_8X16     		(16)
+
+#define LCD_ROWS_6X8       		(8)
+#define LCD_COLS_6X8     		(21)
 
 
 
 #define SYMB16_HOME			('=')
-#define SYMB16_TIMEOUT      (':')
-#define SYMB16_ALARM        (';')
-#define SYMB16_FENCE        ('<')
 
 #define SYMB8_DEGREE        ('\x80')
 #define SYMB8_BAT_TAIL    	('\x81')
@@ -64,20 +62,24 @@ void lcd_clear(void);
 void lcd_pixel(uint8_t x, uint8_t y, int8_t action);
 void lcd_set_pixel(uint8_t x, uint8_t y);
 void lcd_set_pixel_plot(uint8_t x, uint8_t y);
-void lcd_pos(uint8_t row, uint8_t col);
-void lcd_char(char chr);
-void lcd_char_overlay(char chr);
-void lcd_char16(char chr);
-void lcd_char_pos(uint8_t row, uint8_t col, char chr);
-void lcd_char_overlay_pos(uint8_t row, uint8_t col, char chr);
-void lcd_char16_pos(uint8_t row, uint8_t col, char chr);
+void lcd_pos_6x8(uint8_t row, uint8_t col);
+void lcd_pos_8x16(uint8_t row, uint8_t col);
+void lcd_char_6x8(char chr);
+void lcd_char_8x16(char chr);
+void lcd_char_8x16_overlay(char chr);
+void lcd_char_16x16(char chr);
+void lcd_char_8x16_pos(uint8_t row, uint8_t col, char chr);
+void lcd_char_8x16_overlay_pos(uint8_t row, uint8_t col, char chr);
+void lcd_char_16x16_pos(uint8_t row, uint8_t col, char chr);
+void lcd_print_small(uint8_t row, uint8_t col, char *p_str);
+void lcd_print_small_next(char *p_str);
 void lcd_print(uint8_t row, uint8_t col, char *p_str);
 void lcd_print_only(uint8_t row, uint8_t col, char *p_str);
-void lcd_print16(uint8_t row, uint8_t col, char *p_str);
+void lcd_print_large(uint8_t row, uint8_t col, char *p_str);
 void lcd_print_next(char *p_str);
 void lcd_print_viceversa(uint8_t row, uint8_t col, char *p_str);
 void lcd_print_next_viceversa(char *p_str);
-void lcd_print16_viceversa(uint8_t row, uint8_t col, char *p_str);
+void lcd_print_large_viceversa(uint8_t row, uint8_t col, char *p_str);
 void lcd_bitmap(const uint8_t arr[]);
 void lcd_update(void);
 void lcd_continue_update(void);

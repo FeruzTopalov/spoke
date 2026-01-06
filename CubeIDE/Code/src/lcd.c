@@ -7,6 +7,7 @@
 #include <string.h>
 #include <math.h>
 #include "stm32f10x.h"
+#include "lcd_font6x8.h"
 #include "lcd_font8x16.h"
 #include "lcd_font16x16.h"
 #include "lcd.h"
@@ -26,42 +27,54 @@ void lcd_backlight_disable(void);
 
 #define LCD_SIZE_BYTES    	(1024)
 
+#define FONT_6X8_SIZE_X       	(6)		//size of font in pixels
+#define FONT_6X8_SIZE_Y       	(8)		//size of font in pixels
+#define FONT_6X8_BYTES_X      	(6)		//size of font in bytes
+#define FONT_6X8_BYTES_Y      	(1)		//size of font in bytes
+#define FONT_6X8_BYTES      	(FONT_6X8_BYTES_X * FONT_6X8_BYTES_Y)	//size of font in bytes
 
-#define FONT_SIZE_X       	(8)		//size of font in pixels
-#define FONT_SIZE_Y       	(16)	//size of font in pixels
-#define FONT_BYTES_X      	(8)		//size of font in bytes
-#define FONT_BYTES_Y      	(2)		//size of font in bytes
-#define FONT_BYTES      	(FONT_BYTES_X * FONT_BYTES_Y)	//size of font in bytes
+#define FONT_8X16_SIZE_X       	(8)		//size of font in pixels
+#define FONT_8X16_SIZE_Y       	(16)	//size of font in pixels
+#define FONT_8X16_BYTES_X      	(8)		//size of font in bytes
+#define FONT_8X16_BYTES_Y      	(2)		//size of font in bytes
+#define FONT_8X16_BYTES      	(FONT_8X16_BYTES_X * FONT_8X16_BYTES_Y)	//size of font in bytes
 
-#define FONT16_SIZE_X       	(16)	//size of font in pixels
-#define FONT16_SIZE_Y       	(16)	//size of font in pixels
-#define FONT16_BYTES_X      	(16)	//size of font in bytes
-#define FONT16_BYTES_Y      	(2)		//size of font in bytes
-#define FONT16_BYTES      		(FONT16_BYTES_X * FONT16_BYTES_Y)	//size of font in bytes
+#define FONT_16X16_SIZE_X       (16)	//size of font in pixels
+#define FONT_16X16_SIZE_Y       (16)	//size of font in pixels
+#define FONT_16X16_BYTES_X      (16)	//size of font in bytes
+#define FONT_16X16_BYTES_Y      (2)		//size of font in bytes
+#define FONT_16X16_BYTES      	(FONT_16X16_BYTES_X * FONT_16X16_BYTES_Y)	//size of font in bytes
 
-#define LCD_COMMAND_DISPLAY_ON	(0xAF)
-#define LCD_COMMAND_DISPLAY_OFF	(0xAE)
-#define LCD_COMMAND_SET_ROW_ADR_BASE	(0xB0)
-#define LCD_COMMAND_SET_COL_ADRH_BASE	(0x10)
+
 
 #ifdef LCD_TYPE_SH1106
+#define LCD_COMMAND_DISPLAY_ON	(0xAF)
+#define LCD_COMMAND_DISPLAY_OFF	(0xAE)
+#define LCD_NUM_OF_PAGES		(8)
+#define LCD_COMMAND_SET_ROW_ADR_BASE	(0xB0)
 #define LCD_COMMAND_SET_COL_ADRL_BASE	(0x02)		//LCD panel is centered to SH1106 frame buffer
+#define LCD_COMMAND_SET_COL_ADRH_BASE	(0x10)
 #endif
 
 #ifdef LCD_TYPE_ST7567A
+#define LCD_NUM_OF_PAGES		(8)
+#define LCD_COMMAND_SET_ROW_ADR_BASE	(0xB0)
 #define LCD_COMMAND_SET_COL_ADRL_BASE	(0x00)		//LCD panel is left-adjusted to ST7567A frame buffer
+#define LCD_COMMAND_SET_COL_ADRH_BASE	(0x10)
 #endif
+
+
 
 #define BL_MODE_CONSTANT	(0)	//always on BL
 #define BL_MODE_AUTO 		(1) //auto off BL
-#define BL_TIMEOUT_TOP		(30)//timeout in seconds to auto bl turn off
+#define BL_TIMEOUT_TOP		(60)//timeout in seconds to auto bl turn off
 #define BL_TIMEOUT_END		(-1)//end of timeout period
 
 
 
 uint8_t screen_buf[LCD_SIZE_BYTES];     		//public array 128x64 pixels
 uint16_t buf_pos = 0;                   		//public var 0 - 1023
-uint8_t current_page = 0;
+uint8_t current_page = 0;						//LCD page number from 0 to (LCD_NUM_OF_PAGES - 1)
 uint8_t lcd_busy = 0;	//is lcd update ongoing?
 uint8_t lcd_pending_off = 0; 	//pending command to off the lcd
 
@@ -381,7 +394,7 @@ void lcd_continue_update(void)
 {
 	current_page++;
 
-	if (current_page < 8)//todo replace magic number
+	if (current_page < LCD_NUM_OF_PAGES)
 	{
 		lcd_send_command(LCD_COMMAND_SET_COL_ADRL_BASE); 		//reset column address low
 		lcd_send_command(LCD_COMMAND_SET_COL_ADRH_BASE);			//reset column address high
@@ -465,126 +478,174 @@ void lcd_set_pixel_plot(uint8_t x, uint8_t y)
 
 
 
-//Set character position on screen (rows 0-3, cols 0-15)
-void lcd_pos(uint8_t row, uint8_t col)
+//Set 6x8 character position on screen (rows 0-7, cols 0-20)
+void lcd_pos_6x8(uint8_t row, uint8_t col)
 {
-    buf_pos = (col + LCD_COLS * row * FONT_BYTES_Y) * FONT_BYTES_X;
+    buf_pos = (col + row * LCD_COLS_6X8) * FONT_6X8_SIZE_X + 2 * row;   //+2 bytes, because 128 - (21 * 6) = 2
 }
 
 
 
-//Put one char in buffer in position, defined previously via ssd1306_pos()
-void lcd_char(char chr)
+//Set 8x16 character position on screen (rows 0-3, cols 0-15)
+void lcd_pos_8x16(uint8_t row, uint8_t col)
+{
+    buf_pos = (col + LCD_COLS_8X16 * row * FONT_8X16_BYTES_Y) * FONT_8X16_BYTES_X;
+}
+
+
+
+//Put one char in buffer in position, defined previously
+void lcd_char_6x8(char chr)
+{
+    for (uint8_t i = 0; i < FONT_6X8_SIZE_X - 1; i++)
+    {
+        screen_buf[buf_pos++] = font_6x8[(uint8_t)chr - ' '][i]; //subtract space char because font table starts with space
+    }
+
+    screen_buf[buf_pos++] = 0;       //intercharacter space
+}
+
+
+
+//Put one char in buffer in position, defined previously
+void lcd_char_8x16(char chr)
 {
 	uint16_t buf_pos_copy = buf_pos;
 	uint16_t font_char_pos, c;
 	uint8_t px;
 
-    font_char_pos = ((uint8_t)chr) * FONT_BYTES;
+    font_char_pos = ((uint8_t)chr) * FONT_8X16_BYTES;
 
-    for (px = 0, c = font_char_pos; px < FONT_BYTES_X; px++, c += 2)		//upper symbol row
+    for (px = 0, c = font_char_pos; px < FONT_8X16_BYTES_X; px++, c += 2)		//upper symbol row
     {
         screen_buf[buf_pos++] = font_8x16[c];
     }
 
     buf_pos = buf_pos_copy + LCD_SIZE_X; //point to the lower symbol's row
-    for (px = 0, c = font_char_pos + 1; px < FONT_BYTES_X; px++, c += 2)	//lower symbol row
+    for (px = 0, c = font_char_pos + 1; px < FONT_8X16_BYTES_X; px++, c += 2)	//lower symbol row
     {
         screen_buf[buf_pos++] = font_8x16[c];
     }
 
-    buf_pos = buf_pos_copy + FONT_BYTES_X;	//point to the next LCD char
+    buf_pos = buf_pos_copy + FONT_8X16_BYTES_X;	//point to the next LCD char
     //no new line/carriage return
 }
 
 
 
-//Put one char in buffer in position with content overlay, defined previously via ssd1306_pos()
-void lcd_char_overlay(char chr)
+//Put one char in buffer in position with content overlay, defined previously
+void lcd_char_8x16_overlay(char chr)
 {
 	uint16_t buf_pos_copy = buf_pos;
 	uint16_t font_char_pos, c;
 	uint8_t px;
 
-    font_char_pos = ((uint8_t)chr) * FONT_BYTES;
+    font_char_pos = ((uint8_t)chr) * FONT_8X16_BYTES;
 
-    for (px = 0, c = font_char_pos; px < FONT_BYTES_X; px++, c += 2)		//upper symbol row
+    for (px = 0, c = font_char_pos; px < FONT_8X16_BYTES_X; px++, c += 2)		//upper symbol row
     {
         screen_buf[buf_pos++] |= font_8x16[c];
     }
 
     buf_pos = buf_pos_copy + LCD_SIZE_X; //point to the lower symbol's row
-    for (px = 0, c = font_char_pos + 1; px < FONT_BYTES_X; px++, c += 2)	//lower symbol row
+    for (px = 0, c = font_char_pos + 1; px < FONT_8X16_BYTES_X; px++, c += 2)	//lower symbol row
     {
         screen_buf[buf_pos++] |= font_8x16[c];
     }
 
-    buf_pos = buf_pos_copy + FONT_BYTES_X;	//point to the next LCD char
-    //no new line/carriage return
-}
-
-
-
-void lcd_char16(char chr)
-{
-	uint16_t buf_pos_copy = buf_pos;
-	uint16_t font_char_pos, c;
-	uint8_t px;
-
-    font_char_pos = ((uint8_t)chr - 48) * FONT16_BYTES;
-
-    for (px = 0, c = font_char_pos; px < FONT16_BYTES_X; px++, c += 2)		//upper symbol row
-    {
-        screen_buf[buf_pos++] = font_16x16[c];
-    }
-
-    buf_pos = buf_pos_copy + LCD_SIZE_X; //point to the lower symbol's row
-    for (px = 0, c = font_char_pos + 1; px < FONT16_BYTES_X; px++, c += 2)	//lower symbol row
-    {
-        screen_buf[buf_pos++] = font_16x16[c];
-    }
-
-    buf_pos = buf_pos_copy + FONT16_BYTES_X;	//point to the next LCD char
+    buf_pos = buf_pos_copy + FONT_8X16_BYTES_X;	//point to the next LCD char
     //no new line/carriage return
 }
 
 
 
 //Put one char in defined pos
-void lcd_char_pos(uint8_t row, uint8_t col, char chr)
+void lcd_char_8x16_pos(uint8_t row, uint8_t col, char chr)
 {
-    lcd_pos(row, col);
-    lcd_char(chr);
+    lcd_pos_8x16(row, col);
+    lcd_char_8x16(chr);
 }
 
 
 
 //Put one char in defined pos, with overlay
-void lcd_char_overlay_pos(uint8_t row, uint8_t col, char chr)
+void lcd_char_8x16_overlay_pos(uint8_t row, uint8_t col, char chr)
 {
-    lcd_pos(row, col);
-    lcd_char_overlay(chr);
+    lcd_pos_8x16(row, col);
+    lcd_char_8x16_overlay(chr);
+}
+
+
+
+void lcd_char_16x16(char chr)
+{
+	uint16_t buf_pos_copy = buf_pos;
+	uint16_t font_char_pos, c;
+	uint8_t px;
+
+    font_char_pos = ((uint8_t)chr - '0') * FONT_16X16_BYTES;	//subtract char '0'
+
+    for (px = 0, c = font_char_pos; px < FONT_16X16_BYTES_X; px++, c += 2)		//upper symbol row
+    {
+        screen_buf[buf_pos++] = font_16x16[c];
+    }
+
+    buf_pos = buf_pos_copy + LCD_SIZE_X; //point to the lower symbol's row
+    for (px = 0, c = font_char_pos + 1; px < FONT_16X16_BYTES_X; px++, c += 2)	//lower symbol row
+    {
+        screen_buf[buf_pos++] = font_16x16[c];
+    }
+
+    buf_pos = buf_pos_copy + FONT_16X16_BYTES_X;	//point to the next LCD char
+    //no new line/carriage return
 }
 
 
 
 //Put one char in defined pos
-void lcd_char16_pos(uint8_t row, uint8_t col, char chr)
+void lcd_char_16x16_pos(uint8_t row, uint8_t col, char chr)
 {
-    lcd_pos(row, col);
-    lcd_char16(chr);
+    lcd_pos_8x16(row, col); //using 8x16 pos function for fine positioning along x if needed
+    lcd_char_16x16(chr);
+}
+
+
+
+//Print string on screen (with position (rows 0-7, cols 0-20))
+//Small print with 6x8 font
+void lcd_print_small(uint8_t row, uint8_t col, char *p_str)
+{
+    lcd_pos_6x8(row, col);
+
+    while (*p_str)
+    {
+        lcd_char_6x8(*p_str++);
+    }
+}
+
+
+
+//Print string on screen (with position (rows 0-7, cols 0-20))
+//Small print with 6x8 font
+void lcd_print_small_next(char *p_str)
+{
+    while (*p_str)
+    {
+        lcd_char_6x8(*p_str++);
+    }
 }
 
 
 
 //Print string on screen (with position (rows 0-3, cols 0-15))
+//Standard print with 8x16 font
 void lcd_print(uint8_t row, uint8_t col, char *p_str)
 {
-    lcd_pos(row, col);
+    lcd_pos_8x16(row, col);
     
     while (*p_str)
     {
-        lcd_char(*p_str++);
+        lcd_char_8x16(*p_str++);
     }
 }
 
@@ -601,25 +662,12 @@ void lcd_print_only(uint8_t row, uint8_t col, char *p_str)
 
 
 
-
-void lcd_print16(uint8_t row, uint8_t col, char *p_str)
-{
-    lcd_pos(row, col);
-
-    while (*p_str)
-    {
-        lcd_char16(*p_str++);
-    }
-}
-
-
-
 //Print string on screen (with position) in viceversa direction (decrease collumn)
 void lcd_print_viceversa(uint8_t row, uint8_t col, char *p_str)
 {
     uint8_t symb_cntr = 0;
     
-    lcd_pos(row, col);
+    lcd_pos_8x16(row, col);
     
     while (*p_str)
     {
@@ -630,31 +678,8 @@ void lcd_print_viceversa(uint8_t row, uint8_t col, char *p_str)
     while (symb_cntr)
     {
         symb_cntr--;
-        lcd_char(*--p_str);
-        buf_pos -= 2 * FONT_SIZE_X;         //minus two characters position
-    }
-}
-
-
-
-//Print string on screen (with position) in viceversa direction (decrease collumn)
-void lcd_print16_viceversa(uint8_t row, uint8_t col, char *p_str)
-{
-    uint8_t symb_cntr = 0;
-
-    lcd_pos(row, col);
-
-    while (*p_str)
-    {
-        p_str++;
-        symb_cntr++;
-    }
-
-    while (symb_cntr)
-    {
-        symb_cntr--;
-        lcd_char16(*--p_str);
-        buf_pos -= 4 * FONT_SIZE_X;         //minus two characters position
+        lcd_char_8x16(*--p_str);
+        buf_pos -= 2 * FONT_8X16_SIZE_X;         //minus two characters position
     }
 }
 
@@ -665,7 +690,7 @@ void lcd_print_next(char *p_str)
 {
     while (*p_str)
     {
-        lcd_char(*p_str++);
+        lcd_char_8x16(*p_str++);
     }
 }
 
@@ -686,8 +711,44 @@ void lcd_print_next_viceversa(char *p_str)	//use only after lcd_print_viceversa(
     while (symb_cntr)
     {
         symb_cntr--;
-        lcd_char(*--p_str);
-        buf_pos -= 2 * FONT_SIZE_X;         //minus two characters position
+        lcd_char_8x16(*--p_str);
+        buf_pos -= 2 * FONT_8X16_SIZE_X;         //minus two characters position
+    }
+}
+
+
+
+//Large print with 16x16 font
+void lcd_print_large(uint8_t row, uint8_t col, char *p_str)
+{
+    lcd_pos_8x16(row, col);
+
+    while (*p_str)
+    {
+        lcd_char_16x16(*p_str++);
+    }
+}
+
+
+
+//Print string on screen (with position) in viceversa direction (decrease collumn)
+void lcd_print_large_viceversa(uint8_t row, uint8_t col, char *p_str)
+{
+    uint8_t symb_cntr = 0;
+
+    lcd_pos_8x16(row, col);
+
+    while (*p_str)
+    {
+        p_str++;
+        symb_cntr++;
+    }
+
+    while (symb_cntr)
+    {
+        symb_cntr--;
+        lcd_char_16x16(*--p_str);
+        buf_pos -= 4 * FONT_8X16_SIZE_X;         //minus two characters position
     }
 }
 
@@ -707,7 +768,7 @@ void lcd_bitmap(const uint8_t arr[])
 //Print byte on screen (debug function)
 void lcd_print_byte(uint8_t row, uint8_t col, uint8_t byte)
 {
-    lcd_pos(row, col);
+    lcd_pos_8x16(row, col);
     screen_buf[buf_pos++] = byte;
 }
 
@@ -786,11 +847,11 @@ void lcd_draw_dot(int8_t x0, int8_t y0)
 	uint8_t loop = 0;
 
 	//            draw a filled circle as filled rect but with skipped corners
-	//             xxx
-	//            xxxxx
-	//            xxoxx
-	//            xxxxx
-	//             xxx
+	//             ooo
+	//            ooooo
+	//            ooxoo
+	//            ooooo
+	//             ooo
 
 	for (int8_t px = -2; px <= 2; px++)
 	{
