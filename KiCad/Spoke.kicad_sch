@@ -15362,7 +15362,7 @@
 	)
 	(global_label "PWR_HOLD"
 		(shape input)
-		(at 334.01 109.22 180)
+		(at 334.01 99.06 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -15372,7 +15372,7 @@
 		)
 		(uuid "5b1e8815-9c11-4eb2-b982-1851981c832a")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 321.6788 109.2994 0)
+			(at 321.6788 99.1394 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16528,7 +16528,7 @@
 	)
 	(global_label "RF_TXEN"
 		(shape input)
-		(at 334.01 99.06 180)
+		(at 334.01 109.22 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -16538,7 +16538,7 @@
 		)
 		(uuid "e7cd8f11-d725-4273-bbd5-edf7aa728638")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 323.614 98.9806 0)
+			(at 323.614 109.1406 0)
 			(effects
 				(font
 					(size 1.27 1.27)
