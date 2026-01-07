@@ -14854,28 +14854,6 @@
 			)
 		)
 	)
-	(global_label "BUZZER_N"
-		(shape input)
-		(at 317.5 241.3 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "2d405feb-5fce-4ef1-af3a-e093f523b9bf")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 305.3502 241.2206 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "LCD_CS"
 		(shape input)
 		(at 500.38 58.42 180)
@@ -15756,7 +15734,7 @@
 			)
 		)
 	)
-	(global_label "BUZZER_P"
+	(global_label "BUZZER"
 		(shape input)
 		(at 334.01 71.12 180)
 		(fields_autoplaced yes)
@@ -15768,7 +15746,7 @@
 		)
 		(uuid "8323b88a-eab5-4238-b410-4a8725cee873")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 321.9207 71.0406 0)
+			(at 323.5863 71.12 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15866,7 +15844,7 @@
 			)
 		)
 	)
-	(global_label "BUZZER_P"
+	(global_label "BUZZER"
 		(shape input)
 		(at 317.5 236.22 180)
 		(fields_autoplaced yes)
@@ -15878,7 +15856,7 @@
 		)
 		(uuid "932b0780-56cf-4b2f-93c9-4d46fe9febd7")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 305.4107 236.1406 0)
+			(at 307.0763 236.22 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16374,28 +16352,6 @@
 	)
 	(global_label "LCD_BL"
 		(shape input)
-		(at 377.19 119.38 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "d28b8648-a61e-47c7-b79f-92aac216b888")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 387.009 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "BUZZER_N"
-		(shape input)
 		(at 334.01 73.66 180)
 		(fields_autoplaced yes)
 		(effects
@@ -16404,9 +16360,9 @@
 			)
 			(justify right)
 		)
-		(uuid "d3954ee2-4244-4ceb-bed0-153f0418c79a")
+		(uuid "d28b8648-a61e-47c7-b79f-92aac216b888")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 321.8602 73.5806 0)
+			(at 324.191 73.66 0)
 			(effects
 				(font
 					(size 1.27 1.27)
