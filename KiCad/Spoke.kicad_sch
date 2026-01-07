@@ -9057,6 +9057,12 @@
 		(uuid "bfc14568-d589-4861-a8a7-eb6a13c9125e")
 	)
 	(junction
+		(at 120.65 166.37)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "c03c2bd4-5142-43e4-ad99-599c60d93a0a")
+	)
+	(junction
 		(at 82.55 166.37)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -9181,6 +9187,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f757de1d-8331-47d7-b24c-b3c776617802")
+	)
+	(junction
+		(at 120.65 156.21)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f75db297-9a20-40a8-ae05-d91f94281b7d")
 	)
 	(junction
 		(at 88.9 207.01)
@@ -9890,6 +9902,16 @@
 	)
 	(wire
 		(pts
+			(xy 119.38 153.67) (xy 120.65 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1a9f771a-50de-4e99-9361-3fb6bfc3af5b")
+	)
+	(wire
+		(pts
 			(xy 113.03 198.12) (xy 125.73 198.12)
 		)
 		(stroke
@@ -10217,6 +10239,16 @@
 			(type default)
 		)
 		(uuid "29663ba6-fcad-40fb-bb4b-4ff655bf4d09")
+	)
+	(wire
+		(pts
+			(xy 119.38 168.91) (xy 120.65 168.91)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "296fd344-21a7-45e6-9869-2accc602312d")
 	)
 	(wire
 		(pts
@@ -10590,6 +10622,16 @@
 	)
 	(wire
 		(pts
+			(xy 120.65 168.91) (xy 120.65 166.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "380c1bc3-38b9-40bf-ba08-f9375bf22ff8")
+	)
+	(wire
+		(pts
 			(xy 334.01 114.3) (xy 337.82 114.3)
 		)
 		(stroke
@@ -10637,6 +10679,16 @@
 			(type default)
 		)
 		(uuid "39017a8a-0059-4d18-bdf2-d7d35376b9d4")
+	)
+	(wire
+		(pts
+			(xy 120.65 156.21) (xy 125.73 156.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3907faf8-f8c4-4129-909b-4053c011a5fd")
 	)
 	(wire
 		(pts
@@ -12220,6 +12272,16 @@
 	)
 	(wire
 		(pts
+			(xy 119.38 156.21) (xy 120.65 156.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8cd6812e-d835-4978-9d7b-3a9b8de8072a")
+	)
+	(wire
+		(pts
 			(xy 284.48 36.83) (xy 284.48 44.45)
 		)
 		(stroke
@@ -13130,6 +13192,16 @@
 	)
 	(wire
 		(pts
+			(xy 119.38 166.37) (xy 120.65 166.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ba9c1e74-cc58-48f8-a230-527f5c899ab7")
+	)
+	(wire
+		(pts
 			(xy 137.16 295.91) (xy 137.16 294.64)
 		)
 		(stroke
@@ -13620,6 +13692,16 @@
 	)
 	(wire
 		(pts
+			(xy 120.65 166.37) (xy 125.73 166.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cb2ad794-fc61-4994-b98b-78451ec4bbff")
+	)
+	(wire
+		(pts
 			(xy 82.55 128.27) (xy 87.63 128.27)
 		)
 		(stroke
@@ -13637,6 +13719,16 @@
 			(type default)
 		)
 		(uuid "cc9b5521-77c1-4e5e-822f-a3c2319b2292")
+	)
+	(wire
+		(pts
+			(xy 120.65 153.67) (xy 120.65 156.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cdaf0944-843d-4c16-a312-24de2f060663")
 	)
 	(wire
 		(pts
@@ -15382,6 +15474,28 @@
 			)
 		)
 	)
+	(global_label "BTN_ALARM"
+		(shape input)
+		(at 125.73 156.21 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5fd8dc66-0192-400f-a8d0-7cb32505ef40")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 139.1776 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "BLE_WKP_SLP"
 		(shape input)
 		(at 321.31 294.64 0)
@@ -16341,6 +16455,28 @@
 		(uuid "d1936942-b33b-4ddd-ae3d-1eb1231d00d1")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 388.1302 83.7406 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "BTN_ALARM"
+		(shape input)
+		(at 377.19 119.38 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d280a862-e89e-4b73-8728-4590051b7355")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 390.6376 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25459,6 +25595,72 @@
 	)
 	(symbol
 		(lib_id "power:GND")
+		(at 125.73 166.37 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8b3da6cf-5213-4480-8a07-4b3e998c5525")
+		(property "Reference" "#PWR0105"
+			(at 132.08 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 128.905 166.849 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 125.73 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 125.73 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 125.73 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "80254a46-00c3-42e8-8ad1-e74726ae6ab0")
+		)
+		(instances
+			(project "Spoke"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "#PWR0105")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
 		(at 220.98 133.35 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -32381,6 +32583,79 @@
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "#PWR082")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Spoke:Button-SPST-NO")
+		(at 119.38 156.21 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f7d216e0-0141-46d4-9f25-386e9a1fb283")
+		(property "Reference" "SW5"
+			(at 110.49 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "~"
+			(at 110.49 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Spoke:Button_6x6"
+			(at 119.38 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 119.38 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "ALARM"
+			(at 110.49 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "dd0ee596-a9ca-4f51-a45b-c8f231746828")
+		)
+		(pin "2"
+			(uuid "c8b33780-9366-4d2e-a411-b1c5a5e7b89c")
+		)
+		(pin "4"
+			(uuid "630b92e7-dd22-41e9-9894-ec9e77093b68")
+		)
+		(pin "3"
+			(uuid "8a268175-b213-4624-9673-1a0bbf3d4e65")
+		)
+		(instances
+			(project "Spoke"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "SW5")
 					(unit 1)
 				)
 			)
