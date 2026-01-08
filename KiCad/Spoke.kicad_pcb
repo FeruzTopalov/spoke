@@ -255,7 +255,7 @@
 	(footprint "Spoke:Button_6x6"
 		(layer "F.Cu")
 		(uuid "0718689e-332d-4829-a7f7-fa28a6dd278d")
-		(at 120 86 90)
+		(at 120 83 90)
 		(property "Reference" "SW5"
 			(at 0 -5 90)
 			(unlocked yes)
