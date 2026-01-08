@@ -22784,7 +22784,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100kR"
+		(property "Value" "1kR"
 			(at 342.9 327.6599 90)
 			(effects
 				(font
