@@ -8961,7 +8961,7 @@
 	)
 	(text_box "Populate if BLE is only used\n(no USB, no MUX)"
 		(exclude_from_sim no)
-		(at 367.03 265.43 0)
+		(at 323.85 270.51 0)
 		(size 31.75 7.62)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
@@ -9021,7 +9021,7 @@
 	)
 	(text_box "Populate if USB is only used\n(no BLE, no MUX)"
 		(exclude_from_sim no)
-		(at 215.9 265.43 0)
+		(at 251.46 270.51 0)
 		(size 31.75 7.62)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
@@ -9079,37 +9079,11 @@
 		)
 		(uuid "9e5cbbf1-2a61-43a2-8fff-3dc6076645df")
 	)
-	(text_box "Populate for automatic control of the BLE sleep mode\n(experimental)"
-		(exclude_from_sim no)
-		(at 293.37 275.59 0)
-		(size 31.75 11.43)
-		(margins 0.9525 0.9525 0.9525 0.9525)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(fill
-			(type none)
-		)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left top)
-		)
-		(uuid "cf759c70-1006-4df0-961e-a519212708b6")
-	)
 	(junction
 		(at 341.63 220.98)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "02f49cda-1fa7-4046-908d-96c6223a46c0")
-	)
-	(junction
-		(at 311.15 342.9)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "0535b714-66eb-4864-b434-eebee2bb7d65")
 	)
 	(junction
 		(at 358.14 60.96)
@@ -10651,7 +10625,7 @@
 	)
 	(wire
 		(pts
-			(xy 226.06 294.64) (xy 218.44 294.64)
+			(xy 261.62 299.72) (xy 254 299.72)
 		)
 		(stroke
 			(width 0)
@@ -10911,7 +10885,7 @@
 	)
 	(wire
 		(pts
-			(xy 388.62 281.94) (xy 396.24 281.94)
+			(xy 345.44 287.02) (xy 353.06 287.02)
 		)
 		(stroke
 			(width 0)
@@ -11781,7 +11755,7 @@
 	)
 	(wire
 		(pts
-			(xy 370.84 294.64) (xy 378.46 294.64)
+			(xy 327.66 299.72) (xy 335.28 299.72)
 		)
 		(stroke
 			(width 0)
@@ -11941,7 +11915,7 @@
 	)
 	(wire
 		(pts
-			(xy 243.84 281.94) (xy 236.22 281.94)
+			(xy 279.4 287.02) (xy 271.78 287.02)
 		)
 		(stroke
 			(width 0)
@@ -12051,16 +12025,6 @@
 	)
 	(wire
 		(pts
-			(xy 295.91 294.64) (xy 303.53 294.64)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "587ac0f0-eded-4688-9dec-c479964be756")
-	)
-	(wire
-		(pts
 			(xy 313.69 220.98) (xy 330.2 220.98)
 		)
 		(stroke
@@ -12088,16 +12052,6 @@
 			(type default)
 		)
 		(uuid "59a87da7-d22a-45e0-b2b9-e70cba88c5d6")
-	)
-	(wire
-		(pts
-			(xy 313.69 294.64) (xy 321.31 294.64)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5a1fe40d-efd4-4fe3-b897-c1b0bd998131")
 	)
 	(wire
 		(pts
@@ -13791,7 +13745,7 @@
 	)
 	(wire
 		(pts
-			(xy 388.62 294.64) (xy 396.24 294.64)
+			(xy 345.44 299.72) (xy 353.06 299.72)
 		)
 		(stroke
 			(width 0)
@@ -13988,16 +13942,6 @@
 			(type default)
 		)
 		(uuid "b77d1787-1598-442c-9b30-ee9e096a078b")
-	)
-	(wire
-		(pts
-			(xy 294.64 342.9) (xy 311.15 342.9)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b7c5c784-a028-4df6-a3a2-12adff8ba4be")
 	)
 	(wire
 		(pts
@@ -14201,7 +14145,7 @@
 	)
 	(wire
 		(pts
-			(xy 243.84 294.64) (xy 236.22 294.64)
+			(xy 279.4 299.72) (xy 271.78 299.72)
 		)
 		(stroke
 			(width 0)
@@ -14301,7 +14245,7 @@
 	)
 	(wire
 		(pts
-			(xy 311.15 342.9) (xy 334.01 342.9)
+			(xy 331.47 342.9) (xy 334.01 342.9)
 		)
 		(stroke
 			(width 0)
@@ -14521,7 +14465,7 @@
 	)
 	(wire
 		(pts
-			(xy 226.06 281.94) (xy 218.44 281.94)
+			(xy 261.62 287.02) (xy 254 287.02)
 		)
 		(stroke
 			(width 0)
@@ -14601,16 +14545,6 @@
 	)
 	(wire
 		(pts
-			(xy 311.15 332.74) (xy 311.15 342.9)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ce5a4177-a8b1-4705-8eca-dab52013bf23")
-	)
-	(wire
-		(pts
 			(xy 135.89 295.91) (xy 135.89 298.45)
 		)
 		(stroke
@@ -14671,7 +14605,7 @@
 	)
 	(wire
 		(pts
-			(xy 370.84 281.94) (xy 378.46 281.94)
+			(xy 327.66 287.02) (xy 335.28 287.02)
 		)
 		(stroke
 			(width 0)
@@ -15611,7 +15545,7 @@
 	)
 	(global_label "CONSOLE_TXD"
 		(shape input)
-		(at 243.84 281.94 0)
+		(at 279.4 287.02 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -15621,7 +15555,7 @@
 		)
 		(uuid "0b41cd4f-ba02-4312-a503-80b160e4ed59")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 259.888 281.94 0)
+			(at 295.448 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15983,28 +15917,6 @@
 			)
 		)
 	)
-	(global_label "BLE_WKP_SLP"
-		(shape input)
-		(at 294.64 342.9 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "33bdf6bc-ed05-4d0b-b8db-bd307c20e60c")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 278.7735 342.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "USB_TXD"
 		(shape input)
 		(at 250.19 356.87 0)
@@ -16051,7 +15963,7 @@
 	)
 	(global_label "BLE_TXD"
 		(shape input)
-		(at 396.24 294.64 0)
+		(at 353.06 299.72 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -16061,7 +15973,7 @@
 		)
 		(uuid "3e7892a9-66d8-4606-b390-4647ee2c30ee")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 407.087 294.64 0)
+			(at 363.907 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16181,28 +16093,6 @@
 			)
 		)
 	)
-	(global_label "MUX_BLE_USB"
-		(shape input)
-		(at 295.91 294.64 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "484a262a-5db2-4b11-86e5-036698014dd2")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 279.7411 294.64 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "LCD_CS"
 		(shape input)
 		(at 377.19 101.6 0)
@@ -16227,7 +16117,7 @@
 	)
 	(global_label "USB_RXD"
 		(shape input)
-		(at 218.44 281.94 180)
+		(at 254 287.02 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -16237,7 +16127,7 @@
 		)
 		(uuid "4902ed43-bb49-4be6-a51d-fd98424f7225")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 206.9277 281.94 0)
+			(at 242.4877 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16337,7 +16227,7 @@
 	)
 	(global_label "USB_TXD"
 		(shape input)
-		(at 218.44 294.64 180)
+		(at 254 299.72 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -16347,7 +16237,7 @@
 		)
 		(uuid "52a0d7b3-4ab9-4c8b-9ee4-b176b9692638")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 207.2301 294.64 0)
+			(at 242.7901 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16480,28 +16370,6 @@
 		(uuid "5fd8dc66-0192-400f-a8d0-7cb32505ef40")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 139.1776 156.21 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "BLE_WKP_SLP"
-		(shape input)
-		(at 321.31 294.64 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "6141d6d3-e008-4b27-8dbb-cae57dea13e1")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 337.1765 294.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16975,7 +16843,7 @@
 	)
 	(global_label "CONSOLE_RXD"
 		(shape input)
-		(at 243.84 294.64 0)
+		(at 279.4 299.72 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -16985,7 +16853,7 @@
 		)
 		(uuid "925a176b-f359-40c9-ae69-88f358ec2b32")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 260.1904 294.64 0)
+			(at 295.7504 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17195,7 +17063,7 @@
 	)
 	(global_label "CONSOLE_RXD"
 		(shape input)
-		(at 370.84 294.64 180)
+		(at 327.66 299.72 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -17205,7 +17073,7 @@
 		)
 		(uuid "a60fd88a-d54f-476d-bfdc-f2b3b5fc63ce")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 354.4896 294.64 0)
+			(at 311.3096 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17745,7 +17613,7 @@
 	)
 	(global_label "BLE_RXD"
 		(shape input)
-		(at 396.24 281.94 0)
+		(at 353.06 287.02 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -17755,7 +17623,7 @@
 		)
 		(uuid "ea1894ac-314a-4d4c-8660-7dbfeec84cda")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 407.3894 281.94 0)
+			(at 364.2094 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17789,7 +17657,7 @@
 	)
 	(global_label "CONSOLE_TXD"
 		(shape input)
-		(at 370.84 281.94 180)
+		(at 327.66 287.02 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -17799,7 +17667,7 @@
 		)
 		(uuid "f104c167-4eba-494b-a96e-1fd043811c42")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 354.792 281.94 0)
+			(at 311.612 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18903,7 +18771,7 @@
 	)
 	(symbol
 		(lib_id "Spoke:R")
-		(at 236.22 281.94 0)
+		(at 271.78 287.02 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -18913,7 +18781,7 @@
 		(fields_autoplaced yes)
 		(uuid "1ab86d11-88b0-47a9-b813-a7bee89d47be")
 		(property "Reference" "R18"
-			(at 231.14 276.7035 0)
+			(at 266.7 281.7835 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18921,7 +18789,7 @@
 			)
 		)
 		(property "Value" "0R"
-			(at 231.14 279.4786 0)
+			(at 266.7 284.5586 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18929,7 +18797,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:R0603"
-			(at 233.68 269.24 0)
+			(at 269.24 274.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18938,7 +18806,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 233.68 269.24 0)
+			(at 269.24 274.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18947,7 +18815,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 236.22 281.94 0)
+			(at 271.78 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -28338,7 +28206,7 @@
 	)
 	(symbol
 		(lib_id "Spoke:R")
-		(at 236.22 294.64 0)
+		(at 271.78 299.72 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -28348,7 +28216,7 @@
 		(fields_autoplaced yes)
 		(uuid "9847694f-9ce8-4b10-bd0d-a8146f17f4dd")
 		(property "Reference" "R19"
-			(at 231.14 289.4035 0)
+			(at 266.7 294.4835 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -28356,7 +28224,7 @@
 			)
 		)
 		(property "Value" "0R"
-			(at 231.14 292.1786 0)
+			(at 266.7 297.2586 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -28364,7 +28232,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:R0603"
-			(at 233.68 281.94 0)
+			(at 269.24 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -28373,7 +28241,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 233.68 281.94 0)
+			(at 269.24 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -28382,7 +28250,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 236.22 294.64 0)
+			(at 271.78 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -29307,7 +29175,7 @@
 	)
 	(symbol
 		(lib_id "Spoke:R")
-		(at 378.46 281.94 0)
+		(at 335.28 287.02 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -29316,7 +29184,7 @@
 		(fields_autoplaced yes)
 		(uuid "a88f3bc1-def0-4c24-9e96-58f27b477303")
 		(property "Reference" "R33"
-			(at 383.54 276.7035 0)
+			(at 340.36 281.7835 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -29324,7 +29192,7 @@
 			)
 		)
 		(property "Value" "0R"
-			(at 383.54 279.4786 0)
+			(at 340.36 284.5586 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -29332,7 +29200,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:R0603"
-			(at 381 269.24 0)
+			(at 337.82 274.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -29341,7 +29209,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 381 269.24 0)
+			(at 337.82 274.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -29350,7 +29218,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 378.46 281.94 0)
+			(at 335.28 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -31038,74 +30906,6 @@
 			(project "Spoke"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "Q6")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Spoke:R")
-		(at 313.69 294.64 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp yes)
-		(fields_autoplaced yes)
-		(uuid "c768cdcd-7131-46db-9110-d58fc94d1d96")
-		(property "Reference" "R24"
-			(at 308.61 289.4035 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "0R"
-			(at 308.61 292.1786 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Spoke:R0603"
-			(at 311.15 281.94 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 311.15 281.94 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 313.69 294.64 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "3be0d894-ca83-4cf7-9fe4-77836d9becdf")
-		)
-		(pin "2"
-			(uuid "58b59623-21fb-424d-982d-b3248f7968b2")
-		)
-		(instances
-			(project "Spoke"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "R24")
 					(unit 1)
 				)
 			)
@@ -34865,8 +34665,8 @@
 	)
 	(symbol
 		(lib_id "Spoke:Pad-Round")
-		(at 311.15 332.74 270)
-		(mirror x)
+		(at 331.47 342.9 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -34874,7 +34674,7 @@
 		(dnp no)
 		(uuid "f34b7a2d-a869-4d24-868d-8f985514dd61")
 		(property "Reference" "TP6"
-			(at 311.15 325.12 0)
+			(at 323.85 342.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -34882,7 +34682,7 @@
 			)
 		)
 		(property "Value" "Pad-Round"
-			(at 308.61 327.66 0)
+			(at 326.39 345.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -34891,7 +34691,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:Pad_round"
-			(at 311.15 332.74 0)
+			(at 331.47 342.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -34900,7 +34700,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 311.15 332.74 0)
+			(at 331.47 342.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -34909,7 +34709,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 311.15 332.74 0)
+			(at 331.47 342.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -35401,7 +35201,7 @@
 	)
 	(symbol
 		(lib_id "Spoke:R")
-		(at 378.46 294.64 0)
+		(at 335.28 299.72 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -35410,7 +35210,7 @@
 		(fields_autoplaced yes)
 		(uuid "f9969395-a2ee-48d9-9421-fabef25c4909")
 		(property "Reference" "R34"
-			(at 383.54 289.4035 0)
+			(at 340.36 294.4835 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -35418,7 +35218,7 @@
 			)
 		)
 		(property "Value" "0R"
-			(at 383.54 292.1786 0)
+			(at 340.36 297.2586 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -35426,7 +35226,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:R0603"
-			(at 381 281.94 0)
+			(at 337.82 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -35435,7 +35235,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 381 281.94 0)
+			(at 337.82 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -35444,7 +35244,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 378.46 294.64 0)
+			(at 335.28 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
