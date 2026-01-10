@@ -1,0 +1,124 @@
+(footprint "XH414HG-IV01E"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0 -3.9 0)
+		(layer "F.SilkS")
+		(uuid "a8f15f81-c64f-4a6a-8184-eabd4f5daa6f")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.2)
+			)
+		)
+	)
+	(property "Value" "XH414HG-IV01E"
+		(at 0 4 0)
+		(layer "F.Fab")
+		(uuid "4821a0f1-0757-49b5-bc91-a0ccf3e9f548")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.2)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "95f94963-70cd-4846-ab9a-cdaccbf7bde6")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "cc1c2ef2-66b5-484e-bf56-48065db3e315")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -3 -3)
+		(end 3 3)
+		(stroke
+			(width 0.2)
+			(type default)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "070ffa01-ff84-4275-9d08-d6efddbef096")
+	)
+	(fp_poly
+		(pts
+			(xy 3.2 -1.5) (xy 3.73 -1.904837) (xy 3.73 -1.104837)
+		)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "4ec97102-32b8-42f8-a8df-83e088c5ef67")
+	)
+	(fp_rect
+		(start -3.05 -3.05)
+		(end 3.05 3.05)
+		(stroke
+			(width 0.2)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "6bcd4ba0-5015-4cd8-ab33-66d292a887ce")
+	)
+	(pad "1" smd custom
+		(at 2.2 -2.2)
+		(size 0.85 0.85)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(options
+			(clearance outline)
+			(anchor rect)
+		)
+		(primitives
+			(gr_poly
+				(pts
+					(xy -1.9 -0.5) (xy 0.5 -0.5) (xy 0.5 1.9)
+				)
+				(width 0)
+				(fill yes)
+			)
+		)
+		(uuid "065bbab7-8db3-4432-af94-d82301097bd8")
+	)
+	(pad "2" smd rect
+		(at 0.65 1.85)
+		(size 4.1 1.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "d98d557d-4f4f-49b3-9745-359bb04d0ef7")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/packages3d/XH414H-IV01E.STEP"
+		(offset
+			(xyz 0 0 0.3)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -0 -0 -90)
+		)
+	)
+)

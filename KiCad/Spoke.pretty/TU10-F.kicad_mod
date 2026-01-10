@@ -206,15 +206,15 @@
 		(uuid "54fb0b19-4912-47f8-a26c-6bb537aff49e")
 	)
 	(embedded_fonts no)
-	(model "${KIPRJMOD}/packages3d/GN801.step"
+	(model "${KIPRJMOD}/packages3d/TU10-F.step"
 		(offset
-			(xyz -15 -15 0)
+			(xyz 0 -0.5 0)
 		)
 		(scale
 			(xyz 1 1 1)
 		)
 		(rotate
-			(xyz 0 0 0)
+			(xyz -0 -0 -0)
 		)
 	)
 )
