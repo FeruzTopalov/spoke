@@ -1,4 +1,4 @@
-(footprint "GN-801"
+(footprint "G10A-F30"
 	(version 20241229)
 	(generator "pcbnew")
 	(generator_version "9.0")
@@ -14,7 +14,7 @@
 			)
 		)
 	)
-	(property "Value" "GN-801"
+	(property "Value" "G10A-F30"
 		(at 0 17.5 0)
 		(layer "F.Fab")
 		(uuid "a85ba885-21f0-4ec6-a484-69d88e0e6f44")
@@ -299,7 +299,7 @@
 		(uuid "54fb0b19-4912-47f8-a26c-6bb537aff49e")
 	)
 	(embedded_fonts no)
-	(model "${KIPRJMOD}/packages3d/GN801.step"
+	(model "${KIPRJMOD}/packages3d/G10A-F30.step"
 		(offset
 			(xyz -15 -15 0)
 		)
