@@ -8961,7 +8961,7 @@
 	)
 	(text_box "Populate if BLE is only used\n(no USB, no MUX)"
 		(exclude_from_sim no)
-		(at 323.85 270.51 0)
+		(at 368.3 270.51 0)
 		(size 31.75 7.62)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
@@ -9021,7 +9021,7 @@
 	)
 	(text_box "Populate if USB is only used\n(no BLE, no MUX)"
 		(exclude_from_sim no)
-		(at 251.46 270.51 0)
+		(at 215.9 270.51 0)
 		(size 31.75 7.62)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
@@ -9838,7 +9838,7 @@
 		(uuid "697a4f33-49bd-4346-a4fe-1c97d3c7ceac")
 	)
 	(no_connect
-		(at 431.8 138.43)
+		(at 426.72 138.43)
 		(uuid "6c662925-9f4c-4f66-a3f4-619f896d30bb")
 	)
 	(no_connect
@@ -10625,7 +10625,7 @@
 	)
 	(wire
 		(pts
-			(xy 261.62 299.72) (xy 254 299.72)
+			(xy 226.06 299.72) (xy 218.44 299.72)
 		)
 		(stroke
 			(width 0)
@@ -10885,7 +10885,7 @@
 	)
 	(wire
 		(pts
-			(xy 345.44 287.02) (xy 353.06 287.02)
+			(xy 389.89 287.02) (xy 397.51 287.02)
 		)
 		(stroke
 			(width 0)
@@ -11755,7 +11755,7 @@
 	)
 	(wire
 		(pts
-			(xy 327.66 299.72) (xy 335.28 299.72)
+			(xy 372.11 299.72) (xy 379.73 299.72)
 		)
 		(stroke
 			(width 0)
@@ -11915,7 +11915,7 @@
 	)
 	(wire
 		(pts
-			(xy 279.4 287.02) (xy 271.78 287.02)
+			(xy 243.84 287.02) (xy 236.22 287.02)
 		)
 		(stroke
 			(width 0)
@@ -12042,16 +12042,6 @@
 			(type default)
 		)
 		(uuid "59931c18-1ab6-4ab5-b8cc-8c01b52b6f89")
-	)
-	(wire
-		(pts
-			(xy 426.72 168.91) (xy 429.26 168.91)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "59a87da7-d22a-45e0-b2b9-e70cba88c5d6")
 	)
 	(wire
 		(pts
@@ -13745,7 +13735,7 @@
 	)
 	(wire
 		(pts
-			(xy 345.44 299.72) (xy 353.06 299.72)
+			(xy 389.89 299.72) (xy 397.51 299.72)
 		)
 		(stroke
 			(width 0)
@@ -14145,7 +14135,7 @@
 	)
 	(wire
 		(pts
-			(xy 279.4 299.72) (xy 271.78 299.72)
+			(xy 243.84 299.72) (xy 236.22 299.72)
 		)
 		(stroke
 			(width 0)
@@ -14465,7 +14455,7 @@
 	)
 	(wire
 		(pts
-			(xy 261.62 287.02) (xy 254 287.02)
+			(xy 226.06 287.02) (xy 218.44 287.02)
 		)
 		(stroke
 			(width 0)
@@ -14605,7 +14595,7 @@
 	)
 	(wire
 		(pts
-			(xy 327.66 287.02) (xy 335.28 287.02)
+			(xy 372.11 287.02) (xy 379.73 287.02)
 		)
 		(stroke
 			(width 0)
@@ -14985,7 +14975,7 @@
 	)
 	(wire
 		(pts
-			(xy 426.72 135.89) (xy 426.72 138.43)
+			(xy 431.8 135.89) (xy 431.8 138.43)
 		)
 		(stroke
 			(width 0)
@@ -15545,7 +15535,7 @@
 	)
 	(global_label "CONSOLE_TXD"
 		(shape input)
-		(at 279.4 287.02 0)
+		(at 243.84 287.02 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -15555,7 +15545,7 @@
 		)
 		(uuid "0b41cd4f-ba02-4312-a503-80b160e4ed59")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 295.448 287.02 0)
+			(at 259.888 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15963,7 +15953,7 @@
 	)
 	(global_label "BLE_TXD"
 		(shape input)
-		(at 353.06 299.72 0)
+		(at 397.51 299.72 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -15973,7 +15963,7 @@
 		)
 		(uuid "3e7892a9-66d8-4606-b390-4647ee2c30ee")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 363.907 299.72 0)
+			(at 408.357 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16117,7 +16107,7 @@
 	)
 	(global_label "USB_RXD"
 		(shape input)
-		(at 254 287.02 180)
+		(at 218.44 287.02 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -16127,7 +16117,7 @@
 		)
 		(uuid "4902ed43-bb49-4be6-a51d-fd98424f7225")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 242.4877 287.02 0)
+			(at 206.9277 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16227,7 +16217,7 @@
 	)
 	(global_label "USB_TXD"
 		(shape input)
-		(at 254 299.72 180)
+		(at 218.44 299.72 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -16237,7 +16227,7 @@
 		)
 		(uuid "52a0d7b3-4ab9-4c8b-9ee4-b176b9692638")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 242.7901 299.72 0)
+			(at 207.2301 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16843,7 +16833,7 @@
 	)
 	(global_label "CONSOLE_RXD"
 		(shape input)
-		(at 279.4 299.72 0)
+		(at 243.84 299.72 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -16853,7 +16843,7 @@
 		)
 		(uuid "925a176b-f359-40c9-ae69-88f358ec2b32")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 295.7504 299.72 0)
+			(at 260.1904 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17063,7 +17053,7 @@
 	)
 	(global_label "CONSOLE_RXD"
 		(shape input)
-		(at 327.66 299.72 180)
+		(at 372.11 299.72 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -17073,7 +17063,7 @@
 		)
 		(uuid "a60fd88a-d54f-476d-bfdc-f2b3b5fc63ce")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 311.3096 299.72 0)
+			(at 355.7596 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17613,7 +17603,7 @@
 	)
 	(global_label "BLE_RXD"
 		(shape input)
-		(at 353.06 287.02 0)
+		(at 397.51 287.02 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -17623,7 +17613,7 @@
 		)
 		(uuid "ea1894ac-314a-4d4c-8660-7dbfeec84cda")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 364.2094 287.02 0)
+			(at 408.6594 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17657,7 +17647,7 @@
 	)
 	(global_label "CONSOLE_TXD"
 		(shape input)
-		(at 327.66 287.02 180)
+		(at 372.11 287.02 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -17667,7 +17657,7 @@
 		)
 		(uuid "f104c167-4eba-494b-a96e-1fd043811c42")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 311.612 287.02 0)
+			(at 356.062 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18771,7 +18761,7 @@
 	)
 	(symbol
 		(lib_id "Spoke:R")
-		(at 271.78 287.02 0)
+		(at 236.22 287.02 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -18781,7 +18771,7 @@
 		(fields_autoplaced yes)
 		(uuid "1ab86d11-88b0-47a9-b813-a7bee89d47be")
 		(property "Reference" "R18"
-			(at 266.7 281.7835 0)
+			(at 231.14 281.7835 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18789,7 +18779,7 @@
 			)
 		)
 		(property "Value" "0R"
-			(at 266.7 284.5586 0)
+			(at 231.14 284.5586 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18797,7 +18787,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:R0603"
-			(at 269.24 274.32 0)
+			(at 233.68 274.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18806,7 +18796,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 269.24 274.32 0)
+			(at 233.68 274.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18815,7 +18805,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 271.78 287.02 0)
+			(at 236.22 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25797,7 +25787,7 @@
 	)
 	(symbol
 		(lib_id "power:+3V3")
-		(at 426.72 135.89 0)
+		(at 431.8 135.89 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -25805,7 +25795,7 @@
 		(dnp no)
 		(uuid "7cae4872-bd06-4830-b216-2f7fc250c84c")
 		(property "Reference" "#PWR0112"
-			(at 426.72 139.7 0)
+			(at 431.8 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25814,7 +25804,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 426.72 132.08 0)
+			(at 431.8 132.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25822,7 +25812,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 426.72 135.89 0)
+			(at 431.8 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25831,7 +25821,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 426.72 135.89 0)
+			(at 431.8 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25840,7 +25830,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 426.72 135.89 0)
+			(at 431.8 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27810,72 +27800,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Spoke:Pad-Round")
-		(at 426.72 168.91 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "938c8084-6b8f-48c5-b796-b2e4f958ff24")
-		(property "Reference" "TP19"
-			(at 419.1 168.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "Pad-Round"
-			(at 421.64 171.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Footprint" "Spoke:Pad_round"
-			(at 426.72 168.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 426.72 168.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 426.72 168.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "fbd859a6-8651-4f43-ad28-536e65aa8465")
-		)
-		(instances
-			(project "Spoke"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "TP19")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 505.46 73.66 0)
 		(unit 1)
@@ -28206,7 +28130,7 @@
 	)
 	(symbol
 		(lib_id "Spoke:R")
-		(at 271.78 299.72 0)
+		(at 236.22 299.72 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -28216,7 +28140,7 @@
 		(fields_autoplaced yes)
 		(uuid "9847694f-9ce8-4b10-bd0d-a8146f17f4dd")
 		(property "Reference" "R19"
-			(at 266.7 294.4835 0)
+			(at 231.14 294.4835 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -28224,7 +28148,7 @@
 			)
 		)
 		(property "Value" "0R"
-			(at 266.7 297.2586 0)
+			(at 231.14 297.2586 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -28232,7 +28156,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:R0603"
-			(at 269.24 287.02 0)
+			(at 233.68 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -28241,7 +28165,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 269.24 287.02 0)
+			(at 233.68 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -28250,7 +28174,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 271.78 299.72 0)
+			(at 236.22 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -29175,7 +29099,7 @@
 	)
 	(symbol
 		(lib_id "Spoke:R")
-		(at 335.28 287.02 0)
+		(at 379.73 287.02 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -29184,7 +29108,7 @@
 		(fields_autoplaced yes)
 		(uuid "a88f3bc1-def0-4c24-9e96-58f27b477303")
 		(property "Reference" "R33"
-			(at 340.36 281.7835 0)
+			(at 384.81 281.7835 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -29192,7 +29116,7 @@
 			)
 		)
 		(property "Value" "0R"
-			(at 340.36 284.5586 0)
+			(at 384.81 284.5586 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -29200,7 +29124,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:R0603"
-			(at 337.82 274.32 0)
+			(at 382.27 274.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -29209,7 +29133,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 337.82 274.32 0)
+			(at 382.27 274.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -29218,7 +29142,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 335.28 287.02 0)
+			(at 379.73 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -35201,7 +35125,7 @@
 	)
 	(symbol
 		(lib_id "Spoke:R")
-		(at 335.28 299.72 0)
+		(at 379.73 299.72 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -35210,7 +35134,7 @@
 		(fields_autoplaced yes)
 		(uuid "f9969395-a2ee-48d9-9421-fabef25c4909")
 		(property "Reference" "R34"
-			(at 340.36 294.4835 0)
+			(at 384.81 294.4835 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -35218,7 +35142,7 @@
 			)
 		)
 		(property "Value" "0R"
-			(at 340.36 297.2586 0)
+			(at 384.81 297.2586 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -35226,7 +35150,7 @@
 			)
 		)
 		(property "Footprint" "Spoke:R0603"
-			(at 337.82 287.02 0)
+			(at 382.27 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -35235,7 +35159,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 337.82 287.02 0)
+			(at 382.27 287.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -35244,7 +35168,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 335.28 299.72 0)
+			(at 379.73 299.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)

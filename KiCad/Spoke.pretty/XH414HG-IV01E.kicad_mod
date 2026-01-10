@@ -4,7 +4,7 @@
 	(generator_version "9.0")
 	(layer "F.Cu")
 	(property "Reference" "REF**"
-		(at 0 -3.9 0)
+		(at 0 -4.3 0)
 		(layer "F.SilkS")
 		(uuid "a8f15f81-c64f-4a6a-8184-eabd4f5daa6f")
 		(effects
@@ -63,7 +63,7 @@
 	)
 	(fp_poly
 		(pts
-			(xy 3.2 -1.5) (xy 3.73 -1.904837) (xy 3.73 -1.104837)
+			(xy 1.569837 -3.239837) (xy 1.165 -3.769837) (xy 1.965 -3.769837)
 		)
 		(stroke
 			(width 0.12)
