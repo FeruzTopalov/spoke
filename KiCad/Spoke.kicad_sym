@@ -6735,17 +6735,6 @@
 					(type background)
 				)
 			)
-			(rectangle
-				(start 10.16 -10.16)
-				(end 10.16 -10.16)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
 		)
 		(symbol "TP4056_1_1"
 			(pin unspecified line
