@@ -8458,10 +8458,10 @@
 		)
 		(uuid "5f07d16d-a909-4b88-8872-83599d46e555")
 	)
-	(text_box "Passive Buzzer\nPiezo: Populate Resistor\nMagnetic: Populate Diode"
+	(text_box "Passive Buzzer\n\nPiezo: Populate Resistor\nMagnetic: Populate Diode"
 		(exclude_from_sim no)
 		(at 276.86 220.98 0)
-		(size 26.67 7.62)
+		(size 26.67 10.16)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
 			(width 0)
@@ -8478,7 +8478,7 @@
 		)
 		(uuid "0dd59a30-95e6-46f4-b2dd-38bc831aa1c3")
 	)
-	(text_box "GPS CONFIG MODE\n1) Full Erase MCU\n2) Pull MUX S1 high\n3) Access GPS TX line at CONSOLE_RXD (see pin header)\n3) Access GPS RX line at CONSOLE_TXD (see pin header)\n4) Optionally, jumper wire to USB TX/RX pin header to access via USB-UART"
+	(text_box "GPS CONFIG MODE\n1) Full Erase MCU\n2) Pull MUX S1 high\n3) Access GPS TX line at CONSOLE_RXD (see pin header)\n3) Access GPS RX line at CONSOLE_TXD (see pin header)\n4) Optionally, jumper wire them to USB TX/RX pin header to access via USB-UART"
 		(exclude_from_sim no)
 		(at 166.37 379.73 0)
 		(size 58.42 15.24)
@@ -8517,6 +8517,26 @@
 			(justify left top)
 		)
 		(uuid "55d91f55-2d1f-40a6-8dcf-7e097f8c5608")
+	)
+	(text_box "R_PROG   Charging Current \n[kOhm]   [mA]\n\n10        130\n5         250\n4         300\n3         400\n2         580\n1.66      690\n1.5       780\n1.33      900\n1.2       1000"
+		(exclude_from_sim no)
+		(at 35.56 353.06 0)
+		(size 29.21 26.67)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "5d60f2df-dd11-48f6-8a99-44b6eb503b25")
 	)
 	(text_box "MUX_BLE_USB\nLow - BLE\nHigh - USB (default)"
 		(exclude_from_sim no)
@@ -8578,10 +8598,10 @@
 		)
 		(uuid "9a71ba96-d0d8-4641-b6f6-04b79adbe6d4")
 	)
-	(text_box "Populate if backlight LED pins are directly available"
+	(text_box "Populate this driver if backlight LED pins (Anode and Cathode) are directly available"
 		(exclude_from_sim no)
-		(at 414.02 49.53 0)
-		(size 22.86 8.89)
+		(at 412.75 48.26 0)
+		(size 25.4 10.16)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
 			(width 0)
