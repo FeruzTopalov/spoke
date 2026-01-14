@@ -92,7 +92,7 @@
 	)
 	(fp_poly
 		(pts
-			(xy -13.5 -11.1) (xy -13.095163 -10.57) (xy -13.895163 -10.57)
+			(xy -13.5 -15.3) (xy -13.904837 -15.83) (xy -13.104837 -15.83)
 		)
 		(stroke
 			(width 0.12)
@@ -114,78 +114,78 @@
 		(uuid "2d7a97eb-853b-42fb-8e04-563b8cc5e5dc")
 	)
 	(fp_text user "GND"
-		(at -13.5 -10 270)
+		(at -13.5 -11.4 270)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "13abe7ef-1a0a-461a-9330-2facbc487c0b")
 		(effects
 			(font
-				(size 1.2 1)
+				(size 1 0.7)
 				(thickness 0.15)
 			)
 			(justify left)
 		)
 	)
 	(fp_text user "EN"
-		(at -1 -10 270)
+		(at -1.1 -11.4 270)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "3f311ccc-5d63-424b-8f5c-425f96d29c97")
 		(effects
 			(font
-				(size 1.2 1)
+				(size 1 0.7)
 				(thickness 0.15)
 			)
 			(justify left)
 		)
 	)
 	(fp_text user "PPS"
-		(at -3.34 -10 270)
+		(at -3.6 -11.4 270)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "87365159-d50c-4f3f-a44a-7b86313a876d")
 		(effects
 			(font
-				(size 1.2 1)
+				(size 1 0.7)
 				(thickness 0.15)
 			)
 			(justify left)
 		)
 	)
 	(fp_text user "NMEA OUT"
-		(at -8.42 -10 270)
+		(at -8.5 -11.4 270)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "9d166d9e-4a4f-461b-9a55-1d739fb516b2")
 		(effects
 			(font
-				(size 1.2 1)
+				(size 1 0.7)
 				(thickness 0.15)
 			)
 			(justify left)
 		)
 	)
 	(fp_text user "VCC"
-		(at -11 -10 270)
+		(at -11 -11.4 270)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "a897fd89-ceb9-43d1-8701-7be842395482")
 		(effects
 			(font
-				(size 1.2 1)
+				(size 1 0.7)
 				(thickness 0.15)
 			)
 			(justify left)
 		)
 	)
 	(fp_text user "RXD"
-		(at -5.88 -10 270)
+		(at -6 -11.4 270)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "f10a8216-7c49-43d3-a0c6-acddd7e9dd13")
 		(effects
 			(font
-				(size 1.2 1)
+				(size 1 0.7)
 				(thickness 0.15)
 			)
 			(justify left)
