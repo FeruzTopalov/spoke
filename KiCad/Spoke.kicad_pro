@@ -41,7 +41,7 @@
           "height": 2.0,
           "width": 2.0
         },
-        "silk_line_width": 0.153,
+        "silk_line_width": 0.2,
         "silk_text_italic": false,
         "silk_text_size_h": 1.0,
         "silk_text_size_v": 1.0,
@@ -61,56 +61,44 @@
       ],
       "drc_exclusions": [
         [
-          "courtyards_overlap|121415000|56927316|7fb27039-1c75-4b9a-8f0c-2bade9600d15|f5ccb259-9269-4bc1-988d-08a502fb10ce",
+          "hole_clearance|102550000|143045000|1e1add71-4131-49bd-b538-2c7c7cbb1b65|c469c320-4645-4a0a-93aa-673e0e0a90c6",
           ""
         ],
         [
-          "courtyards_overlap|88655000|110805000|51867e2e-9f28-4b70-b849-878235eb3dd1|69a9114b-84ea-4637-8d5b-81548e5f54db",
+          "hole_clearance|103050000|143045000|1e1add71-4131-49bd-b538-2c7c7cbb1b65|8d5106a0-65c8-4e9f-99c3-70e7817a54bc",
           ""
         ],
         [
-          "hole_clearance|102550000|143045000|0358f1cd-b0ca-4f47-88aa-aa07632a6c4d|c469c320-4645-4a0a-93aa-673e0e0a90c6",
-          "Cannot fix"
-        ],
-        [
-          "hole_clearance|103050000|143045000|0358f1cd-b0ca-4f47-88aa-aa07632a6c4d|8d5106a0-65c8-4e9f-99c3-70e7817a54bc",
-          "Cannot fix"
-        ],
-        [
-          "hole_clearance|96950000|143045000|d26d5f16-e129-4d42-8797-9539abb9748f|6fed84db-4a1c-4389-92e4-a73c41b1c34f",
-          "Cannot fix"
-        ],
-        [
-          "hole_clearance|97450000|143045000|d26d5f16-e129-4d42-8797-9539abb9748f|21d27619-e45d-470e-9f4b-2a0c1ffd46b4",
-          "Cannot fix"
-        ],
-        [
-          "silk_over_copper|105857999|142330000|b011bd39-b14a-4246-b297-5af74d2bd448|00000000-0000-0000-0000-000000000000",
+          "hole_clearance|96950000|143045000|82a74c96-e45d-416a-b87d-fcea46915aa5|6fed84db-4a1c-4389-92e4-a73c41b1c34f",
           ""
         ],
         [
-          "silk_over_copper|94142000|143402082|297a2845-7244-4475-8c43-94cd6470cbb5|00000000-0000-0000-0000-000000000000",
+          "hole_clearance|97450000|143045000|82a74c96-e45d-416a-b87d-fcea46915aa5|21d27619-e45d-470e-9f4b-2a0c1ffd46b4",
           ""
         ],
         [
-          "unconnected_items|103980000|97750000|F.Cu|4|2aae5d7a-b727-45d2-8d81-b9ce83663efe|29bc0c76-a1a3-4ca2-a6c9-df8370c471e3",
-          "Internally connected"
+          "unconnected_items|103980000|97750000|F.Cu|4|2aae5d7a-b727-45d2-8d81-b9ce83663efe|6d1540e0-1c82-44b3-b190-84c1566583a3",
+          ""
         ],
         [
           "unconnected_items|108020000|136750000|F.Cu|4|85155e18-ec2a-487d-9ca7-65f6beca6da0|5cc71c70-69d9-4eac-8710-d98299be2e9a",
-          "Internally connected"
+          ""
         ],
         [
-          "unconnected_items|108020000|141250000|F.Cu|4|d6131748-e17c-447e-9712-1d130e90d0e1|7e8a566f-62d0-4cad-929e-a118ae20d2f7",
-          "Internally connected"
+          "unconnected_items|108020000|141250000|F.Cu|4|626884fd-49e9-4cff-b8a2-1ab875befa32|7e8a566f-62d0-4cad-929e-a118ae20d2f7",
+          ""
         ],
         [
-          "unconnected_items|116980000|97750000|F.Cu|4|eaf634df-0d5f-4c57-b487-8a4706f51a2e|1971a4ff-74c1-4ed9-84f4-5cfeee29eb5e",
-          "Internally connected"
+          "unconnected_items|109020000|97750000|F.Cu|4|825744ae-642a-447c-aaf2-2ff3fb0e8e25|eaf634df-0d5f-4c57-b487-8a4706f51a2e",
+          ""
         ],
         [
-          "unconnected_items|90980000|97750000|F.Cu|4|7ba3a697-3195-4eff-9f86-679b180eb406|506dc5b1-58db-43e5-a17b-2eebc3b456a2",
-          "Internally connected"
+          "unconnected_items|119250000|86980000|F.Cu|4|6b4c742d-5574-47ae-abfc-7439dd8410ed|9ad8d165-30d8-43ac-bdfa-37935c0bd6c8",
+          ""
+        ],
+        [
+          "unconnected_items|90980000|97750000|F.Cu|4|4dbf9a07-64ea-42a4-9a0f-3a801c60b1a9|506dc5b1-58db-43e5-a17b-2eebc3b456a2",
+          ""
         ]
       ],
       "meta": {
@@ -122,7 +110,7 @@
         "connection_width": "warning",
         "copper_edge_clearance": "error",
         "copper_sliver": "warning",
-        "courtyards_overlap": "error",
+        "courtyards_overlap": "warning",
         "creepage": "error",
         "diff_pair_gap_out_of_range": "error",
         "diff_pair_uncoupled_length_too_long": "error",
@@ -507,7 +495,7 @@
       "duplicate_sheet_names": "error",
       "endpoint_off_grid": "warning",
       "extra_units": "error",
-      "footprint_filter": "ignore",
+      "footprint_filter": "error",
       "footprint_link_issues": "warning",
       "four_way_junction": "warning",
       "global_label_dangling": "warning",
@@ -783,7 +771,7 @@
       "meta": {
         "version": 0
       },
-      "model_mode": 0,
+      "model_mode": 4,
       "workbook_filename": ""
     },
     "page_layout_descr_file": "",

@@ -80,6 +80,18 @@
 		(layer "F.SilkS")
 		(uuid "11338925-1d78-44eb-8945-bafb4bea6979")
 	)
+	(fp_poly
+		(pts
+			(xy -2.2 -1) (xy -2.73 -0.595163) (xy -2.73 -1.395163)
+		)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "20aec269-39d3-44e0-89ae-5b78863eab73")
+	)
 	(fp_line
 		(start -2.1 -1.85)
 		(end 2.1 -1.85)

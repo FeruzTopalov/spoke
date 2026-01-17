@@ -1,9 +1,32 @@
+# Release HW Rev.2.1 17-Jan-2026
+Major improvements keeping all HW revisions support
+
+
+Implemented:
+- Fixed power stall issue by swapping PWR_HOLD and RF_TXEN pins at MCU
+- Fixed BLE UART module stuck in configuration mode
+- Reduced Buzzer drive type from differential to single-ended
+- Supported both: passive piezo and passive magnetic buzzers
+- Added PWM-mode LCD backlight control
+- Added separate ALARM button
+- Added TU10-F QUESCAN SMD GPS module as an alternative
+- Connected GPS receiver to MUX channel-4 for debug access
+- Updated SMA footprint to fit both: 6.35 and 9.52 mm width connectors
+- LEDs moved to the right to align with mounting hole
+- Commented the schematic on components optional placement
+- Other minor fixes
+
+
+Known issues & limitations:
+- No known issues
+
+
 # Release FW Rev.5.0 (for HW Rev.1.x, Rev. 2.0, Rev 2.1) 06-Jan-2026 
 All HW versions support, 868 MHz band with 1% duty cycle compliance, new packet format and lots of fixes and improvements
 
 
 Implemented:
-- Support of the Spoke HW Rev.2.x
+- Added support of the Spoke HW Rev.2.x
 - Unified FW for all HW versions
 - FW configuration is done at compile-time through defines in "config.h"
 - PWM-controlled LCD backligh for Spoke HW Rev.2.x
@@ -50,7 +73,8 @@ Implemented:
 
 
 Known issues & limitations:
-- No known issues
+- When no FW flashed (erased MCU) the PWR_HOLD line is held high by an internal JTDI pull-up resistor, so the device power does not switch off when power button gets released; battery disconnect is required
+- BLE UART hangs in configuration mode because of logic levels conflict at MODE pin 
 
 
 # Release FW Rev.4.0 (for HW Rev.1.x) 12-Apr-2025 

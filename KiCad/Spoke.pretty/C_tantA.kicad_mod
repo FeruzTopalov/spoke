@@ -92,7 +92,7 @@
 	)
 	(fp_poly
 		(pts
-			(xy -3.17 0) (xy -3.5 0.24) (xy -3.5 -0.24)
+			(xy -2.9 0) (xy -3.43 0.404837) (xy -3.43 -0.395163)
 		)
 		(stroke
 			(width 0.12)
@@ -100,7 +100,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "707647bd-03fc-4614-97c2-9572ade64996")
+		(uuid "4ec97102-32b8-42f8-a8df-83e088c5ef67")
 	)
 	(fp_rect
 		(start -2.9 -1.4)
