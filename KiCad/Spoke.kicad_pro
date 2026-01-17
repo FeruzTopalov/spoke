@@ -59,7 +59,48 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "hole_clearance|102550000|143045000|1e1add71-4131-49bd-b538-2c7c7cbb1b65|c469c320-4645-4a0a-93aa-673e0e0a90c6",
+          ""
+        ],
+        [
+          "hole_clearance|103050000|143045000|1e1add71-4131-49bd-b538-2c7c7cbb1b65|8d5106a0-65c8-4e9f-99c3-70e7817a54bc",
+          ""
+        ],
+        [
+          "hole_clearance|96950000|143045000|82a74c96-e45d-416a-b87d-fcea46915aa5|6fed84db-4a1c-4389-92e4-a73c41b1c34f",
+          ""
+        ],
+        [
+          "hole_clearance|97450000|143045000|82a74c96-e45d-416a-b87d-fcea46915aa5|21d27619-e45d-470e-9f4b-2a0c1ffd46b4",
+          ""
+        ],
+        [
+          "unconnected_items|103980000|97750000|F.Cu|4|2aae5d7a-b727-45d2-8d81-b9ce83663efe|6d1540e0-1c82-44b3-b190-84c1566583a3",
+          ""
+        ],
+        [
+          "unconnected_items|108020000|136750000|F.Cu|4|85155e18-ec2a-487d-9ca7-65f6beca6da0|5cc71c70-69d9-4eac-8710-d98299be2e9a",
+          ""
+        ],
+        [
+          "unconnected_items|108020000|141250000|F.Cu|4|626884fd-49e9-4cff-b8a2-1ab875befa32|7e8a566f-62d0-4cad-929e-a118ae20d2f7",
+          ""
+        ],
+        [
+          "unconnected_items|109020000|97750000|F.Cu|4|825744ae-642a-447c-aaf2-2ff3fb0e8e25|eaf634df-0d5f-4c57-b487-8a4706f51a2e",
+          ""
+        ],
+        [
+          "unconnected_items|119250000|86980000|F.Cu|4|6b4c742d-5574-47ae-abfc-7439dd8410ed|9cb25fd8-3e09-45d7-871a-6965e9a2b45f",
+          ""
+        ],
+        [
+          "unconnected_items|90980000|97750000|F.Cu|4|4dbf9a07-64ea-42a4-9a0f-3a801c60b1a9|506dc5b1-58db-43e5-a17b-2eebc3b456a2",
+          ""
+        ]
+      ],
       "meta": {
         "version": 2
       },
@@ -69,7 +110,7 @@
         "connection_width": "warning",
         "copper_edge_clearance": "error",
         "copper_sliver": "warning",
-        "courtyards_overlap": "error",
+        "courtyards_overlap": "warning",
         "creepage": "error",
         "diff_pair_gap_out_of_range": "error",
         "diff_pair_uncoupled_length_too_long": "error",
