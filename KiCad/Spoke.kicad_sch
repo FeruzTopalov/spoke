@@ -6,8 +6,8 @@
 	(paper "A2")
 	(title_block
 		(title "LRNS SPOKE")
-		(date "2025-09-20")
-		(rev "2.0")
+		(date "2026-01-17")
+		(rev "2.1")
 		(company "https://github.com/FeruzTopalov")
 	)
 	(lib_symbols
@@ -9179,10 +9179,10 @@
 		)
 		(uuid "ee551f3d-ea16-4fd7-965b-2fa44ac59793")
 	)
-	(text_box "For the 868 MHz band populate a pin-to-pin compatible E22-900M22S module"
+	(text_box "For 433 MHz band populate E22-400M22S\nFor 868/915 MHz band populate E22-900M22S"
 		(exclude_from_sim no)
-		(at 495.3 243.84 0)
-		(size 27.94 10.16)
+		(at 495.3 248.92 0)
+		(size 49.53 6.35)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
 			(width 0)
