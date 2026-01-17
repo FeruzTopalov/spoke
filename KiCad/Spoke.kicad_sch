@@ -8959,10 +8959,10 @@
 		)
 		(uuid "23eebf33-3e3b-4c7d-a1c4-7ae76231b4a8")
 	)
-	(text_box "GPS Module\n\nPopulate one of the suggested modules. \nIf you have a different GPS module with wires, then populate it in place of G10A-F30.\nFor the TU10-F module the additional VBKP circuit with supercapacitor ensures hot/warm start of the module. If not populated - only cold start is possible."
+	(text_box "GPS Module\n\nPopulate one of the suggested modules:\n\n1) Module with wires: populate G10A-F30 or a different GPS module with wires\n\n2) SMD module: populate TU10-F. The additional VBKP circuit with supercapacitor ensures hot/warm start of the module. If not populated - only cold start is possible."
 		(exclude_from_sim no)
-		(at 422.91 102.87 0)
-		(size 43.18 22.86)
+		(at 422.91 100.33 0)
+		(size 43.18 26.67)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
 			(width 0)
@@ -19401,7 +19401,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "1d959a40-d445-4ce1-8141-f3d77f7d068a")
 		(property "Reference" "C29"
@@ -19612,7 +19612,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "1e8e0e77-3f46-41e5-9a7c-22330ba02b1e")
 		(property "Reference" "A5"
 			(at 520.7 152.4 0)
@@ -22904,7 +22904,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "4ec5e97a-6cf9-401b-b0d7-9318b213aaf2")
 		(property "Reference" "A4"
 			(at 519.43 101.6 0)
@@ -23050,7 +23050,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "52ad993a-87ea-41c6-b4b4-a970bfe63cff")
 		(property "Reference" "C28"
@@ -24537,7 +24537,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "6d983cad-6515-42ea-aa2b-300731083332")
 		(property "Reference" "C24"
@@ -27626,7 +27626,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "8c441047-5767-4f2e-83bf-8bfaf353a2e7")
 		(property "Reference" "D6"
@@ -31139,7 +31139,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "c8b540ac-af60-4c40-9e84-c1fdb77b5e1f")
 		(property "Reference" "R38"
@@ -31209,7 +31209,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "c94c46f7-8c1d-41b2-b72a-e2f6d72d418f")
 		(property "Reference" "C31"
 			(at 503.682 173.0815 90)
@@ -33517,7 +33517,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "e5663cb4-4452-485c-843e-315c1f280ac4")
 		(property "Reference" "C30"
 			(at 503.682 122.2815 90)
