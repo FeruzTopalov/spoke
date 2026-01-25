@@ -270,6 +270,10 @@ The [Loxodrome formula](https://en.wikipedia.org/wiki/Rhumb_line) determines con
 - STM32CubeIDE for compilation
 - STM32CubeProgrammer for flashing
 
+### HW & FW Versions
+
+To access a specific version of Spoke HW or FW refer to Git Tags. See the latest versions in [CHANGELOG](CHANGELOG.md)
+
 ### Building Firmware
 
 See [Configuration, Compilation and Programming Instruction](CubeIDE/README.md)
@@ -353,7 +357,7 @@ Access settings via button interface:
 | CH 14 | 867.700 |
 | CH 15 | 867.900 |
 | CH 16 | 868.100 |
-| CH 17 | 868.300 |
+| CH 17 | 868.300 | 
 | CH 18 | 868.500 |
 | CH 19 | 868.700 |
 | CH 20 | 868.900 |
