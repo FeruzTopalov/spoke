@@ -221,8 +221,8 @@ Complete navigational data of all devices and saved points is available via:
     - Latitude - 4 bytes, float, decimal degree
     - Longitude - 4 bytes, float, decimal degree
     - Altitude - 2 bytes, signed, meters above mean sea level
-- **Example:** 2025-03-02T10:45:00+03:00
-  - Max size: 25 + 228 + 2 (CR+LF) = 255
+- **Example:** "2025-03-02T10:45:00+02:00 AUERGAAAAAB+WUNCvHUSQGQA\r\n"
+  - Max total size: 25 + 1 (space) + 228 + 2 (cr & lf) = 256 bytes
 
 ---
 
