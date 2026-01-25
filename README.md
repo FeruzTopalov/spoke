@@ -28,35 +28,30 @@ or<br>
 ## 📋 Table of Contents
 
 - [About](#about)
-- [Key Features](#key-features)
-- [Demo](#demo)
-- [Why Spoke?](#why-spoke)
 - [Use Cases](#use-cases)
+- [Key Features](#key-features)
 - [Hardware](#hardware)
 - [Technology & How It Works](#technology--how-it-works)
 - [Navigation Algorithms](#navigation-algorithms)
 - [Getting Started](#getting-started)
 - [Configuration](#configuration)
-- [Connectivity Options](#connectivity-options)
-- [Supported Frequency Bands](#supported-frequency-bands)
+- [Frequency Bands](#frequency-bands)
 - [Community](#community)
 - [Contributing](#contributing)
 - [Support the Project](#support-the-project)
-- [Changelog](#changelog)
-- [License](#license)
 
 ---
 
 ## About
 
-**Spoke** is a GPS tracker for group of up to 5 members. It enables **real-time positional data sharing** in a group providing **Distance** and **Azimuth** information in a **radar-like interface** where a 360 deg azimuth circle shows your direction as a **spoke** and azimuth to target as a **notch**. 
+**Spoke** is a GPS tracker for a group of up to 5 members. It enables **real-time positional data sharing** in a group, providing **Distance** and **Azimuth** information in a **radar-like interface** where a 360-degree azimuth circle shows your direction as a **spoke** and azimuth to target as a **notch**. 
 
 <p align="center">
   <img src="Pictures/spoke_screen.jpg" alt="User Interface Legend">
 </p>
 
 Besides navigation function, Spoke has **extra safety features** like: 
-- **Alarm distress signal** - with dedicated red button to easily call group members for a help
+- **Alarm distress signal** - with a dedicated red button to easily call group members for help
 - **Timeout alert** - with configurable timeout in seconds
 - **Radial geo-fence alert** - with configurable distance in meters
 
@@ -108,7 +103,7 @@ Spoke's open-source nature and flexible hardware make it adaptable to numerous s
 
 ### PCB
 
-Spoke is assembled on a simple, 2-layer, 1.6 mm thick PCB of a 100 x 50 mm size. It uses well known and popular electronic components that are easy to get. Some of them may be or already are obsolete, but still available on the market, or even in your own stock! Spoke is not critical to values and nominals of components, so it can be easily adapted to your parts source. Some components are optional to install what adds extra flexibility if you do not need particular functionality.
+Spoke is assembled on a simple, 2-layer, 1.6 mm thick PCB of 100 x 50 mm size. It uses well-known and popular electronic components that are easy to get. Some of them may be or already are obsolete, but are still available on the market, or even in your own stock! Spoke is not critical to values and nominals of components, so it can be easily adapted to your parts source. Some components are optional to install, which adds extra flexibility if you do not need particular functionality.
 
 <p align="center">
   <img src="Pictures/hw_rev_2.1.png" alt="Spoke PCB">
@@ -149,7 +144,7 @@ Spoke firmware is written in **pure C** using CMSIS and runs on the STM32F103C8T
 - **Configurable baud rates** (9600, 38400, 57600 and 115200 baud)
 - **NMEA-0183 stream parsing** with essential navigation sentences (RMC, GGA, GSA, GSV)
 - **PPS (Pulse Per Second)** signal for precise time synchronization
-- **Data extracted:** Time, date, position (lat/lon/alt), speed, course over groung, satellites info, PDOP quality
+- **Data extracted:** Time, date, position (lat/lon/alt), speed, course over ground, satellites info, PDOP quality
 
 ### Communication Protocol
 
@@ -199,7 +194,7 @@ Complete navigational data of all devices and saved points is available via:
 
 ### Nav data Format
 
-- **ISO 8601 Timestamp:** YYYY-MM-DDTHH:MM:SS+hh:mm" where +/-hh:mm is timezone configured by user
+- **ISO 8601 Timestamp:** YYYY-MM-DDTHH:MM:SS+hh:mm where +/-hh:mm is timezone configured by user
   - 25 bytes size, fixed
 - **Base64 Nav data:**
   - 9 navigation objects max (5 devices and 4 saved points)
@@ -210,17 +205,17 @@ Complete navigational data of all devices and saved points is available via:
     - Device Number - 1 byte, unsigned, range from 1 to 9
     - Device ID - 1 byte, ASCII char
     - Internal flags - 1 byte, bit field
-      - bit 0 - is nav object is your device
-      - bit 1 - is nav object is a memory point
+      - bit 0 - is nav object your device
+      - bit 1 - is nav object a memory point
       - bit 2 - is fence alarm triggered
       - bit 3 - is timeout alarm triggered
-      - bit 4 - is nav object online (i.e. successfull communication at last time slot)
+      - bit 4 - is nav object online (i.e. successful communication at last time slot)
     - External flags - 1 byte, bit field
       - bit 0 - is nav object in alarm
       - bit 1 - is nav object a beacon
       - bit 2 - is nav object in low battery state
       - bit 3 - is nav object's motion detected
-      - bit 4 - is nav object's PDOP is good
+      - bit 4 - is nav object's PDOP good
     - SNR value - 1 byte, signed (actual for devices only, but kept as 0 for saved points for unification)
     - Timeout  - 4 bytes, unsigned, seconds since last activity
     - Latitude - 4 bytes, float, decimal degree
@@ -265,7 +260,7 @@ The [Loxodrome formula](https://en.wikipedia.org/wiki/Rhumb_line) determines con
 ### Prerequisites
 
 **Hardware Requirements:**
-- Spoke devices (at least two to forma a group)
+- Spoke devices (at least two to form a group)
 - USB Type-C cable for UART bootloader programming
 - ST-Link for SWD programming
 - Lithium-ion battery
