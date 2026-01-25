@@ -1,6 +1,6 @@
 # Enclosures for Spoke
 
-_ newest to oldest_
+_newest to oldest_
 
 - Endeavour
   - For Spoke HW Rev. 2.1
