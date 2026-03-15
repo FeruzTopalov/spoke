@@ -9,7 +9,6 @@
 #include "service.h"
 #include "uart.h"
 #include "gpio.h"
-#include "timer.h"
 
 
 
@@ -34,15 +33,9 @@ static const char base64_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqr
 //Simple delay in cycles
 void delay_cyc(uint32_t cycles)
 {
-    uint32_t wdg_counter = 0;
     while (cycles--)
     {
     	__NOP();
-    	if (++wdg_counter >= 100000)
-    	{
-    		wdg_counter = 0;
-    		reload_watchdog();
-    	}
     }
 }
 
