@@ -301,7 +301,7 @@ void clear_buttons_interrupts(void)
 {
 	EXTI->PR = EXTI_PR_PR3;		//clear interrupt
 	EXTI->PR = EXTI_PR_PR4;		//clear interrupt
-	EXTI->PR = EXTI_PR_PR3;		//clear interrupt
+	EXTI->PR = EXTI_PR_PR5;		//clear interrupt
 }
 
 

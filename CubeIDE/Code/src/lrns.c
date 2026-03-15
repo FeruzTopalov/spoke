@@ -233,8 +233,13 @@ uint8_t parse_air_packet(uint32_t current_uptime)
 	//extract device number from received packet
 	rx_device = (p_air_packet_rx[PKT_HEADER_1_POS] & BYT_HEADER_1_DEV_NUM_MASK) >> BYT_HEADER_1_DEV_NUM_POS;
 
+	if ((rx_device < DEVICE_NUMBER_FIRST) || (rx_device > DEVICE_NUMBER_LAST))
+	{
+		return NAV_OBJECT_NULL;	//return NULL if device number is out of range
+	}
+
 	devices[rx_device].exist_flag 				=	1;
-	devices[rx_device].device_id				=	((p_air_packet_rx[PKT_HEADER_2_POS] & BYT_HEADER_2_DEV_ID_MASK) + 'A') >> BYT_HEADER_2_DEV_ID_POS;	//restore 0x41 shift
+	devices[rx_device].device_id				=	((p_air_packet_rx[PKT_HEADER_2_POS] & BYT_HEADER_2_DEV_ID_MASK) >> BYT_HEADER_2_DEV_ID_POS) + 'A';	//restore 0x41 shift
 	devices[rx_device].timestamp				=	current_uptime;
 
 	temp_alarm_flag 							=	(p_air_packet_rx[PKT_HEADER_0_POS] & BYT_HEADER_0_FLAG_ALARM_MASK) >> BYT_HEADER_0_FLAG_ALARM_POS;
