@@ -194,8 +194,8 @@ void compass_hard_soft_compensation(void)
 	cal_avg_delta_y = (cal_y_max - cal_y_min) / 2;
 	cal_avg_delta = (cal_avg_delta_x + cal_avg_delta_y) / 2;
 
-	cal_scale_x = (float)cal_avg_delta / cal_avg_delta_x;
-	cal_scale_y = (float)cal_avg_delta / cal_avg_delta_y;
+	cal_scale_x = (cal_avg_delta_x != 0) ? (float)cal_avg_delta / cal_avg_delta_x : 1.0f;
+	cal_scale_y = (cal_avg_delta_y != 0) ? (float)cal_avg_delta / cal_avg_delta_y : 1.0f;
 
 	//hard and soft compensation itself
 	cal_x_max = cal_x_min = 0;

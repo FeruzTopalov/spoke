@@ -9,6 +9,7 @@
 #include "service.h"
 #include "uart.h"
 #include "gpio.h"
+#include "timer.h"
 
 
 
@@ -33,9 +34,15 @@ static const char base64_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqr
 //Simple delay in cycles
 void delay_cyc(uint32_t cycles)
 {
+    uint32_t wdg_counter = 0;
     while (cycles--)
     {
     	__NOP();
+    	if (++wdg_counter >= 100000)
+    	{
+    		wdg_counter = 0;
+    		reload_watchdog();
+    	}
     }
 }
 
@@ -429,10 +436,15 @@ float atof32(char *input)
         i++;
     }
 
-    while(input[i] != '.')
+    while(input[i] != '.' && input[i] != 0)
     {
         result = result * 10.0 + (input[i] - '0');
         i++;
+    }
+
+    if(input[i] == 0)
+    {
+        return (sign * result);
     }
 
     i++;
@@ -442,6 +454,7 @@ float atof32(char *input)
         result = result * 10.0 + (input[i] - '0');
         p++;
         i++;
+        if (p >= sizeof(dec_pow_table) / sizeof(dec_pow_table[0])) break;
     }
 
     return (sign * result / dec_pow_table[p]);
@@ -450,12 +463,18 @@ float atof32(char *input)
 
 
 //Converts float to string
+#define FTOA32_BUF_MAX	(15)
 void ftoa32(float value, uint8_t precision, char *buffer)
 {
     uint8_t i = 0;
     uint32_t mod = 0;
     char sgn = 0;
     float value_copy;
+
+    if (precision >= sizeof(dec_pow_table) / sizeof(dec_pow_table[0]))
+    {
+        precision = sizeof(dec_pow_table) / sizeof(dec_pow_table[0]) - 1;
+    }
 
     if((value == 0.0) || (value == -0.0))
     {
@@ -481,6 +500,7 @@ void ftoa32(float value, uint8_t precision, char *buffer)
     {
         mod = ipart % 10;
         ipart /= 10;
+        if (i >= FTOA32_BUF_MAX) break;
         buffer[i++] = mod + '0';
     }
     while(ipart > 0);
@@ -572,6 +592,29 @@ void itoa32(int32_t value, char *buffer)
     if(value < 0)
     {
         sgn = '-';
+        if (value == (-2147483647 - 1)) // INT32_MIN
+        {
+            // Handle INT32_MIN specially to avoid signed overflow
+            buffer[i++] = 0;
+            buffer[i++] = '8';
+            value = 214748364;
+            while(value > 0)
+            {
+                mod = value % 10;
+                value /= 10;
+                buffer[i++] = mod + '0';
+            }
+            buffer[i] = '-';
+
+            char c;
+            for(uint8_t j = 0; j < i; j++, i--)
+            {
+                c = buffer[j];
+                buffer[j] = buffer[i];
+                buffer[i] = c;
+            }
+            return;
+        }
         value *= -1;
     }
 

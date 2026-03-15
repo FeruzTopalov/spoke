@@ -59,7 +59,8 @@ struct settings_struct *p_settings;
 //wait until radio is ready to accept a command, or until reset is done
 void rf_wait_busy(void)
 {
-	while ((GPIOB->IDR) & GPIO_IDR_IDR1){}
+	uint32_t timeout = 100000;
+	while (((GPIOB->IDR) & GPIO_IDR_IDR1) && --timeout){}
 }
 
 

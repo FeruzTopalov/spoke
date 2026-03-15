@@ -37,7 +37,7 @@ void setup_interrupt_priorities(void);
 
 
 
-struct main_flags_struct main_flags = {0};
+volatile struct main_flags_struct main_flags = {0};
 struct gps_num_struct *p_gps_num;
 struct settings_struct *p_settings;
 struct devices_struct **pp_devices;
@@ -45,22 +45,22 @@ struct devices_struct **pp_devices;
 
 
 //TIMERS
-uint32_t uptime_cntr = 0;
-uint32_t nmea_overflow_cntr = 0;
-uint32_t pps_absolute_cntr = 0;
-uint32_t pps_continuous_cntr = 0;
-uint32_t lora_tx_cycles_cntr = 0;
-uint32_t lora_rx_cycles_cntr = 0;
-uint32_t lora_crc_err_cntr = 0;
-uint32_t lora_rx_timeouts_cntr = 0;
+volatile uint32_t uptime_cntr = 0;
+volatile uint32_t nmea_overflow_cntr = 0;
+volatile uint32_t pps_absolute_cntr = 0;
+volatile uint32_t pps_continuous_cntr = 0;
+volatile uint32_t lora_tx_cycles_cntr = 0;
+volatile uint32_t lora_rx_cycles_cntr = 0;
+volatile uint32_t lora_crc_err_cntr = 0;
+volatile uint32_t lora_rx_timeouts_cntr = 0;
 
 //OTHER
 uint8_t *p_update_interval_values;
 
-uint8_t button_code = 0;
-uint8_t processing_button = 0;
+volatile uint8_t button_code = 0;
+volatile uint8_t processing_button = 0;
 
-uint8_t radio_action;
+volatile uint8_t radio_action;
 
 
 

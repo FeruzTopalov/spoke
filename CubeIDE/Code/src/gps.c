@@ -451,31 +451,31 @@ uint8_t parse_RMC(void)
             switch (comma)  //surfing through RMC data fields
             {
                 case 1:
-                    gps_raw.time[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.time) - 1) gps_raw.time[sym++] = nmea_data[i];
                     break;
                 case 2:
-                    gps_raw.status[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.status) - 1) gps_raw.status[sym++] = nmea_data[i];
                     break;
                 case 3:
-                    gps_raw.latitude[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.latitude) - 1) gps_raw.latitude[sym++] = nmea_data[i];
                     break;
                 case 4:
-                    gps_raw.ns[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.ns) - 1) gps_raw.ns[sym++] = nmea_data[i];
                     break;
                 case 5:
-                    gps_raw.longitude[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.longitude) - 1) gps_raw.longitude[sym++] = nmea_data[i];
                     break;
                 case 6:
-                    gps_raw.ew[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.ew) - 1) gps_raw.ew[sym++] = nmea_data[i];
                     break;
                 case 7:
-                    gps_raw.speed[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.speed) - 1) gps_raw.speed[sym++] = nmea_data[i];
                     break;
                 case 8:
-                    gps_raw.course[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.course) - 1) gps_raw.course[sym++] = nmea_data[i];
                     break;
                 case 9:
-                    gps_raw.date[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.date) - 1) gps_raw.date[sym++] = nmea_data[i];
                     break;
                 default:
                     break;
@@ -521,10 +521,10 @@ uint8_t parse_GGA(void)
             switch (comma)  //surfing through GGA data fields
             {
                 case 7:
-                    gps_raw.sat_used[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.sat_used) - 1) gps_raw.sat_used[sym++] = nmea_data[i];
                     break;
                 case 9:
-                    gps_raw.altitude[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.altitude) - 1) gps_raw.altitude[sym++] = nmea_data[i];
                     break;
                 default:
                     break;
@@ -570,10 +570,10 @@ uint8_t parse_GSA(void)
             switch (comma)  //surfing through GSA data fields
             {
                 case 2:
-                    gps_raw.mode[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.mode) - 1) gps_raw.mode[sym++] = nmea_data[i];
                     break;
                 case 15:
-                    gps_raw.pdop[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.pdop) - 1) gps_raw.pdop[sym++] = nmea_data[i];
                     break;
                 default:
                     break;
@@ -619,7 +619,7 @@ uint8_t parse_GSV(void)
             switch (comma)  //surfing through GSV data fields
             {
                 case 3:
-                    gps_raw.sat_view[sym++] = nmea_data[i];
+                    if (sym < sizeof(gps_raw.sat_view) - 1) gps_raw.sat_view[sym++] = nmea_data[i];
                     break;
                 default:
                     break;

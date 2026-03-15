@@ -315,12 +315,12 @@ void calc_relative_position(uint8_t another_device)
     lat2 = devices[another_device].latitude.as_float * deg_to_rad;
     lon2 = devices[another_device].longitude.as_float * deg_to_rad;
 
-    if (lat1 == lat2)
+    if (fabs(lat1 - lat2) < 1e-8)
     {
         lat2 += 0.00000001;       //slightly shift the position
     }
 
-    if (lon1 == lon2)
+    if (fabs(lon1 - lon2) < 1e-8)
     {
         lon2 += 0.00000001;       //slightly shift the position
     }

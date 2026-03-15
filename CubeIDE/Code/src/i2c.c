@@ -149,24 +149,29 @@ uint8_t i2c_poll(uint8_t i2c_addr)
 void i2c_write(uint8_t i2c_addr, uint8_t reg_addr, uint8_t data)
 {
 	uint8_t SR_tmp;
+	uint32_t timeout;
 
 	i2c_clock_enable();
 
 	//Start
 	I2C1->CR1 |= I2C_CR1_START;
 	//Wait for start generated
-	while (!(I2C1->SR1 & I2C_SR1_SB))
+	timeout = I2C_TIMEOUT;
+	while (!(I2C1->SR1 & I2C_SR1_SB) && --timeout)
 	{
 	}
+	if (timeout == 0) { i2c_clock_disable(); return; }
 	//Clear
 	SR_tmp = I2C1->SR1;
 
 	//Device address
 	I2C1->DR = i2c_addr;
 	//Wait for address end of transmission
-	while (!(I2C1->SR1 & I2C_SR1_ADDR))
+	timeout = I2C_TIMEOUT;
+	while (!(I2C1->SR1 & I2C_SR1_ADDR) && --timeout)
 	{
 	}
+	if (timeout == 0) { i2c_clock_disable(); return; }
 	//Clear
 	SR_tmp = I2C1->SR1;
 	SR_tmp = I2C1->SR2;
@@ -174,14 +179,17 @@ void i2c_write(uint8_t i2c_addr, uint8_t reg_addr, uint8_t data)
 	//Reg address
 	I2C1->DR = reg_addr;
 	//Wait for data register empty
-	while (!(I2C1->SR1 & I2C_SR1_TXE))
+	timeout = I2C_TIMEOUT;
+	while (!(I2C1->SR1 & I2C_SR1_TXE) && --timeout)
 	{
 	}
+	if (timeout == 0) { i2c_clock_disable(); return; }
 
 	//Write data
 	I2C1->DR = data;
 	//Wait byte transfer finish
-	while (!(I2C1->SR1 & I2C_SR1_BTF))
+	timeout = I2C_TIMEOUT;
+	while (!(I2C1->SR1 & I2C_SR1_BTF) && --timeout)
 	{
 	}
 
@@ -189,7 +197,8 @@ void i2c_write(uint8_t i2c_addr, uint8_t reg_addr, uint8_t data)
 
 	//Stop
 	I2C1->CR1 |= I2C_CR1_STOP;
-	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
+	timeout = I2C_TIMEOUT;
+	while ((I2C1->CR1 & I2C_CR1_STOP) && --timeout){} 		//wait for stop cleared by hardware
 
 	i2c_clock_disable();
 }
@@ -200,24 +209,29 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 {
     uint8_t result = 0;
 	uint16_t SR_tmp;
+	uint32_t timeout;
 
 	i2c_clock_enable();
 
 	//Start
 	I2C1->CR1 |= I2C_CR1_START;
 	//Wait for start generated
-	while (!(I2C1->SR1 & I2C_SR1_SB))
+	timeout = I2C_TIMEOUT;
+	while (!(I2C1->SR1 & I2C_SR1_SB) && --timeout)
 	{
 	}
+	if (timeout == 0) { i2c_clock_disable(); return 0; }
 	//Clear
 	SR_tmp = I2C1->SR1;
 
 	//Device address
 	I2C1->DR = i2c_addr;
 	//Wait for address end of transmission
-	while (!(I2C1->SR1 & I2C_SR1_ADDR))
+	timeout = I2C_TIMEOUT;
+	while (!(I2C1->SR1 & I2C_SR1_ADDR) && --timeout)
 	{
 	}
+	if (timeout == 0) { i2c_clock_disable(); return 0; }
 	//Clear
 	SR_tmp = I2C1->SR1;
 	SR_tmp = I2C1->SR2;
@@ -225,26 +239,32 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 	//Reg address
 	I2C1->DR = reg_addr;
 	//Wait for data register empty
-	while (!(I2C1->SR1 & I2C_SR1_TXE))
+	timeout = I2C_TIMEOUT;
+	while (!(I2C1->SR1 & I2C_SR1_TXE) && --timeout)
 	{
 	}
+	if (timeout == 0) { i2c_clock_disable(); return 0; }
 
 
 	//Start (restart actually)
 	I2C1->CR1 |= I2C_CR1_START;
 	//Wait for start generated
-	while (!(I2C1->SR1 & I2C_SR1_SB))
+	timeout = I2C_TIMEOUT;
+	while (!(I2C1->SR1 & I2C_SR1_SB) && --timeout)
 	{
 	}
+	if (timeout == 0) { i2c_clock_disable(); return 0; }
 	//Clear
 	SR_tmp = I2C1->SR1;
 
 	//Device address
 	I2C1->DR = (i2c_addr | 0x01);	//read mode bit set
 	//Wait for address end of transmission
-	while (!(I2C1->SR1 & I2C_SR1_ADDR))
+	timeout = I2C_TIMEOUT;
+	while (!(I2C1->SR1 & I2C_SR1_ADDR) && --timeout)
 	{
 	}
+	if (timeout == 0) { i2c_clock_disable(); return 0; }
 
 	//NACK next byte
 	I2C1->CR1 &= ~I2C_CR1_ACK;
@@ -257,7 +277,8 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 	I2C1->CR1 |= I2C_CR1_STOP;
 
 	//Wait for data register not empty
-	while (!(I2C1->SR1 & I2C_SR1_RXNE))
+	timeout = I2C_TIMEOUT;
+	while (!(I2C1->SR1 & I2C_SR1_RXNE) && --timeout)
 	{
 	}
 
@@ -266,7 +287,8 @@ uint8_t i2c_read(uint8_t i2c_addr, uint8_t reg_addr)
 	//Read requested byte
 	result = I2C1->DR;
 
-	while (I2C1->CR1 & I2C_CR1_STOP){} 		//wait for stop cleared by hardware
+	timeout = I2C_TIMEOUT;
+	while ((I2C1->CR1 & I2C_CR1_STOP) && --timeout){} 		//wait for stop cleared by hardware
 
 	i2c_clock_disable();
 
