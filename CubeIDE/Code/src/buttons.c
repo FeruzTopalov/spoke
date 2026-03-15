@@ -9,7 +9,6 @@
 #include "stm32f10x.h"
 #include "buttons.h"
 #include "gpio.h"
-#include "gpio.h"
 #include "timer.h"
 
 

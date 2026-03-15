@@ -44,9 +44,6 @@ void res_rf_inactive(void);
 void res_lcd_active(void);
 void res_lcd_inactive(void);
 
-void res_lcd_active(void);
-void res_lcd_inactive(void);
-
 void lcd_data_mode(void);
 void lcd_command_mode(void);
 

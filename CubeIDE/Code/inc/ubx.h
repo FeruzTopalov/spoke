@@ -79,7 +79,7 @@
 #define     UBX_NMEA_GLQ   0x43 	//GxGLQ (poll a standard message (if the current Talker ID is GL))
 #define     UBX_NMEA_GNQ   0x42 	//GxGNQ (poll a standard message (if the current Talker ID is GN))
 #define     UBX_NMEA_GNS   0x0D 	//GxGNS (GNSS fix data)
-#define     UBX_NMEA_GPQ   0x040  //GxGPQ (poll a standard message (if the current Talker ID is GP))
+#define     UBX_NMEA_GPQ   0x40  //GxGPQ (poll a standard message (if the current Talker ID is GP))
 #define     UBX_NMEA_GRS   0x06 	//GxGRS (GNSS range residuals)
 #define     UBX_NMEA_GSA   0x02 	//GxGSA (GNSS DOP and Active satellites)
 #define     UBX_NMEA_GST   0x07 	//GxGST (GNSS Pseudo Range Error Statistics)
